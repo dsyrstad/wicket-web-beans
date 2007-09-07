@@ -1,0 +1,7 @@
+---+ Running the Samples
+
+1. Deploy the wwb.war or setup an project with Tomcat, Jetty, etc.
+2. For Tomcat, go to http://localhost:8080/WebBeans. This starts LauncherApplication and allows you to drill down on each sample. 
+
+Back to WicketWebBeans
+

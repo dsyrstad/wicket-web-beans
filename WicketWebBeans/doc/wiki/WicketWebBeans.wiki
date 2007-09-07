@@ -1,0 +1,205 @@
+---+ Introduction to Wicket Web Beans
+
+Wicket Web Beans (WWB) is a Wicket-based component toolkit for displaying and editing POJOs that conform to the !JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
+
+At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX functionality. Fields within a form are dynamically sent back to the bean as they are changed. This allows the form to be dynamically updated back to the server without the typical submit cycle. Other lower-level components may be used independently of !BeanForm and multiple !BeanForms may be incorporated on a single page.
+
+---+ Simple Example
+
+Let's take a look at a simple bean from the examples:
+
+Embed:wicket.contrib.webbeans.examples.simple.TestBean
+
+This is a Java Bean compliant POJO. As most people know, getters start with "get" or "is" and setters start with "set". Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.
+
+This bean also implements !PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if you're bean implements add/removePropertyChangeListener(), !BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use !PropertyChangeEvents to notify !BeanForm when dependent properties change. 
+
+If you don't implement !PropertyChangeListeners, !BeanForm already knows if a single property changes from a change on the form. For example, setFirstName() automatically changes the input value to upper case. !BeanForm knows to refresh this field on the form because the user changed it. If you type "xyzzy" in the First Name field and tab or click away from the field, the field is sent to the bean and the field is dynamically refreshed to it's new value "XYZZY".
+
+Before we get too deep, let's take a look at the Wicket page and HTML:
+
+<verbatim>
+	<html xmlns:wicket>
+	<head>
+	<wicket:head>
+	    <wicket:link><link href="bean.css" type="text/css" rel="stylesheet" ></link></wicket:link>
+		<title>Simple Bean Page</title>
+	</wicket:head>
+	</head>
+	<body >
+		<span wicket:id="beanForm"></span>
+	</body>
+	</html>
+</verbatim>
+
+Embed:wicket.contrib.webbeans.examples.simple.SimpleBeanPage
+
+You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of wicket.contrib.webbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of wicket.contrib.webbeans.model.BeanMetaData. !BeanMetaData reflects on the !TestBean class to derive the fields and actions for the form.
+
+If you bring up this page in a browser (see RunningSamples), you will see something like:
+
+WWB:/doc/wiki/images/SimpleBeanScreenShot.png
+
+Note that "Result" is not editable because there is no setter method on the bean.
+
+As we mentioned, !BeanMetaData represents the metadata for a bean properties and actions. By default, the metadata originates by convention:
+
+   * Label names for properties are derived from the property name. E.g., "customerName" becomes "Customer Name"; "address2" becomes "Address 2" (or from the !JavaBean !BeanInfo "displayName").
+   * Field components for the Java primitive/wrapper types, enum types, !java.util.Date and those classes deriving from it, and java.util.Lists are pre-configured.
+   * All !JavaBean properties are displayed. Non-!JavaBean methods are not displayed. 
+   * All fields are editable if viewOnly is false (see the !BeanMetaData constructor). Otherwise they are all view-only.
+   * If a property is not writable, it is displayed view-only.
+   * All fields are displayed in the order the are reflected (alphabetical order).
+   * All fields are displayed in a single page. (Known as the "default tab", but the tab is hidden).
+
+Field types are deduced from the property's Java type. The mappings from the property's Java class to the wicket.contrib.webbeans.fields.Field type is done by wicket.contrib.webbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
+
+---+ Customization Using "*.beanprops"
+
+WWB is a method of programming by exception. That is, you only tell WWB to do something when its not doing what you want. Most commonly, WWB doesn't really know a good way to order fields on the page. By default, they are in alphabetical order and laid out in a three column grid.  Alphabetical order isn't typically want you want, though. To change this, you can create a "beanprops" file. This file is named like other Wicket files - it has the same based name as your Page (or component that the !BeanForm is embedded in). 
+
+Using the Simple Example above, let's customize it. Note that we're now using wicket.contrib.webbeans.examples.simple.CustomSimpleBeanPage (we won't reiterate the trivial HTML and Page code here). This page also has a !CustomSimpleBeanPage.beanprops file, seen below:
+
+<verbatim>
+	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: firstName, lastName, operand1, operand2, result, -number;
+	}
+</verbatim>
+
+This file tells WWB : whenever you see a !TestBean bean, layout it out in a one-column grid ("cols: 1") and display the properties ("props") in the order specified. Note that you refer to !JavaBean properties without the prefix of "get", "set", or "is" and the first character is lower case. Also in the "props" parameter, we say "-number". This tells WWB to remove the "number" property from the page. 
+
+Note that we didn't specify a package name when we wrote "!TestBean". The package name is optional as long as the class name is not ambiguous. If !BeanMetaData matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    
+
+If you run this example, you'll see something like:
+
+WWB:/doc/wiki/images/CustomSimpleBeanScreenShot.png
+
+In addition to beanprops, most of the look and feel of the page can be customized via CSS.
+
+
+
+---++ Referencing Wicket properties
+
+---++ Bean Property Customization
+Property-level settings override Bean-level settings.
+
+---++ Actions
+
+---++ Tabs
+
+---++ Nested Beans
+
+= beanprops syntax =
+= Component Parameter Reference = 
+
+= Details =
+
+{{{
+<verbatim>
+# Default specification/context for bean TestBean. Package name is optional.
+# Standard parameters are: label, actions, props, tabs, displayed, viewOnly.
+TestBean {
+	# Standard Bean-level parameters are: label, actions, props, tabs, displayed, viewOnly. In addition,
+	# you may specify Bean container-specific ones (e.g., BeanGridPanel allows "columns").
+	
+	# $(property-name) to reference a Wicket property file property (i.e., Localizer). Can be used anywhere in a value and
+	# in any kind of value.  Double quotes may be used to embed whitespace in values.
+	label: "My ${TestBean.title} Title";   
+
+	# Defines the actions available for the bean.
+	# This is a list of action methods available on the Wicket Page that the bean
+ 	# is embedded in. These methods must be public and have the following signature:
+ 	#     public void <i>doSomething</i>(AjaxRequestTarget target, Form form, Object bean)
+ 	# The target parameter may be null for non-Ajax requests. 
+ 	# These can be referenced as "action.{action-method-name}" in props. 
+ 	# Actions not included in the "props" parameter are considered to be "global" actions
+	# that appear outside of any tabs.
+		
+	actions: save,cancel,doIt,addRow;
+
+	# This is a list of properties that may have parameters and are presented on the page in the order specified below. 
+	# Any other properties not specified are presented at the end of the page. 
+	# Properties beginning with "action." refer to actions defined in "actions:" above, not to bean properties.
+	# If the property begins with "-", it is not displayed.
+	# The "EMPTY" pseudo-property name can be used to provide an empty field (e.g., a blank cell in a grid). 
+	# Configuration may be specified for each property within "{}". Standard configuration parameters are:
+	#   label, labelImage, viewOnly, fieldType (overrides the Field used), elementType. 
+	# For Collections, elementType is the type of the elements
+ 	# contained within the collection. If this is not specified and the collection is not 
+ 	# null and not empty, the elementType is detected from the first element of the collection.
+	# In addition, you may specify Bean container and Field-level specific parameters (e.g., BeanGridPanel allows "colspan").
+	# For action parameters, see BeanActionButton.
+	props: 
+		action.save{colspan: 3},
+		firstName,
+		lastName,
+		EMPTY,
+		activePrimitive,
+		color,
+		# Note that only the base class name for fieldType is specified, not the package (wicket.contrib.beancomponents.fields) which is optional.
+		# This class must be in the ComponentRegistry for this to work. Otherwise, you can explicitly specify the package name. 
+		inlineBean{fieldType: BeanInlineField; colspan: 3},
+		dateTimestamp,
+		blockBean{fieldType: BeanGridField; colspan: 3},
+		testBean2{colspan: 3},
+		popupBean{colspan: 3},
+		-subComponent;  # Explicitly hides subComponent.
+
+	# Tabs are optional. Only specify the properties not on the default tab. 
+	# Each tab can define parameters. Standard parameters are: label, props.
+	tabs: 
+		nameInfo, # Default tab: no props specified, so it gets all of the bean props not used in other tabs.
+		miscInfo {
+			label: "${MiscInfo.title}";
+			props:
+				gender,
+				EMPTY,  # Empty cell/spacer.
+				age,
+				operand1,
+				operand2,
+				result{viewOnly: true},
+				# Note that only the base class name for elementType is specified, not the package, which is optional.
+				# This class must be in the same package as the bean for this to work. Otherwise, you can explicitly specify the package name. 
+				palette{elementType: TestBean$ColorEnum},
+				palette2{elementType: TestBean$ColorEnum; viewOnly: true},
+				description{fieldType: TextAreaField; rows: 5};
+		}, 
+		listOfBeans {
+			props: 
+				action.addRow{colspan: 3}, 
+				beans{viewOnly: true; rows: 20};
+		};
+}
+
+# [] specifies a specific context (e.g., a use-case). This one extends the default context implicitly.
+TestBean[view] {
+	viewOnly: true;
+}
+
+TestBean[popupView extends view] {
+	props: 
+		-color,		# Remove the color property from the default list. 
+		lastName{viewOnly: false}; # Change the parameter of lastName
+}
+
+TestBean2 {
+	actions: deleteRow;
+	props: 
+		action.deleteRow{labelImage: "remove.gif"},
+		selected{label: X},
+		firstName{viewOnly: false},
+		lastName;
+}
+</verbatim>
+}}}
+
+
+= CSS Guide =
+
+
+
+
+
+

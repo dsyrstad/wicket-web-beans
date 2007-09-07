@@ -1,0 +1,26 @@
+- Bug: Test null list on BeanListEditor
+- Bug: IE: table row hover highlighting not working.
+- Bug: Collapsibles should be built out of wicket components. Doesn't remember state on refresh
+
+- Option to find components of properties. Have this already?
+
+
+
+Later
+-----
+- context parameter for sub-bean references.
+- @NULLABLE/not for required fields. (@NOTNULLABLE)
+- props could be a list of property *expressions*  to be included
+- Each row in a table is a bean, but you should be able to control whether the individual row is view-only via a property
+	expression.
+- Hide BeanListEditor navbar if everything fits on one page.
+- Remove dependency on bean utils?
+- Handle array types where List types are used. Worked on this, but probably need a model wrapper 
+  the fully wraps an array in a pass-thru List (Arrays.asList() doesn't clear or add).
+- Date picker icon should be div that's style-able so that calendar icon can be skinned. Or have a parameter.
+- bean/property name should be additional class on editors/viewers so that per-property can be configured.
+  Alternately can use wicket id (long). Need to output markup id in this case.
+- movable/resizable table columns
+- rowspan support in table?
+- Support JavaBean Constrained flag for vetoable types?
+- Tree/table for nested tables

@@ -1,0 +1,67 @@
+package wicket.contrib.webbeans.actions;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import wicket.Page;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.contrib.webbeans.model.ElementMetaData;
+import wicket.markup.html.form.Form;
+
+/**
+ * Bean button for Actions. Action config properties:<p>
+ * <ul>
+ *  <li>confirm=msg - delivers a confirmation message when clicked. If answer is "Yes", the action proceeds,
+ *    otherwise it is canceled.</li>
+ *  <li>ajax - true/false where the action should be invoked with Ajax. Otherwise, it is a regular
+ *    form submit.</li>
+ *  <li>default - true/false whether the button should be fired when the Enter key is pressed anywhere
+ *    on the form.</li>
+ * </ul>     
+ * <p>
+ * 
+ * @author Dan Syrstad
+ */
+public class BeanActionButton extends BeanSubmitButton
+{
+    public Class[] ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
+    
+    private ElementMetaData element;
+    
+    /**
+     * Construct a BeanActionButton. 
+     *
+     * @param id
+     * @param label
+     * @param form
+     */
+    public BeanActionButton(String id, ElementMetaData element, Form form, Object bean)
+    {
+        super(id, element, form, bean);
+        this.element = element;
+    }
+
+    @Override
+    protected void onAction(AjaxRequestTarget target, Form form, Object bean)
+    {
+        Page page = getPage();
+        String methodName = element.getActionMethodName();
+        if (page == null) {
+            throw new RuntimeException("BeanActionButton for action " + methodName + " is not on a Page");
+        }
+        
+        try {
+            Method method = page.getClass().getMethod(methodName, ACTION_PARAMS);
+            method.invoke(page, new Object[] { target, form, bean });
+        }
+        catch (NoSuchMethodException e) {
+            throw new RuntimeException("Action method " + methodName + " is not defined in class " + page.getClass());
+        }
+        catch (IllegalAccessException e) {
+            throw new RuntimeException("Action method " + methodName + " defined in class " + page.getClass() + " must be declared public");
+        }
+        catch (InvocationTargetException e) {
+            throw new RuntimeException("Error invoking action " + methodName + " defined in class " + page.getClass(), e.getCause());
+        }
+    }
+}
