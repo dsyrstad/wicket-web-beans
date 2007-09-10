@@ -2,7 +2,9 @@
 
 Wicket Web Beans (WWB) is a Wicket-based component toolkit for displaying and editing POJOs that conform to the !JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
 
-At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX functionality. Fields within a form are dynamically sent back to the bean as they are changed. This allows the form to be dynamically updated back to the server without the typical submit cycle. Other lower-level components may be used independently of !BeanForm and multiple !BeanForms may be incorporated on a single page.
+At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, but it . This allows for customized page designs. Also, this allows multiple !BeanForms may be incorporated on a single page. At your choosing, other lower-level components may be used independently of !BeanForm (e.g., !BeanGridPanel). WWB does not try to force you into a certain way of doing things, but !BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. 
+
+Fields within a form are dynamically sent back to the server-side bean as they are changed, which eliminates the typical submit cycle. This makes WWB act more like a rich client application and less like a standard forms-based application. 
 
 ---+ Simple Example
 
@@ -79,17 +81,159 @@ WWB:/doc/wiki/images/CustomSimpleBeanScreenShot.png
 In addition to beanprops, most of the look and feel of the page can be customized via CSS.
 
 
+---++ Referencing Wicket Properties Files
 
----++ Referencing Wicket properties
+Let's say you don't like the generated label "Operand 1" and "Operand 2" in the previous example, or you want to be able to localize them for another language. You can fix this by adding a Wicket properties file called !CustomSimpleBeanPage.properties, such as: 
+
+<verbatim>
+operand1.Label=Enter First Value
+operand1.Label=Enter Second Value
+</verbatim>
+
+And change !CustomSimpleBeanPage.beanprops as follows:
+<verbatim>
+	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, lastName, 
+			operand1{ label: "${operand1.Label}" }, 
+			operand2{ label: "${operand2.Label}" }, 
+			result, -number;
+	}
+</verbatim>
+
+You can see that you can specify parameters for each bean property. This example gives operand1 and operand2 the labels "Enter First Value" and "Enter Second Value" respectively. The "${xxx}" macro expression syntax substitutes the properties file key for xxx into the value for the parameter. You can intermix text and multiple macro expressions in a single value. 
 
 ---++ Bean Property Customization
-Property-level settings override Bean-level settings.
 
----++ Actions
+In !CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The "result" property is view-only by default because it has no setter. If you were to pass "viewOnly" = true to the !BeanMetaData object, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change !CustomSimpleBeanPage.beanprops as follows:
 
----++ Tabs
+<verbatim>
+	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, 
+			lastName{ label: "Last Name (informational)"; viewOnly: true }, 
+			operand1{ label: "${operand1.Label}" }, 
+			operand2{ label: "${operand2.Label}" }, 
+			result, -number;
+	}
+</verbatim>
 
----++ Nested Beans
+This causes the lastName property to get a different label and be view-only.
+
+---+ Actions
+
+It's simple to add actions to your form. Here's the code for wicket.contrib.webbeans.examples.actions.ActionBeanPage:
+
+Embed:wicket.contrib.webbeans.examples.actions.ActionBeanPage
+
+And here's ActionBeanPage.beanprops:
+
+<verbatim>
+	# Actions Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: firstName, lastName, action.clearLastName,
+			operand1, operand2, result, -number;
+	}
+</verbatim>
+
+Note the "actions" parameter. This defines the actions available from your Page (or whatever component the form is embedded in). The action name corresponds precisely to the method name in the Page. Every action method must have the following method signature:
+
+<verbatim>
+    public void actionName(AjaxRequestTarget target, Form form, Object bean) 
+    { 
+        ...
+    }
+</verbatim>
+
+The target parameter normally null. It is only non-null if you specify the "ajax: true" parameter to the action. The Wicket Form is always passed in "form" and the bean that the action applies to is in "bean".  
+
+This configuration yeilds the following page:
+WWB:/doc/wiki/images/ActionBeanScreenshot.png
+
+Since the save and cancel actions are not referenced anywhere else in the beanprops file, WWB assumes that they are global actions for the Page. However, the clearLastName action is referenced in the "props" parameter. It is referenced using the "action." prefix to distinguish it from a regular bean property. In this example, we placed the action near the lastName property since they are related. When you click the Clear Last Name button, the last name field will clear out.
+
+---+ Tabs
+
+There may be many times when you have more information for a form than can fit on a single page. One method of splitting up this information is to group it into tabs. Of course, WWB makes tabs easy too. Let's look at wicket.contrib.webbeans.examples.tabs.TabBeanPage. The Java code is exactly the same as !ActionBeanPage, but the beanprops are a little different:
+
+<verbatim>
+	# Tabs Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: -number;
+		
+		tabs: 
+			name { props: firstName, lastName, action.clearLastName },
+			calculator { props: operand1, operand2, result }; 
+	}
+</verbatim>
+
+Here we just use !TestBean "props" to specify the properties we don't want. "name" and "calculator" specify the tab groupings. We specify a "props" parameter for each tab to say which properties fall on which tab, and in what order. The result looks like:  
+
+WWB:/doc/wiki/images/TabBeanScreenshot.png
+
+Alternately we could configure all of the properties in !TestBean's "props" if we wanted. By default all properties that weren't specified for a tab fall in the first tab, so we could have said: 
+ 
+<verbatim>
+	# Tabs Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: firstName, lastName, action.clearLastName, -number;
+		
+		tabs: 
+			name, calculator { props: operand1, operand2, result }; 
+	}
+</verbatim>
+
+and gotten the same result.
+
+---+ Bean Contexts
+
+WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simple view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at wicket.contrib.webbeans.examples.contexts.ContextBeanPage:
+
+Embed:wicket.contrib.webbeans.examples.contexts.ContextBeanPage
+ 
+Note that we pass "view" to the !BeanMetaData constructor. This is the context (or use case) that we want. Of course, you can dynamically come up with this context in the Page constructor depending on parameters passed, etc.
+ 
+Here's the beanprops file:
+
+<verbatim>
+	# Context Example
+	TestBean {
+		props: firstName, lastName, EMPTY,
+			operand1, operand2, result, -number;
+	}
+	
+	TestBean[view] {
+		viewOnly: true;
+	}
+	
+	TestBean[limitedEdit extends view] {
+		props: firstName{ viewOnly: false };
+	}
+</verbatim>
+
+If you run this page from the examples, you will see that all fields are view-only. When we specify "!TestBean[view]", it tells WWB to extend the default definition for !TestBean. The "view" context inherits all of the parameters from the default specification and overrides the bean's "viewOnly" parameter to be true. This causes all of the fields to be view-only.
+
+If you change the following line in !ContextBeanPage, from "view" to "limitedEdit", WWB uses the third definition in the beanprops file:
+  
+<verbatim>
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), "limitedEdit", this, null, false);
+</verbatim>
+
+This cause just the firstName property to become editable.  The "[limitedEdit extends view]" tells WWB to extend the "view" context, which in turn extends the default context. 
+
+---+ Nested Beans
+
+---+ Tables
 
 = beanprops syntax =
 = Component Parameter Reference = 

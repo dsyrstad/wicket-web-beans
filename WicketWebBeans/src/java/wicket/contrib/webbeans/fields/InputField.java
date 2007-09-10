@@ -13,7 +13,7 @@ import wicket.model.IModel;
 /**
  * A Field that allows entry of text, numbers, etc. depending on the property type.
  * Accepts a config of "advOnEnter={true|false}", which means: advance to the next field when the
- * Enter key is pressed. This is useful for barcode scanners. 
+ * Enter key is pressed.  
  * 
  * @author Dan Syrstad
  */
