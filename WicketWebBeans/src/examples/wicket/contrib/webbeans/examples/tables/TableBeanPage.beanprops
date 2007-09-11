@@ -2,7 +2,7 @@
 Invoice {
 	actions: addLine;
 	
-	props: invoiceNumber, customerName, EMPTY, 
+	props: invoiceNumber, invoiceDate, EMPTY, customerName, 
 		shipToAddress{colspan: 3},
 		action.addLine{colspan: 3},
 		lines{colspan: 3};

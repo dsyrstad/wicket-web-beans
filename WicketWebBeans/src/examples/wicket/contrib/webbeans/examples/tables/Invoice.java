@@ -2,6 +2,7 @@ package wicket.contrib.webbeans.examples.tables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 import wicket.contrib.webbeans.examples.nested.Address;
@@ -12,6 +13,7 @@ public class Invoice implements Serializable
 
     private String invoiceNumber;
     private String customerName;
+    private Date invoiceDate;
     private Address shipToAddress;
     private List<InvoiceLine> lines = new ArrayList<InvoiceLine>();
 
@@ -37,6 +39,16 @@ public class Invoice implements Serializable
     public void setCustomerName(String customerName)
     {
         this.customerName = customerName;
+    }
+
+    public Date getInvoiceDate()
+    {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(Date invoiceDate)
+    {
+        this.invoiceDate = invoiceDate;
     }
 
     public Address getShipToAddress()

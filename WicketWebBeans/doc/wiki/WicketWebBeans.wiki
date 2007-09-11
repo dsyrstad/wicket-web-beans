@@ -42,7 +42,7 @@ If you bring up this page in a browser (see RunningSamples), you will see someth
 
 WWB:/doc/wiki/images/SimpleBeanScreenShot.png
 
-Note that "Result" is not editable because there is no setter method on the bean.
+Note that "Result" is not editable because there is no setter method on the bean. Also, if you type numbers into Operand 1 and Operand 2, you'll see that the Result field automatically is calculated and updated. The calculation is done by !TestBean and the !PropertyChangeEvents are notifying WWB to update the result field.
 
 As we mentioned, !BeanMetaData represents the metadata for a bean properties and actions. By default, the metadata originates by convention:
 
@@ -72,7 +72,7 @@ Using the Simple Example above, let's customize it. Note that we're now using wi
 
 This file tells WWB : whenever you see a !TestBean bean, layout it out in a one-column grid ("cols: 1") and display the properties ("props") in the order specified. Note that you refer to !JavaBean properties without the prefix of "get", "set", or "is" and the first character is lower case. Also in the "props" parameter, we say "-number". This tells WWB to remove the "number" property from the page. 
 
-Note that we didn't specify a package name when we wrote "!TestBean". The package name is optional as long as the class name is not ambiguous. If !BeanMetaData matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    
+Note that we didn't specify a package name when we wrote "!TestBean". The package name is optional as long as the class name is not ambiguous. WWB matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    
 
 If you run this example, you'll see something like:
 
@@ -107,7 +107,7 @@ You can see that you can specify parameters for each bean property. This example
 
 ---++ Bean Property Customization
 
-In !CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The "result" property is view-only by default because it has no setter. If you were to pass "viewOnly" = true to the !BeanMetaData object, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change !CustomSimpleBeanPage.beanprops as follows:
+In !CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The "result" property is view-only by default because it has no setter. If you were to pass "viewOnly" = true to the !BeanMetaData constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change !CustomSimpleBeanPage.beanprops as follows:
 
 <verbatim>
 	# Customize TestBean.
@@ -326,7 +326,7 @@ This page references two beans wicket.contrib.webbeans.examples.tables.Invoice a
 	Invoice {
 		actions: addLine;
 		
-		props: invoiceNumber, customerName, EMPTY, 
+		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
 			shipToAddress{colspan: 3},
 			action.addLine{colspan: 3},
 			lines{colspan: 3};
@@ -350,11 +350,39 @@ When you bring up the page, it will look something like:
 
 WWB:/doc/wiki/images/TableBeanScreenshot.png
 
-Of course, you could throw the lines in a separate tab to clean up the page a bit.
+Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking "Add Line" adds a new line to the table. Click the trash can icon on one of the lines will remove the corresponding line. 
+
+The screenshot also shows the Invoice Date field with a calendar pop-up displayed. WWB displays properties of java.util.Date (date/time), java.sql.Date (date only), java.sql.Time (time only), java.sql.Timestamp (date/time), and java.util.Calendar (date/time with timezone) in a field with a pop-up calendar button.  
 
 ---+ Creating Your Own Field Types
 
-custom NonJavaEnum
+There are times when you may want to implement your own Fields (wicket.contrib.webbeans.fields.Field). wicket.contrib.webbeans.fields.AbstractField is the base class for the Field interface. It is recommended that you use the !AbstractField base class, or an extension of it, if your field will participate in a !BeanForm. 
+
+By convention, all Fields must define a constructor with the signature:
+ 
+<verbatim>
+	public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+</verbatim>
+
+In this example, we're going to enhance the wicket.contrib.webbeans.examples.customfields.Address bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things similar for you, WWB defines an interface called wicket.contrib.webbeans.model.NonJavaEnum. It also has a base class for this interface called wicket.contrib.webbeans.model.BaseNonJavaEnum. So let's look at our wicket.contrib.webbeans.examples.customfields.Country enumeration:
+
+Embed:wicket.contrib.webbeans.examples.customfields.Country
+
+You would normally query the database for countries in the static values() method. However, we don't have a database, so we just hard coded them. The idea is that you would retrieve these values at runtime. The static values() and valueOf() methods are similar to those found on a Java language enum.
+
+Next we need to implement the Field. WWB has a base Field class wicket.contrib.webbeans.fields.EnumField that can be used for Java enums and !NonJavaEnums. Here's our wicket.contrib.webbeans.examples.customfields.CountryField that extends !EnumField:
+
+Embed:wicket.contrib.webbeans.examples.customfields.CountryField
+
+Next, we need to register the !CountryField type so that whenever WWB sees a Country bean, it will know how to handle it. In this example, this is done in wicket.contrib.webbeans.examples.customfields.CustomFieldPage:
+
+Embed:wicket.contrib.webbeans.examples.customfields.CustomFieldPage
+ 
+For simplicity, we add the mapping to !ComponentRegistry directly in our Page code. However, you would normally create your instance or sub-class of !ComponentRegistry outside of the Page code so that it can be used from multiple pages.
+
+The end result looks like this:
+
+WWB:/doc/wiki/images/CustomFieldScreenshot.png 
 
 = beanprops syntax =
 = Component Parameter Reference = 
