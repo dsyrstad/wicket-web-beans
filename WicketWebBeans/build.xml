@@ -12,7 +12,10 @@
 	<!-- The class files are put in this directory. -->
 	<property name="code.build" value="build-ant" />
 
-    <!-- libs -->
+	<property name="examples.src" value="${base.src}/examples" />
+	<property name="examples.build" value="${code.build}/examples" />
+
+	<!-- libs -->
     <property name="weblib.dir" value="WebContent/WEB-INF/lib"/>
 
     <!-- Define a temporary directory, based on the system temporary directory,
@@ -23,8 +26,8 @@
        test sources, the location of the test .class files and the
        directory where the test results are written in. -->
 	<property name="tests.src" value="${base.src}/test" />
-	<property name="tests.build" value="build-ant/tests" />
-	<property name="tests.reports" value="build-ant/tests-results" />
+	<property name="tests.build" value="${code.build}/tests" />
+	<property name="tests.reports" value="${code.build}/tests-results" />
 
 	<!-- The directory where the final build artifacts are put -->
 	<property name="release.dir" value="releases" />
@@ -51,11 +54,13 @@
 	<target name="init" description="Initializes everything, creates directories, etc.">
 		<mkdir dir="${code.build}" />
 		<mkdir dir="${tests.build}" />
+		<mkdir dir="${examples.build}" />
 	</target>
 
 	<!-- Removes the build directory and the tests build directory -->
 	<target name="clean" description="Cleans away all generated files.">
 		<delete dir="${tests.build}" />
+		<delete dir="${examples.build}" />
 		<delete dir="${code.build}" />
 		<delete dir="${release.dir}" />
 	</target>
@@ -64,13 +69,10 @@
 
 	<!-- Compilation targets -->
 	
-	<target name="compile-src" depends="init" description="Builds the source code.">
+	<target name="compile" depends="init" description="Builds the source code and resources.">
 		<javac srcdir="${code.src}" destdir="${code.build}" debug="on" optimize="on"  source="1.5">
 			<classpath refid="path.base" />
 		</javac>
-	</target>
-
-	<target name="compile" depends="compile-src" description="Builds the source code and resources.">
 		<copy todir="${code.build}" >
 			<fileset dir="${code.src}" >
 				<include name="**/*.xsl" />
@@ -87,7 +89,7 @@
 		</copy>
 	</target>
 
-	<target name="compiletests" depends="compile" description="Builds the test code.">
+	<target name="compile-tests" depends="compile" description="Builds the test code.">
 		<javac srcdir="${tests.src}" destdir="${tests.build}">
 			<classpath refid="path.base" />
 		</javac>
@@ -107,8 +109,27 @@
 		</copy>
 	</target>
 
-	<!-- ============================================================== -->
+	<target name="compile-examples" depends="compile" description="Builds the example code.">
+		<javac srcdir="${examples.src}" destdir="${examples.build}">
+			<classpath refid="path.base" />
+		</javac>
+		<copy todir="${examples.build}" >
+			<fileset dir="${examples.src}" >
+				<include name="**/*.xsl" />
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+				<include name="**/*.beanprops" />
+				<include name="**/*.html" />
+				<include name="**/*.gif" />
+				<include name="**/*.png" />
+				<include name="**/*.jpg" />
+				<include name="**/*.css" />
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+	</target>
 
+	<!-- ============================================================== -->
 	<!--  Release targets -->
 
 	<target name="releaseinit">
@@ -121,7 +142,12 @@
 		<jar basedir="${code.build}" destfile="${release.dir}/lib/wicket-web-beans.jar" />
 	</target>
 		
-	<target name="war" depends="jar" description="Builds the samples WAR file.">
+	<target name="jar-examples" depends="compile-examples" description="Builds jar.">
+		<mkdir dir="${release.dir}/lib" />
+		<jar basedir="${examples.build}" destfile="${release.dir}/lib/wicket-web-beans-examples.jar" />
+	</target>
+		
+	<target name="war" depends="jar,jar-examples" description="Builds the samples WAR file.">
 		<war warfile="${release.dir}/wwb.war" webxml="${webcontent}/WEB-INF/web.xml">
 			<lib dir="${webcontent}/WEB-INF/lib">
 				<include name="*.jar" />
@@ -146,7 +172,7 @@
 	<!-- ============================================================== -->
 	<!-- Running tests -->
 
-	<target name="tests" depends="compile,compiletests" description="Runs the JUnit tests.">
+	<target name="tests" depends="compile,compile-tests" description="Runs the JUnit tests.">
 		<mkdir dir="${tests.reports}"/>
         <junit printsummary="yes" haltonfailure="no" fork="yes" failureproperty="tests.failed">
             <classpath>

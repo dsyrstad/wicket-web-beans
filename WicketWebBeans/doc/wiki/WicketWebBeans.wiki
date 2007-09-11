@@ -1,6 +1,6 @@
 ---+ Introduction to Wicket Web Beans
 
-Wicket Web Beans (WWB) is a Wicket-based component toolkit for displaying and editing POJOs that conform to the !JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
+Wicket Web Beans (WWB) is an Apache Wicket (http://wicket.apache.org) component toolkit for displaying and editing POJOs that conform to the !JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
 
 At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, but it . This allows for customized page designs. Also, this allows multiple !BeanForms may be incorporated on a single page. At your choosing, other lower-level components may be used independently of !BeanForm (e.g., !BeanGridPanel). WWB does not try to force you into a certain way of doing things, but !BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. 
 
@@ -285,9 +285,72 @@ These fields have a bar across the top that allow you to expand and contract the
 
 ---+ Enumerated Types
 
+It is quite common for beans to reference other beans. WWB handles this for you. Let's look at wicket.contrib.webbeans.examples.enums.EnumBeanPage: 
+
+Embed:wicket.contrib.webbeans.examples.enums.EnumBeanPage
+
+The wicket.contrib.webbeans.examples.enums.Customer bean references a Java enum type called wicket.contrib.webbeans.examples.enums.CustomerType:
+
+Embed:wicket.contrib.webbeans.examples.enums.CustomerType
+
+And here are the beanprops:
+
+<verbatim>
+	# Enum Bean Example
+	Customer {
+		cols: 1;
+		props: 
+			firstName, lastName, 
+			customerType{default: Government}; 
+	}
+</verbatim>
+
+The result looks like:
+
+WWB:/doc/wiki/images/EnumBeanScreenshot.png
+
+We specify the parameter "default" for customerType so that the the drop-down defaults to "Government". If we hadn't specified the default, the drop-down would have defaulted to null (an empty selection).
+
+Later you'll see how to implement custom/dynamic runtime enums where the values can be derived from a database or other source.
 
 ---+ Tables
 
+You may encounter times when you need to manage collections of nested beans. By default, WWB displays collections in an editable table. Let's look at an example: wicket.contrib.webbeans.examples.tables.TableBeanPage:
+
+Embed:wicket.contrib.webbeans.examples.tables.TableBeanPage
+
+This page references two beans wicket.contrib.webbeans.examples.tables.Invoice and wicket.contrib.webbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll set that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
+
+<verbatim>
+	# Table Bean Example
+	Invoice {
+		actions: addLine;
+		
+		props: invoiceNumber, customerName, EMPTY, 
+			shipToAddress{colspan: 3},
+			action.addLine{colspan: 3},
+			lines{colspan: 3};
+	}
+	
+	InvoiceLine {
+		actions: removeLine;
+		
+		props: action.removeLine{labelImage: "remove.gif"},
+			quantity, itemCode, cost, total; 
+	}
+	
+	Address {
+		props: address1{colspan: 3}, address2{colspan: 3}, city, state, zip;
+	}
+</verbatim>
+
+You'll note a couple of new things here. First, the pseudo-property "EMPTY". In the !BeanGridPanel (the default layout for !BeanForm), EMPTY consumes a blank cell in the grid. Second, the "action.removeLine" action specifies a "labelImage" parameter. This allows you to display an image in place of a text label. Also note that Invoice has an addLine action that will add a line to the invoice. !InvoiceLine has a removeLine action that will remove a line from the table. 
+
+When you bring up the page, it will look something like:
+
+WWB:/doc/wiki/images/TableBeanScreenshot.png
+
+Of course, you could throw the lines in a separate tab to clean up the page a bit.
 
 ---+ Creating Your Own Field Types
 
@@ -295,109 +358,6 @@ custom NonJavaEnum
 
 = beanprops syntax =
 = Component Parameter Reference = 
-
-= Details =
-
-{{{
-<verbatim>
-# Default specification/context for bean TestBean. Package name is optional.
-# Standard parameters are: label, actions, props, tabs, displayed, viewOnly.
-TestBean {
-	# Standard Bean-level parameters are: label, actions, props, tabs, displayed, viewOnly. In addition,
-	# you may specify Bean container-specific ones (e.g., BeanGridPanel allows "columns").
-	
-	# $(property-name) to reference a Wicket property file property (i.e., Localizer). Can be used anywhere in a value and
-	# in any kind of value.  Double quotes may be used to embed whitespace in values.
-	label: "My ${TestBean.title} Title";   
-
-	# Defines the actions available for the bean.
-	# This is a list of action methods available on the Wicket Page that the bean
- 	# is embedded in. These methods must be public and have the following signature:
- 	#     public void <i>doSomething</i>(AjaxRequestTarget target, Form form, Object bean)
- 	# The target parameter may be null for non-Ajax requests. 
- 	# These can be referenced as "action.{action-method-name}" in props. 
- 	# Actions not included in the "props" parameter are considered to be "global" actions
-	# that appear outside of any tabs.
-		
-	actions: save,cancel,doIt,addRow;
-
-	# This is a list of properties that may have parameters and are presented on the page in the order specified below. 
-	# Any other properties not specified are presented at the end of the page. 
-	# Properties beginning with "action." refer to actions defined in "actions:" above, not to bean properties.
-	# If the property begins with "-", it is not displayed.
-	# The "EMPTY" pseudo-property name can be used to provide an empty field (e.g., a blank cell in a grid). 
-	# Configuration may be specified for each property within "{}". Standard configuration parameters are:
-	#   label, labelImage, viewOnly, fieldType (overrides the Field used), elementType. 
-	# For Collections, elementType is the type of the elements
- 	# contained within the collection. If this is not specified and the collection is not 
- 	# null and not empty, the elementType is detected from the first element of the collection.
-	# In addition, you may specify Bean container and Field-level specific parameters (e.g., BeanGridPanel allows "colspan").
-	# For action parameters, see BeanActionButton.
-	props: 
-		action.save{colspan: 3},
-		firstName,
-		lastName,
-		EMPTY,
-		activePrimitive,
-		color,
-		# Note that only the base class name for fieldType is specified, not the package (wicket.contrib.beancomponents.fields) which is optional.
-		# This class must be in the ComponentRegistry for this to work. Otherwise, you can explicitly specify the package name. 
-		inlineBean{fieldType: BeanInlineField; colspan: 3},
-		dateTimestamp,
-		blockBean{fieldType: BeanGridField; colspan: 3},
-		testBean2{colspan: 3},
-		popupBean{colspan: 3},
-		-subComponent;  # Explicitly hides subComponent.
-
-	# Tabs are optional. Only specify the properties not on the default tab. 
-	# Each tab can define parameters. Standard parameters are: label, props.
-	tabs: 
-		nameInfo, # Default tab: no props specified, so it gets all of the bean props not used in other tabs.
-		miscInfo {
-			label: "${MiscInfo.title}";
-			props:
-				gender,
-				EMPTY,  # Empty cell/spacer.
-				age,
-				operand1,
-				operand2,
-				result{viewOnly: true},
-				# Note that only the base class name for elementType is specified, not the package, which is optional.
-				# This class must be in the same package as the bean for this to work. Otherwise, you can explicitly specify the package name. 
-				palette{elementType: TestBean$ColorEnum},
-				palette2{elementType: TestBean$ColorEnum; viewOnly: true},
-				description{fieldType: TextAreaField; rows: 5};
-		}, 
-		listOfBeans {
-			props: 
-				action.addRow{colspan: 3}, 
-				beans{viewOnly: true; rows: 20};
-		};
-}
-
-# [] specifies a specific context (e.g., a use-case). This one extends the default context implicitly.
-TestBean[view] {
-	viewOnly: true;
-}
-
-TestBean[popupView extends view] {
-	props: 
-		-color,		# Remove the color property from the default list. 
-		lastName{viewOnly: false}; # Change the parameter of lastName
-}
-
-TestBean2 {
-	actions: deleteRow;
-	props: 
-		action.deleteRow{labelImage: "remove.gif"},
-		selected{label: X},
-		firstName{viewOnly: false},
-		lastName;
-}
-</verbatim>
-}}}
-
-
 = CSS Guide =
 
 

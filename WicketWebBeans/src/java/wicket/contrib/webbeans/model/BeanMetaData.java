@@ -593,10 +593,14 @@ public class BeanMetaData extends MetaData implements Serializable
             identifier = identifier.substring(idx + 1);
         }
 
+        if (identifier.length() == 0) {
+            return "";
+        }
+        
         char[] chars = identifier.toCharArray();
         StringBuffer buf = new StringBuffer(chars.length + 10);
 
-        // Captialize the first letter.
+        // Capitalize the first letter.
         buf.append(Character.toUpperCase(chars[0]));
         boolean lastLower = false;
         for (int i = 1; i < chars.length; ++i) {
