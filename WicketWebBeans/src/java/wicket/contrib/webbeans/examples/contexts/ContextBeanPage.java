@@ -2,12 +2,10 @@ package wicket.contrib.webbeans.examples.contexts;
 
 import java.math.BigDecimal;
 
-import wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.examples.simple.TestBean;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.markup.html.WebPage;
-import wicket.markup.html.form.Form;
 
 public class ContextBeanPage extends WebPage
 {

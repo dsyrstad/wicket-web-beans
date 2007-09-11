@@ -10,7 +10,7 @@ import wicket.model.IModel;
 
 
 /**
- * A Fieled that presents a property's bean inline with other fields.
+ * A Field that presents a property's bean inline with other fields.
  *
  * @author Dan Syrstad
  */

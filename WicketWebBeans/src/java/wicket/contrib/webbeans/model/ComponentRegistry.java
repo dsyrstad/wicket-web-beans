@@ -59,7 +59,7 @@ public class ComponentRegistry implements Serializable
     {
         registry = new HashMap<String, String>();
 
-        register(Object.class, BeanInCollapsibleField.class);
+        register(Object.class, BeanGridField.class);
         register(String.class, InputField.class);
         register(Boolean.class, BooleanField.class);
         register(Boolean.TYPE, BooleanField.class);
@@ -92,6 +92,7 @@ public class ComponentRegistry implements Serializable
         
         // Register the following so that they're available for findMatchingFieldClass(), but not really available otherwise.
         register(BeanGridField.class, BeanGridField.class);
+        register(BeanInCollapsibleField.class, BeanInCollapsibleField.class);
         register(BeanInlineField.class, BeanInlineField.class);
         register(BeanTableField.class, BeanTableField.class);
         register(BeanWithParentLabelField.class, BeanWithParentLabelField.class);
