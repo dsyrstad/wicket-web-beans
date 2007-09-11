@@ -114,7 +114,6 @@ public class BeanPropsParser
         tokenizer.wordChars('.', '.');
         tokenizer.wordChars('*', '*');
         tokenizer.wordChars('$', '$'); // For inner classes/macros
-        tokenizer.wordChars('(', ')'); // For macros
         tokenizer.wordChars(128 + 32, 255);
         tokenizer.whitespaceChars(0, ' ');
         tokenizer.commentChar('#');

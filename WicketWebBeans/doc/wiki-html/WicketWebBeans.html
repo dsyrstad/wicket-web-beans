@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Wicket Web Beans</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Wicket Web Beans</h1>
+<h1>Introduction to Wicket Web Beans</h1>
+<p>
+</p>
+<p>
+Wicket Web Beans (WWB) is an Apache Wicket (<a href="http://wicket.apache.org">http://wicket.apache.org</a>) component toolkit for displaying and editing POJOs that conform to the JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.</p>
+<p>
+</p>
+<p>
+At the highest-level, the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a> component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, but it . This allows for customized page designs. Also, this allows multiple BeanForms may be incorporated on a single page. At your choosing, other lower-level components may be used independently of BeanForm (e.g., BeanGridPanel). WWB does not try to force you into a certain way of doing things, but BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. </p>
+<p>
+</p>
+<p>
+Fields within a form are dynamically sent back to the server-side bean as they are changed, which eliminates the typical submit cycle. This makes WWB act more like a rich client application and less like a standard forms-based application. </p>
+<p>
+</p>
+<h1>Simple Example</h1>
+<p>
+</p>
+<p>
+Let's take a look at a simple bean from the examples:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">001</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.simple;</font><br/>
+<font color="#808080">002</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">003</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.beans.PropertyChangeListener;</font><br/>
+<font color="#808080">004</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.beans.PropertyChangeSupport;</font><br/>
+<font color="#808080">005</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.io.Serializable;</font><br/>
+<font color="#808080">006</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.math.BigDecimal;</font><br/>
+<font color="#808080">007</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">008</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">TestBean&nbsp;</font><font color="#7f0055"><b>implements&nbsp;</b></font><font color="#000000">Serializable&nbsp;</font><br/>
+<font color="#808080">009</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">010</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;static&nbsp;final&nbsp;</b></font><font color="#7f0055"><b>long&nbsp;</b></font><font color="#000000">serialVersionUID&nbsp;=&nbsp;-</font><font color="#990000">8500883418534059147L</font><font color="#000000">;</font><br/>
+<font color="#808080">011</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">012</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">String&nbsp;firstName;</font><br/>
+<font color="#808080">013</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">String&nbsp;lastName;</font><br/>
+<font color="#808080">014</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">Integer&nbsp;number;</font><br/>
+<font color="#808080">015</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">BigDecimal&nbsp;operand1;</font><br/>
+<font color="#808080">016</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">BigDecimal&nbsp;operand2;</font><br/>
+<font color="#808080">017</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">018</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">PropertyChangeSupport&nbsp;listeners&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">PropertyChangeSupport</font><font color="#000000">(</font><font color="#7f0055"><b>this</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">019</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">020</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">TestBean</font><font color="#000000">()</font><br/>
+<font color="#808080">021</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">022</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">023</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">024</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">/**</font><br/>
+<font color="#808080">025</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;JavaBeans&nbsp;compliant&nbsp;method&nbsp;to&nbsp;add&nbsp;a&nbsp;PropertyChangeListener.&nbsp;</font><br/>
+<font color="#808080">026</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*/</font><br/>
+<font color="#808080">027</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">addPropertyChangeListener</font><font color="#000000">(</font><font color="#000000">PropertyChangeListener&nbsp;listener</font><font color="#000000">)</font><br/>
+<font color="#808080">028</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">029</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">listeners.addPropertyChangeListener</font><font color="#000000">(</font><font color="#000000">listener</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">030</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">031</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">032</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">/**</font><br/>
+<font color="#808080">033</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;JavaBeans&nbsp;compliant&nbsp;method&nbsp;to&nbsp;remove&nbsp;a&nbsp;PropertyChangeListener.&nbsp;</font><br/>
+<font color="#808080">034</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*/</font><br/>
+<font color="#808080">035</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">removePropertyChangeListener</font><font color="#000000">(</font><font color="#000000">PropertyChangeListener&nbsp;listener</font><font color="#000000">)</font><br/>
+<font color="#808080">036</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">037</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">listeners.removePropertyChangeListener</font><font color="#000000">(</font><font color="#000000">listener</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">038</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">039</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">040</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">String&nbsp;getFirstName</font><font color="#000000">()</font><br/>
+<font color="#808080">041</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">042</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">firstName;</font><br/>
+<font color="#808080">043</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">044</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">045</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">setFirstName</font><font color="#000000">(</font><font color="#000000">String&nbsp;firstName</font><font color="#000000">)</font><br/>
+<font color="#808080">046</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">047</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.firstName&nbsp;=&nbsp;</font><font color="#000000">(</font><font color="#000000">firstName&nbsp;==&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">?&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">:&nbsp;firstName.toUpperCase</font><font color="#000000">())</font><font color="#000000">;</font><br/>
+<font color="#808080">048</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">049</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">050</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">String&nbsp;getLastName</font><font color="#000000">()</font><br/>
+<font color="#808080">051</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">052</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">lastName;</font><br/>
+<font color="#808080">053</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">054</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">055</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">setLastName</font><font color="#000000">(</font><font color="#000000">String&nbsp;lastName</font><font color="#000000">)</font><br/>
+<font color="#808080">056</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">057</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.lastName&nbsp;=&nbsp;lastName;</font><br/>
+<font color="#808080">058</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">059</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">060</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">Integer&nbsp;getNumber</font><font color="#000000">()</font><br/>
+<font color="#808080">061</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">062</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">number;</font><br/>
+<font color="#808080">063</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">064</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">065</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">setNumber</font><font color="#000000">(</font><font color="#000000">Integer&nbsp;number</font><font color="#000000">)</font><br/>
+<font color="#808080">066</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">067</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.number&nbsp;=&nbsp;number;</font><br/>
+<font color="#808080">068</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">069</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">070</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">BigDecimal&nbsp;getOperand1</font><font color="#000000">()</font><br/>
+<font color="#808080">071</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">072</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">operand1;</font><br/>
+<font color="#808080">073</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">074</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">075</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">setOperand1</font><font color="#000000">(</font><font color="#000000">BigDecimal&nbsp;operand1</font><font color="#000000">)</font><br/>
+<font color="#808080">076</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">077</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.operand1&nbsp;=&nbsp;operand1;</font><br/>
+<font color="#808080">078</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">fireResultChange</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">079</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">080</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">081</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">BigDecimal&nbsp;getOperand2</font><font color="#000000">()</font><br/>
+<font color="#808080">082</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">083</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">operand2;</font><br/>
+<font color="#808080">084</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">085</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">086</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">setOperand2</font><font color="#000000">(</font><font color="#000000">BigDecimal&nbsp;operand2</font><font color="#000000">)</font><br/>
+<font color="#808080">087</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">088</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.operand2&nbsp;=&nbsp;operand2;</font><br/>
+<font color="#808080">089</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">fireResultChange</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">090</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">091</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">092</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">fireResultChange</font><font color="#000000">()</font><br/>
+<font color="#808080">093</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">094</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">listeners.firePropertyChange</font><font color="#000000">(</font><font color="#2a00ff">&#34;result&#34;</font><font color="#000000">,&nbsp;null,&nbsp;getResult</font><font color="#000000">())</font><font color="#000000">;</font><br/>
+<font color="#808080">095</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">096</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">097</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">BigDecimal&nbsp;getResult</font><font color="#000000">()</font><br/>
+<font color="#808080">098</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">099</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">getOperand1</font><font color="#000000">()&nbsp;</font><font color="#000000">==&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">||&nbsp;getOperand2</font><font color="#000000">()&nbsp;</font><font color="#000000">==&nbsp;</font><font color="#7f0055"><b>null</b></font><font color="#000000">)&nbsp;{</font><br/>
+<font color="#808080">100</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;null</b></font><font color="#000000">;</font><br/>
+<font color="#808080">101</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">102</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">103</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">getOperand1</font><font color="#000000">()</font><font color="#000000">.add</font><font color="#000000">(&nbsp;</font><font color="#000000">getOperand2</font><font color="#000000">()&nbsp;)</font><font color="#000000">;&nbsp;</font><br/>
+<font color="#808080">104</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">105</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+This is a Java Bean compliant POJO. As most people know, getters start with &quot;get&quot; or &quot;is&quot; and setters start with &quot;set&quot;. Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.</p>
+<p>
+</p>
+<p>
+This bean also implements PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if you're bean implements add/removePropertyChangeListener(), BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use PropertyChangeEvents to notify BeanForm when dependent properties change. </p>
+<p>
+</p>
+<p>
+If you don't implement PropertyChangeListeners, BeanForm already knows if a single property changes from a change on the form. For example, setFirstName() automatically changes the input value to upper case. BeanForm knows to refresh this field on the form because the user changed it. If you type &quot;xyzzy&quot; in the First Name field and tab or click away from the field, the field is sent to the bean and the field is dynamically refreshed to it's new value &quot;XYZZY&quot;.</p>
+<p>
+</p>
+<p>
+Before we get too deep, let's take a look at the Wicket page (<a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/simple/SimpleBeanPage.java.html">wicket.contrib.webbeans.examples.simple.SimpleBeanPage</a>) and HTML:</p>
+<p>
+</p>
+<pre>	&lt;html xmlns:wicket&gt;
+	&lt;head&gt;
+	&lt;wicket:head&gt;
+	    &lt;wicket:link&gt;&lt;link href=&quot;bean.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot; &gt;&lt;/link&gt;&lt;/wicket:link&gt;
+		&lt;title&gt;Simple Bean Page&lt;/title&gt;
+	&lt;/wicket:head&gt;
+	&lt;/head&gt;
+	&lt;body &gt;
+		&lt;span wicket:id=&quot;beanForm&quot;&gt;&lt;/span&gt;
+	&lt;/body&gt;
+	&lt;/html&gt;</pre><p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.simple;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">SimpleBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">SimpleBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">TestBean&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">TestBean</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+You can see this is pretty simple. There is only a single component added to the page - &quot;beanForm&quot; - which is an instance of <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a>. You can see in the constructor that we create an instance of TestBean which is passed to BeanForm. We also create an instance of <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/model/BeanMetaData.java.html">wicket.contrib.webbeans.model.BeanMetaData</a>. BeanMetaData reflects on the TestBean class to derive the fields and actions for the form.</p>
+<p>
+</p>
+<p>
+If you bring up this page in a browser (see <a href="RunningSamples.html">RunningSamples</a>), you will see something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/SimpleBeanScreenShot.png" src="workspace/WicketWebBeans/doc/wiki/images/SimpleBeanScreenShot.png"/></p>
+<p>
+</p>
+<p>
+Note that &quot;Result&quot; is not editable because there is no setter method on the bean. Also, if you type numbers into Operand 1 and Operand 2, you'll see that the Result field automatically is calculated and updated. The calculation is done by TestBean and the PropertyChangeEvents are notifying WWB to update the result field.</p>
+<p>
+</p>
+<p>
+As we mentioned, BeanMetaData represents the metadata for a bean properties and actions. By default, the metadata originates by convention:</p>
+<p>
+</p>
+<ul><li>Label names for properties are derived from the property name. E.g., &quot;customerName&quot; becomes &quot;Customer Name&quot;; &quot;address2&quot; becomes &quot;Address 2&quot; (or from the JavaBean BeanInfo &quot;displayName&quot;).</li>
+<li>Field components for the Java primitive/wrapper types, enum types, !java.util.Date and those classes deriving from it, and java.util.Lists are pre-configured.</li>
+<li>All JavaBean properties are displayed. Non-JavaBean methods are not displayed.</li>
+<li>All fields are editable if viewOnly is false (see the BeanMetaData constructor). Otherwise they are all view-only.</li>
+<li>If a property is not writable, it is displayed view-only.</li>
+<li>All fields are displayed in the order the are reflected (alphabetical order).</li>
+<li>All fields are displayed in a single page. (Known as the &quot;default tab&quot;, but the tab is hidden).</li>
+</ul><p>
+</p>
+<p>
+Field types are deduced from the property's Java type. The mappings from the property's Java class to the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/Field.java.html">wicket.contrib.webbeans.fields.Field</a> type is done by <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/model/ComponentRegistry.java.html">wicket.contrib.webbeans.model.ComponentRegistry</a>. ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the &quot;beanprops&quot; file, which we'll discuss later.  </p>
+<p>
+</p>
+<h1>Customization Using "*.beanprops"</h1>
+<p>
+</p>
+<p>
+WWB is a method of programming by exception. That is, you only tell WWB to do something when its not doing what you want. Most commonly, WWB doesn't really know a good way to order fields on the page. By default, they are in alphabetical order and laid out in a three column grid.  Alphabetical order isn't typically want you want, though. To change this, you can create a &quot;beanprops&quot; file. This file is named like other Wicket files - it has the same based name as your Page (or component that the BeanForm is embedded in). </p>
+<p>
+</p>
+<p>
+Using the Simple Example above, let's customize it. Note that we're now using <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/simple/CustomSimpleBeanPage.java.html">wicket.contrib.webbeans.examples.simple.CustomSimpleBeanPage</a> (we won't reiterate the trivial HTML and Page code here). This page also has a CustomSimpleBeanPage.beanprops file, seen below:</p>
+<p>
+</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: firstName, lastName, operand1, operand2, result, -number;
+	}</pre><p>
+</p>
+<p>
+This file tells WWB : whenever you see a TestBean bean, layout it out in a one-column grid (&quot;cols: 1&quot;) and display the properties (&quot;props&quot;) in the order specified. Note that you refer to JavaBean properties without the prefix of &quot;get&quot;, &quot;set&quot;, or &quot;is&quot; and the first character is lower case. Also in the &quot;props&quot; parameter, we say &quot;-number&quot;. This tells WWB to remove the &quot;number&quot; property from the page. </p>
+<p>
+</p>
+<p>
+Note that we didn't specify a package name when we wrote &quot;TestBean&quot;. The package name is optional as long as the class name is not ambiguous. WWB matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    </p>
+<p>
+</p>
+<p>
+If you run this example, you'll see something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/CustomSimpleBeanScreenShot.png" src="workspace/WicketWebBeans/doc/wiki/images/CustomSimpleBeanScreenShot.png"/></p>
+<p>
+</p>
+<p>
+In addition to beanprops, most of the look and feel of the page can be customized via CSS.</p>
+<p>
+</p>
+<p>
+</p>
+<h2>Referencing Wicket Properties Files</h2>
+<p>
+</p>
+<p>
+Let's say you don't like the generated label &quot;Operand 1&quot; and &quot;Operand 2&quot; in the previous example, or you want to be able to localize them for another language. You can fix this by adding a Wicket properties file called CustomSimpleBeanPage.properties, such as: </p>
+<p>
+</p>
+<pre>operand1.Label=Enter First Value
+operand1.Label=Enter Second Value</pre><p>
+</p>
+<p>
+And change CustomSimpleBeanPage.beanprops as follows:</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, lastName, 
+			operand1{ label: &quot;${operand1.Label}&quot; }, 
+			operand2{ label: &quot;${operand2.Label}&quot; }, 
+			result, -number;
+	}</pre><p>
+</p>
+<p>
+You can see that you can specify parameters for each bean property. This example gives operand1 and operand2 the labels &quot;Enter First Value&quot; and &quot;Enter Second Value&quot; respectively. The &quot;${xxx}&quot; macro expression syntax substitutes the properties file key for xxx into the value for the parameter. You can intermix text and multiple macro expressions in a single value. </p>
+<p>
+</p>
+<h2>Bean Property Customization</h2>
+<p>
+</p>
+<p>
+In CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The &quot;result&quot; property is view-only by default because it has no setter. If you were to pass &quot;viewOnly&quot; = true to the BeanMetaData constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change CustomSimpleBeanPage.beanprops as follows:</p>
+<p>
+</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, 
+			lastName{ label: &quot;Last Name (informational)&quot;; viewOnly: true }, 
+			operand1{ label: &quot;${operand1.Label}&quot; }, 
+			operand2{ label: &quot;${operand2.Label}&quot; }, 
+			result, -number;
+	}</pre><p>
+</p>
+<p>
+This causes the lastName property to get a different label and be view-only.</p>
+<p>
+</p>
+<h1>Actions</h1>
+<p>
+</p>
+<p>
+It's simple to add actions to your form. Here's the code for <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/actions/ActionBeanPage.java.html">wicket.contrib.webbeans.examples.actions.ActionBeanPage</a>:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.actions;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.ajax.AjaxRequestTarget;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.simple.TestBean;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.form.Form;</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">ActionBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">ActionBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">TestBean&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">TestBean</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">18</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">save</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Saved&nbsp;-&nbsp;thank&nbsp;you&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">23</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">cancel</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">25</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">26</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Canceled&nbsp;-&nbsp;thank&nbsp;you&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">28</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">clearLastName</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">TestBean&nbsp;testBean&nbsp;=&nbsp;</font><font color="#000000">(</font><font color="#000000">TestBean</font><font color="#000000">)</font><font color="#000000">bean;</font><br/>
+<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">testBean.setLastName</font><font color="#000000">(</font><font color="#2a00ff">&#34;&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">33</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">34</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+And here's ActionBeanPage.beanprops:</p>
+<p>
+</p>
+<pre>	# Actions Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: firstName, lastName, action.clearLastName,
+			operand1, operand2, result, -number;
+	}</pre><p>
+</p>
+<p>
+Note the &quot;actions&quot; parameter. This defines the actions available from your Page (or whatever component the form is embedded in). The action name corresponds precisely to the method name in the Page. Every action method must have the following method signature:</p>
+<p>
+</p>
+<pre>    public void actionName(AjaxRequestTarget target, Form form, Object bean) 
+    { 
+        ...
+    }</pre><p>
+</p>
+<p>
+The target parameter normally null. It is only non-null if you specify the &quot;ajax: true&quot; parameter to the action. The Wicket Form is always passed in &quot;form&quot; and the bean that the action applies to is in &quot;bean&quot;.  </p>
+<p>
+</p>
+<p>
+This configuration yeilds the following page:</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/ActionBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/ActionBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+Since the save and cancel actions are not referenced anywhere else in the beanprops file, WWB assumes that they are global actions for the Page. However, the clearLastName action is referenced in the &quot;props&quot; parameter. It is referenced using the &quot;action.&quot; prefix to distinguish it from a regular bean property. In this example, we placed the action near the lastName property since they are related. When you click the Clear Last Name button, the last name field will clear out.</p>
+<p>
+</p>
+<h1>Tabs</h1>
+<p>
+</p>
+<p>
+There may be many times when you have more information for a form than can fit on a single page. One method of splitting up this information is to group it into tabs. Of course, WWB makes tabs easy too. Let's look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tabs/TabBeanPage.java.html">wicket.contrib.webbeans.examples.tabs.TabBeanPage</a>. The Java code is exactly the same as ActionBeanPage, but the beanprops are a little different:</p>
+<p>
+</p>
+<pre>	# Tabs Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: -number;
+		
+		tabs: 
+			name { props: firstName, lastName, action.clearLastName },
+			calculator { props: operand1, operand2, result }; 
+	}</pre><p>
+</p>
+<p>
+Here we just use TestBean &quot;props&quot; to specify the properties we don't want. &quot;name&quot; and &quot;calculator&quot; specify the tab groupings. We specify a &quot;props&quot; parameter for each tab to say which properties fall on which tab, and in what order. The result looks like:  </p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/TabBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/TabBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+Alternately we could configure all of the properties in TestBean's &quot;props&quot; if we wanted. By default all properties that weren't specified for a tab fall in the first tab, so we could have said: </p>
+<p>
+ </p>
+<pre>	# Tabs Example
+	TestBean {
+		actions: save, cancel, clearLastName;
+		
+		props: firstName, lastName, action.clearLastName, -number;
+		
+		tabs: 
+			name, calculator { props: operand1, operand2, result }; 
+	}</pre><p>
+</p>
+<p>
+and gotten the same result.</p>
+<p>
+</p>
+<h1>Bean Contexts</h1>
+<p>
+</p>
+<p>
+WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simple view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/contexts/ContextBeanPage.java.html">wicket.contrib.webbeans.examples.contexts.ContextBeanPage</a>:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.contexts;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.math.BigDecimal;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.simple.TestBean;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">ContextBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">ContextBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">TestBean&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">TestBean</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.setFirstName</font><font color="#000000">(</font><font color="#2a00ff">&#34;Dan&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.setLastName</font><font color="#000000">(</font><font color="#2a00ff">&#34;Syrstad&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.setOperand1</font><font color="#000000">(</font><font color="#000000">BigDecimal.valueOf</font><font color="#000000">(</font><font color="#990000">123.0</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+<font color="#808080">18</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.setOperand2</font><font color="#000000">(</font><font color="#000000">BigDecimal.valueOf</font><font color="#000000">(</font><font color="#990000">456.0</font><font color="#000000">))</font><font color="#000000">;</font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;view&#34;</font><font color="#000000">,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">23</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+ </p>
+<p>
+Note that we pass &quot;view&quot; to the BeanMetaData constructor. This is the context (or use case) that we want. Of course, you can dynamically come up with this context in the Page constructor depending on parameters passed, etc.</p>
+<p>
+ </p>
+<p>
+Here's the beanprops file:</p>
+<p>
+</p>
+<pre>	# Context Example
+	TestBean {
+		props: firstName, lastName, EMPTY,
+			operand1, operand2, result, -number;
+	}
+	
+	TestBean[view] {
+		viewOnly: true;
+	}
+	
+	TestBean[limitedEdit extends view] {
+		props: firstName{ viewOnly: false };
+	}</pre><p>
+</p>
+<p>
+If you run this page from the examples, you will see that all fields are view-only. When we specify &quot;TestBean[view]&quot;, it tells WWB to extend the default definition for TestBean. The &quot;view&quot; context inherits all of the parameters from the default specification and overrides the bean's &quot;viewOnly&quot; parameter to be true. This causes all of the fields to be view-only.</p>
+<p>
+</p>
+<p>
+If you change the following line in ContextBeanPage, from &quot;view&quot; to &quot;limitedEdit&quot;, WWB uses the third definition in the beanprops file:</p>
+<p>
+  </p>
+<pre>        BeanMetaData meta = new BeanMetaData(bean.getClass(), &quot;limitedEdit&quot;, this, null, false);</pre><p>
+</p>
+<p>
+This cause just the firstName property to become editable.  The &quot;[limitedEdit extends view]&quot; tells WWB to extend the &quot;view&quot; context, which in turn extends the default context. </p>
+<p>
+</p>
+<h1>Nested Beans</h1>
+<p>
+</p>
+<p>
+It is quite common for beans to reference other beans. WWB handles this for you. Let's look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/nested/NestedBeanPage.java.html">wicket.contrib.webbeans.examples.nested.NestedBeanPage</a>. </p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.nested;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">NestedBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">NestedBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Customer&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Customer</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+Note that we only create an instance of <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/nested/Customer.java.html">wicket.contrib.webbeans.examples.nested.Customer</a>. The bill-to and ship-to <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/nested/Address.java.html">wicket.contrib.webbeans.examples.nested.Address</a> objects are automatically instantiated by WWB.</p>
+<p>
+</p>
+<p>
+Here are the beanprops.</p>
+<p>
+</p>
+<pre>	# Nested Bean Example
+	Customer {
+		props: 
+			firstName, lastName, 
+			billToAddress{colspan: 3}, 
+			shipToAddress{colspan: 3};
+	}
+	
+	Address {
+		props: 
+			address1{colspan: 3}, 
+			address2{colspan: 3},
+			city, state, zip; 
+	}</pre><p>
+</p>
+<p>
+</p>
+<p>
+Here we have specifications for the two beans we use: !Customer and !Address. The &quot;colspan&quot; specification tells BeanGridPanel to span the field across the three grid columns. In other words, this causes the field to span the entire row.  </p>
+<p>
+</p>
+<p>
+The result looks like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/NestedBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/NestedBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+By default, nested objects are presented in a <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/BeanGridField.java.html">wicket.contrib.webbeans.fields.BeanGridField</a> - which is a nested version of the BeanGridPanel used by BeanForm. There are other variations of nested bean fields, such as <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/BeanInCollapsibleField.java.html">wicket.contrib.webbeans.fields.BeanInCollapsibleField</a>, <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/BeanInlineField.java.html">wicket.contrib.webbeans.fields.BeanInlineField</a>, and <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/BeanWithParentLabelField.java.html">wicket.contrib.webbeans.fields.BeanWithParentLabelField</a>. If we wanted to use BeanInCollapsibleField rather than the default, we could say:</p>
+<p>
+</p>
+<pre>...	
+	Customer {
+		props: 
+			firstName, lastName, 
+			billToAddress{colspan: 3; fieldType: BeanInCollapsibleField }, 
+			shipToAddress{colspan: 3; fieldType: BeanInCollapsibleField };
+	}</pre><p>
+</p>
+<p>
+Which results in collapsible fields for the Address beans:</p>
+<p>
+ </p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/NestedBean2Screenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/NestedBean2Screenshot.png"/></p>
+<p>
+</p>
+<p>
+These fields have a bar across the top that allow you to expand and contract the content.</p>
+<p>
+</p>
+<h1>Enumerated Types</h1>
+<p>
+</p>
+<p>
+It is quite common for beans to reference other beans. WWB handles this for you. Let's look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/enums/EnumBeanPage.java.html">wicket.contrib.webbeans.examples.enums.EnumBeanPage</a>: </p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.enums;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">EnumBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">EnumBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Customer&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Customer</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+The <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/enums/Customer.java.html">wicket.contrib.webbeans.examples.enums.Customer</a> bean references a Java enum type called <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/enums/CustomerType.java.html">wicket.contrib.webbeans.examples.enums.CustomerType</a>:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">1</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.enums;</font><br/>
+<font color="#808080">2</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">3</font>&nbsp;<font color="#7f0055"><b>public&nbsp;enum&nbsp;</b></font><font color="#000000">CustomerType&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Consumer,&nbsp;Business,&nbsp;Government,&nbsp;International</font><br/>
+<font color="#808080">5</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+And here are the beanprops:</p>
+<p>
+</p>
+<pre>	# Enum Bean Example
+	Customer {
+		cols: 1;
+		props: 
+			firstName, lastName, 
+			customerType{default: Government}; 
+	}</pre><p>
+</p>
+<p>
+The result looks like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/EnumBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/EnumBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+We specify the parameter &quot;default&quot; for customerType so that the the drop-down defaults to &quot;Government&quot;. If we hadn't specified the default, the drop-down would have defaulted to null (an empty selection).</p>
+<p>
+</p>
+<p>
+Later you'll see how to implement custom/dynamic runtime enums where the values can be derived from a database or other source.</p>
+<p>
+</p>
+<h1>Tables</h1>
+<p>
+</p>
+<p>
+You may encounter times when you need to manage collections of nested beans. By default, WWB displays collections in an editable table. Let's look at an example: <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/TableBeanPage.java.html">wicket.contrib.webbeans.examples.tables.TableBeanPage</a>:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.tables;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.ajax.AjaxRequestTarget;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.form.Form;</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">TableBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;</b></font><font color="#000000">Invoice&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Invoice</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">TableBeanPage</font><font color="#000000">()</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;Start&nbsp;with&nbsp;one&nbsp;empty&nbsp;line.</font><br/>
+<font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.getLines</font><font color="#000000">()</font><font color="#000000">.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">InvoiceLine</font><font color="#000000">()&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">18</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;null,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">addLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">23</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.bean.getLines</font><font color="#000000">()</font><font color="#000000">.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">InvoiceLine</font><font color="#000000">()&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">25</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">26</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">removeLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;rowBean</font><font color="#000000">)</font><br/>
+<font color="#808080">28</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">InvoiceLine&nbsp;line&nbsp;=&nbsp;</font><font color="#000000">(</font><font color="#000000">InvoiceLine</font><font color="#000000">)</font><font color="#000000">rowBean;</font><br/>
+<font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.getLines</font><font color="#000000">()</font><font color="#000000">.remove</font><font color="#000000">(</font><font color="#000000">line</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Removed&nbsp;line&nbsp;with&nbsp;item&nbsp;code&nbsp;&#34;&nbsp;</font><font color="#000000">+&nbsp;</font><font color="#000000">(</font><font color="#000000">line.getItemCode</font><font color="#000000">()&nbsp;</font><font color="#000000">==&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">?&nbsp;</font><font color="#2a00ff">&#34;&lt;empty&gt;&#34;&nbsp;</font><font color="#000000">:&nbsp;line.getItemCode</font><font color="#000000">())&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">33</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+This page references two beans <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/Invoice.java.html">wicket.contrib.webbeans.examples.tables.Invoice</a> and <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/InvoiceLine.java.html">wicket.contrib.webbeans.examples.tables.InvoiceLine</a> - the typical invoice pattern. If you look at InvoiceLine, you'll set that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
+<p>
+</p>
+<pre>	# Table Bean Example
+	Invoice {
+		actions: addLine;
+		
+		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
+			shipToAddress{colspan: 3},
+			action.addLine{colspan: 3},
+			lines{colspan: 3};
+	}
+	
+	InvoiceLine {
+		actions: removeLine;
+		
+		props: action.removeLine{labelImage: &quot;remove.gif&quot;},
+			quantity, itemCode, cost, total; 
+	}
+	
+	Address {
+		props: address1{colspan: 3}, address2{colspan: 3}, city, state, zip;
+	}</pre><p>
+</p>
+<p>
+You'll note a couple of new things here. First, the pseudo-property &quot;EMPTY&quot;. In the BeanGridPanel (the default layout for BeanForm), EMPTY consumes a blank cell in the grid. Second, the &quot;action.removeLine&quot; action specifies a &quot;labelImage&quot; parameter. This allows you to display an image in place of a text label. Also note that Invoice has an addLine action that will add a line to the invoice. InvoiceLine has a removeLine action that will remove a line from the table. </p>
+<p>
+</p>
+<p>
+When you bring up the page, it will look something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/TableBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/TableBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking &quot;Add Line&quot; adds a new line to the table. Click the trash can icon on one of the lines will remove the corresponding line. </p>
+<p>
+</p>
+<p>
+The screenshot also shows the Invoice Date field with a calendar pop-up displayed. WWB displays properties of java.util.Date (date/time), java.sql.Date (date only), java.sql.Time (time only), java.sql.Timestamp (date/time), and java.util.Calendar (date/time with timezone) in a field with a pop-up calendar button.  </p>
+<p>
+</p>
+<h1>Creating Your Own Field Types</h1>
+<p>
+</p>
+<p>
+There are times when you may want to implement your own Fields (<a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/Field.java.html">wicket.contrib.webbeans.fields.Field</a>). <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/AbstractField.java.html">wicket.contrib.webbeans.fields.AbstractField</a> is the base class for the Field interface. It is recommended that you use the AbstractField base class, or an extension of it, if your field will participate in a BeanForm. </p>
+<p>
+</p>
+<p>
+By convention, all Fields must define a constructor with the signature:</p>
+<p>
+ </p>
+<pre>	public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)</pre><p>
+</p>
+<p>
+In this example, we're going to enhance the <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/customfields/Address.java.html">wicket.contrib.webbeans.examples.customfields.Address</a> bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things similar for you, WWB defines an interface called <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/model/NonJavaEnum.java.html">wicket.contrib.webbeans.model.NonJavaEnum</a>. It also has a base class for this interface called <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/model/BaseNonJavaEnum.java.html">wicket.contrib.webbeans.model.BaseNonJavaEnum</a>. So let's look at our <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/customfields/Country.java.html">wicket.contrib.webbeans.examples.customfields.Country</a> enumeration:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.customfields;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.util.ArrayList;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.util.List;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BaseNonJavaEnum;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">Country&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">BaseNonJavaEnum</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>private&nbsp;volatile&nbsp;static&nbsp;</b></font><font color="#000000">List&lt;Country&gt;&nbsp;cachedEnums;</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#000000">String&nbsp;name,&nbsp;String&nbsp;displayValue</font><font color="#000000">)</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>super</b></font><font color="#000000">(</font><font color="#000000">name,&nbsp;displayValue</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">16</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">/**</font><br/>
+<font color="#808080">18</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;Get&nbsp;the&nbsp;enumerated&nbsp;values.</font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*</font><br/>
+<font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;</font><font color="#7f9fbf">@return&nbsp;</font><font color="#3f5fbf">the&nbsp;list&nbsp;of&nbsp;values.&nbsp;An&nbsp;empty&nbsp;list&nbsp;is&nbsp;returned&nbsp;if&nbsp;nothing&nbsp;is&nbsp;found.</font><br/>
+<font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*/</font><br/>
+<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;static&nbsp;</b></font><font color="#000000">List&lt;Country&gt;&nbsp;values</font><font color="#000000">()</font><br/>
+<font color="#808080">23</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>if&nbsp;</b></font><font color="#000000">(</font><font color="#000000">cachedEnums&nbsp;==&nbsp;</font><font color="#7f0055"><b>null</b></font><font color="#000000">)&nbsp;{</font><br/>
+<font color="#808080">25</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;This&nbsp;is&nbsp;where&nbsp;you&nbsp;would&nbsp;load&nbsp;a&nbsp;list&nbsp;of&nbsp;countries&nbsp;from&nbsp;a&nbsp;database.&nbsp;</font><br/>
+<font color="#808080">26</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">ArrayList&lt;Country&gt;</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#2a00ff">&#34;USA&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;United&nbsp;States&#34;</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">28</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#2a00ff">&#34;CAN&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;Canada&#34;</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#2a00ff">&#34;MEX&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;Mexico&#34;</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#2a00ff">&#34;GBR&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;Great&nbsp;Britian&#34;</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">cachedEnums.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Country</font><font color="#000000">(</font><font color="#2a00ff">&#34;RUS&#34;</font><font color="#000000">,&nbsp;</font><font color="#2a00ff">&#34;Russia&#34;</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">33</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">34</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">cachedEnums;</font><br/>
+<font color="#808080">35</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">36</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">37</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">/**</font><br/>
+<font color="#808080">38</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;Get&nbsp;the&nbsp;country&nbsp;enum&nbsp;value&nbsp;for&nbsp;the&nbsp;given&nbsp;name.</font><br/>
+<font color="#808080">39</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*</font><br/>
+<font color="#808080">40</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;</font><font color="#7f9fbf">@param&nbsp;</font><font color="#3f5fbf">enumValue&nbsp;name&nbsp;to&nbsp;match</font><br/>
+<font color="#808080">41</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*</font><br/>
+<font color="#808080">42</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*&nbsp;</font><font color="#7f9fbf">@return&nbsp;</font><font color="#3f5fbf">a&nbsp;Country,&nbsp;or&nbsp;null&nbsp;if&nbsp;not&nbsp;found.</font><br/>
+<font color="#808080">43</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f5fbf">*/</font><br/>
+<font color="#808080">44</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;static&nbsp;</b></font><font color="#000000">Country&nbsp;valueOf</font><font color="#000000">(</font><font color="#000000">String&nbsp;enumValue</font><font color="#000000">)</font><br/>
+<font color="#808080">45</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">46</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>return&nbsp;</b></font><font color="#000000">(</font><font color="#000000">Country</font><font color="#000000">)</font><font color="#000000">BaseNonJavaEnum.valueOf</font><font color="#000000">(</font><font color="#000000">enumValue,&nbsp;values</font><font color="#000000">())</font><font color="#000000">;</font><br/>
+<font color="#808080">47</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">48</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">49</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+You would normally query the database for countries in the static values() method. However, we don't have a database, so we just hard coded them. The idea is that you would retrieve these values at runtime. The static values() and valueOf() methods are similar to those found on a Java language enum.</p>
+<p>
+</p>
+<p>
+Next we need to implement the Field. WWB has a base Field class <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/fields/EnumField.java.html">wicket.contrib.webbeans.fields.EnumField</a> that can be used for Java enums and NonJavaEnums. Here's our <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/customfields/CountryField.java.html">wicket.contrib.webbeans.examples.customfields.CountryField</a> that extends EnumField:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.customfields;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.fields.EnumField;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.ElementMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.model.IModel;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">CountryField&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">EnumField</font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">CountryField</font><font color="#000000">(</font><font color="#000000">String&nbsp;id,&nbsp;IModel&nbsp;model,&nbsp;ElementMetaData&nbsp;metaData,&nbsp;</font><font color="#7f0055"><b>boolean&nbsp;</b></font><font color="#000000">viewOnly</font><font color="#000000">)</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>super</b></font><font color="#000000">(</font><font color="#000000">id,&nbsp;model,&nbsp;metaData,&nbsp;viewOnly,&nbsp;Country.values</font><font color="#000000">())</font><font color="#000000">;</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+</p>
+<p>
+Next, we need to register the CountryField type so that whenever WWB sees a Country bean, it will know how to handle it. In this example, this is done in <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/customfields/CustomFieldPage.java.html">wicket.contrib.webbeans.examples.customfields.CustomFieldPage</a>:</p>
+<p>
+</p>
+<p>
+
+
+<!-- ======================================================== -->
+<!-- = Java Sourcecode to HTML automatically converted code = -->
+<!-- =   Java2Html Converter V4.1 2004 by Markus Gebhard  markus@jave.de   = -->
+<!-- =     Further information: http://www.java2html.de     = -->
+<div align="left" class="java">
+<table border="0" cellpadding="3" cellspacing="0" bgcolor="#ffffff">
+   <tr>
+  <!-- start source code -->
+   <td nowrap="nowrap" valign="top" align="left">
+    <code>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.customfields;</font><br/>
+<font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.ComponentRegistry;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.markup.html.WebPage;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#ffffff"></font><br/>
+<font color="#808080">08</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">CustomFieldPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
+<font color="#808080">09</font>&nbsp;<font color="#000000">{</font><br/>
+<font color="#808080">10</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#000000">CustomFieldPage</font><font color="#000000">()</font><br/>
+<font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
+<font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Address&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Address</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;Register&nbsp;the&nbsp;CountryField&nbsp;for&nbsp;the&nbsp;Country&nbsp;class.</font><br/>
+<font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">ComponentRegistry&nbsp;registry&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">ComponentRegistry</font><font color="#000000">()</font><font color="#000000">;</font><br/>
+<font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">registry.register</font><font color="#000000">(</font><font color="#000000">Country.class,&nbsp;CountryField.</font><font color="#7f0055"><b>class</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
+<font color="#808080">18</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">BeanMetaData&nbsp;meta&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanMetaData</font><font color="#000000">(</font><font color="#000000">bean.getClass</font><font color="#000000">()</font><font color="#000000">,&nbsp;null,&nbsp;this,&nbsp;registry,&nbsp;</font><font color="#7f0055"><b>false</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">21</font>&nbsp;<font color="#000000">}</font></code>
+    
+   </td>
+  <!-- end source code -->
+   </tr>
+  <!-- start Java2Html link -->
+   <tr>
+    <td align="right">
+<small>
+<a href="http://www.java2html.de" target="_blank">Java2html</a>
+</small>
+    </td>
+   </tr>
+  <!-- end Java2Html link -->
+</table>
+</div>
+<!-- =       END of automatically generated HTML code       = -->
+<!-- ======================================================== -->
+
+</p>
+<p>
+ </p>
+<p>
+For simplicity, we add the mapping to ComponentRegistry directly in our Page code. However, you would normally create your instance or sub-class of ComponentRegistry outside of the Page code so that it can be used from multiple pages.</p>
+<p>
+</p>
+<p>
+The end result looks like this:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/CustomFieldScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/CustomFieldScreenshot.png"/> </p>
+<p>
+</p>
+<h1>More Information</h1>
+<p>
+</p>
+<p>
+You can read more about the beanprops file syntax at <a href="BeanPropsSyntax.html">BeanPropsSyntax</a>. </p>
+<p>
+</p>
+<p>
+For more info about the parameters that may be specified in a beanprops file, see <a href="ParameterReference.html">ParameterReference</a>.</p>
+<p>
+</p>
+<p>
+To learn how to customize WWB's look and feel via CSS, see the <a href="CssGuide.html">CssGuide</a>.</p>
+<p>
+ </p>
+  </body>
+</html>
