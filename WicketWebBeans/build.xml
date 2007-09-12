@@ -85,6 +85,8 @@
 				<include name="**/*.jpg" />
 				<include name="**/*.css" />
 				<include name="**/*.js" />
+				<include name="**/NOTICE.txt" />
+				<include name="**/LICENSE.txt" />
 			</fileset>
 		</copy>
 	</target>
@@ -105,6 +107,8 @@
 				<include name="**/*.jpg" />
 				<include name="**/*.css" />
 				<include name="**/*.js" />
+				<include name="**/NOTICE.txt" />
+				<include name="**/LICENSE.txt" />
 			</fileset>
 		</copy>
 	</target>
@@ -125,6 +129,8 @@
 				<include name="**/*.jpg" />
 				<include name="**/*.css" />
 				<include name="**/*.js" />
+				<include name="**/NOTICE.txt" />
+				<include name="**/LICENSE.txt" />
 			</fileset>
 		</copy>
 	</target>
@@ -139,12 +145,12 @@
 
 	<target name="jar" depends="compile,releaseinit" description="Builds jar.">
 		<mkdir dir="${release.dir}/lib" />
-		<jar basedir="${code.build}" destfile="${release.dir}/lib/wicket-web-beans.jar" />
+		<jar basedir="${code.build}" destfile="${release.dir}/lib/wicket-web-beans-${release-number}.jar" />
 	</target>
 		
 	<target name="jar-examples" depends="compile-examples" description="Builds jar.">
 		<mkdir dir="${release.dir}/lib" />
-		<jar basedir="${examples.build}" destfile="${release.dir}/lib/wicket-web-beans-examples.jar" />
+		<jar basedir="${examples.build}" destfile="${release.dir}/lib/wicket-web-beans-examples-${release-number}.jar" />
 	</target>
 		
 	<target name="war" depends="jar,jar-examples" description="Builds the samples WAR file.">
