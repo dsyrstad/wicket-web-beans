@@ -224,7 +224,13 @@
 		</zip>
 	</target>
 
-
+	<target name="website" depends="releaseinit" description="Builds the website tarball.">
+		<tar destfile="${release.dir}/wwb-web-site.tar.gz" compression="gzip" longfile="gnu">
+			<fileset dir="website" includes="**" />
+			<fileset dir="." includes="doc/wiki-html/**" />
+		</tar>
+	</target>
+		
 	<!-- ============================================================== -->
 	<!-- Running tests -->
 
