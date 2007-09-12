@@ -1,0 +1,399 @@
+/*----------------------------------------------------------------------------
+	main.css
+
+	this css-file contains all definitions, that are independend from the
+	colorschemes.
+
+	(c) Georg Torges (kein_bluemchen@gmx.de) for 1und1 Website Award
+ ----------------------------------------------------------------------------*/
+
+* {
+	margin: 0;
+	padding: 0;
+}
+  
+/*--- Body ---*/
+
+body#main_body {
+	background: #DAD8CF url(images/static/background.jpg) repeat-x;
+	text-align: center;
+}
+
+/*--- Absaetze ---*/
+
+.content p {
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+	text-decoration: none;
+	margin: 10px 0px 10px 0px;
+	color: #000000;
+	text-align: justify;
+}
+
+/*--- Überschriften ---*/
+
+.content h1 {
+	margin: 20px 0px 20px 0px;
+	font-weight: bold;
+	font-family: Verdana,Arial,sans-serif;
+	font-size: 16px;
+	font-style: normal ;
+	text-decoration: none;
+}
+
+.content h2 {
+	margin: 20px 0px 20px 0px;
+	font-weight: bold;
+	font-family: Verdana,Arial,sans-serif;
+	font-size: 14px;
+	font-style: normal ;
+	text-decoration: none;
+}
+
+.content h3 {
+	margin: 20px 0px 20px 0px;
+	font-weight: bold;
+	font-family: Verdana,Arial,sans-serif;
+	font-size: 12px;
+	font-style: normal ;
+	text-decoration: none;
+}
+
+/*--- Links ---*/
+
+.content a:link {
+	font-size: 12px;
+	text-decoration: underline;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+.content a:visited {
+	font-size: 12px;
+	text-decoration: underline;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+.content a:active {
+	font-size: 12px;
+	text-decoration: underline;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+.content a:hover {
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+	text-decoration: none;
+}
+
+/*--- Tabellen ---*/
+
+.content table {
+	font-size: 12px;
+	width: 500px;
+	margin: 20px auto 20px auto;
+	/*border: 0;*/
+	border-collapse: collapse;
+}
+
+.content tr {
+	font-size: 12px;
+	background-color: #FCFCFC;
+}
+
+.content tr.odd {
+	font-size: 12px;
+	background-color: #FCFCFC;
+}
+.content tr.even {
+	font-size: 12px;
+	background-color: #F3F3F3;
+}
+.content th {
+	font-size: 12px;
+	border: 1px solid #777777; 
+	padding: 1px 5px 1px 10px;
+}
+
+.content td {
+	font-size: 12px;
+	border: 1px dashed #777777; 
+	padding: 1px 5px 1px 10px;
+}
+/*--- Forms ---*/
+
+.content fieldset {
+	border: 3px solid #000000;
+}
+.content input {
+	border: 1px solid #EAEAEA;
+	background: url(images/static/input_background.gif) no-repeat;
+	font-family: Arial,sans-serif; 
+	font-size: 13px;
+	padding-left: 6px;
+}
+.content textarea {
+	font-family: Arial,sans-serif; 
+	font-size: 13px;
+	border: 1px solid #EAEAEA;
+	background: url(images/static/input_background.gif) no-repeat;
+	overflow: auto;
+	padding-left: 6px;
+}
+.content button {
+	height: 18px;
+	border-left: 1px solid white;
+	border-top: 1px solid white;
+	border-right: 1px solid Gray;
+	border-bottom: 1px solid Gray;
+	background-color: #DCE0E6;
+	color:#000000;
+	text-align: center;
+	font-family: Arial,sans-serif; 
+	font-size: 12px;
+	line-height: 15px;
+}
+.content select {
+	border: 1px solid #EAEAEA;
+	background: url(images/static/input_background.gif) no-repeat;
+	font-family: Arial,sans-serif; 
+	font-size: 13px;
+}
+
+/*--- Listen ---*/
+
+.content ul {
+	margin: 20px 0px 20px 40px;
+}
+
+.content ol {
+	margin: 20px 0px 20px 40px;
+}
+
+/*--- other ---*/
+
+.content b {
+	font-weight: bold;
+}
+.content strong {
+	font-weight: bold;
+}
+
+/*--- Stile für bestimme Klassen und IDs ---*/
+
+#container {
+padding: 30px 30px 10px 30px;
+background-color: white;
+margin: 0 auto;
+margin-top: 20px;
+margin-bottom:20px;
+padding-top: 12px;
+border: 1px solid #555555;
+text-align: left;
+width: 720px;
+}
+
+#sub_container2 {
+	margin: 0;
+	padding: 0;
+}
+
+#content_container {
+	width: 500px;
+	z-index: 100;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+/*--- HEADER ---*/
+
+#header	{
+height: 220px;
+margin-bottom: 20px;
+}
+#slogan {
+position: absolute;
+font-weight: bold;
+}
+#key_visual {
+width: 720px;
+height: 220px;
+}
+#logo {
+position: absolute;
+top: 169px;
+width: 269px;
+height: 68px;
+background-repeat: no-repeat;
+}
+/*--- ENDE HEADER ---*/
+
+/*--- MAIN NAVIGATION ---*/
+
+#main_nav_container {
+position: absolute;
+top: 39px;
+width:170px;
+height:200px;
+margin-left: 530px;
+}
+#main_nav_list {
+margin: 0px;
+margin-top:14px;
+margin-bottom: 0px;
+list-style-type: none;
+}
+
+#main_nav_list a {
+display: block;
+border-bottom: 1px dashed #BFBFBF;
+padding-left: 45px;
+line-height: 18px; 
+vertical-align: middle;
+background-repeat: no-repeat;
+}
+
+a.main_nav_item {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+a.main_nav_item:hover {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+a.main_nav_active_item {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+/*--- ENDE MAINNAVIGATION ---*/
+
+/*--- Suche---*/
+
+#content_search_container {
+position: absolute;
+top:212px;
+width:168px;
+height: 30px;
+margin-left: 530px;
+border: 1px solid white;
+padding-top: 10px;
+}
+#content_search_caption {
+display: none;
+}
+#content_search_container button {
+width: 56px; 
+margin-left: 5px; 
+}
+#content_search_container input {
+width: 82px;
+margin-left: 8px;
+}
+
+/*--- LEFT COLUMN ---*/
+
+#left_column_container {
+float: right;
+width: 194px;
+margin-top:-20px;
+margin-left: 20px;
+vertical-align: top;
+}
+
+/*--- SUB NAVIGATION ---*/
+
+.sub_nav_container {
+width: 180px;
+min-height: 20px;
+margin-bottom: 20px;
+padding-bottom: 1px; 
+background: url(images/static/sub_nav_background.jpg) no-repeat bottom;
+}
+.sub_nav_list {
+background-color: #FFFFFF;
+margin: 0px 6px 8px 4px;
+padding: 16px 0px 20px 0px;
+list-style-type: none;
+}
+
+.sub_nav_list a {
+display: block;
+border-bottom: 1px dashed #000000;
+border-bottom: 1px dashed #BFBFBF;
+padding: 0px 0px 1px 45px;
+background-color: transparent;
+line-height: 18px;
+background-repeat: no-repeat;
+}
+
+a.sub_nav_item {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+a.sub_nav_item:hover {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+a.sub_nav_active_item {
+color: #000000;
+text-decoration: none;
+	font-size: 12px;
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+}
+
+/*--- ENDE LEFT_COLUMN_CONTAINER ---*/
+
+/*--- FOOTER ---*/
+
+#footer {
+margin-top: 30px;
+border-top: 1px dashed #D4D4D4;
+clear: both; 
+}
+#footer_text {
+	font-family: 'Trebuchet MS',Verdana,Arial,sans-serif;
+	font-style: normal ;
+	font-weight: normal ;
+	text-decoration: none;
+	margin-top: 4px;
+text-align: center;
+font-size: 11px; 
+}
+
+

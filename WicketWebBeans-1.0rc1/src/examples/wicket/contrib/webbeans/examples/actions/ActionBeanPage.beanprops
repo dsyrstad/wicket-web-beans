@@ -1,0 +1,7 @@
+# Actions Example
+TestBean {
+	actions: save, cancel, clearLastName;
+	
+	props: firstName, lastName, action.clearLastName,
+		operand1, operand2, result, -number;
+}

@@ -1,0 +1,10 @@
+# Tabs Example
+TestBean {
+	actions: save, cancel, clearLastName;
+	
+	props: -number;
+	
+	tabs: 
+		name { props: firstName, lastName, action.clearLastName },
+		calculator { props: operand1, operand2, result }; 
+}
