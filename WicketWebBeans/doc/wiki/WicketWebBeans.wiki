@@ -2,7 +2,7 @@
 
 Wicket Web Beans (WWB) is an Apache Wicket (http://wicket.apache.org) component toolkit for displaying and editing POJOs that conform to the !JavaBeans specification. Web pages are automatically generated based on bean properties and certain conventions. If necessary, the layout, editability, and actions of these pages can be customized on an exception basis. In other words, the toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
 
-At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, this allows for customized page designs. Also, this allows multiple !BeanForms may be incorporated on a single page. At your choosing, other lower-level components may be used independently of !BeanForm (e.g., !BeanGridPanel). WWB does not try to force you into a certain way of doing things, but !BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. 
+At the highest-level, the wicket.contrib.webbeans.containers.BeanForm component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, this allows for customized page designs. Also, this allows multiple !BeanForms to be incorporated on a single page. At your choosing, other lower-level components may be used independently of !BeanForm (e.g., !BeanGridPanel). WWB does not try to force you into a certain way of doing things, but !BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. 
 
 Fields within a form are dynamically sent back to the server-side bean as they are changed, which eliminates the typical submit cycle. This makes WWB act more like a rich client application and less like a standard forms-based application.
 
@@ -22,7 +22,7 @@ Embed:wicket.contrib.webbeans.examples.simple.TestBean
 
 This is a Java Bean compliant POJO. As most people know, getters start with "get" or "is" and setters start with "set". Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.
 
-This bean also implements !PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if you're bean implements add/removePropertyChangeListener(), !BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use !PropertyChangeEvents to notify !BeanForm when dependent properties change. 
+This bean also implements !PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if your bean implements add/removePropertyChangeListener(), !BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use !PropertyChangeEvents to notify !BeanForm when dependent properties change. 
 
 If you don't implement !PropertyChangeListeners, !BeanForm already knows if a single property changes from a change on the form. For example, setFirstName() automatically changes the input value to upper case. !BeanForm knows to refresh this field on the form because the user changed it. If you type "xyzzy" in the First Name field and tab or click away from the field, the field is sent to the bean and the field is dynamically refreshed to it's new value "XYZZY".
 
@@ -59,7 +59,7 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
    * All !JavaBean properties are displayed. Non-!JavaBean methods are not displayed. 
    * All fields are editable if viewOnly is false (see the !BeanMetaData constructor). Otherwise they are all view-only.
    * If a property is not writable, it is displayed view-only.
-   * All fields are displayed in the order the are reflected (alphabetical order).
+   * All fields are displayed in alphabetical order by property name.
    * All fields are displayed in a single page. (Known as the "default tab", but the tab is hidden).
 
 Field types are deduced from the property's Java type. The mappings from the property's Java class to the wicket.contrib.webbeans.fields.Field type is done by wicket.contrib.webbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
@@ -78,7 +78,7 @@ Using the Simple Example above, let's customize it. Note that we're now using wi
 	}
 </verbatim>
 
-This file tells WWB : whenever you see a !TestBean bean, layout it out in a one-column grid ("cols: 1") and display the properties ("props") in the order specified. Note that you refer to !JavaBean properties without the prefix of "get", "set", or "is" and the first character is lower case. Also in the "props" parameter, we say "-number". This tells WWB to remove the "number" property from the page. 
+This file tells WWB : whenever you see a !TestBean bean, lay it out in a one-column grid ("cols: 1") and display the properties ("props") in the order specified. Note that you refer to !JavaBean properties without the prefix of "get", "set", or "is" and the first character is lower case. Also in the "props" parameter, we say "-number". This tells WWB to remove the "number" property from the page. 
 
 Note that we didn't specify a package name when we wrote "!TestBean". The package name is optional as long as the class name is not ambiguous. WWB matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    
 
@@ -289,7 +289,7 @@ Which results in collapsible fields for the Address beans:
  
 WWB:/doc/wiki/images/NestedBean2Screenshot.png
 
-These fields have a bar across the top that allow you to expand and contract the content.
+These fields have a bar across the top that allows you to expand and contract the content.
 
 ---+ Enumerated Types
 
@@ -327,7 +327,7 @@ You may encounter times when you need to manage collections of nested beans. By 
 
 Embed:wicket.contrib.webbeans.examples.tables.TableBeanPage
 
-This page references two beans wicket.contrib.webbeans.examples.tables.Invoice and wicket.contrib.webbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll set that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
+This page references two beans wicket.contrib.webbeans.examples.tables.Invoice and wicket.contrib.webbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
 
 <verbatim>
 	# Table Bean Example
@@ -358,7 +358,7 @@ When you bring up the page, it will look something like:
 
 WWB:/doc/wiki/images/TableBeanScreenshot.png
 
-Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking "Add Line" adds a new line to the table. Click the trash can icon on one of the lines will remove the corresponding line. 
+Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking "Add Line" adds a new line to the table. Clicking the trash can icon on one of the lines will remove the corresponding line. 
 
 The screenshot also shows the Invoice Date field with a calendar pop-up displayed. WWB displays properties of java.util.Date (date/time), java.sql.Date (date only), java.sql.Time (time only), java.sql.Timestamp (date/time), and java.util.Calendar (date/time with timezone) in a field with a pop-up calendar button.  
 

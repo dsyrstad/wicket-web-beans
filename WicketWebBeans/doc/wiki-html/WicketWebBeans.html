@@ -57,7 +57,7 @@ Wicket Web Beans (WWB) is an Apache Wicket (<a href="http://wicket.apache.org">h
 <p>
 </p>
 <p>
-At the highest-level, the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a> component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, this allows for customized page designs. Also, this allows multiple BeanForms may be incorporated on a single page. At your choosing, other lower-level components may be used independently of BeanForm (e.g., BeanGridPanel). WWB does not try to force you into a certain way of doing things, but BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. </p>
+At the highest-level, the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a> component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, this allows for customized page designs. Also, this allows multiple BeanForms to be incorporated on a single page. At your choosing, other lower-level components may be used independently of BeanForm (e.g., BeanGridPanel). WWB does not try to force you into a certain way of doing things, but BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. </p>
 <p>
 </p>
 <p>
@@ -227,7 +227,7 @@ This is a Java Bean compliant POJO. As most people know, getters start with &quo
 <p>
 </p>
 <p>
-This bean also implements PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if you're bean implements add/removePropertyChangeListener(), BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use PropertyChangeEvents to notify BeanForm when dependent properties change. </p>
+This bean also implements PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if your bean implements add/removePropertyChangeListener(), BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use PropertyChangeEvents to notify BeanForm when dependent properties change. </p>
 <p>
 </p>
 <p>
@@ -324,7 +324,7 @@ As we mentioned, BeanMetaData represents the metadata for a bean properties and 
 <li>All JavaBean properties are displayed. Non-JavaBean methods are not displayed.</li>
 <li>All fields are editable if viewOnly is false (see the BeanMetaData constructor). Otherwise they are all view-only.</li>
 <li>If a property is not writable, it is displayed view-only.</li>
-<li>All fields are displayed in the order the are reflected (alphabetical order).</li>
+<li>All fields are displayed in alphabetical order by property name.</li>
 <li>All fields are displayed in a single page. (Known as the &quot;default tab&quot;, but the tab is hidden).</li>
 </ul><p>
 </p>
@@ -350,7 +350,7 @@ Using the Simple Example above, let's customize it. Note that we're now using <a
 	}</pre><p>
 </p>
 <p>
-This file tells WWB : whenever you see a TestBean bean, layout it out in a one-column grid (&quot;cols: 1&quot;) and display the properties (&quot;props&quot;) in the order specified. Note that you refer to JavaBean properties without the prefix of &quot;get&quot;, &quot;set&quot;, or &quot;is&quot; and the first character is lower case. Also in the &quot;props&quot; parameter, we say &quot;-number&quot;. This tells WWB to remove the &quot;number&quot; property from the page. </p>
+This file tells WWB : whenever you see a TestBean bean, lay it out in a one-column grid (&quot;cols: 1&quot;) and display the properties (&quot;props&quot;) in the order specified. Note that you refer to JavaBean properties without the prefix of &quot;get&quot;, &quot;set&quot;, or &quot;is&quot; and the first character is lower case. Also in the &quot;props&quot; parameter, we say &quot;-number&quot;. This tells WWB to remove the &quot;number&quot; property from the page. </p>
 <p>
 </p>
 <p>
@@ -787,7 +787,7 @@ Which results in collapsible fields for the Address beans:</p>
 <p>
 </p>
 <p>
-These fields have a bar across the top that allow you to expand and contract the content.</p>
+These fields have a bar across the top that allows you to expand and contract the content.</p>
 <p>
 </p>
 <h1>Enumerated Types</h1>
@@ -992,7 +992,7 @@ You may encounter times when you need to manage collections of nested beans. By 
 <p>
 </p>
 <p>
-This page references two beans <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/Invoice.java.html">wicket.contrib.webbeans.examples.tables.Invoice</a> and <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/InvoiceLine.java.html">wicket.contrib.webbeans.examples.tables.InvoiceLine</a> - the typical invoice pattern. If you look at InvoiceLine, you'll set that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
+This page references two beans <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/Invoice.java.html">wicket.contrib.webbeans.examples.tables.Invoice</a> and <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/tables/InvoiceLine.java.html">wicket.contrib.webbeans.examples.tables.InvoiceLine</a> - the typical invoice pattern. If you look at InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
 <p>
 </p>
 <pre>	# Table Bean Example
@@ -1029,7 +1029,7 @@ When you bring up the page, it will look something like:</p>
 <p>
 </p>
 <p>
-Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking &quot;Add Line&quot; adds a new line to the table. Click the trash can icon on one of the lines will remove the corresponding line. </p>
+Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking &quot;Add Line&quot; adds a new line to the table. Clicking the trash can icon on one of the lines will remove the corresponding line. </p>
 <p>
 </p>
 <p>
