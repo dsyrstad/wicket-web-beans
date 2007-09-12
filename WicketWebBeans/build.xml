@@ -4,6 +4,14 @@
 -->
 
 <project name="WWB" default="all" basedir=".">
+    <!-- Allow any user specific values to override the defaults -->
+    <property file="${user.home}/build.properties"/>
+    <!-- Allow user defaults for this project -->
+    <property file="build.properties"/>
+    <!-- Set default values for the build -->
+    <property file="default.properties"/>
+
+    <property name="release-number" value="NO.RELEASE.NUM" />
 
 	<property name="base.src" value="src" />
 	<property name="code.src" value="${base.src}/java" />
@@ -47,6 +55,7 @@
 		</fileset>
 	</path>
 
+
 	<!-- ============================================================== -->
 
 	<!-- Initializing, cleaning, etc. -->
@@ -70,7 +79,7 @@
 	<!-- Compilation targets -->
 	
 	<target name="compile" depends="init" description="Builds the source code and resources.">
-		<javac srcdir="${code.src}" destdir="${code.build}" debug="on" optimize="on"  source="1.5">
+		<javac srcdir="${code.src}" destdir="${code.build}" debug="on" optimize="on"  source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${code.build}" >
@@ -92,7 +101,7 @@
 	</target>
 
 	<target name="compile-tests" depends="compile" description="Builds the test code.">
-		<javac srcdir="${tests.src}" destdir="${tests.build}">
+		<javac srcdir="${tests.src}" destdir="${tests.build}"  source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${tests.build}" >
@@ -114,7 +123,7 @@
 	</target>
 
 	<target name="compile-examples" depends="compile" description="Builds the example code.">
-		<javac srcdir="${examples.src}" destdir="${examples.build}">
+		<javac srcdir="${examples.src}" destdir="${examples.build}"  source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${examples.build}" >
@@ -173,6 +182,47 @@
 		</war>
 	</target>
 	
+	<target name="release" depends="war" description="Builds the release distribution files.">
+		<tar destfile="${release.dir}/wicket-web-beans-${release-number}-bin.tar.gz" compression="gzip" longfile="gnu">
+			<fileset dir="${release.dir}">
+			    <include name="**/lib/*.jar"/>
+			    <include name="**/*.war"/>
+			</fileset>
+			<fileset dir="WebContent" includes="resources/**" />
+			<fileset dir=".">
+				<include name="doc/**" />
+				<include name="lib/**" />
+			    <include name="NOTICE.txt"/>
+			    <include name="LICENSE.txt"/>
+			</fileset>
+		</tar>
+
+		<tar destfile="${release.dir}/wicket-web-beans-${release-number}-src.tar.gz" compression="gzip" longfile="gnu">
+			<fileset dir=".">
+			    <include name="**"/>
+			    <exclude name="${release.dir}/**.tar.gz"/>
+			    <include name="${release.dir}/lib/*.jar"/>
+			    <include name="${release.dir}/*.war"/>
+			    <exclude name="build/**"/>
+			    <exclude name="build-ant/**"/>
+			    <exclude name=".externalToolBuilders/**"/>
+			</fileset>
+		</tar>
+
+		<delete dir="${release.dir}/zip" />
+		<mkdir dir="${release.dir}/zip" />
+		<untar src="${release.dir}/wicket-web-beans-${release-number}-bin.tar.gz" dest="${release.dir}/zip" compression="gzip" />
+		<zip destfile="${release.dir}/wicket-web-beans-${release-number}-bin.zip" >
+			<fileset dir="${release.dir}/zip" includes="**" />
+		</zip>
+
+		<delete dir="${release.dir}/zip" />
+		<mkdir dir="${release.dir}/zip" />
+		<untar src="${release.dir}/wicket-web-beans-${release-number}-src.tar.gz" dest="${release.dir}/zip" compression="gzip" />
+		<zip destfile="${release.dir}/wicket-web-beans-${release-number}-src.zip" >
+			<fileset dir="${release.dir}/zip" includes="**" />
+		</zip>
+	</target>
 
 
 	<!-- ============================================================== -->
@@ -203,6 +253,6 @@
         </fail>
     </target>
 
-	<target name="all" depends="jar,war" description="Builds all release artifacts." />
+	<target name="all" depends="release" description="Builds all release artifacts." />
 	
 </project>

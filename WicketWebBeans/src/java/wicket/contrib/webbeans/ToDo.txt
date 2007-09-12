@@ -1,4 +1,4 @@
-- Bug: Test null list on BeanListEditor
+- Bug: Test null list on BeanTableField
 - Bug: IE: table row hover highlighting not working.
 - Bug: Collapsibles should be built out of wicket components. Doesn't remember state on refresh
 

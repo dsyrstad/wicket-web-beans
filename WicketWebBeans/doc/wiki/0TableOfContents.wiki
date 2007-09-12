@@ -4,6 +4,8 @@ RunningSamples - How to Run the Samples
 BeanPropsSyntax - Syntax and Grammar of the beanprops File
 ParameterReference - Reference to beanprops Parameters
 CssGuide - Guide to Creating Your Own CSS for Wicket Web Beans
- 
+
+CopyrightLicense - Copyright and License.
+
 
  
