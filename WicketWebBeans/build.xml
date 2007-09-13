@@ -79,7 +79,7 @@
 	<!-- Compilation targets -->
 	
 	<target name="compile" depends="init" description="Builds the source code and resources.">
-		<javac srcdir="${code.src}" destdir="${code.build}" debug="on" optimize="on"  source="1.5" target="1.5">
+		<javac srcdir="${code.src}" destdir="${code.build}" debug="on" source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${code.build}" >
@@ -101,7 +101,7 @@
 	</target>
 
 	<target name="compile-tests" depends="compile" description="Builds the test code.">
-		<javac srcdir="${tests.src}" destdir="${tests.build}"  source="1.5" target="1.5">
+		<javac srcdir="${tests.src}" destdir="${tests.build}" debug="on" source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${tests.build}" >
@@ -123,7 +123,7 @@
 	</target>
 
 	<target name="compile-examples" depends="compile" description="Builds the example code.">
-		<javac srcdir="${examples.src}" destdir="${examples.build}"  source="1.5" target="1.5">
+		<javac srcdir="${examples.src}" destdir="${examples.build}" debug="on" source="1.5" target="1.5">
 			<classpath refid="path.base" />
 		</javac>
 		<copy todir="${examples.build}" >

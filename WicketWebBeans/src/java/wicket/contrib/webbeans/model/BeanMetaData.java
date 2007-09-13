@@ -605,7 +605,7 @@ public class BeanMetaData extends MetaData implements Serializable
             idx = identifier.lastIndexOf('$'); // Java nested classes.
         }
         
-        if (idx >= 0) {
+        if (idx >= 0 && identifier.length() > 1) {
             identifier = identifier.substring(idx + 1);
         }
 
