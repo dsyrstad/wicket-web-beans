@@ -180,8 +180,7 @@ public class BeanGridPanel extends Panel
         protected void populateItem(ListItem item)
         {
             ElementMetaData element = (ElementMetaData)item.getModelObject();
-            String colspanStr = element.getParameters().getProperty("colspan", "1");
-            int colspan = Integer.valueOf(colspanStr);
+            int colspan = element.getIntParameter("colspan", 1);
             
             Component component;
             if (element.isAction()) {
@@ -195,7 +194,7 @@ public class BeanGridPanel extends Panel
                 }
             }
 
-            item.add( new AttributeModifier("colspan", true, new Model(colspanStr)) );
+            item.add( new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))) );
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
             item.add( new AttributeModifier("style", true, new Model(width)) );

@@ -168,7 +168,7 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     public boolean areAllParametersConsumed(Set<String> unconsumedMsgs, TabMetaData tabMetaData)
     {
-        if (!super.areAllParametersConsumed("Bean " + beanClass.getSimpleName(), unconsumedMsgs)) {
+        if (!super.areAllParametersConsumed("Bean " + beanClass.getName(), unconsumedMsgs)) {
             return false;
         }
         
@@ -255,7 +255,7 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
 
-        String propFileName = component.getClass().getSimpleName() + ".beanprops";
+        String propFileName = getBaseClassName(component.getClass()) + ".beanprops";
         List<Bean> beanSpecs = cachedBeanProps.get(propFileName);
         if (beanSpecs == null) {
             // It's OK not to have a beanprops file. We can deduce the parameters by convention. 
@@ -316,6 +316,24 @@ public class BeanMetaData extends MetaData implements Serializable
                 return (o1.getOrder() > o2.getOrder() ? 1 : (o1.getOrder() < o2.getOrder() ? -1 : 0));
             }
         });
+    }
+    
+    /**
+     * Gets the base class name of a Class.
+     * 
+     * @param aClass the class.
+     *
+     * @return the base class name (the name without the package name).
+     */
+    private static String getBaseClassName(Class aClass) 
+    {
+        String baseClassName = aClass.getName();
+        int idx = baseClassName.lastIndexOf('.');
+        if (idx >= 0) {
+            baseClassName = baseClassName.substring(idx + 1);
+        }
+
+        return baseClassName;
     }
     
     /**
@@ -523,10 +541,11 @@ public class BeanMetaData extends MetaData implements Serializable
     private Bean getBean(List<Bean> beans, String context)
     {
         String fullName = beanClass.getName();
-        String shortName = beanClass.getSimpleName();
+        String baseName = getBaseClassName(beanClass); // Name without pkg but with parent of inner class
+        String shortName = beanClass.getSimpleName(); // Short name without parent of inner class
         for (Bean bean : beans) {
             String beanName = bean.getName();
-            if (shortName.equals(beanName) || fullName.equals(beanName)) {
+            if (shortName.equals(beanName) || baseName.equals(beanName) || fullName.equals(beanName)) {
                 String beanContext = bean.getContext();
                 if ((context == null && beanContext == null) ||
                     (context != null && context.equals(beanContext))) {

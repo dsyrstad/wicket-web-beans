@@ -62,9 +62,9 @@ public class BeanSubmitButton extends Panel
     public BeanSubmitButton(String id, ElementMetaData element, Form form, final Object bean)
     {
         this(id, element.getLabelComponent("label"), form, bean, 
-                        element.getParameters().getProperty("confirm"),
-                        element.getParameters().getProperty("ajax"),
-                        element.getParameters().getProperty("default")); 
+                        element.getParameter("confirm"),
+                        element.getParameter("ajax"),
+                        element.getParameter("default")); 
     }
 
     /**
