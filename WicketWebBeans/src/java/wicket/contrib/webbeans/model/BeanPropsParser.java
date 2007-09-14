@@ -179,9 +179,16 @@ public class BeanPropsParser
         
         expect("{");
         
-        List<Parameter> params = parseParameters();
-        
-        expect("}");
+        // Allow empty blocks...
+        List<Parameter> params;
+        if (!getNextToken().equals("}")) {
+            tokenizer.pushBack();
+            params = parseParameters();
+            expect("}");
+        }
+        else {
+            params = new ArrayList<Parameter>();
+        }
         
         return new Bean(beanName, context, extendsContext, params);
     }
@@ -241,8 +248,12 @@ public class BeanPropsParser
         String nextToken = getNextToken();
         // Start of parameters for value?
         if (nextToken.equals("{")) {
-            param.setParameters( parseParameters() );
-            expect("}");
+            // Allow empty blocks...
+            if (!getNextToken().equals("}")) {
+                tokenizer.pushBack();
+                param.setParameters( parseParameters() );
+                expect("}");
+            }
         }
         else {
             tokenizer.pushBack();

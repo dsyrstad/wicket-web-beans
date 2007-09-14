@@ -64,3 +64,7 @@ BeanMetaDataTestBean2 {
 		firstName{viewOnly: false},
 		lastName;
 }
+
+# Make sure parser allows empty blocks
+XX { }
+XX2 { props: a{}, b, c; }
