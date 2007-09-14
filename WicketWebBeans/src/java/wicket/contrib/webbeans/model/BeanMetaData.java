@@ -107,6 +107,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
+    private boolean isChildBean;
     
     // List of all properties.
     private List<ElementMetaData> elements = new ArrayList<ElementMetaData>();
@@ -130,6 +131,24 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry, boolean viewOnly)
     {
+        this(beanClass, context, component, componentRegistry, viewOnly, false);
+    }
+    
+    /**
+     * Construct a BeanMetaData. See class documentation for a description of the Localizer
+     * properties used.
+     *
+     * @param beanClass the bean's class.
+     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
+     *  use a context.
+     * @param component the component used to get the Localizer.
+     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
+     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
+     *  Localizer configuration.
+     * @param isChildBean true if this bean is a child of another bean.
+     */
+    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry, boolean viewOnly, boolean isChildBean)
+    {
         if (beanClass.isAssignableFrom(Serializable.class)) {
             throw new IllegalArgumentException("bean must be Serializable. It is " + beanClass);
         }
@@ -143,6 +162,8 @@ public class BeanMetaData extends MetaData implements Serializable
         else {
             this.componentRegistry = componentRegistry;
         }
+        
+        this.isChildBean = isChildBean;
         
         setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
         setParameter(PARAM_DISPLAYED, "true");
@@ -554,8 +575,9 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
         
-        // Default context implicitly exists.
-        if (context == null) {
+        // Default context implicitly exists. Also, don't require the context to be 
+        // explicitly specified for child beans.
+        if (context == null || isChildBean) {
             return new Bean("", null, null, Collections.EMPTY_LIST);
         }
         

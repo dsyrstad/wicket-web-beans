@@ -25,8 +25,6 @@ import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.markup.html.panel.Panel;
 import wicket.model.IModel;
 
-import java.util.Properties;
-
 
 /**
  * Base class for Fields. In general, Fields should <em>not</em> set renderBodyOnly to true
@@ -91,14 +89,13 @@ abstract public class AbstractField extends Panel implements Field
     /**
      * Returns the ElementMetaData related to the specified propertyName.
      * @param metaData metaData for this field.
-     * @param propertyName the propertyName to lookup
+     * @param parameterName the parameter name on metaData. The value of this parameter should be the property name to lookup.
      * @param propertyClass the class type the property should resolve to
      * @return ElementMetaData
      */
-    protected ElementMetaData getDependentProperty(ElementMetaData metaData, String propertyName, Class propertyClass) {
-        Properties config = metaData.getParameters();
+    protected ElementMetaData getDependentProperty(ElementMetaData metaData, String parameterName, Class propertyClass) {
         ElementMetaData property = null;
-        String propStr = config.getProperty(propertyName);
+        String propStr = metaData.getParameter(parameterName);
         if (propStr != null) {
             property = metaData.getBeanMetaData().findElement(propStr);
             if (property == null) {
@@ -106,7 +103,7 @@ abstract public class AbstractField extends Panel implements Field
             }
 
             if (!propertyClass.isAssignableFrom( property.getPropertyType() )) {
-                throw new RuntimeException(propertyName + "'" + propStr + "' must return a " + propertyClass.getName() + " on "
+                throw new RuntimeException(parameterName + "'" + propStr + "' must return a " + propertyClass.getName() + " on "
                                 + metaData.getBeanMetaData().getBeanClass() + ". Instead it returns "
                                 + property.getPropertyType());
             }
