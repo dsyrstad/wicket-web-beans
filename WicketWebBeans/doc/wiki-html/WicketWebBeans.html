@@ -57,7 +57,7 @@ Wicket Web Beans (WWB) is an Apache Wicket (<a href="http://wicket.apache.org">h
 <p>
 </p>
 <p>
-At the highest-level, the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a> component provides rich AJAX form functionality. The Page design that the form is embedded on is left to you, this allows for customized page designs. Also, this allows multiple BeanForms to be incorporated on a single page. At your choosing, other lower-level components may be used independently of BeanForm (e.g., BeanGridPanel). WWB does not try to force you into a certain way of doing things, but BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. </p>
+At the highest-level, the <a href="workspace/WicketWebBeans/src/java/wicket/contrib/webbeans/containers/BeanForm.java.html">wicket.contrib.webbeans.containers.BeanForm</a> component provides rich AJAX form functionality. The form is embedded in a Page designed by you. This allows you to create customized page designs. Also, this allows multiple BeanForms to be incorporated on a single page. At your choosing, other lower-level components may be used independently of BeanForm (e.g., BeanGridPanel). WWB does not try to force you into a certain way of doing things, but BeanForm makes it very convenient to implement a bean-based form if you don't want to go to a lot of extra work. You focus on the model (beans), WWB handles the user interface. </p>
 <p>
 </p>
 <p>
@@ -577,7 +577,7 @@ and gotten the same result.</p>
 <p>
 </p>
 <p>
-WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simple view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/contexts/ContextBeanPage.java.html">wicket.contrib.webbeans.examples.contexts.ContextBeanPage</a>:</p>
+WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simply view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/contexts/ContextBeanPage.java.html">wicket.contrib.webbeans.examples.contexts.ContextBeanPage</a>:</p>
 <p>
 </p>
 <p>
