@@ -42,6 +42,8 @@ public class BeanPropertyModel extends PropertyModel
     private Object lastValueGot = null;
     // This flag tracks whether lastValueGot is valid.
     private boolean getObjectCalled = false;
+    // If this model is registered with a BeanForm, this is it.
+    private BeanForm beanForm = null;
 
     /**
      * Construct a BeanPropertyModel. 
@@ -122,6 +124,16 @@ public class BeanPropertyModel extends PropertyModel
         }
         
         getObjectCalled = false;
+    }
+
+    public BeanForm getBeanForm()
+    {
+        return beanForm;
+    }
+
+    public void setBeanForm(BeanForm beanForm)
+    {
+        this.beanForm = beanForm;
     }
 
 }

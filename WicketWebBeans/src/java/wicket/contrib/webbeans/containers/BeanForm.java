@@ -21,7 +21,6 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -76,9 +75,6 @@ public class BeanForm extends Panel
     // Wicket ID/HTML ID of field with focus.
     private String focusField = null;
     private BeanPropertyChangeListener listener = new BeanPropertyChangeListener();
-    /** Tracks beans for which we have registered listeners. Key is the bean (by identity) and 
-     * value is the listener registered on the bean. */
-    private IdentityHashMap<Object, BeanPropertyChangeListener> registeredListeners = new IdentityHashMap<Object, BeanPropertyChangeListener>();
 
     /** Maps components in this form to their properties. */
     private Set<ComponentPropertyMapping> componentPropertyMappings = new HashSet<ComponentPropertyMapping>(200);
@@ -219,19 +215,18 @@ public class BeanForm extends Panel
      * 
      * @param component
      */
-    public void registerComponent(Component component, Object bean, ElementMetaData element)
+    public void registerComponent(Component component, BeanPropertyModel beanModel, ElementMetaData element)
     {
-        if (bean != null) {
-            ComponentPropertyMapping mapping = new ComponentPropertyMapping(bean, element);
-            componentPropertyMappings.add(mapping);
+        ComponentPropertyMapping mapping = new ComponentPropertyMapping(beanModel, element);
+        componentPropertyMappings.add(mapping);
             
-            if (!registeredListeners.containsKey(bean)) {
-                // Listen for PropertyChangeEvents on this bean, if necessary.
-                // TODO When do we unregister?? Maybe a WeakRef to ourself in the listener? Then listener unregisters
-                // TODO if we don't exist anymore.
-                element.getBeanMetaData().addPropertyChangeListener(bean, listener);
-                registeredListeners.put(bean, listener);
-            }
+        // Make sure we don't register ourself twice.
+        if (beanModel != null && beanModel.getBeanForm() == null) {
+            // Listen for PropertyChangeEvents on this bean, if necessary.
+            // TODO When do we unregister?? Maybe a WeakRef to ourself in the listener? Then listener unregisters
+            // TODO if we don't exist anymore.
+            element.getBeanMetaData().addPropertyChangeListener(beanModel, listener);
+            beanModel.setBeanForm(this);
         }
         
         if (component instanceof MarkupContainer) {
@@ -465,12 +460,13 @@ public class BeanForm extends Panel
      */
     private static final class ComponentPropertyMapping implements Serializable
     {
-        Object bean;
-        ElementMetaData elementMetaData;
+        /** IModel holding the bean. */
+        private BeanPropertyModel beanModel;
+        private ElementMetaData elementMetaData;
         
-        ComponentPropertyMapping(Object bean, ElementMetaData elementMetaData)
+        ComponentPropertyMapping(BeanPropertyModel beanModel, ElementMetaData elementMetaData)
         {
-            this.bean = bean;
+            this.beanModel = beanModel;
             this.elementMetaData = elementMetaData;
         }
 
@@ -481,9 +477,14 @@ public class BeanForm extends Panel
         @Override
         public int hashCode()
         {
-            int result = 31 + ((bean == null) ? 0 : bean.hashCode());
+            int result = 31 + ((beanModel == null) ? 0 : beanModel.hashCode());
             result = 31 * result + ((elementMetaData == null) ? 0 : elementMetaData.hashCode());
             return result;
+        }
+        
+        private Object getBean()
+        {
+            return beanModel.getObject(null);
         }
 
         /** 
@@ -498,7 +499,7 @@ public class BeanForm extends Panel
             }
 
             final ComponentPropertyMapping other = (ComponentPropertyMapping)obj;
-            return bean == other.bean && 
+            return beanModel == other.beanModel && 
                     (elementMetaData == other.elementMetaData || 
                      (elementMetaData != null && elementMetaData.equals(other.elementMetaData)));
         }
@@ -516,7 +517,7 @@ public class BeanForm extends Panel
             Object bean = evt.getSource();
             String propName = evt.getPropertyName();
             for (ComponentPropertyMapping mapping : componentPropertyMappings) {
-                if (bean == mapping.bean && propName.equals(mapping.elementMetaData.getPropertyName())) {
+                if (bean == mapping.getBean() && propName.equals(mapping.elementMetaData.getPropertyName())) {
                     BeanForm.this.refreshComponents.add(mapping);
                 }
             }

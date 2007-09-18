@@ -17,6 +17,7 @@
 
 package wicket.contrib.webbeans.examples;
 
+import wicket.Component;
 import wicket.model.LoadableDetachableModel;
 
 /**
@@ -45,5 +46,4 @@ public class LoadableDetachableObjectModel extends LoadableDetachableModel
     {
         return new NonSerializableBean("ModelS2000", "1234567");
     }
-
 }

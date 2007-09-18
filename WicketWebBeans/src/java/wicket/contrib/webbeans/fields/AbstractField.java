@@ -67,12 +67,7 @@ abstract public class AbstractField extends Panel implements Field
         // If we're part of a BeanForm, register ourself with it.
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {
-            Object bean = null;
-            if (getModel() instanceof BeanPropertyModel) {
-                bean = ((BeanPropertyModel)getModel()).getBean();
-            }
-            
-            beanForm.registerComponent(this, bean, elementMetaData);
+            beanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
         }
     }
 

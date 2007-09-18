@@ -17,6 +17,7 @@
 
 package wicket.contrib.webbeans.examples;
 
+
 /**
  * A test bean that is not Serializable. <p>
  * 
@@ -58,5 +59,4 @@ public class NonSerializableBean
     {
         this.serialNumber = serialNumber;
     }
-
 }

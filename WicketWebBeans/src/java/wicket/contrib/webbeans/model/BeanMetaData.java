@@ -36,6 +36,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import wicket.Component;
 import wicket.contrib.webbeans.fields.EmptyField;
+import wicket.model.IModel;
 
 /**
  * Represents the metadata for a bean properties and actions. All beans must be Serializable by Wicket
@@ -780,20 +781,23 @@ public class BeanMetaData extends MetaData implements Serializable
      * Adds a property change listener to the bean if it supports it. If it doesn't support
      * addition property change listeners, nothing happens.
      *
-     * @param bean a bean corresponding to this BeanMetaData.
+     * @param beanModel the bean's IModel.
      * @param listener the {@link PropertyChangeListener}.
      */
-    public void addPropertyChangeListener(Object bean, PropertyChangeListener listener)
+    public void addPropertyChangeListener(IModel beanModel, PropertyChangeListener listener)
     {
         if (!hasAddPropertyChangeListenerMethod) {
             return;
         }
-        
-        try {
-            getAddPropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Error adding PropertyChangeListener: ", e);
+
+        Object bean = beanModel.getObject(null);
+        if (bean != null) {
+            try {
+                getAddPropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Error adding PropertyChangeListener: ", e);
+            }
         }
     }
 
@@ -801,20 +805,23 @@ public class BeanMetaData extends MetaData implements Serializable
      * Removes a property change listener to the bean if it supports it. If it doesn't support
      * removal of property change listeners, nothing happens.
      *
-     * @param bean a bean corresponding to this BeanMetaData.
+     * @param beanModel the bean's IModel.
      * @param listener the {@link PropertyChangeListener}.
      */
-    public void removePropertyChangeListener(Object bean, PropertyChangeListener listener)
+    public void removePropertyChangeListener(IModel beanModel, PropertyChangeListener listener)
     {
         if (!hasRemovePropertyChangeListenerMethod) {
             return;
         }
         
-        try {
-            getRemovePropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Error removing PropertyChangeListener: ", e);
+        Object bean = beanModel.getObject(null);
+        if (bean != null) {
+            try {
+                getRemovePropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Error removing PropertyChangeListener: ", e);
+            }
         }
     }
 }
