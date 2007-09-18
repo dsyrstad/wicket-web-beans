@@ -74,7 +74,7 @@ public class BeanTablePanel extends Panel
      */
     public BeanTablePanel(String id, IModel model, BeanMetaData metaData, boolean viewOnly, int numRows)
     {
-        super(id);
+        super(id, model);
 
         this.metaData = metaData;
         List<IColumn> columns = new ArrayList<IColumn>();

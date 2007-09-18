@@ -148,6 +148,15 @@ public class BeanGridPanel extends Panel
     }
 
     @Override
+    public void detachModels()
+    {
+        super.detachModels();
+        if (bean instanceof IModel) {
+            ((IModel)bean).detach();
+        }
+    }
+
+    @Override
     protected void onComponentTag(ComponentTag tag)
     {
         super.onComponentTag(tag);
