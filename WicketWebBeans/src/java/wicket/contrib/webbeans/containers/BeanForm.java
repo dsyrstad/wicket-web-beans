@@ -87,7 +87,7 @@ public class BeanForm extends Panel
      * Construct a new BeanForm.
      *
      * @param id the Wicket id for the panel.
-     * @param bean the bean to be displayed.
+     * @param bean the bean to be displayed. This may be an IModel or regular bean object.
      * @param beanMetaData the meta data for the bean
      */
     public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData)
