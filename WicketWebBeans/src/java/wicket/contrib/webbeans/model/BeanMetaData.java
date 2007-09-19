@@ -784,13 +784,13 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param beanModel the bean's IModel.
      * @param listener the {@link PropertyChangeListener}.
      */
-    public void addPropertyChangeListener(IModel beanModel, PropertyChangeListener listener)
+    public void addPropertyChangeListener(BeanPropertyModel beanModel, PropertyChangeListener listener)
     {
         if (!hasAddPropertyChangeListenerMethod) {
             return;
         }
 
-        Object bean = beanModel.getObject(null);
+        Object bean = beanModel.getBean();
         if (bean != null) {
             try {
                 getAddPropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );

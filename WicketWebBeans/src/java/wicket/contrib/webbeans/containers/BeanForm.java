@@ -237,6 +237,17 @@ public class BeanForm extends Panel
         }
     }
     
+    
+    /**
+     * Gets the listener.
+     *
+     * @return a BeanPropertyChangeListener.
+     */
+    public BeanPropertyChangeListener getListener()
+    {
+        return listener;
+    }
+
     /**
      * Allows external app to set the field to receive focus.
      * 
@@ -267,6 +278,22 @@ public class BeanForm extends Panel
         this.focusField = focusField;
     }
 
+    /**
+     * @return true if {@link #refreshComponents(AjaxRequestTarget, Component)} needs to be called.
+     */
+    public boolean isComponentRefreshNeeded()
+    {
+        return !refreshComponents.isEmpty();
+    }
+    
+    /**
+     * Clears the components that would be refreshed if {@link #refreshComponents(AjaxRequestTarget, Component)} were called.
+     */
+    public void clearRefreshComponents()
+    {
+        refreshComponents.clear();
+    }
+    
     /**
      * Refresh the targetComponent, in addition to any components that need to be updated
      * due to property change events.
@@ -484,7 +511,7 @@ public class BeanForm extends Panel
         
         private Object getBean()
         {
-            return beanModel.getObject(null);
+            return beanModel.getBean();
         }
 
         /** 
@@ -509,7 +536,7 @@ public class BeanForm extends Panel
      * Listens to property change events on a bean and adds them to the queue of
      * components to be refreshed. <p>
      */
-    private final class BeanPropertyChangeListener implements PropertyChangeListener, Serializable
+    public final class BeanPropertyChangeListener implements PropertyChangeListener, Serializable
     {
         public void propertyChange(PropertyChangeEvent evt)
         {

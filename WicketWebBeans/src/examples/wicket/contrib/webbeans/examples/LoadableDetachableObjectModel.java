@@ -17,7 +17,6 @@
 
 package wicket.contrib.webbeans.examples;
 
-import wicket.Component;
 import wicket.model.LoadableDetachableModel;
 
 /**

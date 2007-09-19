@@ -17,6 +17,9 @@
 
 package wicket.contrib.webbeans.containers;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 /**
  * A test bean that is not Serializable. <p>
  * 
@@ -26,7 +29,8 @@ public class NonSerializableBean
 {
     private String name;
     private String serialNumber;
-    
+    private transient PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+
     /**
      * Construct a NonSerializableBean. 
      *
@@ -39,6 +43,23 @@ public class NonSerializableBean
         this.serialNumber = serialNumber;
     }
 
+    /**
+     * JavaBeans compliant method to add a PropertyChangeListener. 
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener)
+    {
+        listeners.addPropertyChangeListener(listener);
+    }
+    
+    /**
+     * JavaBeans compliant method to remove a PropertyChangeListener. 
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener)
+    {
+        listeners.removePropertyChangeListener(listener);
+    }
+
+
     public String getName()
     {
         return name;
@@ -47,6 +68,7 @@ public class NonSerializableBean
     public void setName(String name)
     {
         this.name = name;
+        listeners.firePropertyChange("serialNumber", null, getSerialNumber());
     }
 
     public String getSerialNumber()

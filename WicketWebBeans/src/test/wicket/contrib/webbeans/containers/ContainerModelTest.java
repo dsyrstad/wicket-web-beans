@@ -18,8 +18,12 @@
 package wicket.contrib.webbeans.containers;
 
 import junit.framework.TestCase;
+import wicket.Component;
 import wicket.Page;
+import wicket.contrib.webbeans.fields.InputField;
 import wicket.contrib.webbeans.model.BeanMetaData;
+import wicket.contrib.webbeans.model.BeanPropertyModel;
+import wicket.util.tester.ITestPageSource;
 import wicket.util.tester.WicketTester;
 
 /**
@@ -46,28 +50,85 @@ public class ContainerModelTest extends TestCase
     }
 
     /**
-     * Tests BeanForm with a LoadableDetachableModel.
+     * Tests BeanForm with a LoadableDetachableModel instead of a direct bean.
      */
-    public void testBeanForm()
+    public void testBeanFormWithLoadableDetachableModel()
     {
         WicketTester tester = new WicketTester();
 
-        Page page = tester.startPage(ContainerModelTestPage.class);
+        final ContainerModelTestPage page = new ContainerModelTestPage();
+        
 
-        TestLoadableDetachableObjectModel model = new TestLoadableDetachableObjectModel();
-        BeanMetaData meta = new BeanMetaData(model.getObject(page).getClass(), null, page, null, false);
-        BeanForm form = new BeanForm("beanForm", model, meta);
+        TestLoadableDetachableObjectModel nestedModel = new TestLoadableDetachableObjectModel();
+        BeanMetaData meta = new BeanMetaData(nestedModel.getObject(page).getClass(), null, page, null, false);
+        BeanForm form = new BeanForm("beanForm", nestedModel, meta);
+
         page.add(form);
         
-        assertTrue(model.isAttached());
+        tester.startPage(new ITestPageSource() {
+            public Page getTestPage()
+            {
+                return page;
+            }
+        });
         
+        //tester.debugComponentTrees();
+
+        // Check elements, labels.
+        String firstRowPath = "beanForm:f:tabs:r:0";
+        String namePath = firstRowPath + ":c:0:c";
+        String nameFieldPath = namePath + ":c";
+        
+        tester.assertLabel(namePath + ":l", "Name");
+        tester.assertComponent(nameFieldPath, InputField.class);
+        Component nameField = tester.getComponentFromLastRenderedPage(nameFieldPath);
+
+        String serialNumPath = firstRowPath + ":c:1:c";
+        String serialNumFieldPath = serialNumPath + ":c";
+        tester.assertLabel(serialNumPath + ":l", "Serial Number");
+        tester.assertComponent(serialNumFieldPath, InputField.class);
+        Component serialNumField = tester.getComponentFromLastRenderedPage(serialNumFieldPath);
+        
+        // Check attaching/detaching component's model (BeanPropertyModel).
+        BeanPropertyModel nameFieldModel = (BeanPropertyModel)nameField.getModel();
+        
+        assertFalse(nestedModel.isAttached());
+
+        // Should attach the nested model's object.
+        nameFieldModel.getObject(form);
+        
+        assertTrue(nestedModel.isAttached());
+        
+        NonSerializableBean firstBean = (NonSerializableBean)nestedModel.getObject(null); 
+        
+        // Make the first bean detach. This also tests that the model is attached somewhere below the page.
         page.detachModels();
         
-        assertFalse(model.isAttached());
+        assertFalse(nestedModel.isAttached());
         
+        NonSerializableBean secondBean = (NonSerializableBean)nestedModel.getObject(null); 
+
+        // Should be different and attached now.
+        assertNotSame(firstBean, secondBean);
+        assertTrue(nestedModel.isAttached());
         
+        // Assert PropertyChangeListener on BeanForm is called.
+        assertFalse( form.isComponentRefreshNeeded() );
+        nameFieldModel.setObject(nameField, "test");
+        assertTrue( form.isComponentRefreshNeeded() );
+
+        // Clear the refresh components.
+        form.clearRefreshComponents();
+        
+        // Assert PropertyChangeListener on BeanForm is called after detach()/attach().
+        page.detachModels();
+        assertFalse(nestedModel.isAttached());
+        
+        assertFalse( form.isComponentRefreshNeeded() );
+        nameFieldModel.setObject(nameField, "test");
+        assertTrue( form.isComponentRefreshNeeded() );
+
+        // Clear the refresh components.
+        form.clearRefreshComponents();
     }
- 
-    
-    
 }

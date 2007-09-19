@@ -17,7 +17,6 @@
 package wicket.contrib.webbeans.containers;
 
 
-import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.markup.html.WebPage;
 
 public class ContainerModelTestPage extends WebPage

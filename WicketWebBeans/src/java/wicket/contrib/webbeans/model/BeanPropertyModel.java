@@ -136,4 +136,14 @@ public class BeanPropertyModel extends PropertyModel
         this.beanForm = beanForm;
     }
 
+    @Override
+    protected void onAttach()
+    {
+        super.onAttach();
+        if (beanForm != null) {
+            // Re-register listener when the bean is being re-attached.
+            elementMetaData.getBeanMetaData().addPropertyChangeListener(this, beanForm.getListener());
+        }
+    }
+
 }
