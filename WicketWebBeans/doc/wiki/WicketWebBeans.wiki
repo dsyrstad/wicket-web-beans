@@ -46,6 +46,8 @@ Embed:wicket.contrib.webbeans.examples.simple.SimpleBeanPage
 
 You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of wicket.contrib.webbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of wicket.contrib.webbeans.model.BeanMetaData. !BeanMetaData reflects on the !TestBean class to derive the fields and actions for the form.
 
+Note that you can pass a Wicket IModel that contains your bean, rather than the bean itself, to !BeanForm.
+
 If you bring up this page in a browser (see RunningSamples), you will see something like:
 
 WWB:/doc/wiki/images/SimpleBeanScreenShot.png
