@@ -1,6 +1,5 @@
 BeanMetaDataTestBean {
 	label: "My ${TestBean.title} Title";   
-	actions: save,cancel,doIt,addRow;
 	props: 
 		action.save{colspan: 3},
 		firstName,
@@ -57,7 +56,7 @@ BeanMetaDataTestBean[popupView extends view] {
 }
 
 BeanMetaDataTestBean2 {
-	actions: deleteRow;
+	actions: -doIt;
 	props: 
 		action.deleteRow{labelImage: "remove.gif"},
 		selected{label: X},

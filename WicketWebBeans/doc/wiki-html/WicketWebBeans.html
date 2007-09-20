@@ -328,6 +328,7 @@ As we mentioned, BeanMetaData represents the metadata for a bean properties and 
 <li>All JavaBean properties are displayed. Non-JavaBean methods are not displayed.</li>
 <li>All fields are editable if viewOnly is false (see the BeanMetaData constructor). Otherwise they are all view-only.</li>
 <li>If a property is not writable, it is displayed view-only.</li>
+<li>Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.</li>
 <li>All fields are displayed in alphabetical order by property name.</li>
 <li>All fields are displayed in a single page. (Known as the &quot;default tab&quot;, but the tab is hidden).</li>
 </ul><p>
@@ -461,22 +462,21 @@ It's simple to add actions to your form. Here's the code for <a href="workspace/
 <font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
 <font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
 <font color="#808080">18</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">save</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">save</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;TestBean&nbsp;bean</font><font color="#000000">)</font><br/>
 <font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
 <font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Saved&nbsp;-&nbsp;thank&nbsp;you&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
 <font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
 <font color="#808080">23</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">cancel</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">cancel</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;TestBean&nbsp;bean</font><font color="#000000">)</font><br/>
 <font color="#808080">25</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
 <font color="#808080">26</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Canceled&nbsp;-&nbsp;thank&nbsp;you&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
 <font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
 <font color="#808080">28</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">clearLastName</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">clearLastName</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;TestBean&nbsp;bean</font><font color="#000000">)</font><br/>
 <font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
-<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">TestBean&nbsp;testBean&nbsp;=&nbsp;</font><font color="#000000">(</font><font color="#000000">TestBean</font><font color="#000000">)</font><font color="#000000">bean;</font><br/>
-<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">testBean.setLastName</font><font color="#000000">(</font><font color="#2a00ff">&#34;&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
-<font color="#808080">33</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
-<font color="#808080">34</font>&nbsp;<font color="#000000">}</font></code>
+<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.setLastName</font><font color="#000000">(</font><font color="#2a00ff">&#34;&#34;</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">33</font>&nbsp;<font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
@@ -504,23 +504,21 @@ And here's ActionBeanPage.beanprops:</p>
 </p>
 <pre>	# Actions Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: firstName, lastName, action.clearLastName,
 			operand1, operand2, result, -number;
 	}</pre><p>
 </p>
 <p>
-Note the &quot;actions&quot; parameter. This defines the actions available from your Page (or whatever component the form is embedded in). The action name corresponds precisely to the method name in the Page. Every action method must have the following method signature:</p>
+Note the methods in ActionBeanPage.java: save, cancel, and clearLastName. These methods define the actions available from your Page (or whatever component the form is embedded in). By default, the action's label is derived from the method name. Every action method must have the following method signature:</p>
 <p>
 </p>
-<pre>    public void actionName(AjaxRequestTarget target, Form form, Object bean) 
+<pre>    public void actionName(AjaxRequestTarget target, Form form, &lt;BeanClassName&gt; bean) 
     { 
         ...
     }</pre><p>
 </p>
 <p>
-The target parameter normally null. It is only non-null if you specify the &quot;ajax: true&quot; parameter to the action. The Wicket Form is always passed in &quot;form&quot; and the bean that the action applies to is in &quot;bean&quot;.  </p>
+The target parameter normally null. The Wicket Form is always passed in &quot;form&quot; and the bean that the action applies to is in &quot;bean&quot;. <em>BeanClassName</em> is the class name of the bean to which the action will apply. Optionally this may be &quot;Object&quot; if the action should apply to all beans on your page. WWB only automatically matches actions whose &quot;bean&quot; parameter type matches the bean in question or Object. </p>
 <p>
 </p>
 <p>
@@ -533,6 +531,21 @@ This configuration yeilds the following page:</p>
 Since the save and cancel actions are not referenced anywhere else in the beanprops file, WWB assumes that they are global actions for the Page. However, the clearLastName action is referenced in the &quot;props&quot; parameter. It is referenced using the &quot;action.&quot; prefix to distinguish it from a regular bean property. In this example, we placed the action near the lastName property since they are related. When you click the Clear Last Name button, the last name field will clear out.</p>
 <p>
 </p>
+<p>
+You can also specify an &quot;actions&quot; parameter in the beanprops file to customize an action. Above, we said that AjaxRequestTarget is normally null when the action is called. If you further customize the action as shown here:</p>
+<p>
+</p>
+<pre>	# Actions Example
+	TestBean {
+		actions: save{ ajax: true };
+		props: firstName, lastName, action.clearLastName,
+			operand1, operand2, result, -number;
+	}</pre><p>
+</p>
+<p>
+it will cause the save button to be invoked using Ajax. Hence, the AjaxRequestTarget parameter will be non-null when the action is invoked. You can also do other action customizations, as we'll see later. You can remove actions by prefixing the action name with a dash '-'.</p>
+<p>
+</p>
 <h1>Tabs</h1>
 <p>
 </p>
@@ -542,8 +555,6 @@ There may be many times when you have more information for a form than can fit o
 </p>
 <pre>	# Tabs Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: -number;
 		
 		tabs: 
@@ -565,8 +576,6 @@ Alternately we could configure all of the properties in TestBean's &quot;props&q
  </p>
 <pre>	# Tabs Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: firstName, lastName, action.clearLastName, -number;
 		
 		tabs: 
@@ -962,18 +971,17 @@ You may encounter times when you need to manage collections of nested beans. By 
 <font color="#808080">19</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">BeanForm</font><font color="#000000">(</font><font color="#2a00ff">&#34;beanForm&#34;</font><font color="#000000">,&nbsp;bean,&nbsp;meta</font><font color="#000000">)&nbsp;)</font><font color="#000000">;</font><br/>
 <font color="#808080">20</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
 <font color="#808080">21</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
-<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">addLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;bean</font><font color="#000000">)</font><br/>
+<font color="#808080">22</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">addLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Invoice&nbsp;bean</font><font color="#000000">)</font><br/>
 <font color="#808080">23</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
 <font color="#808080">24</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>this</b></font><font color="#000000">.bean.getLines</font><font color="#000000">()</font><font color="#000000">.add</font><font color="#000000">(&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">InvoiceLine</font><font color="#000000">()&nbsp;)</font><font color="#000000">;</font><br/>
 <font color="#808080">25</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
 <font color="#808080">26</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">removeLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;Object&nbsp;rowBean</font><font color="#000000">)</font><br/>
+<font color="#808080">27</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#7f0055"><b>public&nbsp;</b></font><font color="#7f0055"><b>void&nbsp;</b></font><font color="#000000">removeLine</font><font color="#000000">(</font><font color="#000000">AjaxRequestTarget&nbsp;target,&nbsp;Form&nbsp;form,&nbsp;InvoiceLine&nbsp;line</font><font color="#000000">)</font><br/>
 <font color="#808080">28</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
-<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">InvoiceLine&nbsp;line&nbsp;=&nbsp;</font><font color="#000000">(</font><font color="#000000">InvoiceLine</font><font color="#000000">)</font><font color="#000000">rowBean;</font><br/>
-<font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.getLines</font><font color="#000000">()</font><font color="#000000">.remove</font><font color="#000000">(</font><font color="#000000">line</font><font color="#000000">)</font><font color="#000000">;</font><br/>
-<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Removed&nbsp;line&nbsp;with&nbsp;item&nbsp;code&nbsp;&#34;&nbsp;</font><font color="#000000">+&nbsp;</font><font color="#000000">(</font><font color="#000000">line.getItemCode</font><font color="#000000">()&nbsp;</font><font color="#000000">==&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">?&nbsp;</font><font color="#2a00ff">&#34;&lt;empty&gt;&#34;&nbsp;</font><font color="#000000">:&nbsp;line.getItemCode</font><font color="#000000">())&nbsp;)</font><font color="#000000">;</font><br/>
-<font color="#808080">32</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
-<font color="#808080">33</font>&nbsp;<font color="#000000">}</font></code>
+<font color="#808080">29</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">bean.getLines</font><font color="#000000">()</font><font color="#000000">.remove</font><font color="#000000">(</font><font color="#000000">line</font><font color="#000000">)</font><font color="#000000">;</font><br/>
+<font color="#808080">30</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">info</font><font color="#000000">(</font><font color="#2a00ff">&#34;Removed&nbsp;line&nbsp;with&nbsp;item&nbsp;code&nbsp;&#34;&nbsp;</font><font color="#000000">+&nbsp;</font><font color="#000000">(</font><font color="#000000">line.getItemCode</font><font color="#000000">()&nbsp;</font><font color="#000000">==&nbsp;</font><font color="#7f0055"><b>null&nbsp;</b></font><font color="#000000">?&nbsp;</font><font color="#2a00ff">&#34;&lt;empty&gt;&#34;&nbsp;</font><font color="#000000">:&nbsp;line.getItemCode</font><font color="#000000">())&nbsp;)</font><font color="#000000">;</font><br/>
+<font color="#808080">31</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">}</font><br/>
+<font color="#808080">32</font>&nbsp;<font color="#000000">}</font></code>
     
    </td>
   <!-- end source code -->
@@ -1001,8 +1009,6 @@ This page references two beans <a href="workspace/WicketWebBeans/src/examples/wi
 </p>
 <pre>	# Table Bean Example
 	Invoice {
-		actions: addLine;
-		
 		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
 			shipToAddress{colspan: 3},
 			action.addLine{colspan: 3},
@@ -1010,8 +1016,6 @@ This page references two beans <a href="workspace/WicketWebBeans/src/examples/wi
 	}
 	
 	InvoiceLine {
-		actions: removeLine;
-		
 		props: action.removeLine{labelImage: &quot;remove.gif&quot;},
 			quantity, itemCode, cost, total; 
 	}
@@ -1225,7 +1229,7 @@ Next, we need to register the CountryField type so that whenever WWB sees a Coun
 <font color="#808080">11</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">{</font><br/>
 <font color="#808080">12</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Address&nbsp;bean&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">Address</font><font color="#000000">()</font><font color="#000000">;</font><br/>
 <font color="#808080">13</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>
-<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;Register&nbsp;the&nbsp;CountryField&nbsp;for&nbsp;the&nbsp;Country&nbsp;class.</font><br/>
+<font color="#808080">14</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#3f7f5f">//&nbsp;Register&nbsp;the&nbsp;ModelField&nbsp;for&nbsp;the&nbsp;Country&nbsp;class.</font><br/>
 <font color="#808080">15</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">ComponentRegistry&nbsp;registry&nbsp;=&nbsp;</font><font color="#7f0055"><b>new&nbsp;</b></font><font color="#000000">ComponentRegistry</font><font color="#000000">()</font><font color="#000000">;</font><br/>
 <font color="#808080">16</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">registry.register</font><font color="#000000">(</font><font color="#000000">Country.class,&nbsp;CountryField.</font><font color="#7f0055"><b>class</b></font><font color="#000000">)</font><font color="#000000">;</font><br/>
 <font color="#808080">17</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><br/>

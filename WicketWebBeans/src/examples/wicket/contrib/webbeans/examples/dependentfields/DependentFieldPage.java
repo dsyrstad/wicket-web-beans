@@ -1,20 +1,19 @@
-package wicket.contrib.webbeans.examples.customfields;
+package wicket.contrib.webbeans.examples.dependentfields;
 
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ComponentRegistry;
 import wicket.markup.html.WebPage;
 
-public class CustomFieldPage extends WebPage
+public class DependentFieldPage extends WebPage
 {
-    public CustomFieldPage()
+    public DependentFieldPage()
     {
-        Address bean = new Address();
-        
-        // Register the ModelField for the Country class.
+        // Register the ModelField for the Model enum class.
         ComponentRegistry registry = new ComponentRegistry();
-        registry.register(Country.class, CountryField.class);
+        registry.register(Model.class, ModelField.class);
         
+        Car bean = new Car();
         BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry, false);
         add( new BeanForm("beanForm", bean, meta) );
     }

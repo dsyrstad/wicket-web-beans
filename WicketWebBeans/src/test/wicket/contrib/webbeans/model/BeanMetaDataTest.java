@@ -83,9 +83,9 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", false, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", false, null, null, "Add Row", null, "listOfBeans"),
+            new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
             new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
@@ -105,13 +105,13 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("description", false, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", false, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", false, null, null, "Popup Bean", null, "nameInfo"),
+            new ElementInfo("action.cancel", false, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", false, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", false, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", false, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", false, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", false, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", false, null, null, "Time Only", null, "nameInfo"),
-            new ElementInfo("action.cancel", false, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", false, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -222,9 +222,9 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("Bean View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
+            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
@@ -244,13 +244,13 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
+            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", true, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", true, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", true, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", true, null, null, "Time Only", null, "nameInfo"),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -262,8 +262,8 @@ public class BeanMetaDataTest extends TestCase
             ++elementIdx;
         }
         
-        // action.save (second element) should have a parameter of colspan: 4
-        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
+        // action.save (first element) should have a parameter of colspan: 4
+        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(0).getIntegerParameter("colspan"));
         
         List<TabMetaData> tabs = beanMetaData.getTabs();
         assertEquals(3, tabs.size());
@@ -299,9 +299,9 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("Bean Popup View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
+            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
@@ -320,13 +320,13 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
+            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", true, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", true, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", true, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", true, null, null, "Time Only", null, "nameInfo"),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -338,8 +338,8 @@ public class BeanMetaDataTest extends TestCase
             ++elementIdx;
         }
         
-        // action.save (second element) should have a parameter of colspan: 4
-        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
+        // action.save (first element) should have a parameter of colspan: 4
+        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(0).getIntegerParameter("colspan"));
         
         List<TabMetaData> tabs = beanMetaData.getTabs();
         assertEquals(3, tabs.size());

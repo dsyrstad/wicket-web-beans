@@ -29,28 +29,28 @@ public class ExpPage2 extends WebPage
         add(new BeanForm("beanForm", bean, meta));
     }
     
-    public void save(AjaxRequestTarget target, Form form, Object bean)
+    public void save(AjaxRequestTarget target, Form form, TestBean bean)
     {
         info("Saved - thank you");
     }
 
-    public void cancel(AjaxRequestTarget target, Form form, Object bean)
+    public void cancel(AjaxRequestTarget target, Form form, TestBean bean)
     {
         info("Canceled - thank you");
     }
 
-    public void deleteRow(AjaxRequestTarget target, Form form, Object rowBean)
+    public void deleteRow(AjaxRequestTarget target, Form form, TestBean2 rowBean)
     {
         info("Deleted row " + rowBean);
         bean.getBeans().remove(rowBean);
     }
 
-    public void addRow(AjaxRequestTarget target, Form form, Object rowBean)
+    public void addRow(AjaxRequestTarget target, Form form, TestBean rowBean)
     {
         bean.getBeans().add( new TestBean2() );
     }
 
-    public void doIt(AjaxRequestTarget target, Form form, Object rowBean)
+    public void doIt(AjaxRequestTarget target, Form form, TestBean rowBean)
     {
         info("You did it");
     }

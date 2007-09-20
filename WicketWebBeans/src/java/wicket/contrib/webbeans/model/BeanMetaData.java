@@ -32,13 +32,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import wicket.Component;
+import wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.actions.BeanActionButton;
 import wicket.contrib.webbeans.fields.EmptyField;
+import wicket.markup.html.form.Form;
 import wicket.model.IModel;
 
 /**
@@ -259,15 +262,13 @@ public class BeanMetaData extends MetaData implements Serializable
         hasAddPropertyChangeListenerMethod = getAddPropertyChangeListenerMethod() != null;
         hasRemovePropertyChangeListenerMethod = getRemovePropertyChangeListenerMethod() != null;
         
-        // Deduce actions from the component, only if not a child bean.
-        if (!isChildBean) {
-            List<Method> actionMethods = getActionMethods(component.getClass());
-            for (Method method : actionMethods) {
-                String name = method.getName();
-                ElementMetaData actionMeta = new ElementMetaData(this, ACTION_PROPERTY_PREFIX + name, createLabel(name), null);
-                actionMeta.setAction(true);
-                elements.add(actionMeta);
-            }
+        // Deduce actions from the component.
+        List<Method> actionMethods = getActionMethods(component.getClass());
+        for (Method method : actionMethods) {
+            String name = method.getName();
+            ElementMetaData actionMeta = new ElementMetaData(this, ACTION_PROPERTY_PREFIX + name, createLabel(name), null);
+            actionMeta.setAction(true);
+            elements.add(actionMeta);
         }
         
         // Create defaults based on the bean itself.
@@ -364,24 +365,17 @@ public class BeanMetaData extends MetaData implements Serializable
      * 
      * @return an List of action methods, possibly empty.
      */
-    private static List<Method> getActionMethods(Class<? extends Component> aClass)
+    private List<Method> getActionMethods(Class<? extends Component> aClass)
     {
         List<Method> result = new ArrayList<Method>();
         for (Method method : aClass.getMethods()) {
             Class<?>[] params = method.getParameterTypes();
             Class<?> returnType = method.getReturnType();
-            if (returnType.equals(Void.TYPE) && params.length == BeanActionButton.ACTION_PARAMS.length) {
-                boolean isAction = true;
-                for (int i = 0; i < BeanActionButton.ACTION_PARAMS.length; i++) {
-                    if (BeanActionButton.ACTION_PARAMS[i] != params[i]) {
-                        isAction = false;
-                        break;
-                    }
-                }
-                
-                if (isAction) {
-                    result.add(method);
-                }
+            if (returnType.equals(Void.TYPE) && params.length == 3 &&
+                params[0] == AjaxRequestTarget.class &&
+                params[1] == Form.class &&
+                (params[2] == beanClass || params[2] == Object.class)) {
+                result.add(method);
             }
         }
         

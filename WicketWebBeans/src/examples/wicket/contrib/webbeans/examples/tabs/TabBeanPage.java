@@ -16,19 +16,18 @@ public class TabBeanPage extends WebPage
         add( new BeanForm("beanForm", bean, meta) );
     }
 
-    public void save(AjaxRequestTarget target, Form form, Object bean)
+    public void save(AjaxRequestTarget target, Form form, TestBean bean)
     {
         info("Saved - thank you");
     }
 
-    public void cancel(AjaxRequestTarget target, Form form, Object bean)
+    public void cancel(AjaxRequestTarget target, Form form, TestBean bean)
     {
         info("Canceled - thank you");
     }
 
-    public void clearLastName(AjaxRequestTarget target, Form form, Object bean)
+    public void clearLastName(AjaxRequestTarget target, Form form, TestBean bean)
     {
-        TestBean testBean = (TestBean)bean;
-        testBean.setLastName("");
+        bean.setLastName("");
     }
 }

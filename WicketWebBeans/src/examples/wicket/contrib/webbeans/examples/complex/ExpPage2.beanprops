@@ -16,8 +16,9 @@ TestBean {
  	# These can be referenced as "action.{action-method-name}" in props. 
  	# Actions not included in the "props" parameter are considered to be "global" actions
 	# that appear outside of any tabs.
+	# These are normally deduced automatically.
 		
-	actions: -deleteRow;
+	#actions:  ;
 
 	# This is a list of properties that may have parameters and are presented on the page in the order specified below. 
 	# Any other properties not specified are presented at the end of the page. 
@@ -85,7 +86,6 @@ TestBean[popupView extends view] {
 }
 
 TestBean2 {
-	actions: deleteRow;
 	props: 
 		action.deleteRow{labelImage: "remove.gif"},
 		selected{label: X},

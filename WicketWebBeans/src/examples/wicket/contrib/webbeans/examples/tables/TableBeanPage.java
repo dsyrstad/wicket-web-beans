@@ -19,14 +19,13 @@ public class TableBeanPage extends WebPage
         add( new BeanForm("beanForm", bean, meta) );
     }
     
-    public void addLine(AjaxRequestTarget target, Form form, Object bean)
+    public void addLine(AjaxRequestTarget target, Form form, Invoice bean)
     {
         this.bean.getLines().add( new InvoiceLine() );
     }
 
-    public void removeLine(AjaxRequestTarget target, Form form, Object rowBean)
+    public void removeLine(AjaxRequestTarget target, Form form, InvoiceLine line)
     {
-        InvoiceLine line = (InvoiceLine)rowBean;
         bean.getLines().remove(line);
         info("Removed line with item code " + (line.getItemCode() == null ? "<empty>" : line.getItemCode()) );
     }

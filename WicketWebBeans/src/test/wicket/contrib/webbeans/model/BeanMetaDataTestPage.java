@@ -28,22 +28,23 @@ public class BeanMetaDataTestPage extends WebPage
     {
     }
     
-    public void save(AjaxRequestTarget target, Form form, Object bean)
+    public void save(AjaxRequestTarget target, Form form, BeanMetaDataTestBean bean)
     {
     }
 
-    public void cancel(AjaxRequestTarget target, Form form, Object bean)
+    public void cancel(AjaxRequestTarget target, Form form, BeanMetaDataTestBean bean)
     {
     }
 
-    public void deleteRow(AjaxRequestTarget target, Form form, Object rowBean)
+    public void deleteRow(AjaxRequestTarget target, Form form, BeanMetaDataTestBean2 rowBean)
     {
     }
 
-    public void addRow(AjaxRequestTarget target, Form form, Object rowBean)
+    public void addRow(AjaxRequestTarget target, Form form, BeanMetaDataTestBean rowBean)
     {
     }
 
+    // Test generic Object
     public void doIt(AjaxRequestTarget target, Form form, Object rowBean)
     {
     }
