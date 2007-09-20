@@ -13,6 +13,7 @@ import wicket.markup.html.form.Form;
 public class ExpPage2 extends WebPage
 {
     private TestBean bean = new TestBean();
+    private BeanForm beanForm;
     
     public ExpPage2()
     {
@@ -26,11 +27,16 @@ public class ExpPage2 extends WebPage
         
         BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
 
-        add(new BeanForm("beanForm", bean, meta));
+        beanForm = new BeanForm("beanForm", bean, meta);
+        add(beanForm);
     }
     
     public void save(AjaxRequestTarget target, Form form, TestBean bean)
     {
+        if (!beanForm.validateRequired()) {
+            return; // Errors
+        }
+        
         info("Saved - thank you");
     }
 

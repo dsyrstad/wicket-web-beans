@@ -55,6 +55,7 @@ import wicket.markup.html.panel.FeedbackPanel;
 import wicket.markup.html.panel.Panel;
 import wicket.model.Model;
 import wicket.model.PropertyModel;
+import wicket.util.string.Strings;
 
 /**
  * Generic component for presenting a bean form. Supports the following parameter: <p>
@@ -206,6 +207,21 @@ public class BeanForm extends Panel
         }
         
         return false;
+    }
+    
+    /**
+     * Rather than using Wicket's required field validation, which doesn't play well with Ajax and forms,
+     * allow validation of fields on actions. User must call this from the action method.
+     * Adds errors to the page if empty required fields are found. 
+     *
+     * @return true if validation was successful, else false if errors were found.
+     */
+    public boolean validateRequired()
+    {
+        RequiredFieldValidator validator = new RequiredFieldValidator();
+        visitChildren(AbstractField.class, validator);
+        
+        return !validator.errorsFound;
     }
     
     /**
@@ -550,4 +566,24 @@ public class BeanForm extends Panel
             }
         }
     }
+    
+    /**
+     * Validates required fields on the form and sets an error message on the component if necessary.
+     */
+    private static final class RequiredFieldValidator implements IVisitor 
+    {
+        boolean errorsFound = false;
+        
+        @Override
+        public Object component(Component component)
+        {
+            AbstractField field = (AbstractField)component;
+            if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
+                field.error(field.getElementMetaData().getLabel() + " is required."); // TODO I18N
+                errorsFound = true;
+            }
+            
+            return CONTINUE_TRAVERSAL;
+        }
+    } 
 }

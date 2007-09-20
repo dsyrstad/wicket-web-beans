@@ -36,6 +36,9 @@ abstract public class AbstractField extends Panel implements Field
 {
     private static final long serialVersionUID = -5452855853289381110L;
     
+    // Used by several sub-classes.
+    public static final String PARAM_REQUIRED = "required";
+    
     private ElementMetaData elementMetaData;
 
     /**
@@ -51,9 +54,19 @@ abstract public class AbstractField extends Panel implements Field
         super(id, model);
         this.elementMetaData = metaData;
         
+        metaData.consumeParameter(PARAM_REQUIRED);
+        
         // Allow for refreshing of the field via Ajax.
         setOutputMarkupId(true);
         setRenderBodyOnly(false);
+    }
+    
+    /**
+     * @return true if the field's metadata says that it is a required field.
+     */
+    public boolean isRequiredField()
+    {
+        return elementMetaData.getBooleanParameter(PARAM_REQUIRED);
     }
     
     /**

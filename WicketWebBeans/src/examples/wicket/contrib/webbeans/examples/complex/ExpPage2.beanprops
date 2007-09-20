@@ -34,11 +34,11 @@ TestBean {
 	# For action parameters, see BeanActionButton.
 	props: 
 		action.save{colspan: 3},
-		firstName,
-		lastName,
+		firstName{required: true},
+		lastName{required: true},
 		EMPTY,
 		activePrimitive,
-		color,
+		color{required: true},
 		# Note that only the base class name for fieldType is specified, not the package (wicket.contrib.beancomponents.fields) which is optional.
 		# This class must be in the ComponentRegistry for this to work. Otherwise, you can explicitly specify the package name. 
 		inlineBean{fieldType: BeanInlineField; colspan: 3},

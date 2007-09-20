@@ -37,7 +37,9 @@ The target parameter may be null for non-Ajax requests.
 
    * *elementType* - For Collections, elementType is the type of the elements contained within the collection. By default, WWB automatically deduces the element type from the collection if it is not null and not empty. In this case, elementType is detected from the first element of the collection. Otherwise, you can use this parameter to explicitly specify the type.
 
-   * *colspan* - Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details. 
+   * *colspan* - Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
+   
+   * *required* - Either "true" or "false" to tell WWB whether the field is required. Note that you must call !BeanForm.validateRequired() in your action method to have the validation occur. 
 
 Actions (action.action-name) additionally support the following parameters (supported by !BeanActionButton):
 

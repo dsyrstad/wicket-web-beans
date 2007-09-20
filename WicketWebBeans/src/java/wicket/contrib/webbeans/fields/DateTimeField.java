@@ -41,14 +41,14 @@ import wicket.util.convert.IConverter;
 import wicket.util.convert.converters.DateConverter;
 
 /**
- * Date/Time Field component. Implemented as a text field combined with a DatePicker. <p>
+ * Date/Time Field component. Implemented as a text field combined with a DatePicker.
+ * Allows boolean "required" parameter to determine if field is required.  
+ * <p>
  * 
  * @author Dan Syrstad
  */
 public class DateTimeField extends AbstractField
 {
-    // TODO Make Locale specific - or configurable. This is ISO Format
-    // TODO Look for "DateTimeField.dateFmt" in Localizer.
     public static final String DATE_FMT_STR = "yyyy-MM-dd";
     public static final String TIME_FMT_STR = "HH:mm";
     public static final String DATE_TIME_FMT_STR = DATE_FMT_STR + ' ' + TIME_FMT_STR;
