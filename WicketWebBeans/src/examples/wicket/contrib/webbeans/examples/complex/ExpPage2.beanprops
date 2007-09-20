@@ -17,7 +17,7 @@ TestBean {
  	# Actions not included in the "props" parameter are considered to be "global" actions
 	# that appear outside of any tabs.
 		
-	actions: save,cancel,doIt,addRow;
+	actions: -deleteRow;
 
 	# This is a list of properties that may have parameters and are presented on the page in the order specified below. 
 	# Any other properties not specified are presented at the end of the page. 

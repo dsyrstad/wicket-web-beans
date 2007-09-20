@@ -40,7 +40,7 @@ import wicket.markup.html.form.Form;
  */
 public class BeanActionButton extends BeanSubmitButton
 {
-    public Class[] ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
+    public static final Class[] ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
     
     private ElementMetaData element;
     

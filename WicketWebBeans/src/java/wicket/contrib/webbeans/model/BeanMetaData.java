@@ -32,9 +32,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import wicket.Component;
+import wicket.contrib.webbeans.actions.BeanActionButton;
 import wicket.contrib.webbeans.fields.EmptyField;
 import wicket.model.IModel;
 
@@ -52,6 +55,8 @@ import wicket.model.IModel;
  *      java.util.Date and those classes deriving from it, and java.util.Lists are pre-configured.
  * </li>
  * <li>All JavaBean properties are displayed.
+ * </li>
+ * <li>Actions are derived from action methods defined on the component.
  * </li>
  * <li>All fields are editable if viewOnly (see constructor) is false. 
  *      Otherwise they are all view-only.
@@ -91,9 +96,9 @@ public class BeanMetaData extends MetaData implements Serializable
     private static Logger logger = Logger.getLogger(BeanMetaData.class.getName());
 
     private static final Class[] PROP_CHANGE_LISTENER_ARG = new Class[] { PropertyChangeListener.class };
-    /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */ 
-    private static final Map<String, List<Bean>> cachedBeanProps = new HashMap<String, List<Bean>>(); 
-    
+    /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */
+    private static final Map<String, List<Bean>> cachedBeanProps = new HashMap<String, List<Bean>>();
+
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_DISPLAYED = "displayed";
     public static final String PARAM_TABS = "tabs";
@@ -103,21 +108,20 @@ public class BeanMetaData extends MetaData implements Serializable
 
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
-    
+
     private Class beanClass;
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
     private boolean isChildBean;
-    
+
     // List of all properties.
     private List<ElementMetaData> elements = new ArrayList<ElementMetaData>();
     private List<TabMetaData> tabs = new ArrayList<TabMetaData>();
-    
+
     private boolean hasAddPropertyChangeListenerMethod;
     private boolean hasRemovePropertyChangeListenerMethod;
-    
-    
+
     /**
      * Construct a BeanMetaData. See class documentation for a description of the Localizer
      * properties used.
@@ -130,11 +134,12 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      */
-    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry, boolean viewOnly)
+    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry,
+                    boolean viewOnly)
     {
         this(beanClass, context, component, componentRegistry, viewOnly, false);
     }
-    
+
     /**
      * Construct a BeanMetaData. See class documentation for a description of the Localizer
      * properties used.
@@ -148,12 +153,13 @@ public class BeanMetaData extends MetaData implements Serializable
      *  Localizer configuration.
      * @param isChildBean true if this bean is a child of another bean.
      */
-    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry, boolean viewOnly, boolean isChildBean)
+    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry,
+                    boolean viewOnly, boolean isChildBean)
     {
         if (beanClass.isAssignableFrom(Serializable.class)) {
             throw new IllegalArgumentException("bean must be Serializable. It is " + beanClass);
         }
-        
+
         this.beanClass = beanClass;
         this.context = context;
         this.component = component;
@@ -163,15 +169,15 @@ public class BeanMetaData extends MetaData implements Serializable
         else {
             this.componentRegistry = componentRegistry;
         }
-        
+
         this.isChildBean = isChildBean;
-        
+
         setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
         setParameter(PARAM_DISPLAYED, "true");
-        setParameter(PARAM_LABEL, createLabel(beanClass.getSimpleName()) );
+        setParameter(PARAM_LABEL, createLabel(beanClass.getSimpleName()));
 
         init();
-        
+
         consumeParameter(PARAM_LABEL);
         consumeParameter(PARAM_ACTIONS);
         consumeParameter(PARAM_PROPS);
@@ -193,23 +199,23 @@ public class BeanMetaData extends MetaData implements Serializable
         if (!super.areAllParametersConsumed("Bean " + beanClass.getName(), unconsumedMsgs)) {
             return false;
         }
-        
+
         // Make sure all elements and tabs have their parameters consumed.
         for (ElementMetaData element : tabMetaData == null ? getDisplayedElements() : getTabElements(tabMetaData)) {
             if (!element.areAllParametersConsumed("Property " + element.getPropertyName(), unconsumedMsgs)) {
                 return false;
             }
         }
-        
+
         for (TabMetaData tab : tabMetaData == null ? tabs : Collections.singletonList(tabMetaData)) {
             if (!tab.areAllParametersConsumed("Tab " + tab.getId(), unconsumedMsgs)) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Logs a warning if any parameter specified have not been consumed for a specific tab, or all tabs.
      * 
@@ -224,7 +230,7 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
     }
-    
+
     private Method getAddPropertyChangeListenerMethod()
     {
         try {
@@ -252,6 +258,17 @@ public class BeanMetaData extends MetaData implements Serializable
         // Check if bean supports PropertyChangeListeners.
         hasAddPropertyChangeListenerMethod = getAddPropertyChangeListenerMethod() != null;
         hasRemovePropertyChangeListenerMethod = getRemovePropertyChangeListenerMethod() != null;
+        
+        // Deduce actions from the component, only if not a child bean.
+        if (!isChildBean) {
+            List<Method> actionMethods = getActionMethods(component.getClass());
+            for (Method method : actionMethods) {
+                String name = method.getName();
+                ElementMetaData actionMeta = new ElementMetaData(this, ACTION_PROPERTY_PREFIX + name, createLabel(name), null);
+                actionMeta.setAction(true);
+                elements.add(actionMeta);
+            }
+        }
         
         // Create defaults based on the bean itself.
         PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(beanClass);
@@ -339,7 +356,38 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         });
     }
-    
+
+    /**
+     * Find action methods for a class. 
+     *
+     * @param aClass the class.
+     * 
+     * @return an List of action methods, possibly empty.
+     */
+    private static List<Method> getActionMethods(Class<? extends Component> aClass)
+    {
+        List<Method> result = new ArrayList<Method>();
+        for (Method method : aClass.getMethods()) {
+            Class<?>[] params = method.getParameterTypes();
+            Class<?> returnType = method.getReturnType();
+            if (returnType.equals(Void.TYPE) && params.length == BeanActionButton.ACTION_PARAMS.length) {
+                boolean isAction = true;
+                for (int i = 0; i < BeanActionButton.ACTION_PARAMS.length; i++) {
+                    if (BeanActionButton.ACTION_PARAMS[i] != params[i]) {
+                        isAction = false;
+                        break;
+                    }
+                }
+                
+                if (isAction) {
+                    result.add(method);
+                }
+            }
+        }
+        
+        return result;
+    }
+
     /**
      * Gets the base class name of a Class.
      * 
@@ -347,7 +395,7 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @return the base class name (the name without the package name).
      */
-    private static String getBaseClassName(Class aClass) 
+    private static String getBaseClassName(Class aClass)
     {
         String baseClassName = aClass.getName();
         int idx = baseClassName.lastIndexOf('.');
@@ -357,7 +405,7 @@ public class BeanMetaData extends MetaData implements Serializable
 
         return baseClassName;
     }
-    
+
     /**
      * Process bean ASTs that apply to this bean. 
      *
@@ -372,23 +420,23 @@ public class BeanMetaData extends MetaData implements Serializable
         String currContext = context;
         // Note: Limit cyclical specs (e.g., A extends B, B extends A). This also limits the maximum hierarchy depth to the same 
         // amount, which should be plenty.
-        for (int limit = 0; limit < 20; ++limit) { 
+        for (int limit = 0; limit < 20; ++limit) {
             Bean bean = getBean(beans, currContext);
             beansHier.add(0, bean);
             if (currContext == null) {
                 // Just processed the default context, so stop.
                 break;
             }
-            
+
             currContext = bean.getExtendsContext();
         }
-        
+
         // Apply beans in order from highest to lowest. The default context will always be first.
         for (Bean bean : beansHier) {
             applyBean(bean);
         }
     }
-    
+
     /**
      * Applies a Bean AST to this meta data.
      *
@@ -397,13 +445,13 @@ public class BeanMetaData extends MetaData implements Serializable
     private void applyBean(Bean bean)
     {
         // Process actions first.
-        for (Parameter param :  bean.getParameters()) {
+        for (Parameter param : bean.getParameters()) {
             if (param.getName().equals(PARAM_ACTIONS)) {
                 applyActions(param.getValues());
             }
         }
-        
-        for (Parameter param :  bean.getParameters()) {
+
+        for (Parameter param : bean.getParameters()) {
             String name = param.getName();
             if (name.equals(PARAM_PROPS)) {
                 applyProps(param.getValues(), null);
@@ -418,22 +466,23 @@ public class BeanMetaData extends MetaData implements Serializable
                 // Just handle a regular single-valued parameter.
                 List<ParameterValue> values = param.getValues();
                 if (values.size() != 1) {
-                    throw new RuntimeException("Parameter " + name + " on bean " + bean.getName() + " does not specify exactly one value.");
+                    throw new RuntimeException("Parameter " + name + " on bean " + bean.getName()
+                                    + " does not specify exactly one value.");
                 }
-                
+
                 String value = values.get(0).getValue(component);
                 setParameter(name, value);
             }
         }
 
         // Process tabs last.
-        for (Parameter param :  bean.getParameters()) {
+        for (Parameter param : bean.getParameters()) {
             if (param.getName().equals(PARAM_TABS)) {
                 applyTabs(param.getValues());
             }
         }
     }
-    
+
     /**
      * Applies a Bean's "props" to each ElementMetaData.
      *
@@ -450,7 +499,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 elementName = elementName.substring(1);
                 removeElement = true;
             }
-            
+
             ElementMetaData element = findElementAddPseudos(elementName);
             if (removeElement) {
                 elements.remove(element);
@@ -461,14 +510,14 @@ public class BeanMetaData extends MetaData implements Serializable
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
                     element.setOrder(order++);
                 }
-                
+
                 if (tabId != null) {
                     element.setTabId(tabId);
                 }
             }
         }
     }
-    
+
     /**
      * Applies a Bean's "actions" by adding ElementMetaData.
      *
@@ -484,14 +533,14 @@ public class BeanMetaData extends MetaData implements Serializable
                 elementName = elementName.substring(1);
                 removeElement = true;
             }
-            
+
             String actionName = ACTION_PROPERTY_PREFIX + elementName;
             ElementMetaData element = findElement(actionName);
             if (removeElement) {
                 if (element == null) {
                     throw new RuntimeException("Action " + actionName + " does not exist in exposed list of actions.");
                 }
-                
+
                 elements.remove(element);
             }
             else {
@@ -500,13 +549,13 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setAction(true);
                     elements.add(element);
                 }
-                
+
                 List<Parameter> elementParams = value.getParameters();
                 element.applyBeanProps(elementParams);
             }
         }
     }
-    
+
     /**
      * Applies a Bean's "tabs" by adding ElementMetaData.
      *
@@ -522,7 +571,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 tabName = tabName.substring(1);
                 removeTab = true;
             }
-            
+
             TabMetaData foundTab = null;
             for (TabMetaData tab : tabs) {
                 if (tab.getId().equals(tabName)) {
@@ -530,12 +579,12 @@ public class BeanMetaData extends MetaData implements Serializable
                     break;
                 }
             }
-            
+
             if (removeTab) {
                 if (foundTab == null) {
                     throw new RuntimeException("Tab " + tabName + " does not exist in exposed list of tabs.");
                 }
-                
+
                 tabs.remove(foundTab);
             }
             else {
@@ -543,13 +592,13 @@ public class BeanMetaData extends MetaData implements Serializable
                     foundTab = new TabMetaData(this, tabName, createLabel(tabName));
                     tabs.add(foundTab);
                 }
-                
+
                 List<Parameter> tabParams = value.getParameters();
                 foundTab.applyBeanProps(tabParams);
             }
         }
     }
-    
+
     /**
      * Gets the Bean from the list with the specified context.
      *
@@ -569,22 +618,21 @@ public class BeanMetaData extends MetaData implements Serializable
             String beanName = bean.getName();
             if (shortName.equals(beanName) || baseName.equals(beanName) || fullName.equals(beanName)) {
                 String beanContext = bean.getContext();
-                if ((context == null && beanContext == null) ||
-                    (context != null && context.equals(beanContext))) {
+                if ((context == null && beanContext == null) || (context != null && context.equals(beanContext))) {
                     return bean;
                 }
             }
         }
-        
+
         // Default context implicitly exists. Also, don't require the context to be 
         // explicitly specified for child beans.
         if (context == null || isChildBean) {
             return new Bean("", null, null, Collections.EMPTY_LIST);
         }
-        
+
         throw new RuntimeException("Bean context [" + context + "] does not exist.");
     }
-    
+
     /**
      * Finds the specified element in the list of all elements. Handles special
      * Pseudo property names (e.g., "EMPTY") by adding a new one to the list.
@@ -607,10 +655,11 @@ public class BeanMetaData extends MetaData implements Serializable
         else {
             prop = findElement(propertyName);
             if (prop == null) {
-                throw new RuntimeException("Property: " + propertyName + " does not exist in exposed list of properties.");
+                throw new RuntimeException("Property: " + propertyName
+                                + " does not exist in exposed list of properties.");
             }
         }
-        
+
         return prop;
     }
 
@@ -628,10 +677,10 @@ public class BeanMetaData extends MetaData implements Serializable
                 return prop;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Creates a human readable label from a Java identifier.
      * 
@@ -646,7 +695,7 @@ public class BeanMetaData extends MetaData implements Serializable
         if (idx < 0) {
             idx = identifier.lastIndexOf('$'); // Java nested classes.
         }
-        
+
         if (idx >= 0 && identifier.length() > 1) {
             identifier = identifier.substring(idx + 1);
         }
@@ -654,7 +703,7 @@ public class BeanMetaData extends MetaData implements Serializable
         if (identifier.length() == 0) {
             return "";
         }
-        
+
         char[] chars = identifier.toCharArray();
         StringBuffer buf = new StringBuffer(chars.length + 10);
 
@@ -675,12 +724,12 @@ public class BeanMetaData extends MetaData implements Serializable
 
         return buf.toString();
     }
-    
+
     public String getLabel()
     {
         return getParameter(PARAM_LABEL);
     }
-    
+
     /**
      * @return the tabs defined for this bean. There will always be at least one tab.
      */
@@ -700,10 +749,10 @@ public class BeanMetaData extends MetaData implements Serializable
                 elems.add(elem);
             }
         }
-        
+
         return elems;
     }
-    
+
     /**
      * @return a list of all displayed elements for a bean.
      */
@@ -711,7 +760,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         return elements;
     }
-    
+
     /**
      * Gets a list of actions that are not assigned to any particular placement within the bean.
      *
@@ -725,10 +774,10 @@ public class BeanMetaData extends MetaData implements Serializable
                 elems.add(elem);
             }
         }
-        
+
         return elems;
     }
-    
+
     /**
      * @return the bean class.
      */
@@ -736,7 +785,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         return beanClass;
     }
-    
+
     /**
      * @return the component.
      */
@@ -744,7 +793,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         return component;
     }
-    
+
     /**
      * @return the componentRegistry.
      */
@@ -752,7 +801,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         return componentRegistry;
     }
-    
+
     /**
      * @return the context.
      */
@@ -793,7 +842,7 @@ public class BeanMetaData extends MetaData implements Serializable
         Object bean = beanModel.getBean();
         if (bean != null) {
             try {
-                getAddPropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
+                getAddPropertyChangeListenerMethod().invoke(bean, new Object[] { listener });
             }
             catch (Exception e) {
                 throw new RuntimeException("Error adding PropertyChangeListener: ", e);
@@ -813,11 +862,11 @@ public class BeanMetaData extends MetaData implements Serializable
         if (!hasRemovePropertyChangeListenerMethod) {
             return;
         }
-        
+
         Object bean = beanModel.getObject(null);
         if (bean != null) {
             try {
-                getRemovePropertyChangeListenerMethod().invoke(bean, new Object[] { listener } );
+                getRemovePropertyChangeListenerMethod().invoke(bean, new Object[] { listener });
             }
             catch (Exception e) {
                 throw new RuntimeException("Error removing PropertyChangeListener: ", e);

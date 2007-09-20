@@ -1,7 +1,5 @@
 # Tabs Example
 TestBean {
-	actions: save, cancel, clearLastName;
-	
 	props: -number;
 	
 	tabs: 

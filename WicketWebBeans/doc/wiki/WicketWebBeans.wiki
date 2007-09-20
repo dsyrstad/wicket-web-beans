@@ -61,6 +61,7 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
    * All !JavaBean properties are displayed. Non-!JavaBean methods are not displayed. 
    * All fields are editable if viewOnly is false (see the !BeanMetaData constructor). Otherwise they are all view-only.
    * If a property is not writable, it is displayed view-only.
+   * Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.
    * All fields are displayed in alphabetical order by property name.
    * All fields are displayed in a single page. (Known as the "default tab", but the tab is hidden).
 
@@ -145,14 +146,12 @@ And here's ActionBeanPage.beanprops:
 <verbatim>
 	# Actions Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: firstName, lastName, action.clearLastName,
 			operand1, operand2, result, -number;
 	}
 </verbatim>
 
-Note the "actions" parameter. This defines the actions available from your Page (or whatever component the form is embedded in). The action name corresponds precisely to the method name in the Page. Every action method must have the following method signature:
+Note the methods in !ActionBeanPage.java: save, cancel, and clearLastName. These methods define the actions available from your Page (or whatever component the form is embedded in). By default, the action's label is derived from the method name. Every action method must have the following method signature:
 
 <verbatim>
     public void actionName(AjaxRequestTarget target, Form form, Object bean) 
@@ -161,12 +160,28 @@ Note the "actions" parameter. This defines the actions available from your Page 
     }
 </verbatim>
 
-The target parameter normally null. It is only non-null if you specify the "ajax: true" parameter to the action. The Wicket Form is always passed in "form" and the bean that the action applies to is in "bean".  
+The target parameter normally null. The Wicket Form is always passed in "form" and the bean that the action applies to is in "bean".  
 
 This configuration yeilds the following page:
 WWB:/doc/wiki/images/ActionBeanScreenshot.png
 
 Since the save and cancel actions are not referenced anywhere else in the beanprops file, WWB assumes that they are global actions for the Page. However, the clearLastName action is referenced in the "props" parameter. It is referenced using the "action." prefix to distinguish it from a regular bean property. In this example, we placed the action near the lastName property since they are related. When you click the Clear Last Name button, the last name field will clear out.
+
+You can also specify an "actions" parameter in the beanprops file to customize an action. Above, we said that !AjaxRequestTarget is normally null when the action is called. If you further customized the action as shown here:
+
+<verbatim>
+	# Actions Example
+	TestBean {
+		actions: save{ ajax: true };
+		props: firstName, lastName, action.clearLastName,
+			operand1, operand2, result, -number;
+	}
+</verbatim>
+
+it will cause the save button to be invoked using Ajax. Hence, the !AjaxRequestTarget parameter will be non-null when the action is invoked. You can also do other action customizations, as we'll see later. You can remove actions by prefixing the action name with a dash '-'.
+
+By convention, actions are only automatically created for the top-level bean. If they are desired on a nested bean, they must be explictly called-out in the "actions" parameter for the nested bean. We'll see an example of this later.
+
 
 ---+ Tabs
 
@@ -175,8 +190,6 @@ There may be many times when you have more information for a form than can fit o
 <verbatim>
 	# Tabs Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: -number;
 		
 		tabs: 
@@ -194,8 +207,6 @@ Alternately we could configure all of the properties in !TestBean's "props" if w
 <verbatim>
 	# Tabs Example
 	TestBean {
-		actions: save, cancel, clearLastName;
-		
 		props: firstName, lastName, action.clearLastName, -number;
 		
 		tabs: 
@@ -334,8 +345,7 @@ This page references two beans wicket.contrib.webbeans.examples.tables.Invoice a
 <verbatim>
 	# Table Bean Example
 	Invoice {
-		actions: addLine;
-		
+		actions: -removeLine;
 		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
 			shipToAddress{colspan: 3},
 			action.addLine{colspan: 3},
@@ -344,7 +354,6 @@ This page references two beans wicket.contrib.webbeans.examples.tables.Invoice a
 	
 	InvoiceLine {
 		actions: removeLine;
-		
 		props: action.removeLine{labelImage: "remove.gif"},
 			quantity, itemCode, cost, total; 
 	}
