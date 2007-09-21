@@ -333,7 +333,7 @@ Later you'll see how to implement custom/dynamic runtime enums where the values 
 
 ---+ Tables
 
-You may encounter times when you need to manage collections of nested beans. By default, WWB displays collections in an editable table. Let's look at an example: wicket.contrib.webbeans.examples.tables.TableBeanPage:
+You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: wicket.contrib.webbeans.examples.tables.TableBeanPage:
 
 Embed:wicket.contrib.webbeans.examples.tables.TableBeanPage
 

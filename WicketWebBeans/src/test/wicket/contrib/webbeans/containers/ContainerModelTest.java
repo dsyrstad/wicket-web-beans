@@ -17,12 +17,19 @@
 
 package wicket.contrib.webbeans.containers;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 import wicket.Component;
 import wicket.Page;
 import wicket.contrib.webbeans.fields.InputField;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.BeanPropertyModel;
+import wicket.extensions.markup.html.repeater.data.grid.DataGridView;
+import wicket.extensions.markup.html.repeater.refreshing.OddEvenItem;
+import wicket.model.IModel;
+import wicket.model.Model;
 import wicket.util.tester.ITestPageSource;
 import wicket.util.tester.WicketTester;
 
@@ -33,12 +40,6 @@ import wicket.util.tester.WicketTester;
  */
 public class ContainerModelTest extends TestCase
 {
-    /*
-     * TODO:
-     * - Lists from model. Should use BeanTablePanel.
-     * - No model, just bean.
-     */
-    
     /**
      * Construct a ContainerModelTest. 
      *
@@ -130,5 +131,101 @@ public class ContainerModelTest extends TestCase
 
         // Clear the refresh components.
         form.clearRefreshComponents();
+    }
+
+
+    /**
+     * Tests BeanForm with an IModel that represents a List. Form should use a BeanTablePanel rather
+     * than BeanGridPanel.
+     */
+    public void testBeanFormWithListModel()
+    {
+        WicketTester tester = new WicketTester();
+
+        final ContainerModelTestPage page = new ContainerModelTestPage();
+
+        SerializableBean[] beans = new SerializableBean[20];
+        for (int i = 0; i < beans.length; i++) {
+            beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
+        }
+        
+        IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
+        
+        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null, false);
+        BeanForm form = new BeanForm("beanForm", beanModel, meta);
+
+        page.add(form);
+        
+        tester.startPage(new ITestPageSource() {
+            public Page getTestPage()
+            {
+                return page;
+            }
+        });
+        
+        //tester.debugComponentTrees();
+
+        checkListPage(tester, page, beans);
+    }
+
+    /**
+     * Tests BeanForm with a List. Form should use a BeanTablePanel rather
+     * than BeanGridPanel.
+     */
+    public void testBeanFormWithList()
+    {
+        WicketTester tester = new WicketTester();
+
+        final ContainerModelTestPage page = new ContainerModelTestPage();
+
+        SerializableBean[] beans = new SerializableBean[20];
+        for (int i = 0; i < beans.length; i++) {
+            beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
+        }
+        
+        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null, false);
+        BeanForm form = new BeanForm("beanForm", Arrays.asList(beans), meta);
+
+        page.add(form);
+        
+        tester.startPage(new ITestPageSource() {
+            public Page getTestPage()
+            {
+                return page;
+            }
+        });
+        
+        //tester.debugComponentTrees();
+
+        checkListPage(tester, page, beans);
+    }
+
+    /**
+     * Checks a page that uses a List.
+     *
+     * @param tester
+     * @param page
+     * @param beans
+     */
+    private void checkListPage(WicketTester tester, final ContainerModelTestPage page, SerializableBean[] beans)
+    {
+        // Check that we have a data grid view and repeating fields.
+        String tablePath = "beanForm:f:tabs:t:rows";
+        tester.assertComponent(tablePath, DataGridView.class);
+
+        for (int i = 1; i <= 10; i++) {
+            String rowPath = tablePath + ":" + i;
+            tester.assertComponent(rowPath, OddEvenItem.class);
+
+            String firstCellPath = rowPath + ":cells:1:cell";
+            tester.assertComponent(firstCellPath, InputField.class);
+            Component nameField = tester.getComponentFromLastRenderedPage(firstCellPath);
+            assertEquals(beans[i - 1].getName(), nameField.getModel().getObject(page));
+
+            String secondCellPath = rowPath + ":cells:2:cell";
+            tester.assertComponent(secondCellPath, InputField.class);
+            Component serailNumField = tester.getComponentFromLastRenderedPage(secondCellPath);
+            assertEquals(beans[i - 1].getSerialNumber(), serailNumField.getModel().getObject(page));
+        }
     }
 }

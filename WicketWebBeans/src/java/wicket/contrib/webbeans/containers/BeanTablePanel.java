@@ -55,7 +55,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model.
+     * @param model the model, which must return a List for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -68,7 +68,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model.
+     * @param model the model, which must return a List for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -111,19 +111,19 @@ public class BeanTablePanel extends Panel
     {
         private static final long serialVersionUID = 6712923396580294568L;
 
-        private IModel collectionModel;
+        private IModel listModel;
         private BeanMetaData metaData;
         private SortParam lastSortParam = null;
         
-        public BeanSortableDataProvider(BeanMetaData metaData, IModel collectionModel)
+        public BeanSortableDataProvider(BeanMetaData metaData, IModel listModel)
         {
             this.metaData = metaData;
-            this.collectionModel = collectionModel;
+            this.listModel = listModel;
         }
         
         List getList()
         {
-            List list = (List)collectionModel.getObject(null);
+            List list = (List)listModel.getObject(null);
             if (list == null) {
                 list = new ArrayList();
             }
@@ -131,6 +131,7 @@ public class BeanTablePanel extends Panel
             return list;
         }
 
+        @Override
         public Iterator iterator(int first, int count)
         {
             List list = getList();
@@ -149,6 +150,7 @@ public class BeanTablePanel extends Panel
             return list.subList(first, first + count).iterator();
         }
 
+        @Override
         public int size()
         {
             return getList().size();
@@ -157,11 +159,18 @@ public class BeanTablePanel extends Panel
         /**
          * @see wicket.extensions.markup.html.repeater.data.IDataProvider#model(java.lang.Object)
          */
+        @Override
         public IModel model(Object object)
         {
             return new Model((Serializable)object);
         }
 
+        @Override
+        public void detach()
+        {
+            super.detach();
+            listModel.detach();
+        }
     }
     
     public static class BeanElementColumn implements IColumn

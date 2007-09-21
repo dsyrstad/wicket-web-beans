@@ -53,14 +53,16 @@ import wicket.markup.html.list.ListItem;
 import wicket.markup.html.list.ListView;
 import wicket.markup.html.panel.FeedbackPanel;
 import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
 import wicket.model.Model;
 import wicket.model.PropertyModel;
 import wicket.util.string.Strings;
 
 /**
- * Generic component for presenting a bean form. Supports the following parameter: <p>
+ * Generic component for presenting a bean form. Supports the following parameters: <p>
  * <ul>
  * <li>label - the form's label.</li>
+ * <li>rows - if the bean is a List, this is the number of rows to be displayed. Defaults to 10.</li>
  * </ul>
  *
  * @author Dan Syrstad
@@ -89,7 +91,10 @@ public class BeanForm extends Panel
      *
      * @param id the Wicket id for the panel.
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
-     * @param beanMetaData the meta data for the bean
+     *  The bean may be a List or, if an IModel, a model that returns a List. If so, the bean is display is
+     *  displayed using BeanTablePanel. Otherwise BeanGridPanel is used.
+     * @param beanMetaData the meta data for the bean. If bean is a List or model of a List, then this must be
+     *  the BeanMetaData for a single element (row) of the List. 
      */
     public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData)
     {
@@ -115,6 +120,8 @@ public class BeanForm extends Panel
         String title = beanMetaData.getLabel();
         form.add( new Label("title", title) );
         
+        beanMetaData.consumeParameter("rows");
+        
         final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
         focusField.add( new AbstractBehavior() {
             public void onComponentTag(Component component, ComponentTag tag)
@@ -131,15 +138,15 @@ public class BeanForm extends Panel
         List<TabMetaData> tabMetaDataList = beanMetaData.getTabs();
         if (tabMetaDataList.get(0).getId().equals(BeanMetaData.DEFAULT_TAB_ID)) {
             // Single default tab - none explicitly specified. Don't add a tab panel.
-            form.add( new BeanGridPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0)) );
+            form.add( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0)) );
         }
         else {
             List<AbstractTab> tabs = new ArrayList<AbstractTab>();
-            for (final TabMetaData groupMetaData : tabMetaDataList) {
-                tabs.add( new AbstractTab( new Model(groupMetaData.getLabel()) ) {
+            for (final TabMetaData tabMetaData : tabMetaDataList) {
+                tabs.add( new AbstractTab( new Model(tabMetaData.getLabel()) ) {
                     public Panel getPanel(String panelId)
                     {
-                        return new BeanGridPanel(panelId, bean, beanMetaData, groupMetaData);
+                        return createPanel(panelId, bean, beanMetaData, tabMetaData);
                     }
                 } );
             }
@@ -168,6 +175,42 @@ public class BeanForm extends Panel
                 item.add( new BeanActionButton("action", element, form, bean) );
             }
         });
+    }
+    
+    /**
+     * Creates the panel for the given tab.
+     *
+     * @param panelId the Wicket id for the panel component.
+     * @param bean may be a bean or an IModel containing a bean.
+     * @param beanMetaData the BeanMetaData.
+     * @param tabMetaData the TabMetaData.
+     * 
+     * @return a Panel.
+     */
+    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)
+    {
+        boolean isList = (bean instanceof List);
+        if (bean instanceof IModel) {
+            Object modelBean = ((IModel)bean).getObject(this);
+            isList = (modelBean instanceof List);
+        }
+        
+        if (isList) {
+            // BeanTablePanel expects a model. Wrap bean if necessary.
+            IModel model;
+            if (bean instanceof IModel) {
+                model = (IModel)bean;
+            }
+            else {
+                model = new Model((Serializable)bean);
+            }
+            
+            // Get Number of rows from parameters
+            int rows = beanMetaData.getIntParameter("rows", 10);
+            return new BeanTablePanel(panelId, model, beanMetaData, rows);
+        }
+
+        return new BeanGridPanel(panelId, bean, beanMetaData, tabMetaData);
     }
     
     /**

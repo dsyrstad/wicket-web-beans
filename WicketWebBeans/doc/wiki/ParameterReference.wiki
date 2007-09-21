@@ -25,6 +25,8 @@ The target parameter may be null for non-Ajax requests.
    * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default.
    
    * *cols* - Number of columns in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
+   
+   * *rows* - If the bean or bean's IModel passed to !BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10.
 
 ---++ Standard Property Parameters
    * *label* - Specifies the label for the property.

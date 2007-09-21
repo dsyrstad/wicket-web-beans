@@ -274,7 +274,7 @@ public class ComponentRegistry implements Serializable
         }
         
         // The Object.class registry entry should have caught this, but just in case.
-        return new Label(wicketId, "<No " + (viewOnly ? "Viewer" : "Field") + " for " + propertyMeta.getPropertyType().getName() + ">");
+        return new Label(wicketId, "<No Field for " + propertyMeta.getPropertyType().getName() + ">");
     }
     
     
