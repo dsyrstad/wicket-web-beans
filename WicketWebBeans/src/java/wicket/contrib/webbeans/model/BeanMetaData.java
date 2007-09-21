@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,14 +33,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import wicket.Component;
 import wicket.ajax.AjaxRequestTarget;
-import wicket.contrib.webbeans.actions.BeanActionButton;
 import wicket.contrib.webbeans.fields.EmptyField;
 import wicket.markup.html.form.Form;
 import wicket.model.IModel;
@@ -293,6 +291,8 @@ public class BeanMetaData extends MetaData implements Serializable
             if (descriptor.getWriteMethod() == null) {
                 propertyMeta.setViewOnly(true);
             }
+            
+            deriveMetaDataFromAnnotations(descriptor, propertyMeta);
         }
 
         String propFileName = getBaseClassName(component.getClass()) + ".beanprops";
@@ -356,6 +356,73 @@ public class BeanMetaData extends MetaData implements Serializable
                 return (o1.getOrder() > o2.getOrder() ? 1 : (o1.getOrder() < o2.getOrder() ? -1 : 0));
             }
         });
+    }
+    
+    /**
+     * Derive metadata from standard annotations such as JPA and FindBugs.
+     *
+     * @param descriptor
+     * @param elementMetaData
+     */
+    private void deriveMetaDataFromAnnotations(PropertyDescriptor descriptor, ElementMetaData elementMetaData)
+    {
+        // NOTE: !!! The annotation classes must be present at runtime, otherwise getAnnotations() doesn't 
+        // return the annotation.
+        Method readMethod = descriptor.getReadMethod();
+        if (readMethod != null) {
+            processAnnotations(elementMetaData, readMethod.getAnnotations());
+        }
+
+        Method writeMethod = descriptor.getWriteMethod();
+        if (writeMethod != null) {
+            processAnnotations(elementMetaData, writeMethod.getAnnotations());
+        }
+    }
+    
+    /**
+     * Process annotations for {@link #deriveMetaDataFromAnnotations(PropertyDescriptor, ElementMetaData)}.
+     *
+     * @param elementMetaData
+     * @param annotations
+     */
+    private void processAnnotations(ElementMetaData elementMetaData, Annotation[] annotations)
+    {
+        if (annotations == null) {
+            return;
+        }
+        
+        // Note: We only reference the annotations using their string name, not the class.
+        // If we referenced the class, we'd have a dependency on those classes.
+        // We also have to access the values by reflection so we don't depend on the class.
+        for (Annotation annotation : annotations) {
+            String name = annotation.annotationType().getName();
+            
+            if (name.equals("javax.persistence.Column")) {
+                elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
+                elementMetaData.setRequired( !(Boolean)invokeAnnotationMethod(annotation, "nullable") );
+                elementMetaData.setViewOnly( !(Boolean)invokeAnnotationMethod(annotation, "insertable") &&
+                                             !(Boolean)invokeAnnotationMethod(annotation, "updatable"));
+            }
+            else if (name.equals("javax.jdo.annotations.Column")) {
+                elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
+                elementMetaData.setRequired( "true".equals((String)invokeAnnotationMethod(annotation, "allowsNull")) );
+                elementMetaData.setDefaultValue( (String)invokeAnnotationMethod(annotation, "defaultValue") );
+            }
+        }
+    }
+    
+    /**
+     * Invokes an annotation method to get a value, possibly returning null if no value or if the method doesn't exist.
+     */
+    private Object invokeAnnotationMethod(Annotation annotation, String methodName)
+    {
+        try {
+            return MethodUtils.invokeExactMethod(annotation, methodName, null);
+        }
+        catch (Exception e) {
+            // Ignore.
+            return null;
+        }
     }
 
     /**

@@ -63,6 +63,7 @@ public class InputField extends AbstractField
                 field.add( new SimpleAttributeModifier("onkeypress", "return inputField_HandleEnter(this, event)") );
             }
             
+            setFieldParameters(field);
             fragment.add(field);
         }
         

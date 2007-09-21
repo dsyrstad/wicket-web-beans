@@ -64,6 +64,7 @@ public class TextAreaField extends AbstractField
             }
         };
         
+        setFieldParameters(field);
         field.setEnabled(!viewOnly);
 
         add(field);

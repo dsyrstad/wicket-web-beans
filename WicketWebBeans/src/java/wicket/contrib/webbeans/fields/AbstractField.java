@@ -19,9 +19,11 @@
  */
 package wicket.contrib.webbeans.fields;
 
+import wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanPropertyModel;
 import wicket.contrib.webbeans.model.ElementMetaData;
+import wicket.markup.html.form.FormComponent;
 import wicket.markup.html.panel.Panel;
 import wicket.model.IModel;
 
@@ -35,9 +37,6 @@ import wicket.model.IModel;
 abstract public class AbstractField extends Panel implements Field
 {
     private static final long serialVersionUID = -5452855853289381110L;
-    
-    // Used by several sub-classes.
-    public static final String PARAM_REQUIRED = "required";
     
     private ElementMetaData elementMetaData;
 
@@ -54,7 +53,8 @@ abstract public class AbstractField extends Panel implements Field
         super(id, model);
         this.elementMetaData = metaData;
         
-        metaData.consumeParameter(PARAM_REQUIRED);
+        metaData.consumeParameter(ElementMetaData.PARAM_REQUIRED);
+        metaData.consumeParameter(ElementMetaData.PARAM_MAX_LENGTH);
         
         // Allow for refreshing of the field via Ajax.
         setOutputMarkupId(true);
@@ -66,7 +66,36 @@ abstract public class AbstractField extends Panel implements Field
      */
     public boolean isRequiredField()
     {
-        return elementMetaData.getBooleanParameter(PARAM_REQUIRED);
+        return elementMetaData.isRequired();
+    }
+    
+    /**
+     * @return the maximum length for the field, or null if no maxmimum length.
+     */
+    public Integer getMaxLength()
+    {
+        return elementMetaData.getMaxLength();
+    }
+    
+    /**
+     * @return the default string value for this field, or null if none is defined.
+     */
+    public String getDefaultValue()
+    {
+        return elementMetaData.getDefaultValue();
+    }
+    
+    protected void setFieldParameters(FormComponent field)
+    {
+        Integer maxLength = getMaxLength();
+        if (maxLength != null) {
+            field.add( new SimpleAttributeModifier("maxlength", maxLength.toString()) );
+        }
+        
+        String defaultValue = getDefaultValue();
+        if (defaultValue != null) {
+            field.setModelValue(defaultValue);
+        }
     }
     
     /**

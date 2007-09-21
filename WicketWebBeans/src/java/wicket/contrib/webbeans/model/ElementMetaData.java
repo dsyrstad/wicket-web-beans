@@ -36,6 +36,9 @@ public final class ElementMetaData extends MetaData implements Serializable
     public static final String PARAM_LABEL_IMAGE = "labelImage";
     public static final String PARAM_LABEL = "label";
     public static final String PARAM_FIELD_TYPE = "fieldType";
+    public static final String PARAM_REQUIRED = "required";
+    public static final String PARAM_MAX_LENGTH = "maxlength";
+    public static final String PARAM_DEFAULT_VALUE = "defaultValue";
 
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
     
@@ -123,6 +126,48 @@ public final class ElementMetaData extends MetaData implements Serializable
     public void setLabel(String label)
     {
         getParameters().setProperty(PARAM_LABEL, label);
+    }
+    
+    public String getDefaultValue()
+    {
+        return getParameter(PARAM_DEFAULT_VALUE);
+    }
+    
+    public void setDefaultValue(String value)
+    {
+        if (value != null) {
+            getParameters().setProperty(PARAM_DEFAULT_VALUE, value);
+        }
+    }
+    
+    /**
+     * @return the maximum length for the field, or null if no maxmimum length.
+     */
+    public Integer getMaxLength()
+    {
+        return getIntegerParameter(PARAM_MAX_LENGTH);
+    }
+    
+    /**
+     * Sets the maximum length.
+     *
+     * @param maxLength the maximum length. If null, nothing is set.
+     */
+    public void setMaxLength(Integer maxLength)
+    {
+        if (maxLength != null) {
+            getParameters().setProperty(PARAM_MAX_LENGTH, maxLength.toString());
+        }
+    }
+    
+    public boolean isRequired()
+    {
+        return getBooleanParameter(PARAM_REQUIRED);
+    }
+    
+    public void setRequired(boolean required)
+    {
+        getParameters().setProperty(PARAM_REQUIRED, String.valueOf(required));
     }
     
     /**

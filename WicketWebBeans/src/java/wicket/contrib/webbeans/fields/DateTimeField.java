@@ -109,6 +109,7 @@ public class DateTimeField extends AbstractField
                 }
             };
             
+            setFieldParameters(dateField);
             fragment.add(dateField);
     
             DatePickerSettings settings = new DatePickerSettings();
