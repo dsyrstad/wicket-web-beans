@@ -83,6 +83,9 @@ The target parameter may be null for non-Ajax requests. </p>
    </p>
 <ul><li><strong>cols</strong> - Number of columns in the grid. Though not strictly a &quot;standard&quot; parameter, this is a property parameter supported by BeanGridPanel, which is the default layout used by BeanForm. See BeanGridPanel parameters for more details.</li>
 </ul><p>
+   </p>
+<ul><li><strong>rows</strong> - If the bean or bean's IModel passed to BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10.</li>
+</ul><p>
 </p>
 <h2>Standard Property Parameters</h2>
 <ul><li><strong>label</strong> - Specifies the label for the property.</li>
@@ -101,6 +104,9 @@ The target parameter may be null for non-Ajax requests. </p>
 </ul><p>
 </p>
 <ul><li><strong>colspan</strong> - Number of columns to span in the grid. Though not strictly a &quot;standard&quot; parameter, this is a property parameter supported by BeanGridPanel, which is the default layout used by BeanForm. See BeanGridPanel parameters for more details.</li>
+</ul><p>
+   </p>
+<ul><li><strong>required</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the field is required. Note that you must call BeanForm.validateRequired() in your action method to have the validation occur.</li>
 </ul><p>
 </p>
 <p>
