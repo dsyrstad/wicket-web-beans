@@ -46,7 +46,7 @@ Embed:wicket.contrib.webbeans.examples.simple.SimpleBeanPage
 
 You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of wicket.contrib.webbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of wicket.contrib.webbeans.model.BeanMetaData. !BeanMetaData reflects on the !TestBean class to derive the fields and actions for the form.
 
-Note that you can pass a Wicket IModel that contains your bean, rather than the bean itself, to !BeanForm.
+Note that you can also pass a Wicket IModel that contains your bean, rather than the bean itself, to !BeanForm. If the bean is a List, or the IModel contains a List, the results will be displayed as a data table.
 
 If you bring up this page in a browser (see RunningSamples), you will see something like:
 
@@ -61,6 +61,7 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
    * All !JavaBean properties are displayed. Non-!JavaBean methods are not displayed. 
    * All fields are editable if viewOnly is false (see the !BeanMetaData constructor). Otherwise they are all view-only.
    * If a property is not writable, it is displayed view-only.
+   * If your beans use JPA or JDO, other property aspects can be controlled by annotations available in these APIs.
    * Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.
    * All fields are displayed in alphabetical order by property name.
    * All fields are displayed in a single page. (Known as the "default tab", but the tab is hidden).

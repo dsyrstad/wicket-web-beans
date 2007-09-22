@@ -26,6 +26,7 @@ import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.markup.html.form.FormComponent;
 import wicket.markup.html.panel.Panel;
 import wicket.model.IModel;
+import wicket.util.string.Strings;
 
 
 /**
@@ -93,7 +94,7 @@ abstract public class AbstractField extends Panel implements Field
         }
         
         String defaultValue = getDefaultValue();
-        if (defaultValue != null) {
+        if (defaultValue != null && Strings.isEmpty(getModelObjectAsString())) {
             field.setModelValue(defaultValue);
         }
     }

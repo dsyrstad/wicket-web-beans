@@ -304,7 +304,7 @@ You can see this is pretty simple. There is only a single component added to the
 <p>
 </p>
 <p>
-Note that you can pass a Wicket IModel that contains your bean, rather than the bean itself, to BeanForm.</p>
+Note that you can also pass a Wicket IModel that contains your bean, rather than the bean itself, to BeanForm. If the bean is a List, or the IModel contains a List, the results will be displayed as a data table.</p>
 <p>
 </p>
 <p>
@@ -328,6 +328,7 @@ As we mentioned, BeanMetaData represents the metadata for a bean properties and 
 <li>All JavaBean properties are displayed. Non-JavaBean methods are not displayed.</li>
 <li>All fields are editable if viewOnly is false (see the BeanMetaData constructor). Otherwise they are all view-only.</li>
 <li>If a property is not writable, it is displayed view-only.</li>
+<li>If your beans use JPA or JDO, other property aspects can be controlled by annotations available in these APIs.</li>
 <li>Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.</li>
 <li>All fields are displayed in alphabetical order by property name.</li>
 <li>All fields are displayed in a single page. (Known as the &quot;default tab&quot;, but the tab is hidden).</li>

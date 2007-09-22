@@ -94,7 +94,7 @@ The target parameter may be null for non-Ajax requests. </p>
 <ul><li><strong>labelImage</strong> - An image file name relative to the component. Specifies that the property's field should have the specified image rather than a text label.</li>
 </ul><p>
 </p>
-<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the property is view-only (i.e., not editable).</li>
+<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the property is view-only (i.e., not editable). This is automatically set to true if you are using JPA and the @Column annotation has both insertable and updatable set to false.</li>
 </ul><p>
 </p>
 <ul><li><strong>fieldType</strong> - Specifies a Field class name to use for this property. This overrides the Field type defined for the property type in ComponentRegistry. Note that if the Field type is already defined for a different class in ComponentRegistry, you can just specify the base class name, not the package which is optional. Otherwise, you can explicitly specify the package name.</li>
@@ -106,7 +106,13 @@ The target parameter may be null for non-Ajax requests. </p>
 <ul><li><strong>colspan</strong> - Number of columns to span in the grid. Though not strictly a &quot;standard&quot; parameter, this is a property parameter supported by BeanGridPanel, which is the default layout used by BeanForm. See BeanGridPanel parameters for more details.</li>
 </ul><p>
    </p>
-<ul><li><strong>required</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the field is required. Note that you must call BeanForm.validateRequired() in your action method to have the validation occur.</li>
+<ul><li><strong>required</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the field is required. Note that you must call BeanForm.validateRequired() in your action method to have the validation occur. This is automatically set to true if you are using JPA and the @Column annotation has nullable set to false. If you are using the JDO @Column annotation, this is set to true if @Column.allowsNull is &quot;false&quot;.</li>
+</ul><p>
+   </p>
+<ul><li><strong>maxlength</strong> - The maximum input length for a field. This is automatically set if you are using the JPA or JDO @Column.length annotation.</li>
+</ul><p>
+   </p>
+<ul><li><strong>defaultValue</strong> - The default string value for a field. This is automatically set if you are using the JDO @Column.defaultValue annotation.</li>
 </ul><p>
 </p>
 <p>
@@ -215,7 +221,7 @@ A common field used to accept input for a variety of primitive and wrapper prope
 <p>
  </p>
 <p>
- Defines a field for Strings that allows more than one line of input.</p>
+Defines a field for Strings that allows more than one line of input.</p>
 <p>
  </p>
 <ul><li><strong>rows</strong> - The number of rows (lines) to be displayed for the field. Note that the input is not limited to this number of lines because a scrollbar is used. This is simply the number of lines displayed.  Default is the CSS defined height.</li>
@@ -224,7 +230,14 @@ A common field used to accept input for a variety of primitive and wrapper prope
 <ul><li><strong>cols</strong> - The number of columns (characters) across to be displayed for the field. Default is the CSS defined width.</li>
 </ul><p>
  </p>
+<h2>Third-Party Annotations</h2>
 <p>
- </p>
+</p>
+<p>
+Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See <em>Standard Property Parameters</em> above for more details. Also see the <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/thirdpartyannotations/AnnotationsBeanPage.java.html">wicket.contrib.webbeans.examples.thirdpartyannotations.AnnotationsBeanPage</a> example.</p>
+<p>
+</p>
+<p>
+For annotations to be effective at runtime, you <strong>must</strong> have the JDO or JPA annotation classes in your classpath. For web apps, this means having the appropriate JARs in your WEB-INF/lib directory. </p>
   </body>
 </html>

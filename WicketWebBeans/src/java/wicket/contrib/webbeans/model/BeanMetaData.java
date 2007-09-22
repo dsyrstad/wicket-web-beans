@@ -405,7 +405,7 @@ public class BeanMetaData extends MetaData implements Serializable
             }
             else if (name.equals("javax.jdo.annotations.Column")) {
                 elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
-                elementMetaData.setRequired( "true".equals((String)invokeAnnotationMethod(annotation, "allowsNull")) );
+                elementMetaData.setRequired( "false".equals((String)invokeAnnotationMethod(annotation, "allowsNull")) );
                 elementMetaData.setDefaultValue( (String)invokeAnnotationMethod(annotation, "defaultValue") );
             }
         }

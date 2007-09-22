@@ -22,7 +22,7 @@ The target parameter may be null for non-Ajax requests.
    
    * *displayed* - Either "true" or "false" to tell WWB whether to display the bean. This is only useful on nested beans.
      
-   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default.
+   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default. 
    
    * *cols* - Number of columns in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
    
@@ -33,7 +33,7 @@ The target parameter may be null for non-Ajax requests.
 
    * *labelImage* - An image file name relative to the component. Specifies that the property's field should have the specified image rather than a text label. 
 
-   * *viewOnly* - Either "true" or "false" to tell WWB whether the property is view-only (i.e., not editable).
+   * *viewOnly* - Either "true" or "false" to tell WWB whether the property is view-only (i.e., not editable). This is automatically set to true if you are using JPA and the @Column annotation has both insertable and updatable set to false.
 
    * *fieldType* - Specifies a Field class name to use for this property. This overrides the Field type defined for the property type in !ComponentRegistry. Note that if the Field type is already defined for a different class in !ComponentRegistry, you can just specify the base class name, not the package which is optional. Otherwise, you can explicitly specify the package name.
 
@@ -41,7 +41,11 @@ The target parameter may be null for non-Ajax requests.
 
    * *colspan* - Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
    
-   * *required* - Either "true" or "false" to tell WWB whether the field is required. Note that you must call !BeanForm.validateRequired() in your action method to have the validation occur. 
+   * *required* - Either "true" or "false" to tell WWB whether the field is required. Note that you must call !BeanForm.validateRequired() in your action method to have the validation occur. This is automatically set to true if you are using JPA and the @Column annotation has nullable set to false. If you are using the JDO @Column annotation, this is set to true if @Column.allowsNull is "false".
+   
+   * *maxlength* - The maximum input length for a field. This is automatically set if you are using the JPA or JDO @Column.length annotation.
+   
+   * *defaultValue* - The default string value for a field. This is automatically set if you are using the JDO @Column.defaultValue annotation.
 
 Actions (action.action-name) additionally support the following parameters (supported by !BeanActionButton):
 
@@ -107,10 +111,14 @@ A common field used to accept input for a variety of primitive and wrapper prope
  
 ---+++ !TextAreaField
  
- Defines a field for Strings that allows more than one line of input.
+Defines a field for Strings that allows more than one line of input.
  
     * *rows* - The number of rows (lines) to be displayed for the field. Note that the input is not limited to this number of lines because a scrollbar is used. This is simply the number of lines displayed.  Default is the CSS defined height.
     
     * *cols* - The number of columns (characters) across to be displayed for the field. Default is the CSS defined width.
  
- 
+---++ Third-Party Annotations
+
+Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See _Standard Property Parameters_ above for more details. Also see the wicket.contrib.webbeans.examples.thirdpartyannotations.AnnotationsBeanPage example.
+
+For annotations to be effective at runtime, you *must* have the JDO or JPA annotation classes in your classpath. For web apps, this means having the appropriate JARs in your WEB-INF/lib directory. 
