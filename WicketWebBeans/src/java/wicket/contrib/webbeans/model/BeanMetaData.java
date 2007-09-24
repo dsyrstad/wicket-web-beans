@@ -18,11 +18,14 @@ package wicket.contrib.webbeans.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -98,7 +101,7 @@ public class BeanMetaData extends MetaData implements Serializable
 
     private static final Class[] PROP_CHANGE_LISTENER_ARG = new Class[] { PropertyChangeListener.class };
     /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */
-    private static final Map<String, List<Bean>> cachedBeanProps = new HashMap<String, List<Bean>>();
+    private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
     private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
 
     public static final String PARAM_VIEW_ONLY = "viewOnly";
@@ -309,25 +312,7 @@ public class BeanMetaData extends MetaData implements Serializable
             deriveMetaDataFromAnnotations(descriptor, propertyMeta);
         }
 
-        String propFileName = getBaseClassName(component.getClass()) + ".beanprops";
-        List<Bean> beanSpecs = cachedBeanProps.get(propFileName);
-        if (beanSpecs == null) {
-            // It's OK not to have a beanprops file. We can deduce the parameters by convention. 
-            InputStream propsStream = component.getClass().getResourceAsStream(propFileName);
-            if (propsStream != null) {
-                try {
-                    beanSpecs = new BeanPropsParser(propFileName, propsStream).parse();
-                    cachedBeanProps.put(propFileName, beanSpecs);
-                }
-                finally {
-                    try { propsStream.close(); } catch (IOException e) { /* Ignore */ }
-                }
-            }
-        }
-        
-        if (beanSpecs != null) {
-            processBeanSpecs(beanSpecs);
-        }
+        processBeanProps();
 
         // Process Bean-level parameters
         if (!getBooleanParameter(PARAM_DISPLAYED)) {
@@ -370,6 +355,46 @@ public class BeanMetaData extends MetaData implements Serializable
                 return (o1.getOrder() > o2.getOrder() ? 1 : (o1.getOrder() < o2.getOrder() ? -1 : 0));
             }
         });
+    }
+
+    /**
+     * Process the beanprops file, if any.
+     */
+    private void processBeanProps()
+    {
+        String propFileName = getBaseClassName(component.getClass()) + ".beanprops";
+        URL propFileURL = component.getClass().getResource(propFileName);
+        long timestamp = 0;
+        if (propFileURL.getProtocol().equals("file")) {
+            try {
+                timestamp = new File(propFileURL.toURI()).lastModified();
+            }
+            catch (URISyntaxException e) { /* Ignore - treat as zero */ }
+        }
+        
+        CachedBeanProps beanprops = cachedBeanProps.get(propFileName);
+        if (beanprops == null || beanprops.getModTimestamp() != timestamp) {
+            if (beanprops != null) {
+                logger.info("File changed: " + propFileName + " re-reading.");
+            }
+            
+            // It's OK not to have a beanprops file. We can deduce the parameters by convention. 
+            InputStream propsStream = component.getClass().getResourceAsStream(propFileName);
+            if (propsStream != null) {
+                try {
+                    List<Bean> beans = new BeanPropsParser(propFileName, propsStream).parse();
+                    beanprops = new CachedBeanProps(beans, timestamp);
+                    cachedBeanProps.put(propFileName, beanprops);
+                }
+                finally {
+                    try { propsStream.close(); } catch (IOException e) { /* Ignore */ }
+                }
+            }
+        }
+        
+        if (beanprops != null) {
+            processBeans(beanprops.getBeans());
+        }
     }
     
     /**
@@ -486,7 +511,7 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param beans the Bean ASTs.
      */
-    private void processBeanSpecs(List<Bean> beans)
+    private void processBeans(List<Bean> beans)
     {
         // Determine the hierarchy of Bean ASTs. I.e., the default Bean is always processed first, followed by those that
         // extend it, etc.
@@ -946,6 +971,31 @@ public class BeanMetaData extends MetaData implements Serializable
             catch (Exception e) {
                 throw new RuntimeException("Error removing PropertyChangeListener: ", e);
             }
+        }
+    }
+    
+    /**
+     * A Cached Beanprops file.
+     */
+    private static final class CachedBeanProps implements Serializable
+    {
+        private List<Bean> beans;
+        private long modTimestamp;
+        
+        CachedBeanProps(List<Bean> beans, long modTimestamp)
+        {
+            this.beans = beans;
+            this.modTimestamp = modTimestamp;
+        }
+        
+        List<Bean> getBeans()
+        {
+            return beans;
+        }
+        
+        long getModTimestamp()
+        {
+            return modTimestamp;
         }
     }
 }
