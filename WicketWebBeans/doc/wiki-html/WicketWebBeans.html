@@ -384,23 +384,34 @@ In addition to beanprops, most of the look and feel of the page can be customize
 Let's say you don't like the generated label &quot;Operand 1&quot; and &quot;Operand 2&quot; in the previous example, or you want to be able to localize them for another language. You can fix this by adding a Wicket properties file called CustomSimpleBeanPage.properties, such as: </p>
 <p>
 </p>
-<pre>operand1.Label=Enter First Value
-operand1.Label=Enter Second Value</pre><p>
+<pre>	operand1.label=Enter First Value
+	operand2.label=Enter Second Value</pre><p>
 </p>
 <p>
-And change CustomSimpleBeanPage.beanprops as follows:</p>
+And the default labels will be overridden. You may also prefix the property key with the bean name, such as:</p>
+<p>
+ </p>
+<pre>	TestBean.operand1.label=Enter First Value
+	TestBean.operand2.label=Enter Second Value</pre><p>
+</p>
+<p>
+WWB always tries to find the label using a key with the bean name first, then it falls back to just the property name.</p>
+<p>
+</p>
+<p>
+If you want to do something more sophisticated, WWB supports Wicket resources in any beanprops value. For example, you could change CustomSimpleBeanPage.beanprops as follows:</p>
 <pre>	# Customize TestBean.
 	TestBean {
 		cols: 1;
 		props: 
 			firstName, lastName, 
-			operand1{ label: &quot;${operand1.Label}&quot; }, 
-			operand2{ label: &quot;${operand2.Label}&quot; }, 
+			operand1{ label: &quot;My ${propertyKey} Value&quot; }, 
+			operand2, 
 			result, -number;
 	}</pre><p>
 </p>
 <p>
-You can see that you can specify parameters for each bean property. This example gives operand1 and operand2 the labels &quot;Enter First Value&quot; and &quot;Enter Second Value&quot; respectively. The &quot;${xxx}&quot; macro expression syntax substitutes the properties file key for xxx into the value for the parameter. You can intermix text and multiple macro expressions in a single value. </p>
+You can see that you can specify parameters for each bean property. This example gives operand1 a label that is partially derived from the Wicket property &quot;propertyKey&quot;. The &quot;${xxx}&quot; macro expression syntax substitutes the properties file value for key &quot;xxx&quot; into the value for the parameter. You can intermix text and multiple macro expressions in a single value. You can use the macro expression in any value, not just labels.</p>
 <p>
 </p>
 <h2>Bean Property Customization</h2>

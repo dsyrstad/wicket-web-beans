@@ -98,24 +98,33 @@ In addition to beanprops, most of the look and feel of the page can be customize
 Let's say you don't like the generated label "Operand 1" and "Operand 2" in the previous example, or you want to be able to localize them for another language. You can fix this by adding a Wicket properties file called !CustomSimpleBeanPage.properties, such as: 
 
 <verbatim>
-operand1.Label=Enter First Value
-operand1.Label=Enter Second Value
+	operand1.label=Enter First Value
+	operand2.label=Enter Second Value
 </verbatim>
 
-And change !CustomSimpleBeanPage.beanprops as follows:
+And the default labels will be overridden. You may also prefix the property key with the bean name, such as:
+ 
+<verbatim>
+	TestBean.operand1.label=Enter First Value
+	TestBean.operand2.label=Enter Second Value
+</verbatim>
+
+WWB always tries to find the label using a key with the bean name first, then it falls back to just the property name.
+
+If you want to do something more sophisticated, WWB supports Wicket resources in any beanprops value. For example, you could change !CustomSimpleBeanPage.beanprops as follows:
 <verbatim>
 	# Customize TestBean.
 	TestBean {
 		cols: 1;
 		props: 
 			firstName, lastName, 
-			operand1{ label: "${operand1.Label}" }, 
-			operand2{ label: "${operand2.Label}" }, 
+			operand1{ label: "My ${propertyKey} Value" }, 
+			operand2, 
 			result, -number;
 	}
 </verbatim>
 
-You can see that you can specify parameters for each bean property. This example gives operand1 and operand2 the labels "Enter First Value" and "Enter Second Value" respectively. The "${xxx}" macro expression syntax substitutes the properties file key for xxx into the value for the parameter. You can intermix text and multiple macro expressions in a single value. 
+You can see that you can specify parameters for each bean property. This example gives operand1 a label that is partially derived from the Wicket property "propertyKey". The "${xxx}" macro expression syntax substitutes the properties file value for key "xxx" into the value for the parameter. You can intermix text and multiple macro expressions in a single value. You can use the macro expression in any value, not just labels.
 
 ---++ Bean Property Customization
 

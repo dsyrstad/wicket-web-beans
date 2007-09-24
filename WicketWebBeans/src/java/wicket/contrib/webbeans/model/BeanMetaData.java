@@ -99,6 +99,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private static final Class[] PROP_CHANGE_LISTENER_ARG = new Class[] { PropertyChangeListener.class };
     /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */
     private static final Map<String, List<Bean>> cachedBeanProps = new HashMap<String, List<Bean>>();
+    private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
 
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_DISPLAYED = "displayed";
@@ -109,7 +110,7 @@ public class BeanMetaData extends MetaData implements Serializable
 
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
-
+    
     private Class beanClass;
     private String context;
     private Component component;
@@ -269,6 +270,8 @@ public class BeanMetaData extends MetaData implements Serializable
             elements.add(actionMeta);
         }
         
+        String baseBeanClassName = getBaseClassName(beanClass);
+
         // Create defaults based on the bean itself.
         PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(beanClass);
         for (PropertyDescriptor descriptor : descriptors) {
@@ -279,7 +282,18 @@ public class BeanMetaData extends MetaData implements Serializable
                 continue;
             }
             
-            String label = descriptor.getDisplayName();
+            // Try to retrieve label from properties file in the form of "Bean.propertyName.label" or
+            // simply propertyName.label.
+            String propLabelKey = name + ".label";
+            String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
+            if (label == DEFAULT_RESOURCE_KEY) {
+                label = component.getLocalizer().getString(propLabelKey, component, DEFAULT_RESOURCE_KEY);
+            }
+            
+            if (label == DEFAULT_RESOURCE_KEY) {
+                label = descriptor.getDisplayName();
+            }
+            
             if (label.equals(name)) {
                 label = createLabel(name);
             }
