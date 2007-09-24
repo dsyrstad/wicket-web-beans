@@ -86,6 +86,16 @@ abstract public class AbstractField extends Panel implements Field
         return elementMetaData.getDefaultValue();
     }
     
+    /**
+     * Gets a java.text.Format string for formatting the field.
+     *
+     * @return the format, or null if not defined.
+     */
+    public String getFormat()
+    {
+        return elementMetaData.getParameter("format");
+    }
+    
     protected void setFieldParameters(FormComponent field)
     {
         Integer maxLength = getMaxLength();

@@ -201,6 +201,32 @@ Displays a property's collection as a list of beans in a table. See BeanTablePan
 A Field that presents a property's bean in a panel, but the bean's properties do not have labels. For errors, the bean's properties use the parent property's label. This is useful for creating simple composite fields directly from small beans. No field-level parameters.</p>
 <p>
 </p>
+<h3>DateTimeField</h3>
+<p>
+</p>
+<ul><li><strong>format</strong> - the format of the date. The default format is based on the property type:</li>
+</ul><p>
+     java.util.Date, java.sql.Timestamp: yyyy-MM-dd HH:MM</p>
+<p>
+     java.sql.Time: HH:MM</p>
+<p>
+     java.sql.Date: yyyy-MM-dd</p>
+<p>
+     java.util.Calendar: yyyy-MM-dd HH:MM z</p>
+<p>
+     </p>
+<p>
+     You may override this defaults in the enclosing Page's properties using the following keys:</p>
+<p>
+		DateTimeField.date.format - Format for java.sql.Date.</p>
+<p>
+		DateTimeField.datetime.format - Format for java.sql.Timestamp or java.util.Date.</p>
+<p>
+		DateTimeField.time.format - Format for java.sql.Time.</p>
+<p>
+		DateTimeField.datetimetz.format - Format for java.util.Calendar types.</p>
+<p>
+</p>
 <h3>EnumField/JavaEnumField</h3>
 <p>
 </p>
