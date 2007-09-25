@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import wicket.util.string.Strings;
+
 /**
  * Common metadata methods. <p>
  * 
@@ -141,6 +143,18 @@ public class MetaData
         parameters.setProperty(key, value);
     }
     
+    /**
+     * Sets a parameter if the value is not empty or null.
+     *
+     * @param key the parameter key. If empty or null, the parameter is not set.
+     * @param value the parameter value. If empty or null, the parameter is not set.
+     */
+    public void setParameterIfNotEmpty(String key, String value)
+    {
+        if (!Strings.isEmpty(key) && !Strings.isEmpty(value)) {
+            setParameter(key,value);
+        }
+    }
     
     /**
      * Gets the parameters.

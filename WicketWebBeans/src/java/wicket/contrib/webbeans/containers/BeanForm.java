@@ -69,6 +69,8 @@ import wicket.util.string.Strings;
  */
 public class BeanForm extends Panel
 {
+    public static final String PARAM_ROWS = "rows";
+    
     private static Logger logger = Logger.getLogger(BeanForm.class.getName());
     private static final long serialVersionUID = -7287729257178283645L;
 
@@ -120,7 +122,7 @@ public class BeanForm extends Panel
         String title = beanMetaData.getLabel();
         form.add( new Label("title", title) );
         
-        beanMetaData.consumeParameter("rows");
+        beanMetaData.consumeParameter(PARAM_ROWS);
         
         final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
         focusField.add( new AbstractBehavior() {
@@ -206,7 +208,7 @@ public class BeanForm extends Panel
             }
             
             // Get Number of rows from parameters
-            int rows = beanMetaData.getIntParameter("rows", 10);
+            int rows = beanMetaData.getIntParameter(PARAM_ROWS, 10);
             return new BeanTablePanel(panelId, model, beanMetaData, rows);
         }
 
@@ -262,6 +264,7 @@ public class BeanForm extends Panel
     public boolean validateRequired()
     {
         RequiredFieldValidator validator = new RequiredFieldValidator();
+// TODO must be based on meta data of all bean properties
         visitChildren(AbstractField.class, validator);
         
         return !validator.errorsFound;
