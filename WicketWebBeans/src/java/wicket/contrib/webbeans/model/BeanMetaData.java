@@ -80,7 +80,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
     
-    private Class beanClass;
+    private Class<?> beanClass;
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
@@ -327,12 +327,15 @@ public class BeanMetaData extends MetaData implements Serializable
         processBeansAnnotation( componentClass.getAnnotation(Beans.class), false);
         processBeanAnnotation( componentClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
         
-        // TODO actions, bean class/Xmethods, metadata class.
         for (Method method : getActionMethods(componentClass)) {
             Action action = method.getAnnotation(Action.class);
             processActionAnnotation(action, method.getName());
         }
         
+        processBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
+        processBeanAnnotation( beanClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), true);
+
+        // TODO metadata class.
     }
     
     private void processBeansAnnotation(Beans beans, boolean isBeanAnnotation)

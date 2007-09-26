@@ -641,7 +641,6 @@ public class BeanForm extends Panel
         public Object component(Component component)
         {
             AbstractField field = (AbstractField)component;
-            logger.info("Validate: " + field.getElementMetaData().getLabel());
             if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
                 field.error(field.getElementMetaData().getLabel() + " is required."); // TODO I18N
                 errorsFound = true;
