@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Customization</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Customization</h1>
+<p>
+</p>
+<p>
+Back: <a href="SimpleExample.html">SimpleExample</a> Next: <a href="Actions.html">Actions</a></p>
+<p>
+</p>
+<h1>Customization Using "*.beanprops"</h1>
+<p>
+</p>
+<p>
+WWB is a method of programming by exception. That is, you only tell WWB to do something when its not doing what you want. Most commonly, WWB doesn't really know a good way to order fields on the page. By default, they are in alphabetical order and laid out in a three column grid.  Alphabetical order isn't typically want you want, though. To change this, you can create a &quot;beanprops&quot; file. This file is named like other Wicket files - it has the same based name as your Page (or component that the BeanForm is embedded in). </p>
+<p>
+</p>
+<p>
+Using the Simple Example above, let's customize it. Note that we're now using <a href="workspace/WicketWebBeans/src/examples/wicket/contrib/webbeans/examples/simple/CustomSimpleBeanPage.java.html">wicket.contrib.webbeans.examples.simple.CustomSimpleBeanPage</a> (we won't reiterate the trivial HTML and Page code here). This page also has a CustomSimpleBeanPage.beanprops file, seen below:</p>
+<p>
+</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: firstName, lastName, operand1, operand2, result, -number;
+	}</pre><p>
+</p>
+<p>
+This file tells WWB : whenever you see a TestBean bean, lay it out in a one-column grid (&quot;cols: 1&quot;) and display the properties (&quot;props&quot;) in the order specified. Note that you refer to JavaBean properties without the prefix of &quot;get&quot;, &quot;set&quot;, or &quot;is&quot; and the first character is lower case. Also in the &quot;props&quot; parameter, we say &quot;-number&quot;. This tells WWB to remove the &quot;number&quot; property from the page. </p>
+<p>
+</p>
+<p>
+Note that we didn't specify a package name when we wrote &quot;TestBean&quot;. The package name is optional as long as the class name is not ambiguous. WWB matches the class name first using the simple name, then using the package and class name. Again, WWB typically matches the right class. If you have two bean classes with the same name but in different packages, you'll need to specify the package name as well.    </p>
+<p>
+</p>
+<p>
+If you run this example, you'll see something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/CustomSimpleBeanScreenShot.png" src="workspace/WicketWebBeans/doc/wiki/images/CustomSimpleBeanScreenShot.png"/></p>
+<p>
+</p>
+<p>
+In addition to beanprops, most of the look and feel of the page can be customized via CSS.</p>
+<p>
+</p>
+<p>
+</p>
+<h2>Referencing Wicket Properties Files</h2>
+<p>
+</p>
+<p>
+Let's say you don't like the generated label &quot;Operand 1&quot; and &quot;Operand 2&quot; in the previous example, or you want to be able to localize them for another language. You can fix this by adding a Wicket properties file called CustomSimpleBeanPage.properties, such as: </p>
+<p>
+</p>
+<pre>	operand1.label=Enter First Value
+	operand2.label=Enter Second Value</pre><p>
+</p>
+<p>
+And the default labels will be overridden. This will override the labels for the operand1 and operand2 property on <em>any</em> bean that defines those properties. To restrict this, you may prefix the property key with the bean name, such as:</p>
+<p>
+ </p>
+<pre>	TestBean.operand1.label=Enter First Value
+	TestBean.operand2.label=Enter Second Value</pre><p>
+</p>
+<p>
+WWB always tries to find the label using a key with the bean name first, then it falls back to just the property name.</p>
+<p>
+</p>
+<p>
+If you want to do something more sophisticated, WWB supports Wicket resources in any beanprops value. For example, you could change CustomSimpleBeanPage.beanprops as follows:</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, lastName, 
+			operand1{ label: &quot;My ${propertyKey} Value&quot; }, 
+			operand2, 
+			result, -number;
+	}</pre><p>
+</p>
+<p>
+You can see that you can specify parameters for each bean property. This example gives operand1 a label that is partially derived from the Wicket property &quot;propertyKey&quot;. The &quot;${xxx}&quot; macro expression syntax substitutes the properties file value for key &quot;xxx&quot; into the value for the parameter. You can intermix text and multiple macro expressions in a single value. You can use the macro expression in any value, not just labels.</p>
+<p>
+</p>
+<h2>Bean Property Customization</h2>
+<p>
+</p>
+<p>
+In CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The &quot;result&quot; property is view-only by default because it has no setter. If you were to pass &quot;viewOnly&quot; = true to the BeanMetaData constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change CustomSimpleBeanPage.beanprops as follows:</p>
+<p>
+</p>
+<pre>	# Customize TestBean.
+	TestBean {
+		cols: 1;
+		props: 
+			firstName, 
+			lastName{ label: &quot;Last Name (informational)&quot;; viewOnly: true }, 
+			operand1{ label: &quot;${operand1.Label}&quot; }, 
+			operand2{ label: &quot;${operand2.Label}&quot; }, 
+			result, -number;
+	}</pre><p>
+</p>
+<p>
+This causes the lastName property to get a different label and be view-only.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+Back: <a href="SimpleExample.html">SimpleExample</a> Next: <a href="Actions.html">Actions</a></p>
+  </body>
+</html>
