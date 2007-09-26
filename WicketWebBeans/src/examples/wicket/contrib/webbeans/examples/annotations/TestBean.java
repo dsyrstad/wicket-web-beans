@@ -2,8 +2,6 @@ package wicket.contrib.webbeans.examples.annotations;
 
 import java.io.Serializable;
 
-import wicket.contrib.webbeans.annotations.Property;
-
 public class TestBean implements Serializable 
 {
     private static final long serialVersionUID = 4911652973164473144L;
@@ -21,7 +19,6 @@ public class TestBean implements Serializable
     {
     }
 
-    @Property(maxLength = 10)
     public String getFirstName()
     {
         return firstName;

@@ -41,8 +41,11 @@ import wicket.contrib.webbeans.model.BeanPropertyModel;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.contrib.webbeans.model.TabMetaData;
 import wicket.extensions.markup.html.tabs.AbstractTab;
+import wicket.extensions.markup.html.tabs.ITab;
 import wicket.extensions.markup.html.tabs.TabbedPanel;
 import wicket.markup.ComponentTag;
+import wicket.markup.Markup;
+import wicket.markup.MarkupStream;
 import wicket.markup.html.WebMarkupContainer;
 import wicket.markup.html.basic.Label;
 import wicket.markup.html.form.Form;
@@ -87,6 +90,7 @@ public class BeanForm extends Panel
     private Set<ComponentPropertyMapping> refreshComponents = new HashSet<ComponentPropertyMapping>(200);
     /** Form submit recursion counter. Zero means we're not validating currently. */
     private int submitCnt = 0;
+    private TabbedPanel tabbedPanel = null;
     
     /**
      * Construct a new BeanForm.
@@ -154,10 +158,10 @@ public class BeanForm extends Panel
             }
     
             // This is a tabbed panel that submits the form and doesn't switch if there are errors. 
-            TabbedPanel tabbedPanel = new TabbedPanel("tabs", tabs) {
+            tabbedPanel = new TabbedPanel("tabs", tabs) {
                 protected WebMarkupContainer newLink(String linkId, final int index)
                 {
-                    return new TabbedPanelSubmitLink(linkId, index, this);
+                    return new TabbedPanelSubmitLink(linkId, index);
                 }
             };
             
@@ -264,8 +268,23 @@ public class BeanForm extends Panel
     public boolean validateRequired()
     {
         RequiredFieldValidator validator = new RequiredFieldValidator();
-// TODO must be based on meta data of all bean properties
-        visitChildren(AbstractField.class, validator);
+        
+        // If we have a tabbed panel, we have to go thru each tab and validate it because the components for a tab are only created
+        // when the tab is open.
+        if (tabbedPanel == null) {
+            visitChildren(AbstractField.class, validator);
+        }
+        else {
+            for (ITab tab : (List<ITab>)tabbedPanel.getTabs()) {
+                Panel panel = tab.getPanel("x");
+                // Needs to be part of the page for errors.
+                getPage().add(panel);
+                // Cause ListViews to be populated.
+                panel.internalAttach();
+                panel.visitChildren(AbstractField.class, validator);
+                getPage().remove(panel);
+            }
+        }
         
         return !validator.errorsFound;
     }
@@ -437,20 +456,18 @@ public class BeanForm extends Panel
     private final class TabbedPanelSubmitLink extends SubmitLink
     {
         private final int index;
-        private final TabbedPanel panel;
 
-        private TabbedPanelSubmitLink(String id, int index, TabbedPanel panel)
+        private TabbedPanelSubmitLink(String id, int index)
         {
             super(id, form);
             this.index = index;
-            this.panel = panel;
         }
 
         @Override
         protected void onSubmit()
         {
-            if (panel.getSelectedTab() != index) {
-                panel.setSelectedTab(index);
+            if (tabbedPanel.getSelectedTab() != index) {
+                tabbedPanel.setSelectedTab(index);
                 // TODO this could remember last focus field on the tab and refocus when switching back to the tab
                 // TODO Keep separate tab array of focus fields?
                 setFocusField(null);
@@ -624,6 +641,7 @@ public class BeanForm extends Panel
         public Object component(Component component)
         {
             AbstractField field = (AbstractField)component;
+            logger.info("Validate: " + field.getElementMetaData().getLabel());
             if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
                 field.error(field.getElementMetaData().getLabel() + " is required."); // TODO I18N
                 errorsFound = true;

@@ -14,17 +14,15 @@ import wicket.markup.html.form.Form;
 
 @Beans({
     @Bean(type = TestBean.class, 
-        // Defines order for the properties that will implicitly fall on the General tab.
-        propertyNames = { "firstName", "lastName", "idNumber" },
         tabs = {
-            @Tab(name = "General"),
+            @Tab(name = "General", propertyNames = { "firstName", "lastName", "idNumber" }),
             @Tab(name = "Address", propertyNames = { 
                 "address1", EMPTY, EMPTY, 
                 "address2", EMPTY, EMPTY, "city", "state", "zip" })
         },
         // Customize certain properties from above.
         properties = {
-          @Property(name = "firstName", required = true),
+          @Property(name = "firstName", required = true, maxLength = 10),
           @Property(name = "lastName", required = true),
         }
     )
@@ -39,7 +37,7 @@ public class AnnotationsOnPage extends WebPage
         add( new BeanForm("beanForm", bean, meta) );
     }
 
-    @Action(confirm = "Are you sure you want to save")
+    @Action(confirm = "Are you sure you want to save?")
     public void save(AjaxRequestTarget target, Form form, TestBean bean)
     {
         
