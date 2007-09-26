@@ -404,7 +404,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         // Compose a keyPrefix from the original bean meta data, the base bean class name, and this property name.
         BeanMetaData parentMetaData = getBeanMetaData();
             
-        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getComponent(),
+        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
                         parentMetaData.getComponentRegistry(), viewOnly, true);
     }
     

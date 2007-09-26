@@ -54,7 +54,8 @@ import wicket.markup.html.form.Form;
 import wicket.model.IModel;
 
 /**
- * Represents the metadata for a bean properties and actions. See documentation for more information.
+ * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
+ * a number of different explicit sources. See the documentation for more information.
  * <p/>
  *  
  * @author Dan Syrstad
@@ -81,6 +82,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
     
     private Class<?> beanClass;
+    private Class<?> metaDataClass;
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
@@ -104,10 +106,10 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      */
-    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry,
+    public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, null, component, componentRegistry, viewOnly, false);
     }
 
     /**
@@ -116,17 +118,39 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param beanClass the bean's class.
      * @param context specifies a context to use when looking up beans in beanprops. May be null to not
      *  use a context.
+     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link wicket.contrib.webbeans.annotations.Bean} annotations.
+     *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
+     * @param component the component used to get the Localizer.
+     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
+     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
+     *  Localizer configuration.
+     */
+    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
+                    boolean viewOnly)
+    {
+        this(beanClass, context, metaDataClass, component, componentRegistry, viewOnly, false);
+    }
+
+    /**
+     * Construct a BeanMetaData. 
+     *
+     * @param beanClass the bean's class.
+     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
+     *  use a context.
+     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link wicket.contrib.webbeans.annotations.Bean} annotations.
+     *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      * @param isChildBean true if this bean is a child of another bean.
      */
-    public BeanMetaData(Class beanClass, String context, Component component, ComponentRegistry componentRegistry,
+    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly, boolean isChildBean)
     {
         this.beanClass = beanClass;
         this.context = context;
+        this.metaDataClass = metaDataClass;
         this.component = component;
         if (componentRegistry == null) {
             this.componentRegistry = new ComponentRegistry();
@@ -320,9 +344,20 @@ public class BeanMetaData extends MetaData implements Serializable
     
     /**
      * Process any WWB annotations that may exist on the component, bean, or meta-data class.
+     * Order of processing is: Bean, Metadata class, then Component. Hence, Component annotations
+     * augment or override those of the Metadata class and the Bean.  
      */
     private void processAnnotations()
     {
+        // Bean
+        processBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
+        processBeanAnnotation( beanClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), true);
+
+        // Metadata class
+        processBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
+        processBeanAnnotation( metaDataClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
+        
+        // Component
         Class<? extends Component> componentClass = component.getClass(); 
         processBeansAnnotation( componentClass.getAnnotation(Beans.class), false);
         processBeanAnnotation( componentClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
@@ -331,11 +366,6 @@ public class BeanMetaData extends MetaData implements Serializable
             Action action = method.getAnnotation(Action.class);
             processActionAnnotation(action, method.getName());
         }
-        
-        processBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
-        processBeanAnnotation( beanClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), true);
-
-        // TODO metadata class.
     }
     
     private void processBeansAnnotation(Beans beans, boolean isBeanAnnotation)
@@ -356,7 +386,8 @@ public class BeanMetaData extends MetaData implements Serializable
         Class<?> beanType = bean.type();
         if (beanType == Object.class) {
             if (!isBeanAnnotation) {
-                throw new RuntimeException("@Bean must include the type attribute when used on non-bean components.");
+                throw new RuntimeException("@Bean must include the type attribute when used on non-bean components. Occurred while processing annotations for bean " 
+                                + beanClass.getName());
             }
             
             beanType = beanClass;
@@ -1090,9 +1121,19 @@ public class BeanMetaData extends MetaData implements Serializable
     /**
      * @return the bean class.
      */
-    public Class getBeanClass()
+    public Class<?> getBeanClass()
     {
         return beanClass;
+    }
+
+    /**
+     * Gets the external metadata Class supplied to the constructor.
+     *
+     * @return a Class<?>, or null if not defined.
+     */
+    public Class<?> getMetaDataClass()
+    {
+        return metaDataClass;
     }
 
     /**
