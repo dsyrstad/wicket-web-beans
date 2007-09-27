@@ -155,7 +155,7 @@ public final class ElementMetaData extends MetaData implements Serializable
      */
     public void setMaxLength(Integer maxLength)
     {
-        if (maxLength != null) {
+        if (maxLength != null && maxLength != 0) {
             getParameters().setProperty(PARAM_MAX_LENGTH, maxLength.toString());
         }
     }

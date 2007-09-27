@@ -19,8 +19,6 @@ import wicket.contrib.webbeans.annotations.Tab;
         properties = {
           @Property(name = "firstName", required = true, maxLength = 10),
           @Property(name = "lastName", required = true),
-          @Property(name = "address1", label = "First Address Line"),
-          @Property(name = "address2", label = "Second Address Line"),
         }
     ),
 

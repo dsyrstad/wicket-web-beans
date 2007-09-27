@@ -1,8 +1,6 @@
-Back: [[Requirements]] Next: [[Customization]]
+Back: [[Requirements]] Next: [[Actions]]
 
-Let's take a look at a simple bean from the examples:
-
-Embed:wicket.contrib.webbeans.examples.simple.TestBean
+Let's take a look at a simple bean from the examples: wicket.contrib.webbeans.examples.simple.TestBean
 
 This is a Java Bean compliant POJO. As most people know, getters start with "get" or "is" and setters start with "set". Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.
 
@@ -52,4 +50,4 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
 
 Field types are deduced from the property's Java type. The mappings from the property's Java class to the wicket.contrib.webbeans.fields.Field type is done by wicket.contrib.webbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
 
-Back: [[Requirements]] Next: [[Customization]]
+Back: [[Requirements]] Next: [[Actions]]

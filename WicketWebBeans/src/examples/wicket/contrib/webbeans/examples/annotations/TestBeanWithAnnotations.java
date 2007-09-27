@@ -22,11 +22,7 @@ import wicket.contrib.webbeans.annotations.Tab;
     // Inherits from default context.
     @Bean(context = "someContext", propertyNames = "-idNumber"),
 })
-
-public class TestBeanWithAnnotations implements Serializable 
-{
-    private static final long serialVersionUID = 4911652973164473144L;
-
+public class TestBeanWithAnnotations implements Serializable {
     private String firstName;
     private String lastName;
     private Integer idNumber;
@@ -36,91 +32,71 @@ public class TestBeanWithAnnotations implements Serializable
     private String state;
     private String zip;
     
-    public TestBeanWithAnnotations()
-    {
-    }
+    public TestBeanWithAnnotations() {  }
 
     @Property(required = true, maxLength = 10)
-    public String getFirstName()
-    {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName)
-    {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
     @Property(required = true)
-    public String getLastName()
-    {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName)
-    {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public Integer getIdNumber()
-    {
+    public Integer getIdNumber() {
         return idNumber;
     }
 
-    public void setIdNumber(Integer idNumber)
-    {
+    public void setIdNumber(Integer idNumber) {
         this.idNumber = idNumber;
     }
 
-    public String getAddress1()
-    {
+    public String getAddress1() {
         return address1;
     }
 
-    public void setAddress1(String address1)
-    {
+    public void setAddress1(String address1) {
         this.address1 = address1;
     }
 
-    public String getAddress2()
-    {
+    public String getAddress2() {
         return address2;
     }
 
-    public void setAddress2(String address2)
-    {
+    public void setAddress2(String address2) {
         this.address2 = address2;
     }
 
-    public String getCity()
-    {
+    public String getCity() {
         return city;
     }
 
-    public void setCity(String city)
-    {
+    public void setCity(String city) {
         this.city = city;
     }
 
-    public String getState()
-    {
+    public String getState() {
         return state;
     }
 
-    public void setState(String state)
-    {
+    public void setState(String state) {
         this.state = state;
     }
 
-    public String getZip()
-    {
+    public String getZip() {
         return zip;
     }
 
-    public void setZip(String zip)
-    {
+    public void setZip(String zip) {
         this.zip = zip;
     }
-
-
 }

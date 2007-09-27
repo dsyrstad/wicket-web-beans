@@ -354,8 +354,10 @@ public class BeanMetaData extends MetaData implements Serializable
         processBeanAnnotation( beanClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), true);
 
         // Metadata class
-        processBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
-        processBeanAnnotation( metaDataClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
+        if (metaDataClass != null) {
+            processBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
+            processBeanAnnotation( metaDataClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
+        }
         
         // Component
         Class<? extends Component> componentClass = component.getClass(); 
@@ -493,6 +495,10 @@ public class BeanMetaData extends MetaData implements Serializable
     
     private ElementMetaData processPropertyAnnotation(Property property, ElementMetaData element)
     {
+        if (property == null) {
+            return null;
+        }
+        
         if (element == null && property.name().length() == 0) {
             throw new RuntimeException("@Property annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
         }
@@ -533,6 +539,10 @@ public class BeanMetaData extends MetaData implements Serializable
     
     private ElementMetaData processActionAnnotation(Action action, String methodName)
     {
+        if (action == null) {
+            return null;
+        }
+        
         if (methodName == null && action.name().length() == 0) {
             throw new RuntimeException("@Action annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
         }
@@ -571,6 +581,10 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     private void processTabAnnotation(Tab tab, TabMetaData tabMetaData)
     {
+        if (tab == null) {
+            return;
+        }
+        
         String tabName = tab.name();
         if (tabMetaData == null) {
             tabMetaData = new TabMetaData(this, tabName, createLabel(tabName));
