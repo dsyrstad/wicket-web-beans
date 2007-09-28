@@ -62,6 +62,18 @@ public @interface Property {
     /** For Collections, elementType is the type of the elements contained within the collection. By default, WWB automatically deduces the element type from the collection if it is not null and not empty. In this case, elementType is detected from the first element of the collection. 
      * Otherwise, you can use this parameter to explicitly specify the type. */
     Class<?> elementType() default Object.class;
+    
+    /** The number of rows to display for TextAreaField and BeanTableFields, etc. */
+    int rows() default 0;
+    
+    /** The number of columns to display for a TextAreaField. */
+    int columns() default 0;
+
+    /** Tell WWB whether this element is view-only or editable. This is automatically set to true if you are using JPA and the @Column annotation has 
+     * both insertable and updatable set to false.
+     * Note that this is defined as an array so WWB can tell if the attribute was explicitly set. However, you should just say viewOnly = true/false 
+     * and not use the array syntax. */
+    boolean[] viewOnly() default {};
 
     // --- Common to Action and Property
     /** The label to display for this element. */
@@ -74,10 +86,6 @@ public @interface Property {
      * which is the default layout used by {@link BeanForm}. See {@link BeanGridPanel} parameters for more details. */
     int colspan() default 1;
     
-    /** Tell WWB whether this element is view-only or editable. This is automatically set to true if you are using JPA and the @Column annotation has 
-     * both insertable and updatable set to false. */
-    boolean viewOnly() default false;
-
     /** Arbitrary non-standard parameters. These are interpreted by the component. */
     Parameter[] params() default {};
     /** Short-cut to specify a single parameter. This is the parameter's name. */

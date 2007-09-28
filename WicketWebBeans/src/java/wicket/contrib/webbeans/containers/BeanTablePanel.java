@@ -131,7 +131,6 @@ public class BeanTablePanel extends Panel
             return list;
         }
 
-        @Override
         public Iterator iterator(int first, int count)
         {
             List list = getList();
@@ -150,7 +149,6 @@ public class BeanTablePanel extends Panel
             return list.subList(first, first + count).iterator();
         }
 
-        @Override
         public int size()
         {
             return getList().size();
@@ -159,7 +157,6 @@ public class BeanTablePanel extends Panel
         /**
          * @see wicket.extensions.markup.html.repeater.data.IDataProvider#model(java.lang.Object)
          */
-        @Override
         public IModel model(Object object)
         {
             return new Model((Serializable)object);

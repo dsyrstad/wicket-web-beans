@@ -39,6 +39,8 @@ public final class ElementMetaData extends MetaData implements Serializable
     public static final String PARAM_REQUIRED = "required";
     public static final String PARAM_MAX_LENGTH = "maxlength";
     public static final String PARAM_DEFAULT_VALUE = "defaultValue";
+    public static final String PARAM_ROWS = "rows";
+    public static final String PARAM_COLUMNS = "cols";
 
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
     
@@ -48,11 +50,11 @@ public final class ElementMetaData extends MetaData implements Serializable
     private int order;
     private String tabId;
     private boolean isAction = false;
-    // If true, the viewOnly parameter was set explicitly by beanprops. 
-    private boolean viewOnlySetExplicitly = false;
     
     ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class propertyType)
     {
+        super(beanMetaData.getComponent());
+        
         this.beanMetaData = beanMetaData;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
@@ -79,11 +81,8 @@ public final class ElementMetaData extends MetaData implements Serializable
                 throw new RuntimeException("Parameter " + param.getName() + "on element " + propertyName + " on bean " + beanMetaData.getBeanClass().getSimpleName() + " does not specify exactly one value.");
             }
             
-            String value = values.get(0).getValue(beanMetaData.getComponent());
+            String value = values.get(0).getValue();
             setParameter(param.getName(), value);
-            if (param.getName().equals(PARAM_VIEW_ONLY)) {
-                viewOnlySetExplicitly = true;
-            }
         }
     }
     
@@ -420,13 +419,5 @@ public final class ElementMetaData extends MetaData implements Serializable
         catch (Exception e) {
             throw new RuntimeException("Error creating instance of " + getPropertyType());
         }
-    }
-
-    /**
-     * @return true if viewOnly was set explicitly in beanprops.
-     */
-    public boolean isViewOnlySetExplicitly()
-    {
-        return viewOnlySetExplicitly;
     }
 }

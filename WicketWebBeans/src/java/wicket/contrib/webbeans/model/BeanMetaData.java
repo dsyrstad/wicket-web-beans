@@ -66,7 +66,7 @@ public class BeanMetaData extends MetaData implements Serializable
 
     private static Logger logger = Logger.getLogger(BeanMetaData.class.getName());
 
-    private static final Class[] PROP_CHANGE_LISTENER_ARG = new Class[] { PropertyChangeListener.class };
+    private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
     /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
     private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
@@ -148,6 +148,8 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly, boolean isChildBean)
     {
+        super(component);
+        
         this.beanClass = beanClass;
         this.context = context;
         this.metaDataClass = metaDataClass;
@@ -305,8 +307,6 @@ public class BeanMetaData extends MetaData implements Serializable
             tabs.clear();
         }
         
-        Boolean beanViewOnly = (getParameter(PARAM_VIEW_ONLY) == null ? null : isViewOnly());
-        
         // Configure tabs
         if (tabs.isEmpty()) {
             // Create single default tab.
@@ -317,14 +317,6 @@ public class BeanMetaData extends MetaData implements Serializable
         
         // Post-process each property based on bean parameters
         for (ElementMetaData elementMeta : elements) {
-            // If bean specified view only, but element didn't, set it to the bean's value.
-            if (beanViewOnly != null && !elementMeta.isViewOnlySetExplicitly()) {
-                // Don't override default view-only (based on bean) if bean is not viewOnly.
-                if (!elementMeta.isViewOnly()) {
-                    elementMeta.setViewOnly(beanViewOnly);
-                }
-            }
-            
             // If element is not on a tab, add it to the first. If it's an action, it must have been assigned an order to
             // appear on a tab. Otherwise it is a global action.
             if (elementMeta.getTabId() ==  null &&
@@ -409,7 +401,16 @@ public class BeanMetaData extends MetaData implements Serializable
         setParameter(PARAM_DISPLAYED, String.valueOf(bean.displayed()));
         setParameterIfNotEmpty(PARAM_LABEL, bean.label());
         setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
-        setParameter(PARAM_VIEW_ONLY, String.valueOf(bean.viewOnly()));
+        if (bean.viewOnly().length > 0) {
+            // Only set if explicitly set.
+            boolean viewOnly = bean.viewOnly()[0];
+            setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
+            // Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
+            // that they can override the bean setting if necessary.
+            for (ElementMetaData element : elements) {
+                element.setViewOnly(viewOnly);
+            }
+        }
 
         setParameterIfNotEmpty(bean.paramName(), bean.paramValue());
         for (wicket.contrib.webbeans.annotations.Parameter param : bean.params()) {
@@ -417,14 +418,6 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         int order = 1;
-        for (String propName : bean.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                element.setOrder(order++);
-            }
-        }
-        
-        order = 1;
         for (Property property : bean.properties()) {
             if (!handleElementRemove(property.name(), false)) {
                 ElementMetaData element = processPropertyAnnotation(property, null);
@@ -432,10 +425,11 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
 
+        // Process propertyNames after properties because propertyNames is typically used to define order.
         order = 1;
-        for (String actionName : bean.actionNames()) {
-            if (!handleElementRemove(actionName, true)) {
-                ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
+        for (String propName : bean.propertyNames()) {
+            if (!handleElementRemove(propName, false)) {
+                ElementMetaData element = findElementAddPseudos(propName);
                 element.setOrder(order++);
             }
         }
@@ -448,6 +442,15 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
 
+        // Process actionNames after actions because actionNames is typically used to define order.
+        order = 1;
+        for (String actionName : bean.actionNames()) {
+            if (!handleElementRemove(actionName, true)) {
+                ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
+                element.setOrder(order++);
+            }
+        }
+        
         for (Tab tab : bean.tabs()) {
             String tabName = tab.name();
             boolean removeTab = false;
@@ -511,6 +514,14 @@ public class BeanMetaData extends MetaData implements Serializable
             element.setParameter(BeanGridPanel.PARAM_COLSPAN, String.valueOf(property.colspan()));
         }
         
+        if (property.rows() > 0) {
+            element.setParameter(ElementMetaData.PARAM_ROWS, String.valueOf(property.rows()));
+        }
+        
+        if (property.columns() > 0) {
+            element.setParameter(ElementMetaData.PARAM_COLUMNS, String.valueOf(property.columns()));
+        }
+        
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_DEFAULT_VALUE, property.defaultValue());
         if (property.elementType() != Object.class) {
             element.setParameter(ElementMetaData.PARAM_ELEMENT_TYPE, property.elementType().getName());
@@ -523,11 +534,16 @@ public class BeanMetaData extends MetaData implements Serializable
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, property.label());
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, property.labelImage());
         if (property.maxLength() > 0) {
-            element.setParameter(ElementMetaData.PARAM_MAX_LENGTH, String.valueOf(property.maxLength()));
+            element.setMaxLength(property.maxLength());
         }
         
-        element.setParameter(ElementMetaData.PARAM_REQUIRED, String.valueOf(property.required()));
-        element.setParameter(ElementMetaData.PARAM_VIEW_ONLY, String.valueOf(property.viewOnly()));
+        element.setRequired(property.required());
+        if (!element.isAction()) {
+            // Only set viewOnly if explicitly set.
+            if (property.viewOnly().length > 0) {
+                element.setViewOnly(property.viewOnly()[0]);
+            }
+        }
         
         element.setParameterIfNotEmpty(property.paramName(), property.paramValue());
         for (wicket.contrib.webbeans.annotations.Parameter param : property.params()) {
@@ -559,7 +575,6 @@ public class BeanMetaData extends MetaData implements Serializable
         
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, action.label());
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, action.labelImage());
-        element.setParameter(ElementMetaData.PARAM_VIEW_ONLY, String.valueOf(action.viewOnly()));
         
         element.setParameterIfNotEmpty(BeanSubmitButton.PARAM_CONFIRM, action.confirm());
         element.setParameter(BeanSubmitButton.PARAM_AJAX, String.valueOf(action.ajax()));
@@ -594,15 +609,6 @@ public class BeanMetaData extends MetaData implements Serializable
         tabMetaData.setParameterIfNotEmpty(PARAM_LABEL, tab.label());
         
         int order = 1;
-        for (String propName : tab.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                element.setTabId( tabMetaData.getId() );
-                element.setOrder(order++);
-            }
-        }
-        
-        order = 1;
         for (Property property : tab.properties()) {
             if (!handleElementRemove(property.name(), false)) {
                 ElementMetaData element = processPropertyAnnotation(property, null);
@@ -611,6 +617,16 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
 
+        // Process propertyNames after properties because propertyNames is typically used to define order.
+        order = 1;
+        for (String propName : tab.propertyNames()) {
+            if (!handleElementRemove(propName, false)) {
+                ElementMetaData element = findElementAddPseudos(propName);
+                element.setTabId( tabMetaData.getId() );
+                element.setOrder(order++);
+            }
+        }
+        
         tabMetaData.setParameterIfNotEmpty(tab.paramName(), tab.paramValue());
         for (wicket.contrib.webbeans.annotations.Parameter param : tab.params()) {
             tabMetaData.setParameterIfNotEmpty(param.name(), param.value());
@@ -694,14 +710,12 @@ public class BeanMetaData extends MetaData implements Serializable
         // If we referenced the class, we'd have a dependency on those classes.
         // We also have to access the values by reflection so we don't depend on the class.
         for (Annotation annotation : annotations) {
-            Class annotationType = annotation.annotationType();
+            Class<?> annotationType = annotation.annotationType();
             String name = annotationType.getName();
             
             if (name.equals("javax.persistence.Column")) {
                 elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
                 elementMetaData.setRequired( !(Boolean)invokeAnnotationMethod(annotation, "nullable") );
-                elementMetaData.setViewOnly( !(Boolean)invokeAnnotationMethod(annotation, "insertable") &&
-                                             !(Boolean)invokeAnnotationMethod(annotation, "updatable"));
             }
             else if (name.equals("javax.jdo.annotations.Column")) {
                 elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
@@ -759,7 +773,7 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @return the base class name (the name without the package name).
      */
-    private static String getBaseClassName(Class aClass)
+    private static String getBaseClassName(Class<?> aClass)
     {
         String baseClassName = aClass.getName();
         int idx = baseClassName.lastIndexOf('.');
@@ -815,6 +829,34 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
 
+        // Process bean parameters next, but not props, tabs, or actions.
+        for (Parameter param : bean.getParameters()) {
+            String name = param.getName();
+            if (!name.equals(PARAM_PROPS) &&
+                !name.equals(PARAM_ACTIONS) &&
+                !name.equals(PARAM_TABS)) {
+
+                // Just handle a regular single-valued parameter.
+                List<ParameterValue> values = param.getValues();
+                if (values.size() != 1) {
+                    throw new RuntimeException("Parameter " + name + " on bean " + bean.getName()
+                                    + " does not specify exactly one value.");
+                }
+
+                String value = values.get(0).getValue();
+                setParameter(name, value);
+                if (name.equals(PARAM_VIEW_ONLY)) {
+                    // Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
+                    // that they can override the bean setting if necessary.
+                    boolean viewOnly = Boolean.valueOf(value);
+                    for (ElementMetaData element : elements) {
+                        element.setViewOnly(viewOnly);
+                    }
+                }
+            }
+        }
+        
+        // Handle props.
         for (Parameter param : bean.getParameters()) {
             String name = param.getName();
             if (name.equals(PARAM_PROPS)) {
@@ -826,17 +868,7 @@ public class BeanMetaData extends MetaData implements Serializable
             else if (name.equals(PARAM_ACTIONS)) {
                 // Ignore - already processed above.
             }
-            else {
-                // Just handle a regular single-valued parameter.
-                List<ParameterValue> values = param.getValues();
-                if (values.size() != 1) {
-                    throw new RuntimeException("Parameter " + name + " on bean " + bean.getName()
-                                    + " does not specify exactly one value.");
-                }
-
-                String value = values.get(0).getValue(component);
-                setParameter(name, value);
-            }
+            // else regular parameter already handled above.
         }
 
         // Process tabs last.

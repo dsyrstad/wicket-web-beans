@@ -33,7 +33,7 @@ The target parameter may be null for non-Ajax requests.
 
    * *labelImage* - An image file name relative to the component. Specifies that the property's field should have the specified image rather than a text label. 
 
-   * *viewOnly* - Either "true" or "false" to tell WWB whether the property is view-only (i.e., not editable). This is automatically set to true if you are using JPA and the @Column annotation has both insertable and updatable set to false.
+   * *viewOnly* - Either "true" or "false" to tell WWB whether the property is view-only (i.e., not editable).
 
    * *fieldType* - Specifies a Field class name to use for this property. This overrides the Field type defined for the property type in !ComponentRegistry. Note that if the Field type is already defined for a different class in !ComponentRegistry, you can just specify the base class name, not the package which is optional. Otherwise, you can explicitly specify the package name.
 
@@ -54,6 +54,8 @@ Actions (action.action-name) additionally support the following parameters (supp
    * *ajax* - If "true", the action should be invoked with Ajax. Otherwise, it the action performs a regular form submit.
  
    * *default* - If "true", the action will be fired when the Enter key is pressed anywhere on the form.
+
+   * *rows* - the number of rows to display in a !BeanTableField or !TextAreaField. 
 
 ---++ Standard Tab Parameters
 

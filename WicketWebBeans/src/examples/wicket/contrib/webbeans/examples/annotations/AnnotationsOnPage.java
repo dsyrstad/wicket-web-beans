@@ -21,7 +21,7 @@ import wicket.markup.html.form.Form;
     // Customize certain properties from above.
     properties = {
       @Property(name = "firstName", required = true, maxLength = 10),
-      @Property(name = "lastName", required = true),
+      @Property(name = "lastName", required = true)
     }
 )
 

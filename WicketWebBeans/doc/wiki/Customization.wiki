@@ -175,7 +175,6 @@ As previously mentioned, if your beans use JDO or JPA @Column annotations, WWB w
 
 JPA @Column annotations are based on javax.persistence.Column. It uses the following attributes:
 
-   * If both @Column.insertable and @Column.updatable are false, the property will be view-only.
    * If @Column.nullable is false, the property will be required.
    * If @Column.length sets the maximum field length. 
 

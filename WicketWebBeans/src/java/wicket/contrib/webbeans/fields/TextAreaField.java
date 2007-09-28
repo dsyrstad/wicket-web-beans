@@ -45,8 +45,8 @@ public class TextAreaField extends AbstractField
     {
         super(id, model, metaData, viewOnly);
 
-        metaData.consumeParameter("rows");
-        metaData.consumeParameter("cols");
+        metaData.consumeParameter(ElementMetaData.PARAM_ROWS);
+        metaData.consumeParameter(ElementMetaData.PARAM_COLUMNS);
         TextArea field = new TextArea("component", model) {
             @Override
             protected void onComponentTag(ComponentTag tag)

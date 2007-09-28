@@ -20,7 +20,7 @@ import wicket.contrib.webbeans.annotations.Tab;
     ),
 
     // Inherits from default context.
-    @Bean(context = "someContext", propertyNames = "-idNumber"),
+    @Bean(context = "someContext", propertyNames = "-idNumber")
 })
 public class TestBeanWithAnnotations implements Serializable {
     private String firstName;

@@ -53,8 +53,10 @@ public @interface Bean {
     /** Tell WWB whether to display the bean. This is only useful on nested beans. */
     boolean displayed() default true;
     /** Tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the {@link BeanMetaData} constructor. 
-     * Individual properties in may override this default. */
-    boolean viewOnly() default false;
+     * Individual properties in may override this default. 
+     * Note that this is defined as an array so WWB can tell if the attribute was explicitly set. However, you should just say viewOnly = true/false 
+     * and not use the array syntax. */
+    boolean[] viewOnly() default {};
     
     /** Specify detailed parameters for each action. */
     Action[] actions() default {};

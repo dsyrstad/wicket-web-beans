@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-package wicket.contrib.webbeans.model;
+package wicket.contrib.webbeans.model.beanprops;
 
 
 import wicket.ajax.AjaxRequestTarget;

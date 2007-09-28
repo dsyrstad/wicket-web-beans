@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import wicket.Component;
+import wicket.contrib.webbeans.util.WicketUtil;
 import wicket.util.string.Strings;
 
 /**
@@ -32,12 +34,16 @@ public class MetaData
 {
     private Properties parameters = new Properties();
     private Set<String> consumedParameters = new HashSet<String>();
+    private Component component;
 
     /**
      * Construct a MetaData. 
+     * 
+     * @param component the component to use for macro localization.
      */
-    public MetaData()
+    public MetaData(Component component)
     {
+        this.component = component;
     }
 
     /**
@@ -136,11 +142,12 @@ public class MetaData
      * Sets a parameter.
      *
      * @param key the parameter key.
-     * @param value the parameter value.
+     * @param value the parameter value. Macros ("${...}")) in this value will be substituted from the component's localizer.
      */
     public void setParameter(String key, String value)
     {
-        parameters.setProperty(key, value);
+        ;
+        parameters.setProperty(key, WicketUtil.substituteMacros(value, component));
     }
     
     /**

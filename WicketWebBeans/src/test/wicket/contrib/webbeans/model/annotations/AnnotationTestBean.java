@@ -15,7 +15,7 @@
    limitations under the License.
 ---*/
 
-package wicket.contrib.webbeans.model;
+package wicket.contrib.webbeans.model.annotations;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BeanMetaDataTestBean implements Serializable
+public class AnnotationTestBean implements Serializable
 {
     private static final long serialVersionUID = -8500883418534059147L;
 
-    private enum ColorEnum { 
+    public enum ColorEnum { 
         RedishBlack ("Redish Black"), 
         Green ("Green"), 
         Blue ("Blue"), 
@@ -65,18 +65,18 @@ public class BeanMetaDataTestBean implements Serializable
     private ColorEnum color;
     private BigDecimal operand1;
     private BigDecimal operand2;
-    private BeanMetaDataTestBean2 testBean2;
-    private BeanMetaDataTestBean2 blockBean;
-    private BeanMetaDataTestBean2 inlineBean;
-    private BeanMetaDataTestBean2 popupBean;
-    private List<BeanMetaDataTestBean2> beans;
+    private AnnotationTestBean2 testBean2;
+    private AnnotationTestBean2 blockBean;
+    private AnnotationTestBean2 inlineBean;
+    private AnnotationTestBean2 popupBean;
+    private List<AnnotationTestBean2> beans;
     private List<ColorEnum> palette = new ArrayList<ColorEnum>();
     private String description;
     private SubComponent subComponent;
     
     private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 
-    public BeanMetaDataTestBean()
+    public AnnotationTestBean()
     {
     }
 
@@ -343,9 +343,9 @@ public class BeanMetaDataTestBean implements Serializable
     /**
      * Gets the beans.
      *
-     * @return a List<BeanMetaDataTestBean2>.
+     * @return a List<AnnotationTestBean2>.
      */
-    public List<BeanMetaDataTestBean2> getBeans()
+    public List<AnnotationTestBean2> getBeans()
     {
         return beans;
     }
@@ -353,9 +353,9 @@ public class BeanMetaDataTestBean implements Serializable
     /**
      * Sets beans.
      *
-     * @param beans a List<BeanMetaDataTestBean2>.
+     * @param beans a List<AnnotationTestBean2>.
      */
-    public void setBeans(List<BeanMetaDataTestBean2> beans)
+    public void setBeans(List<AnnotationTestBean2> beans)
     {
         this.beans = beans;
     }
@@ -363,9 +363,9 @@ public class BeanMetaDataTestBean implements Serializable
     /**
      * Gets the testBean2.
      *
-     * @return a BeanMetaDataTestBean2.
+     * @return a AnnotationTestBean2.
      */
-    public BeanMetaDataTestBean2 getTestBean2()
+    public AnnotationTestBean2 getTestBean2()
     {
         return testBean2;
     }
@@ -373,9 +373,9 @@ public class BeanMetaDataTestBean implements Serializable
     /**
      * Sets testBean2.
      *
-     * @param testBean2 a BeanMetaDataTestBean2.
+     * @param testBean2 a AnnotationTestBean2.
      */
-    public void setTestBean2(BeanMetaDataTestBean2 testBean2)
+    public void setTestBean2(AnnotationTestBean2 testBean2)
     {
         this.testBean2 = testBean2;
     }
@@ -418,7 +418,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the blockBean.
      */
-    public BeanMetaDataTestBean2 getBlockBean()
+    public AnnotationTestBean2 getBlockBean()
     {
         return blockBean;
     }
@@ -429,7 +429,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param blockBean the blockBean to set.
      */
-    public void setBlockBean(BeanMetaDataTestBean2 blockBean)
+    public void setBlockBean(AnnotationTestBean2 blockBean)
     {
         this.blockBean = blockBean;
     }
@@ -440,7 +440,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the inlineBean.
      */
-    public BeanMetaDataTestBean2 getInlineBean()
+    public AnnotationTestBean2 getInlineBean()
     {
         return inlineBean;
     }
@@ -451,7 +451,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param inlineBean the inlineBean to set.
      */
-    public void setInlineBean(BeanMetaDataTestBean2 inlineBean)
+    public void setInlineBean(AnnotationTestBean2 inlineBean)
     {
         this.inlineBean = inlineBean;
     }
@@ -462,7 +462,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the popupBean.
      */
-    public BeanMetaDataTestBean2 getPopupBean()
+    public AnnotationTestBean2 getPopupBean()
     {
         return popupBean;
     }
@@ -473,7 +473,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param popupBean the popupBean to set.
      */
-    public void setPopupBean(BeanMetaDataTestBean2 popupBean)
+    public void setPopupBean(AnnotationTestBean2 popupBean)
     {
         this.popupBean = popupBean;
     }

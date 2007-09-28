@@ -94,7 +94,7 @@ The target parameter may be null for non-Ajax requests. </p>
 <ul><li><strong>labelImage</strong> - An image file name relative to the component. Specifies that the property's field should have the specified image rather than a text label.</li>
 </ul><p>
 </p>
-<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the property is view-only (i.e., not editable). This is automatically set to true if you are using JPA and the @Column annotation has both insertable and updatable set to false.</li>
+<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the property is view-only (i.e., not editable).</li>
 </ul><p>
 </p>
 <ul><li><strong>fieldType</strong> - Specifies a Field class name to use for this property. This overrides the Field type defined for the property type in ComponentRegistry. Note that if the Field type is already defined for a different class in ComponentRegistry, you can just specify the base class name, not the package which is optional. Otherwise, you can explicitly specify the package name.</li>
@@ -126,6 +126,9 @@ Actions (action.action-name) additionally support the following parameters (supp
 </ul><p>
  </p>
 <ul><li><strong>default</strong> - If &quot;true&quot;, the action will be fired when the Enter key is pressed anywhere on the form.</li>
+</ul><p>
+</p>
+<ul><li><strong>rows</strong> - the number of rows to display in a BeanTableField or TextAreaField.</li>
 </ul><p>
 </p>
 <h2>Standard Tab Parameters</h2>

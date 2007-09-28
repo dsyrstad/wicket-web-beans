@@ -59,10 +59,6 @@ public @interface Action  {
     /** Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a parameter supported by {@link BeanGridPanel}, 
      * which is the default layout used by {@link BeanForm}. See {@link BeanGridPanel} parameters for more details. */
     int colspan() default 1;
-    
-    /** Tell WWB whether this element is view-only or editable. This is automatically set to true if you are using JPA and the @Column annotation has 
-     * both insertable and updatable set to false. */
-    boolean viewOnly() default false;
 
     /** Arbitrary non-standard parameters. These are interpreted by the component. */
     Parameter[] params() default {};

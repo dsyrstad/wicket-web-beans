@@ -15,12 +15,16 @@
    limitations under the License.
 ---*/
 
-package wicket.contrib.webbeans.model;
+package wicket.contrib.webbeans.model.beanprops;
 
 import java.util.List;
 
 import junit.framework.TestCase;
 import wicket.Page;
+import wicket.contrib.webbeans.fields.BeanGridField;
+import wicket.contrib.webbeans.fields.BeanInlineField;
+import wicket.contrib.webbeans.fields.EmptyField;
+import wicket.contrib.webbeans.fields.TextAreaField;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.contrib.webbeans.model.TabMetaData;
@@ -35,7 +39,7 @@ public class BeanMetaDataTest extends TestCase
 {
     
     /**
-     * Construct a BeanMetaDataTest. 
+     * Construct a AnnotationTest. 
      *
      * @param name
      */
@@ -88,21 +92,21 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
             new ElementInfo("age", false, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", false, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", false, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", false, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("color", false, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", false, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", false, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", false, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", false, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("palette2", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette 2", null, "miscInfo"),
-            new ElementInfo("blockBean", false, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", false, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
+            new ElementInfo("palette2", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette 2", null, "miscInfo"),
+            new ElementInfo("blockBean", false, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", false, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", false, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", false, null, null, "Popup Bean", null, "nameInfo"),
             new ElementInfo("action.cancel", false, null, null, "Cancel", null, null),
@@ -228,20 +232,20 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
             new ElementInfo("age", true, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", true, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", true, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("color", true, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", true, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("blockBean", true, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
+            new ElementInfo("blockBean", true, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", true, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
             new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
@@ -305,19 +309,19 @@ public class BeanMetaDataTest extends TestCase
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
             new ElementInfo("age", true, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", true, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", true, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("blockBean", true, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
+            new ElementInfo("blockBean", true, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", true, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
             new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),

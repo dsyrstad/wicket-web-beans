@@ -637,7 +637,6 @@ public class BeanForm extends Panel
     {
         boolean errorsFound = false;
         
-        @Override
         public Object component(Component component)
         {
             AbstractField field = (AbstractField)component;
