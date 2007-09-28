@@ -1,0 +1,71 @@
+/*----------------------------------------------------------------------------
+	colorscheme.css (3)
+
+	this css-file contains all definitions, that are dependend from the
+	colorschemes.
+
+	(c) Georg Torges (kein_bluemchen@gmx.de) for 1und1 Website Award
+ ----------------------------------------------------------------------------*/
+
+.content h1 {
+	color: #ff0000;
+}
+
+.content h2 {
+	color: #ff0000;
+}
+
+.content h3 {
+	color: #ff0000;
+}
+
+.content a:link {
+	color: #ff0000;
+}
+
+.content a:visited {
+	color: #ff0000;
+}
+
+.content a:hover {
+	color: #ff0000;
+}
+
+.content a:active {
+	color: #ff0000;
+}
+
+.content fieldset {
+	border-color: #187EC0;
+}
+
+.content th {
+	background-color: #EDF6FB;
+}
+
+a.main_nav_item {
+	background-image: url(../../images/dynamic/buttonset3/main_nav_link_button.gif);
+}
+a.main_nav_item:hover {
+	background-color: #EDF6FB;
+	background-image: url(../../images/dynamic/buttonset3/main_nav_hover_button.gif);
+}
+a.main_nav_active_item {
+	background-image: url(../../images/dynamic/buttonset3/main_nav_active_button.gif);
+}
+.sub_nav_list {
+	/*background-color: #EDF6FB;*/
+}
+a.sub_nav_item {
+	background-image: url(../../images/dynamic/buttonset3/sub_nav_link_button.gif);
+}
+a.sub_nav_item:hover {
+	background-image: url(../../images/dynamic/buttonset3/sub_nav_hover_button.gif);
+}
+a.sub_nav_active_item {
+	background-image: url(../../images/dynamic/buttonset3/sub_nav_active_button.gif);
+}
+
+#content_search_container, #weblog_search_container, #forum_search_container {
+	background-color: #187EC0; 
+}
