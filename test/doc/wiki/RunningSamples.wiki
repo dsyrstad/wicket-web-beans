@@ -1,0 +1,10 @@
+---+ Running the Samples
+
+You need Java 5+ to run the wwb.war file. If you're using Tomcat, we recommend 5.5.23 or later.
+
+0. If necessary, build WWB by typing:  ant clean all 
+1. Deploy releases/wwb.war or setup a project with Tomcat, Jetty, etc.
+2. For Tomcat, go to http://localhost:8080/wwb/WebBeans. This starts LauncherApplication and allows you to drill down on each sample. 
+
+Back to WicketWebBeans
+
