@@ -41,10 +41,6 @@ import wicket.markup.html.panel.Panel;
  */
 public class BeanSubmitButton extends Panel
 {
-    public static final String PARAM_DEFAULT = "default";
-    public static final String PARAM_AJAX = "ajax";
-    public static final String PARAM_CONFIRM = "confirm";
-
     private static final long serialVersionUID = 3103634601101052411L;
 
     private IAjaxCallDecorator decorator = null;
@@ -66,9 +62,9 @@ public class BeanSubmitButton extends Panel
     public BeanSubmitButton(String id, ElementMetaData element, Form form, final Object bean)
     {
         this(id, element.getLabelComponent("label"), form, bean, 
-                        element.getParameter(PARAM_CONFIRM),
-                        element.getParameter(PARAM_AJAX),
-                        element.getParameter(PARAM_DEFAULT)); 
+                        element.getParameters().getProperty("confirm"),
+                        element.getParameters().getProperty("ajax"),
+                        element.getParameters().getProperty("default")); 
     }
 
     /**

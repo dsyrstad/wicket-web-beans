@@ -55,7 +55,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -68,13 +68,13 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
     public BeanTablePanel(String id, IModel model, BeanMetaData metaData, boolean viewOnly, int numRows)
     {
-        super(id, model);
+        super(id);
 
         this.metaData = metaData;
         List<IColumn> columns = new ArrayList<IColumn>();
@@ -111,19 +111,19 @@ public class BeanTablePanel extends Panel
     {
         private static final long serialVersionUID = 6712923396580294568L;
 
-        private IModel listModel;
+        private IModel collectionModel;
         private BeanMetaData metaData;
         private SortParam lastSortParam = null;
         
-        public BeanSortableDataProvider(BeanMetaData metaData, IModel listModel)
+        public BeanSortableDataProvider(BeanMetaData metaData, IModel collectionModel)
         {
             this.metaData = metaData;
-            this.listModel = listModel;
+            this.collectionModel = collectionModel;
         }
         
         List getList()
         {
-            List list = (List)listModel.getObject(null);
+            List list = (List)collectionModel.getObject(null);
             if (list == null) {
                 list = new ArrayList();
             }
@@ -162,12 +162,6 @@ public class BeanTablePanel extends Panel
             return new Model((Serializable)object);
         }
 
-        @Override
-        public void detach()
-        {
-            super.detach();
-            listModel.detach();
-        }
     }
     
     public static class BeanElementColumn implements IColumn

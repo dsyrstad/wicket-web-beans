@@ -22,11 +22,9 @@ The target parameter may be null for non-Ajax requests.
    
    * *displayed* - Either "true" or "false" to tell WWB whether to display the bean. This is only useful on nested beans.
      
-   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default. 
+   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default.
    
    * *cols* - Number of columns in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
-   
-   * *rows* - If the bean or bean's IModel passed to !BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10.
 
 ---++ Standard Property Parameters
    * *label* - Specifies the label for the property.
@@ -39,13 +37,7 @@ The target parameter may be null for non-Ajax requests.
 
    * *elementType* - For Collections, elementType is the type of the elements contained within the collection. By default, WWB automatically deduces the element type from the collection if it is not null and not empty. In this case, elementType is detected from the first element of the collection. Otherwise, you can use this parameter to explicitly specify the type.
 
-   * *colspan* - Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
-   
-   * *required* - Either "true" or "false" to tell WWB whether the field is required. Note that you must call !BeanForm.validateRequired() in your action method to have the validation occur. This is automatically set to true if you are using JPA and the @Column annotation has nullable set to false. If you are using the JDO @Column annotation, this is set to true if @Column.allowsNull is "false".
-   
-   * *maxlength* - The maximum input length for a field. This is automatically set if you are using the JPA or JDO @Column.length annotation.
-   
-   * *defaultValue* - The default string value for a field. This is automatically set if you are using the JDO @Column.defaultValue annotation.
+   * *colspan* - Number of columns to span in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details. 
 
 Actions (action.action-name) additionally support the following parameters (supported by !BeanActionButton):
 
@@ -54,8 +46,6 @@ Actions (action.action-name) additionally support the following parameters (supp
    * *ajax* - If "true", the action should be invoked with Ajax. Otherwise, it the action performs a regular form submit.
  
    * *default* - If "true", the action will be fired when the Enter key is pressed anywhere on the form.
-
-   * *rows* - the number of rows to display in a !BeanTableField or !TextAreaField. 
 
 ---++ Standard Tab Parameters
 
@@ -101,20 +91,6 @@ Displays a property's collection as a list of beans in a table. See !BeanTablePa
 
 A Field that presents a property's bean in a panel, but the bean's properties do not have labels. For errors, the bean's properties use the parent property's label. This is useful for creating simple composite fields directly from small beans. No field-level parameters.
 
----+++ !DateTimeField
-
-   * *format* - the format of the date. The default format is based on the property type:
-     java.util.Date, java.sql.Timestamp: yyyy-MM-dd HH:MM
-     java.sql.Time: HH:MM
-     java.sql.Date: yyyy-MM-dd
-     java.util.Calendar: yyyy-MM-dd HH:MM z
-     
-     You may override this defaults in the enclosing Page's properties using the following keys:
-		DateTimeField.date.format - Format for java.sql.Date.
-		DateTimeField.datetime.format - Format for java.sql.Timestamp or java.util.Date.
-		DateTimeField.time.format - Format for java.sql.Time.
-		DateTimeField.datetimetz.format - Format for java.util.Calendar types.
-
 ---+++ !EnumField/!JavaEnumField
 
    * *default* - specifies the default value to use from the enumeration. This value must match a value returned from the name() method.
@@ -127,14 +103,10 @@ A common field used to accept input for a variety of primitive and wrapper prope
  
 ---+++ !TextAreaField
  
-Defines a field for Strings that allows more than one line of input.
+ Defines a field for Strings that allows more than one line of input.
  
     * *rows* - The number of rows (lines) to be displayed for the field. Note that the input is not limited to this number of lines because a scrollbar is used. This is simply the number of lines displayed.  Default is the CSS defined height.
     
     * *cols* - The number of columns (characters) across to be displayed for the field. Default is the CSS defined width.
  
----++ Third-Party Annotations
-
-Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See _Standard Property Parameters_ above for more details. Also see the wicket.contrib.webbeans.examples.thirdpartyannotations.AnnotationsBeanPage example.
-
-For annotations to be effective at runtime, you *must* have the JDO or JPA annotation classes in your classpath. For web apps, this means having the appropriate JARs in your WEB-INF/lib directory. 
+ 

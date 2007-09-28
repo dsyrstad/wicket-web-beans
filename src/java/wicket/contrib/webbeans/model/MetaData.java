@@ -21,10 +21,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import wicket.Component;
-import wicket.contrib.webbeans.util.WicketUtil;
-import wicket.util.string.Strings;
-
 /**
  * Common metadata methods. <p>
  * 
@@ -34,16 +30,12 @@ public class MetaData
 {
     private Properties parameters = new Properties();
     private Set<String> consumedParameters = new HashSet<String>();
-    private Component component;
 
     /**
      * Construct a MetaData. 
-     * 
-     * @param component the component to use for macro localization.
      */
-    public MetaData(Component component)
+    public MetaData()
     {
-        this.component = component;
     }
 
     /**
@@ -142,26 +134,13 @@ public class MetaData
      * Sets a parameter.
      *
      * @param key the parameter key.
-     * @param value the parameter value. Macros ("${...}")) in this value will be substituted from the component's localizer.
+     * @param value the parameter value.
      */
     public void setParameter(String key, String value)
     {
-        ;
-        parameters.setProperty(key, WicketUtil.substituteMacros(value, component));
+        parameters.setProperty(key, value);
     }
     
-    /**
-     * Sets a parameter if the value is not empty or null.
-     *
-     * @param key the parameter key. If empty or null, the parameter is not set.
-     * @param value the parameter value. If empty or null, the parameter is not set.
-     */
-    public void setParameterIfNotEmpty(String key, String value)
-    {
-        if (!Strings.isEmpty(key) && !Strings.isEmpty(value)) {
-            setParameter(key,value);
-        }
-    }
     
     /**
      * Gets the parameters.

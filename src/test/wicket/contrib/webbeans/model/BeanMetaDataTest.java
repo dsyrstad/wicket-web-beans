@@ -15,16 +15,12 @@
    limitations under the License.
 ---*/
 
-package wicket.contrib.webbeans.model.beanprops;
+package wicket.contrib.webbeans.model;
 
 import java.util.List;
 
 import junit.framework.TestCase;
 import wicket.Page;
-import wicket.contrib.webbeans.fields.BeanGridField;
-import wicket.contrib.webbeans.fields.BeanInlineField;
-import wicket.contrib.webbeans.fields.EmptyField;
-import wicket.contrib.webbeans.fields.TextAreaField;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.contrib.webbeans.model.TabMetaData;
@@ -39,7 +35,7 @@ public class BeanMetaDataTest extends TestCase
 {
     
     /**
-     * Construct a AnnotationTest. 
+     * Construct a BeanMetaDataTest. 
      *
      * @param name
      */
@@ -87,35 +83,35 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
+            new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", false, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", false, null, null, "Add Row", null, "listOfBeans"),
-            new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
             new ElementInfo("age", false, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", false, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", false, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", false, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("color", false, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", false, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", false, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", false, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", false, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("palette2", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette 2", null, "miscInfo"),
-            new ElementInfo("blockBean", false, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", false, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
+            new ElementInfo("palette2", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette 2", null, "miscInfo"),
+            new ElementInfo("blockBean", false, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", false, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", false, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", false, null, null, "Popup Bean", null, "nameInfo"),
-            new ElementInfo("action.cancel", false, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", false, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", false, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", false, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", false, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", false, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", false, null, null, "Time Only", null, "nameInfo"),
+            new ElementInfo("action.cancel", false, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", false, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -226,35 +222,35 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("Bean View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
+            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
-            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
             new ElementInfo("age", true, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", true, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", true, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("color", true, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", true, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("blockBean", true, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", true, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
+            new ElementInfo("blockBean", true, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", true, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", true, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", true, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", true, null, null, "Time Only", null, "nameInfo"),
+            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -266,8 +262,8 @@ public class BeanMetaDataTest extends TestCase
             ++elementIdx;
         }
         
-        // action.save (first element) should have a parameter of colspan: 4
-        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(0).getIntegerParameter("colspan"));
+        // action.save (second element) should have a parameter of colspan: 4
+        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
         
         List<TabMetaData> tabs = beanMetaData.getTabs();
         assertEquals(3, tabs.size());
@@ -303,34 +299,34 @@ public class BeanMetaDataTest extends TestCase
         assertEquals("Bean Popup View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
+            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
-            new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "miscInfo"),
             new ElementInfo("age", true, null, null, "Age", null, "miscInfo"),
             new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
             new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
+            new ElementInfo("EMPTY:28", true, "wicket.contrib.webbeans.fields.EmptyField", null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null, "nameInfo"),
             new ElementInfo("operand2", true, null, null, "Operand 2", null, "miscInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
-            new ElementInfo("palette", true, null, BeanMetaDataTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
+            new ElementInfo("inlineBean", true, "wicket.contrib.webbeans.fields.BeanInlineField", null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("palette", true, null, "wicket.contrib.webbeans.model.TestBean$ColorEnum", "Palette", null, "miscInfo"),
             new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
-            new ElementInfo("blockBean", true, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
-            new ElementInfo("description", true, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
+            new ElementInfo("blockBean", true, "wicket.contrib.webbeans.fields.BeanGridField", null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("description", true, "wicket.contrib.webbeans.fields.TextAreaField", null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", true, null, null, "Popup Bean", null, "nameInfo"),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
             new ElementInfo("dateOnly", true, null, null, "Date Only", null, "nameInfo"),
             new ElementInfo("isActive", true, null, null, "Is Active", null, "nameInfo"),
             new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null, "nameInfo"),
             new ElementInfo("startDate", true, null, null, "Start Date", null, "nameInfo"),
             new ElementInfo("timeOnly", true, null, null, "Time Only", null, "nameInfo"),
+            new ElementInfo("action.cancel", true, null, null, "Cancel", null, null),
+            new ElementInfo("action.doIt", true, null, null, "Do It", null, null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -342,8 +338,8 @@ public class BeanMetaDataTest extends TestCase
             ++elementIdx;
         }
         
-        // action.save (first element) should have a parameter of colspan: 4
-        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(0).getIntegerParameter("colspan"));
+        // action.save (second element) should have a parameter of colspan: 4
+        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
         
         List<TabMetaData> tabs = beanMetaData.getTabs();
         assertEquals(3, tabs.size());

@@ -31,8 +31,6 @@ public final class TabMetaData extends MetaData implements Serializable
 
     TabMetaData(BeanMetaData beanMetaData, String id, String label)
     {
-        super(beanMetaData.getComponent());
-        
         this.beanMetaData = beanMetaData;
         this.id = id;
         setLabel(label);
@@ -57,7 +55,7 @@ public final class TabMetaData extends MetaData implements Serializable
                     throw new RuntimeException("Parameter " + param.getName() + "on tab " + id + " on bean " + beanMetaData.getBeanClass().getSimpleName() + " does not specify exactly one value.");
                 }
                 
-                String value = values.get(0).getValue();
+                String value = values.get(0).getValue(beanMetaData.getComponent());
                 setParameter(param.getName(), value);
             }
         }

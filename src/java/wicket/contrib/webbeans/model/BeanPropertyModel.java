@@ -42,8 +42,6 @@ public class BeanPropertyModel extends PropertyModel
     private Object lastValueGot = null;
     // This flag tracks whether lastValueGot is valid.
     private boolean getObjectCalled = false;
-    // If this model is registered with a BeanForm, this is it.
-    private BeanForm beanForm = null;
 
     /**
      * Construct a BeanPropertyModel. 
@@ -124,26 +122,6 @@ public class BeanPropertyModel extends PropertyModel
         }
         
         getObjectCalled = false;
-    }
-
-    public BeanForm getBeanForm()
-    {
-        return beanForm;
-    }
-
-    public void setBeanForm(BeanForm beanForm)
-    {
-        this.beanForm = beanForm;
-    }
-
-    @Override
-    protected void onAttach()
-    {
-        super.onAttach();
-        if (beanForm != null) {
-            // Re-register listener when the bean is being re-attached.
-            elementMetaData.getBeanMetaData().addPropertyChangeListener(this, beanForm.getListener());
-        }
     }
 
 }

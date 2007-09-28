@@ -1,5 +1,6 @@
 BeanMetaDataTestBean {
 	label: "My ${TestBean.title} Title";   
+	actions: save,cancel,doIt,addRow;
 	props: 
 		action.save{colspan: 3},
 		firstName,
@@ -25,8 +26,8 @@ BeanMetaDataTestBean {
 				operand1,
 				operand2,
 				result{viewOnly: true},
-				palette{elementType: BeanMetaDataTestBean$ColorEnum},
-				palette2{elementType: BeanMetaDataTestBean$ColorEnum; viewOnly: true},
+				palette{elementType: TestBean$ColorEnum},
+				palette2{elementType: TestBean$ColorEnum; viewOnly: true},
 				description{fieldType: TextAreaField; rows: 5};
 		}, 
 		listOfBeans {
@@ -56,14 +57,10 @@ BeanMetaDataTestBean[popupView extends view] {
 }
 
 BeanMetaDataTestBean2 {
-	actions: -doIt;
+	actions: deleteRow;
 	props: 
 		action.deleteRow{labelImage: "remove.gif"},
 		selected{label: X},
 		firstName{viewOnly: false},
 		lastName;
 }
-
-# Make sure parser allows empty blocks
-XX { }
-XX2 { props: a{}, b, c; }

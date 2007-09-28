@@ -24,9 +24,7 @@ import wicket.contrib.webbeans.model.NonJavaEnum;
 import wicket.markup.html.form.DropDownChoice;
 import wicket.markup.html.panel.Fragment;
 import wicket.model.IModel;
-import wicket.model.Model;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -37,8 +35,6 @@ import java.util.List;
  */
 abstract public class EnumField extends AbstractField
 {
-    private DropDownChoice choice;
-    
     /**
      * Construct a new EnumField.
      *
@@ -51,23 +47,8 @@ abstract public class EnumField extends AbstractField
      */
     public EnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, List values)
     {
-        this(id, model, metaData, viewOnly, new Model((Serializable)values));
-    }
-    
-    /**
-     * Construct a new EnumField.
-     *
-     * @param id the Wicket id for the editor.
-     * @param model the model.
-     * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
-     * @param valueModel an IModel that returns a List of values to be selected from. The element's toString() is used to 
-     *  produce the value displayed to the user.
-     */
-    public EnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, IModel valueModel)
-    {
         super(id, model, metaData, viewOnly);
-        
+
         Fragment fragment;
         if (viewOnly) {
             fragment = new Fragment("frag", "viewer");
@@ -75,56 +56,25 @@ abstract public class EnumField extends AbstractField
         }
         else {
             fragment = new Fragment("frag", "editor");
-            choice = new DropDownChoice("component", model, valueModel);
+            DropDownChoice choice = new DropDownChoice("component", model, values);
             // Always allow the null choice.
             choice.setNullValid(true);
             fragment.add(choice);
 
-            initDefault();
+            // Handle default selection if no model is provided
+            if (choice.getModelObject() == null) {
+                String defaultChoice = metaData.getParameter("default");
+                if (defaultChoice != null && values.size() > 0)
+                    setupDefault(values, defaultChoice, choice);
+            }
         }
 
         add(fragment);
     }
-    
-    /**
-     * Sets the list of possible values. 
-     *
-     * @param values the values.
-     */
-    public void setValues(List values)
-    {
-        setValuesModel( new Model((Serializable)values) );
-    }
-    
-    /**
-     * Sets the model of the list of possible values. This model should return a List. 
-     *
-     * @param valuesModel the values model.
-     */
-    public void setValuesModel(IModel valuesModel)
-    {
-        choice.setChoices(valuesModel);
-        initDefault();
-    }
-    
-    private void initDefault()
-    {
-        // Handle default selection if no model is provided
-        if (choice.getModelObject() == null) {
-            String defaultChoice = getElementMetaData().getParameter("default");
-            if (defaultChoice != null)
-                setupDefault(defaultChoice);
-        }
-    }
-    
-    private void setupDefault(String defaultChoice)
+
+    private void setupDefault(List values, String defaultChoice, DropDownChoice choice)
     {
         boolean isJavaEnum = false;
-        List values = choice.getChoices();
-        if (values == null || values.isEmpty()) {
-            return;
-        }
-
         Object firstValue = values.get(0);
 
         // Figure out what type of enum were dealing with

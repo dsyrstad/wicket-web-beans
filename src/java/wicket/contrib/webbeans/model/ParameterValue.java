@@ -19,6 +19,9 @@ package wicket.contrib.webbeans.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import wicket.Component;
+import wicket.contrib.webbeans.util.WicketUtil;
+
 
 /**
  * ParameterValue AST for BeanPropsParser. <p>
@@ -51,5 +54,13 @@ public class ParameterValue
     public String getValue()
     {
         return value;
+    }
+
+    /**
+     * @return the raw value with substitution of macros based on the component's Localizer.  
+     */
+    public String getValue(Component component)
+    {
+        return WicketUtil.substituteMacros(value, component);
     }
 }

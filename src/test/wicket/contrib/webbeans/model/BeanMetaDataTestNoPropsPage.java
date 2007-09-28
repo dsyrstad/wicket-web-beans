@@ -1,5 +1,5 @@
 /*---
-   Copyright 2007 Visual Systems Corporation.
+   Copyright 2006-2007 Visual Systems Corporation.
    http://www.vscorp.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-
-package wicket.contrib.webbeans.containers;
-
-import java.io.Serializable;
+package wicket.contrib.webbeans.model;
 
 
-/**
- * A test bean that is Serializable. <p>
- * 
- * @author Dan Syrstad
- */
-public class SerializableBean extends NonSerializableBean implements Serializable
+import wicket.markup.html.WebPage;
+
+public class BeanMetaDataTestNoPropsPage extends WebPage
 {
-    /**
-     * Construct a SerializableBean. 
-     *
-     * @param name
-     * @param serialNumber
-     */
-    public SerializableBean(String name, String serialNumber)
+    public BeanMetaDataTestNoPropsPage()
     {
-        super(name, serialNumber);
     }
 }

@@ -47,9 +47,6 @@ import wicket.model.Model;
  */
 public class BeanGridPanel extends Panel
 {
-    public static final String PARAM_COLSPAN = "colspan";
-    public static final String PARAM_COLS = "cols";
-
     private static final long serialVersionUID = -2149828837634944417L;
 
     private Object bean; 
@@ -62,7 +59,7 @@ public class BeanGridPanel extends Panel
      * Construct a new BeanGridPanel.
      *
      * @param id the Wicket id for the panel.
-     * @param bean the bean to be displayed. This may be an IModel or regular bean object.
+     * @param bean the bean to be displayed.
      * @param beanMetaData the meta data for the bean
      */
     public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData)
@@ -114,7 +111,7 @@ public class BeanGridPanel extends Panel
         
         // Get Number of rows from config
         //Properties config = beanMetaData.getParameters();
-        columns = beanMetaData.getIntParameter(PARAM_COLS, 3);
+        columns = beanMetaData.getIntParameter("cols", 3);
         if (columns < 1) {
             throw new RuntimeException("Invalid columns config value: " + columns);
         }
@@ -124,7 +121,7 @@ public class BeanGridPanel extends Panel
         int colPos = 0;
         List<ElementMetaData> currRow = null;
         for (ElementMetaData element : displayedProperties) {
-            int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
+            int colspan = element.getIntParameter("colspan", 1);
             if (colspan < 1 || colspan > columns) { 
                 throw new RuntimeException("Invalid colspan parameter value: " + colspan);
             }
@@ -148,15 +145,6 @@ public class BeanGridPanel extends Panel
         
         Model propModel = new Model((Serializable)rowsAndCols);
         add( new RowListView("r", propModel) );
-    }
-
-    @Override
-    public void detachModels()
-    {
-        super.detachModels();
-        if (bean instanceof IModel) {
-            ((IModel)bean).detach();
-        }
     }
 
     @Override
@@ -192,7 +180,8 @@ public class BeanGridPanel extends Panel
         protected void populateItem(ListItem item)
         {
             ElementMetaData element = (ElementMetaData)item.getModelObject();
-            int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
+            String colspanStr = element.getParameters().getProperty("colspan", "1");
+            int colspan = Integer.valueOf(colspanStr);
             
             Component component;
             if (element.isAction()) {
@@ -206,7 +195,7 @@ public class BeanGridPanel extends Panel
                 }
             }
 
-            item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))) );
+            item.add( new AttributeModifier("colspan", true, new Model(colspanStr)) );
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
             item.add( new AttributeModifier("style", true, new Model(width)) );

@@ -58,12 +58,10 @@ public class InputField extends AbstractField
             fragment = new Fragment("frag", "editor");
 
             TextField field = new TextField("component", model, metaData.getPropertyType());
-            
             if (advOnEnter) {
                 field.add( new SimpleAttributeModifier("onkeypress", "return inputField_HandleEnter(this, event)") );
             }
             
-            setFieldParameters(field);
             fragment.add(field);
         }
         

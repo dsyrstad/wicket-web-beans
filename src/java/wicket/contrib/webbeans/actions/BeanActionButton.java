@@ -23,7 +23,6 @@ import wicket.Page;
 import wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.markup.html.form.Form;
-import wicket.model.IModel;
 
 /**
  * Bean button for Actions. Action config properties:<p>
@@ -41,7 +40,7 @@ import wicket.model.IModel;
  */
 public class BeanActionButton extends BeanSubmitButton
 {
-    private static final Class[] GENERIC_ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
+    public Class[] ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
     
     private ElementMetaData element;
     
@@ -51,7 +50,6 @@ public class BeanActionButton extends BeanSubmitButton
      * @param id
      * @param label
      * @param form
-     * @param bean may be a direct bean or an IModel.
      */
     public BeanActionButton(String id, ElementMetaData element, Form form, Object bean)
     {
@@ -62,10 +60,6 @@ public class BeanActionButton extends BeanSubmitButton
     @Override
     protected void onAction(AjaxRequestTarget target, Form form, Object bean)
     {
-        if (bean instanceof IModel) {
-            bean = ((IModel)bean).getObject(this);
-        }
-        
         Page page = getPage();
         String methodName = element.getActionMethodName();
         if (page == null) {
@@ -73,20 +67,11 @@ public class BeanActionButton extends BeanSubmitButton
         }
         
         try {
-            // Try first to find a bean-specific method.
-            Method method;
-            try {
-                method = page.getClass().getMethod(methodName, new Class[] { AjaxRequestTarget.class, Form.class, bean.getClass() } );
-            }
-            catch (Exception e) {
-                // Ignore and try generic parameters.
-                method = page.getClass().getMethod(methodName, GENERIC_ACTION_PARAMS);
-            }
-            
+            Method method = page.getClass().getMethod(methodName, ACTION_PARAMS);
             method.invoke(page, new Object[] { target, form, bean });
         }
         catch (NoSuchMethodException e) {
-            throw new RuntimeException("Action method " + methodName + "(AjaxRequestTarget, Form, " + bean.getClass().getName() + "/Object) is not defined in class " + page.getClass());
+            throw new RuntimeException("Action method " + methodName + " is not defined in class " + page.getClass());
         }
         catch (IllegalAccessException e) {
             throw new RuntimeException("Action method " + methodName + " defined in class " + page.getClass() + " must be declared public");

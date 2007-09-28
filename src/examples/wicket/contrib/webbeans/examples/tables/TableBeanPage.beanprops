@@ -1,5 +1,7 @@
 # Table Bean Example
 Invoice {
+	actions: addLine;
+	
 	props: invoiceNumber, invoiceDate, EMPTY, customerName, 
 		shipToAddress{colspan: 3},
 		action.addLine{colspan: 3},
@@ -7,6 +9,8 @@ Invoice {
 }
 
 InvoiceLine {
+	actions: removeLine;
+	
 	props: action.removeLine{labelImage: "remove.gif"},
 		quantity, itemCode, cost, total; 
 }

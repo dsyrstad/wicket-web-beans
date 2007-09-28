@@ -11,7 +11,7 @@ public class CustomFieldPage extends WebPage
     {
         Address bean = new Address();
         
-        // Register the ModelField for the Country class.
+        // Register the CountryField for the Country class.
         ComponentRegistry registry = new ComponentRegistry();
         registry.register(Country.class, CountryField.class);
         

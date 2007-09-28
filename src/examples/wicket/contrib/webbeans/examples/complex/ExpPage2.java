@@ -13,7 +13,6 @@ import wicket.markup.html.form.Form;
 public class ExpPage2 extends WebPage
 {
     private TestBean bean = new TestBean();
-    private BeanForm beanForm;
     
     public ExpPage2()
     {
@@ -27,36 +26,31 @@ public class ExpPage2 extends WebPage
         
         BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
 
-        beanForm = new BeanForm("beanForm", bean, meta);
-        add(beanForm);
+        add(new BeanForm("beanForm", bean, meta));
     }
     
-    public void save(AjaxRequestTarget target, Form form, TestBean bean)
+    public void save(AjaxRequestTarget target, Form form, Object bean)
     {
-        if (!beanForm.validateRequired()) {
-            return; // Errors
-        }
-        
         info("Saved - thank you");
     }
 
-    public void cancel(AjaxRequestTarget target, Form form, TestBean bean)
+    public void cancel(AjaxRequestTarget target, Form form, Object bean)
     {
         info("Canceled - thank you");
     }
 
-    public void deleteRow(AjaxRequestTarget target, Form form, TestBean2 rowBean)
+    public void deleteRow(AjaxRequestTarget target, Form form, Object rowBean)
     {
         info("Deleted row " + rowBean);
         bean.getBeans().remove(rowBean);
     }
 
-    public void addRow(AjaxRequestTarget target, Form form, TestBean rowBean)
+    public void addRow(AjaxRequestTarget target, Form form, Object rowBean)
     {
         bean.getBeans().add( new TestBean2() );
     }
 
-    public void doIt(AjaxRequestTarget target, Form form, TestBean rowBean)
+    public void doIt(AjaxRequestTarget target, Form form, Object rowBean)
     {
         info("You did it");
     }

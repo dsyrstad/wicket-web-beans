@@ -50,7 +50,7 @@ public class BeanTableField extends AbstractField
         BeanMetaData elementMetaData = metaData.createBeanMetaData(elementType, viewOnly);
         
         // Get Number of rows from parameters
-        int rows = metaData.getIntParameter(ElementMetaData.PARAM_ROWS, 10);
+        int rows = metaData.getIntParameter("rows", 10);
 
         add( new BeanTablePanel("t", model, elementMetaData, rows) );
     }

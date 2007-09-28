@@ -27,8 +27,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import wicket.Component;
-import wicket.Localizer;
 import wicket.ResourceReference;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.extensions.markup.html.datepicker.DatePicker;
@@ -43,29 +41,18 @@ import wicket.util.convert.IConverter;
 import wicket.util.convert.converters.DateConverter;
 
 /**
- * Date/Time Field component. Implemented as a text field combined with a DatePicker.
- * <p>
- * 
- * The enclosing component's properties file may define standard date/time formats 
- * using the following keys:
- * <ul>
- * <li><code>DateTimeField.date.format</code> - Format for java.sql.Date.</li>
- * <li><code>DateTimeField.datetime.format</code> - Format for java.sql.Timestamp or java.util.Date.</li>
- * <li><code>DateTimeField.time.format</code> - Format for java.sql.Time.</li>
- * <li><code>DateTimeField.datetimetz.format</code> - Format for java.util.Calendar types.</li>
- * </ul> 
+ * Date/Time Field component. Implemented as a text field combined with a DatePicker. <p>
  * 
  * @author Dan Syrstad
  */
 public class DateTimeField extends AbstractField
 {
+    // TODO Make Locale specific - or configurable. This is ISO Format
+    // TODO Look for "DateTimeField.dateFmt" in Localizer.
     public static final String DATE_FMT_STR = "yyyy-MM-dd";
     public static final String TIME_FMT_STR = "HH:mm";
     public static final String DATE_TIME_FMT_STR = DATE_FMT_STR + ' ' + TIME_FMT_STR;
     public static final String DATE_TIME_ZONE_FMT_STR = DATE_TIME_FMT_STR + " z";
-    
-    private static final String DATE_TIME_FIELD_PREFIX = "DateTimeField.";
-    private static final String FORMAT_SUFFIX = ".format";
     
     private String fmt;
 
@@ -83,26 +70,18 @@ public class DateTimeField extends AbstractField
         
         Class type = metaData.getPropertyType();
         boolean displayTz = false;
-        Component metaDataComponent = metaData.getBeanMetaData().getComponent();
-        Localizer localizer = metaDataComponent.getLocalizer();
         if (Time.class.isAssignableFrom(type)) {
-            fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "time" + FORMAT_SUFFIX, metaDataComponent, TIME_FMT_STR);
+            fmt = TIME_FMT_STR;
         }
         else if (java.sql.Date.class.isAssignableFrom(type)) {
-            fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "date" + FORMAT_SUFFIX, metaDataComponent, DATE_FMT_STR);
+            fmt = DATE_FMT_STR;
         }
         else if (Calendar.class.isAssignableFrom(type)) {
-            fmt = viewOnly ? localizer.getString(DATE_TIME_FIELD_PREFIX + "datetimetz" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_ZONE_FMT_STR) : 
-                             localizer.getString(DATE_TIME_FIELD_PREFIX + "datetime" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_FMT_STR);
+            fmt = viewOnly ? DATE_TIME_ZONE_FMT_STR : DATE_TIME_FMT_STR;
             displayTz = true;
         }
         else { // if (Date.class.isAssignableFrom(type) || Timestamp.class.isAssignableFrom(type)) 
-            fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "datetime" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_FMT_STR);
-        }
-        
-        String customFmt = getFormat();
-        if (customFmt != null) {
-            fmt = customFmt;
+            fmt = DATE_TIME_FMT_STR;
         }
         
         final InternalDateConverter converter = new InternalDateConverter(); 
@@ -130,7 +109,6 @@ public class DateTimeField extends AbstractField
                 }
             };
             
-            setFieldParameters(dateField);
             fragment.add(dateField);
     
             DatePickerSettings settings = new DatePickerSettings();

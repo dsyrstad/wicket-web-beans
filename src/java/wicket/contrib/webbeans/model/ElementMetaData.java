@@ -36,11 +36,6 @@ public final class ElementMetaData extends MetaData implements Serializable
     public static final String PARAM_LABEL_IMAGE = "labelImage";
     public static final String PARAM_LABEL = "label";
     public static final String PARAM_FIELD_TYPE = "fieldType";
-    public static final String PARAM_REQUIRED = "required";
-    public static final String PARAM_MAX_LENGTH = "maxlength";
-    public static final String PARAM_DEFAULT_VALUE = "defaultValue";
-    public static final String PARAM_ROWS = "rows";
-    public static final String PARAM_COLUMNS = "cols";
 
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
     
@@ -50,11 +45,11 @@ public final class ElementMetaData extends MetaData implements Serializable
     private int order;
     private String tabId;
     private boolean isAction = false;
+    // If true, the viewOnly parameter was set explicitly by beanprops. 
+    private boolean viewOnlySetExplicitly = false;
     
     ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class propertyType)
     {
-        super(beanMetaData.getComponent());
-        
         this.beanMetaData = beanMetaData;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
@@ -81,8 +76,11 @@ public final class ElementMetaData extends MetaData implements Serializable
                 throw new RuntimeException("Parameter " + param.getName() + "on element " + propertyName + " on bean " + beanMetaData.getBeanClass().getSimpleName() + " does not specify exactly one value.");
             }
             
-            String value = values.get(0).getValue();
+            String value = values.get(0).getValue(beanMetaData.getComponent());
             setParameter(param.getName(), value);
+            if (param.getName().equals(PARAM_VIEW_ONLY)) {
+                viewOnlySetExplicitly = true;
+            }
         }
     }
     
@@ -125,48 +123,6 @@ public final class ElementMetaData extends MetaData implements Serializable
     public void setLabel(String label)
     {
         getParameters().setProperty(PARAM_LABEL, label);
-    }
-    
-    public String getDefaultValue()
-    {
-        return getParameter(PARAM_DEFAULT_VALUE);
-    }
-    
-    public void setDefaultValue(String value)
-    {
-        if (value != null) {
-            getParameters().setProperty(PARAM_DEFAULT_VALUE, value);
-        }
-    }
-    
-    /**
-     * @return the maximum length for the field, or null if no maxmimum length.
-     */
-    public Integer getMaxLength()
-    {
-        return getIntegerParameter(PARAM_MAX_LENGTH);
-    }
-    
-    /**
-     * Sets the maximum length.
-     *
-     * @param maxLength the maximum length. If null, nothing is set.
-     */
-    public void setMaxLength(Integer maxLength)
-    {
-        if (maxLength != null && maxLength != 0) {
-            getParameters().setProperty(PARAM_MAX_LENGTH, maxLength.toString());
-        }
-    }
-    
-    public boolean isRequired()
-    {
-        return getBooleanParameter(PARAM_REQUIRED);
-    }
-    
-    public void setRequired(boolean required)
-    {
-        getParameters().setProperty(PARAM_REQUIRED, String.valueOf(required));
     }
     
     /**
@@ -403,8 +359,8 @@ public final class ElementMetaData extends MetaData implements Serializable
         // Compose a keyPrefix from the original bean meta data, the base bean class name, and this property name.
         BeanMetaData parentMetaData = getBeanMetaData();
             
-        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
-                        parentMetaData.getComponentRegistry(), viewOnly, true);
+        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getComponent(),
+                        parentMetaData.getComponentRegistry(), viewOnly);
     }
     
     /**
@@ -419,5 +375,13 @@ public final class ElementMetaData extends MetaData implements Serializable
         catch (Exception e) {
             throw new RuntimeException("Error creating instance of " + getPropertyType());
         }
+    }
+
+    /**
+     * @return true if viewOnly was set explicitly in beanprops.
+     */
+    public boolean isViewOnlySetExplicitly()
+    {
+        return viewOnlySetExplicitly;
     }
 }

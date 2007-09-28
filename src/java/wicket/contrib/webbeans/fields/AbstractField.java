@@ -19,14 +19,13 @@
  */
 package wicket.contrib.webbeans.fields;
 
-import wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanPropertyModel;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.markup.html.form.FormComponent;
 import wicket.markup.html.panel.Panel;
 import wicket.model.IModel;
-import wicket.util.string.Strings;
+
+import java.util.Properties;
 
 
 /**
@@ -54,59 +53,9 @@ abstract public class AbstractField extends Panel implements Field
         super(id, model);
         this.elementMetaData = metaData;
         
-        metaData.consumeParameter(ElementMetaData.PARAM_REQUIRED);
-        metaData.consumeParameter(ElementMetaData.PARAM_MAX_LENGTH);
-        
         // Allow for refreshing of the field via Ajax.
         setOutputMarkupId(true);
         setRenderBodyOnly(false);
-    }
-    
-    /**
-     * @return true if the field's metadata says that it is a required field.
-     */
-    public boolean isRequiredField()
-    {
-        return elementMetaData.isRequired();
-    }
-    
-    /**
-     * @return the maximum length for the field, or null if no maxmimum length.
-     */
-    public Integer getMaxLength()
-    {
-        return elementMetaData.getMaxLength();
-    }
-    
-    /**
-     * @return the default string value for this field, or null if none is defined.
-     */
-    public String getDefaultValue()
-    {
-        return elementMetaData.getDefaultValue();
-    }
-    
-    /**
-     * Gets a java.text.Format string for formatting the field.
-     *
-     * @return the format, or null if not defined.
-     */
-    public String getFormat()
-    {
-        return elementMetaData.getParameter("format");
-    }
-    
-    protected void setFieldParameters(FormComponent field)
-    {
-        Integer maxLength = getMaxLength();
-        if (maxLength != null) {
-            field.add( new SimpleAttributeModifier("maxlength", maxLength.toString()) );
-        }
-        
-        String defaultValue = getDefaultValue();
-        if (defaultValue != null && Strings.isEmpty(getModelObjectAsString())) {
-            field.setModelValue(defaultValue);
-        }
     }
     
     /**
@@ -120,7 +69,12 @@ abstract public class AbstractField extends Panel implements Field
         // If we're part of a BeanForm, register ourself with it.
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {
-            beanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
+            Object bean = null;
+            if (getModel() instanceof BeanPropertyModel) {
+                bean = ((BeanPropertyModel)getModel()).getBean();
+            }
+            
+            beanForm.registerComponent(this, bean, elementMetaData);
         }
     }
 
@@ -137,13 +91,14 @@ abstract public class AbstractField extends Panel implements Field
     /**
      * Returns the ElementMetaData related to the specified propertyName.
      * @param metaData metaData for this field.
-     * @param parameterName the parameter name on metaData. The value of this parameter should be the property name to lookup.
+     * @param propertyName the propertyName to lookup
      * @param propertyClass the class type the property should resolve to
      * @return ElementMetaData
      */
-    protected ElementMetaData getDependentProperty(ElementMetaData metaData, String parameterName, Class propertyClass) {
+    protected ElementMetaData getDependentProperty(ElementMetaData metaData, String propertyName, Class propertyClass) {
+        Properties config = metaData.getParameters();
         ElementMetaData property = null;
-        String propStr = metaData.getParameter(parameterName);
+        String propStr = config.getProperty(propertyName);
         if (propStr != null) {
             property = metaData.getBeanMetaData().findElement(propStr);
             if (property == null) {
@@ -151,7 +106,7 @@ abstract public class AbstractField extends Panel implements Field
             }
 
             if (!propertyClass.isAssignableFrom( property.getPropertyType() )) {
-                throw new RuntimeException(parameterName + "'" + propStr + "' must return a " + propertyClass.getName() + " on "
+                throw new RuntimeException(propertyName + "'" + propStr + "' must return a " + propertyClass.getName() + " on "
                                 + metaData.getBeanMetaData().getBeanClass() + ". Instead it returns "
                                 + property.getPropertyType());
             }
