@@ -19,6 +19,7 @@
 
 	<!-- The class files are put in this directory. -->
 	<property name="code.build" value="build-ant" />
+    <property name="apidocs.dir" value="${code.build}/api"/>
 
 	<property name="examples.src" value="${base.src}/examples" />
 	<property name="examples.build" value="${code.build}/examples" />
@@ -144,6 +145,15 @@
 		</copy>
 	</target>
 
+    <target name="javadoc" depends="init" description="Javadoc">
+        <mkdir dir="${apidocs.dir}"/>
+        <javadoc destdir="${apidocs.dir}" source="1.5" additionalparam="-breakiterator">
+            <sourcepath>
+                <pathelement location="${code.src}"/>
+            </sourcepath>
+        </javadoc>
+    </target>
+
 	<!-- ============================================================== -->
 	<!--  Release targets -->
 
@@ -224,10 +234,11 @@
 		</zip>
 	</target>
 
-	<target name="website" depends="releaseinit" description="Builds the website tarball.">
+	<target name="website" depends="releaseinit,javadoc" description="Builds the website tarball.">
 		<tar destfile="${release.dir}/wwb-web-site.tar.gz" compression="gzip" longfile="gnu">
 			<fileset dir="website" includes="**" />
 			<fileset dir="." includes="doc/wiki-html/**" />
+			<fileset dir="build-ant" includes="api/**" />
 		</tar>
 	</target>
 		
