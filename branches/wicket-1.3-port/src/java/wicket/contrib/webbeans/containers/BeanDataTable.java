@@ -36,17 +36,17 @@ package wicket.contrib.webbeans.containers;
 
 import java.util.List;
 
-import wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
-import wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
-import wicket.extensions.markup.html.repeater.data.table.DataTable;
-import wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
-import wicket.extensions.markup.html.repeater.data.table.IColumn;
-import wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
-import wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
-import wicket.extensions.markup.html.repeater.refreshing.Item;
-import wicket.extensions.markup.html.repeater.refreshing.OddEvenItem;
-import wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import wicket.model.IModel;
+import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
+import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.OddEvenItem;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.model.IModel;
 
 /**
  * An implementation of the DataTable that aims to solve the 90% usecase by

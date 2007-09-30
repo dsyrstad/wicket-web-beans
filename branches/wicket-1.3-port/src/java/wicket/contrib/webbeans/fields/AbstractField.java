@@ -19,14 +19,14 @@
  */
 package wicket.contrib.webbeans.fields;
 
-import wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanPropertyModel;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.markup.html.form.FormComponent;
-import wicket.markup.html.panel.Panel;
-import wicket.model.IModel;
-import wicket.util.string.Strings;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 
 
 /**
@@ -111,12 +111,12 @@ abstract public class AbstractField extends Panel implements Field
     
     /**
      * {@inheritDoc}
-     * @see wicket.Component#onAttach()
+     * @see org.apache.wicket.Component#onAttach()
      */
     @Override
-    protected void onAttach()
+    protected void onBeforeRender()
     {
-        super.onAttach();
+        super.onBeforeRender();
         // If we're part of a BeanForm, register ourself with it.
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {

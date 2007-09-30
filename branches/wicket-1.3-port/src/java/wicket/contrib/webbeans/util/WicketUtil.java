@@ -16,8 +16,8 @@
 ---*/
 package wicket.contrib.webbeans.util;
 
-import wicket.Component;
-import wicket.Localizer;
+import org.apache.wicket.Component;
+import org.apache.wicket.Localizer;
 
 
 /**

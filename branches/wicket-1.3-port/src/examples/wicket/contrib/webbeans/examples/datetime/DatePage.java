@@ -2,7 +2,7 @@ package wicket.contrib.webbeans.examples.datetime;
 
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebPage;
 
 public class DatePage extends WebPage
 {

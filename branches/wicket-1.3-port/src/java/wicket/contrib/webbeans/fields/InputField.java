@@ -19,11 +19,11 @@
  */
 package wicket.contrib.webbeans.fields;
 
-import wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.markup.html.form.TextField;
-import wicket.markup.html.panel.Fragment;
-import wicket.model.IModel;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 
 
 /**

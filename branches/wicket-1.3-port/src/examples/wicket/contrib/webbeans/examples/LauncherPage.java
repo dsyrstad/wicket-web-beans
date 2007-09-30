@@ -1,6 +1,6 @@
 package wicket.contrib.webbeans.examples;
 
-import wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebPage;
 
 /**
  * @author Dan Syrstad

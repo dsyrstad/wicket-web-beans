@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.examples.simple.TestBean;
 import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebPage;
 
 public class ContextBeanPage extends WebPage
 {

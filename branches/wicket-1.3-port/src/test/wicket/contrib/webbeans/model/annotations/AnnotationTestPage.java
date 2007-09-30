@@ -17,7 +17,7 @@
 package wicket.contrib.webbeans.model.annotations;
 
 import static wicket.contrib.webbeans.annotations.Property.EMPTY;
-import wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.annotations.Action;
 import wicket.contrib.webbeans.annotations.Bean;
 import wicket.contrib.webbeans.annotations.Beans;
@@ -26,8 +26,8 @@ import wicket.contrib.webbeans.annotations.Tab;
 import wicket.contrib.webbeans.fields.BeanGridField;
 import wicket.contrib.webbeans.fields.BeanInlineField;
 import wicket.contrib.webbeans.fields.TextAreaField;
-import wicket.markup.html.WebPage;
-import wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
 
 @Beans({
     @Bean(type = AnnotationTestBean.class, label = "My ${TestBean.title} Title",

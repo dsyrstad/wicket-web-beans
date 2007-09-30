@@ -28,9 +28,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import wicket.Component;
-import wicket.MarkupContainer;
-import wicket.Component.IVisitor;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Component.IVisitor;
 import wicket.contrib.webbeans.fields.BeanGridField;
 import wicket.contrib.webbeans.fields.BeanInCollapsibleField;
 import wicket.contrib.webbeans.fields.BeanInlineField;
@@ -44,10 +44,10 @@ import wicket.contrib.webbeans.fields.InputField;
 import wicket.contrib.webbeans.fields.JavaEnumField;
 import wicket.contrib.webbeans.fields.MultiSelectEnumField;
 import wicket.contrib.webbeans.fields.TextAreaField;
-import wicket.markup.html.basic.Label;
-import wicket.markup.html.form.FormComponent;
-import wicket.model.IModel;
-import wicket.model.Model;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 /**
  * Registers field and viewer components. 

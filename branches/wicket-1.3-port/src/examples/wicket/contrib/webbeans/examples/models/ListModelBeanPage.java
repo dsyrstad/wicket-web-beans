@@ -7,9 +7,9 @@ import java.util.List;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.examples.SerializableBean;
 import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.markup.html.WebPage;
-import wicket.model.IModel;
-import wicket.model.Model;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 public class ListModelBeanPage extends WebPage
 {

@@ -3,7 +3,7 @@ package wicket.contrib.webbeans.examples.dependentfields;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ComponentRegistry;
-import wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebPage;
 
 public class DependentFieldPage extends WebPage
 {

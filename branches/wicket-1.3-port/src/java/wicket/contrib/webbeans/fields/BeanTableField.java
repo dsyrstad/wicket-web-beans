@@ -20,7 +20,7 @@ package wicket.contrib.webbeans.fields;
 import wicket.contrib.webbeans.containers.BeanTablePanel;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.model.IModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * Displays a property's list as a list of beans in a table. This Field accepts a single 
@@ -42,7 +42,7 @@ public class BeanTableField extends AbstractField
     {
         super(id, model, metaData, viewOnly);
         
-        Class elementType = metaData.getElementType( model.getObject(this) );
+        Class elementType = metaData.getElementType( model.getObject() );
         if (elementType == null) {
             throw new RuntimeException("No elementType defined for property " + metaData.getPropertyName() + " on bean " + metaData.getBeanMetaData().getBeanClass());
         }

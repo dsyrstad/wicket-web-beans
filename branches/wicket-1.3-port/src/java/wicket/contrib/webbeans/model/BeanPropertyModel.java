@@ -16,10 +16,15 @@
 ---*/
 package wicket.contrib.webbeans.model;
 
-import wicket.Component;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IComponentAssignedModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.IWrapModel;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.string.Strings;
+
 import wicket.contrib.webbeans.containers.BeanForm;
-import wicket.model.PropertyModel;
-import wicket.util.string.Strings;
 
 
 /**
@@ -27,12 +32,12 @@ import wicket.util.string.Strings;
  * modifications. We only set the bean property if the value from the form has changed with respect
  * to the value that was retrieved from the model when the form was rendered. 
  * This is important because setting one property on a bean via this model may cause other properties to be
- * set indirectly. Wicket dumps the whole form back everytime and we do not want to wipe out those
+ * set indirectly. Wicket dumps the whole form back every time and we do not want to wipe out those
  * properties that were indirectly set.<p>
  * 
  * @author Dan Syrstad
  */
-public class BeanPropertyModel extends PropertyModel
+public class BeanPropertyModel extends PropertyModel implements IComponentAssignedModel, IWrapModel
 {
     private ElementMetaData elementMetaData;
     // This value is tracked from onGetObject to see if the value changes. The assumption is that
@@ -45,6 +50,11 @@ public class BeanPropertyModel extends PropertyModel
     // If this model is registered with a BeanForm, this is it.
     private BeanForm beanForm = null;
 
+    // TODO Why aren't we using ComponentPropertyModel in 1.3?
+    private Component component;
+    
+    private transient boolean attached = false;
+    
     /**
      * Construct a BeanPropertyModel. 
      *
@@ -54,8 +64,19 @@ public class BeanPropertyModel extends PropertyModel
      */
     public BeanPropertyModel(Object modelObject, ElementMetaData elementMetaData)
     {
-        super(modelObject, elementMetaData.getPropertyName(), elementMetaData.getPropertyType());
+        super(modelObject, elementMetaData.getPropertyName());
         this.elementMetaData = elementMetaData;
+    }
+    
+    public IWrapModel wrapOnAssignment(Component component)
+    {
+        this.component = component;
+        return this;
+    }
+    
+    public IModel getWrappedModel()
+    {
+        return this;
     }
     
     /**
@@ -65,7 +86,7 @@ public class BeanPropertyModel extends PropertyModel
      */
     public Object getBean()
     {
-        return modelObject(null);
+        return getTarget();
     }
     
     public ElementMetaData getElementMetaData()
@@ -75,13 +96,14 @@ public class BeanPropertyModel extends PropertyModel
 
     /** 
      * {@inheritDoc}
-     * @see wicket.model.AbstractPropertyModel#onGetObject(wicket.Component)
+     * @see org.apache.wicket.model.AbstractPropertyModel#onGetObject(wicket.Component)
      */
     @Override
-    protected Object onGetObject(Component someComponent)
+    public Object getObject()
     {
-        Object value = super.onGetObject(someComponent);
-        if (!BeanForm.isInSubmit(someComponent)) {
+        attach();
+        Object value = super.getObject();
+        if (!BeanForm.isInSubmit(component)) {
             // Only set these if we're not in submit processing.
             lastValueGot = value;
             getObjectCalled = true;
@@ -94,24 +116,24 @@ public class BeanPropertyModel extends PropertyModel
      * {@inheritDoc}
      * Only sets the object if it is different from what getObject() returns. 
      * 
-     * @see wicket.model.AbstractPropertyModel#onSetObject(wicket.Component, java.lang.Object)
+     * @see org.apache.wicket.model.AbstractPropertyModel#onSetObject(wicket.Component, java.lang.Object)
      */
     @Override
-    protected void onSetObject(Component component, Object object)
+    public void setObject(Object object)
     {
+        attach();
         Object newValue = object;
         // This, unfortunately, comes in as a String in most cases, so convert it.
-        if (newValue instanceof String)
-        {
+        if (newValue instanceof String) {
             final String string = (String)newValue;
-            if (!Strings.isEmpty(string))
-            {
+            if (!Strings.isEmpty(string)) {
                 // and there is a non-null property type for the component
-                final Class propertyType = propertyType(component);
-                if (propertyType != null)
-                {
+                if (getObjectClass() != null) {
                     // convert the String to the right type
-                    newValue = component.getConverter().convert(string, propertyType);
+                    IConverter converter = component.getConverter(getObjectClass());
+                    if (converter != null) {
+                        newValue = converter.convertToObject(string, null);
+                    }
                 }
             }
         }
@@ -120,7 +142,7 @@ public class BeanPropertyModel extends PropertyModel
         if ( !(getObjectCalled                        // If lastValueGot is valid.
                && lastValueGot == newValue            // If they're the same object, or both null
                && (lastValueGot == null || lastValueGot.equals(newValue))) ) {
-            super.onSetObject(component, object);
+            super.setObject(object);
         }
         
         getObjectCalled = false;
@@ -136,14 +158,27 @@ public class BeanPropertyModel extends PropertyModel
         this.beanForm = beanForm;
     }
 
-    @Override
-    protected void onAttach()
+    private void attach()
     {
-        super.onAttach();
-        if (beanForm != null) {
-            // Re-register listener when the bean is being re-attached.
-            elementMetaData.getBeanMetaData().addPropertyChangeListener(this, beanForm.getListener());
+        if ( ! attached ) {
+            attached = true;
+            if (beanForm != null) {
+                // Re-register listener when the bean is being re-attached.
+                elementMetaData.getBeanMetaData().addPropertyChangeListener(this, beanForm.getListener());
+            }
         }
     }
+
+    /** 
+     * {@inheritDoc}
+     * @see org.apache.wicket.model.AbstractPropertyModel#detach()
+     */
+    @Override
+    public void detach()
+    {
+        super.detach();
+        attached = false;
+    }
+    
 
 }

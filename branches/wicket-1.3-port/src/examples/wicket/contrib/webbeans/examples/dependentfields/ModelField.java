@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import wicket.Component;
+import org.apache.wicket.Component;
 import wicket.contrib.webbeans.fields.EnumField;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.model.AbstractReadOnlyModel;
-import wicket.model.IModel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 
 public class ModelField extends EnumField
 {
@@ -30,7 +30,7 @@ public class ModelField extends EnumField
     private final class ValuesModel extends AbstractReadOnlyModel 
     {
         @Override
-        public Object getObject(Component component)
+        public Object getObject()
         {
             // Retrieve the value of the dependent property.
             Make make = (Make)getDependentPropertyBean(makeProp);

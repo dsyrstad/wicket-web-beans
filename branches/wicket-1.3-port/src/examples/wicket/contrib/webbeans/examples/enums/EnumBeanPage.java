@@ -2,7 +2,7 @@ package wicket.contrib.webbeans.examples.enums;
 
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.WebPage;
 
 public class EnumBeanPage extends WebPage
 {

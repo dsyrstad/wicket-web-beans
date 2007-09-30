@@ -20,7 +20,7 @@ package wicket.contrib.webbeans.model.annotations;
 import java.util.List;
 
 import junit.framework.TestCase;
-import wicket.Page;
+import org.apache.wicket.Page;
 import wicket.contrib.webbeans.fields.BeanGridField;
 import wicket.contrib.webbeans.fields.BeanInlineField;
 import wicket.contrib.webbeans.fields.EmptyField;
@@ -28,7 +28,7 @@ import wicket.contrib.webbeans.fields.TextAreaField;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.contrib.webbeans.model.TabMetaData;
-import wicket.util.tester.WicketTester;
+import org.apache.wicket.util.tester.WicketTester;
 
 /**
  * Tests BeanMetaData, ElementMetaData, and TabMetaData from an annotation perspective. <p>

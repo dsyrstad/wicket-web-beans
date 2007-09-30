@@ -17,10 +17,10 @@
 package wicket.contrib.webbeans.model.beanprops;
 
 
-import wicket.ajax.AjaxRequestTarget;
-import wicket.markup.html.WebPage;
-import wicket.markup.html.basic.Label;
-import wicket.markup.html.form.Form;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 
 public class BeanMetaDataTestPage extends WebPage
 {

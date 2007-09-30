@@ -21,10 +21,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import wicket.Component;
+import org.apache.wicket.Component;
 import wicket.contrib.webbeans.fields.ImageLabel;
-import wicket.markup.html.basic.Label;
-import wicket.util.lang.PropertyResolver;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.util.lang.PropertyResolver;
 
 /**
  * Represents the metadata for a single property of a bean or an action.

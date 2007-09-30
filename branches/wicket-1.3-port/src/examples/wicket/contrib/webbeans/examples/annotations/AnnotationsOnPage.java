@@ -1,15 +1,15 @@
 package wicket.contrib.webbeans.examples.annotations;
 
 import static wicket.contrib.webbeans.annotations.Property.EMPTY;
-import wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.annotations.Action;
 import wicket.contrib.webbeans.annotations.Bean;
 import wicket.contrib.webbeans.annotations.Property;
 import wicket.contrib.webbeans.annotations.Tab;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.markup.html.WebPage;
-import wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
 
 @Bean(type = TestBean.class, 
     tabs = {

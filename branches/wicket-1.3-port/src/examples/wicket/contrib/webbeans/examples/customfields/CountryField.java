@@ -2,7 +2,7 @@ package wicket.contrib.webbeans.examples.customfields;
 
 import wicket.contrib.webbeans.fields.EnumField;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.model.IModel;
+import org.apache.wicket.model.IModel;
 
 public class CountryField extends EnumField
 {

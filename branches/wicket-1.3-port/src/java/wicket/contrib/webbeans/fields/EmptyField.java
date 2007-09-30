@@ -20,8 +20,8 @@
 package wicket.contrib.webbeans.fields;
 
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.markup.html.panel.Panel;
-import wicket.model.IModel;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 
 
 /**

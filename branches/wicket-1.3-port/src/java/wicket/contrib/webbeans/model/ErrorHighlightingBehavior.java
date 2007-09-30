@@ -17,12 +17,14 @@
 
 package wicket.contrib.webbeans.model;
 
-import wicket.AttributeModifier;
-import wicket.Component;
-import wicket.feedback.FeedbackMessages;
-import wicket.model.AbstractModel;
-import wicket.model.IModel;
-import wicket.util.string.Strings;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.feedback.FeedbackMessages;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.IWrapModel;
+import org.apache.wicket.model.IComponentAssignedModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 
 /**
  * Behavior that modifies the CSS class attribute of the component's tag to be 
@@ -42,7 +44,7 @@ public class ErrorHighlightingBehavior extends AttributeModifier
      */
     public ErrorHighlightingBehavior()
     {
-        super("class", true, ErrorSwitchModel.INSTANCE);
+        super("class", true, new ErrorSwitchModel());
     }
 
     @Override
@@ -68,18 +70,30 @@ public class ErrorHighlightingBehavior extends AttributeModifier
         return replacementValue + ' ' + currentValue;
     }
 
-    private static final class ErrorSwitchModel extends AbstractModel 
+    private static final class ErrorSwitchModel extends Model implements IComponentAssignedModel, IWrapModel
     {
-        static final ErrorSwitchModel INSTANCE = new ErrorSwitchModel();
+        private Component component;
         
-        public Object getObject(Component component)
+        public IWrapModel wrapOnAssignment(Component component)
         {
-            return component.hasErrorMessage() ? 
-                            BEAN_FORM_ERROR_CLASS : 
-                            "";
+            this.component = component;
+            return this;
+        }
+        
+        public IWrapModel getWrappedModel()
+        {
+            return this;
+        }
+        
+        public Object getObject()
+        {
+            if( component != null &&  component.hasErrorMessage() )
+                return BEAN_FORM_ERROR_CLASS;
+            else
+                return "";
         }
 
-        public void setObject(Component component, Object object)
+        public void setObject(Object object)
         {
             throw new UnsupportedOperationException();
         }

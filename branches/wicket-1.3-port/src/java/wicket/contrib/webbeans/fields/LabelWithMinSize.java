@@ -17,11 +17,11 @@
 package wicket.contrib.webbeans.fields;
 
 
-import wicket.markup.ComponentTag;
-import wicket.markup.MarkupStream;
-import wicket.markup.html.basic.Label;
-import wicket.model.IModel;
-import wicket.util.string.Strings;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
 
 
 /**
@@ -65,7 +65,7 @@ public class LabelWithMinSize extends Label
 
     /**
      * {@inheritDoc}
-     * @see wicket.markup.html.basic.Label#onComponentTagBody(wicket.markup.MarkupStream, wicket.markup.ComponentTag)
+     * @see org.apache.wicket.markup.html.basic.Label#onComponentTagBody(wicket.markup.MarkupStream, org.apache.wicket.markup.ComponentTag)
      */
     @Override
     protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)

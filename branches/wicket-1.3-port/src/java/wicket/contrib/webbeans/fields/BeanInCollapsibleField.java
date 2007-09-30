@@ -22,7 +22,7 @@ package wicket.contrib.webbeans.fields;
 import wicket.contrib.webbeans.containers.BeanGridPanel;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.model.IModel;
+import org.apache.wicket.model.IModel;
 
 
 /**
@@ -46,9 +46,9 @@ public class BeanInCollapsibleField extends AbstractField
         
         BeanMetaData beanMetaData = metaData.createBeanMetaData(viewOnly);
         
-        if (!viewOnly && model.getObject(this) == null) {
+        if (!viewOnly && model.getObject() == null) {
             // Create a blank instance for editing.
-            model.setObject(this, metaData.createInstance() );
+            model.setObject( metaData.createInstance() );
         }
 
         add( new BeanGridPanel("beanPanel", model, beanMetaData) );

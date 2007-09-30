@@ -18,21 +18,21 @@
 
 package wicket.contrib.webbeans.actions;
 
-import wicket.AttributeModifier;
-import wicket.Component;
-import wicket.ajax.AjaxRequestTarget;
-import wicket.ajax.IAjaxCallDecorator;
-import wicket.ajax.markup.html.form.AjaxSubmitLink;
-import wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.model.ElementMetaData;
-import wicket.feedback.IFeedback;
-import wicket.markup.ComponentTag;
-import wicket.markup.html.WebMarkupContainer;
-import wicket.markup.html.basic.Label;
-import wicket.markup.html.form.Form;
-import wicket.markup.html.form.SubmitLink;
-import wicket.markup.html.panel.Panel;
+import org.apache.wicket.feedback.IFeedback;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.SubmitLink;
+import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * Bean Form submit button. <p>
@@ -139,7 +139,7 @@ public class BeanSubmitButton extends Panel
         else {
             button = new SubmitLink("button", form) {
                 @Override
-                protected void onSubmit()
+                public void onSubmit()
                 {
                     BeanSubmitButton.this.onAction(null, getForm(), bean);
                 }
