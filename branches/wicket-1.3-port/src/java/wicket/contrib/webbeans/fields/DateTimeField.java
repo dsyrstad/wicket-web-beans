@@ -184,7 +184,6 @@ public class DateTimeField extends AbstractField
                 date = dateFmt.parseMillis(value);
             }
             catch (IllegalArgumentException e) {
-                // TODO I18N?
                 throw new ConversionException("Cannot convert '" + value + "' to a Date.")
                     .setSourceValue(value)
                     .setTargetType(type)
