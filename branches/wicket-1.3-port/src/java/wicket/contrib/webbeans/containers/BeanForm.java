@@ -280,7 +280,7 @@ public class BeanForm extends Panel
                 // Needs to be part of the page for errors.
                 getPage().add(panel);
                 // Cause ListViews to be populated.
-                panel.internalAttach();
+                panel.beforeRender();
                 panel.visitChildren(AbstractField.class, validator);
                 getPage().remove(panel);
             }

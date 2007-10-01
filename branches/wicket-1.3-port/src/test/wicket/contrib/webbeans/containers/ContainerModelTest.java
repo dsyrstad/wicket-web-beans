@@ -21,17 +21,20 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.Page;
-import wicket.contrib.webbeans.fields.InputField;
-import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.contrib.webbeans.model.BeanPropertyModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
+
+import wicket.contrib.webbeans.fields.InputField;
+import wicket.contrib.webbeans.model.BeanMetaData;
+import wicket.contrib.webbeans.model.BeanPropertyModel;
 
 /**
  * Tests Models with bean containers. <p>
@@ -103,8 +106,8 @@ public class ContainerModelTest extends TestCase
         NonSerializableBean firstBean = (NonSerializableBean)nestedModel.getObject(); 
         
         // Make the first bean detach. This also tests that the model is attached somewhere below the page.
-        page.detachModels();
-        nestedModel.detach(); // TODO 1.3 - why didn't page.detachModels() detach it???
+        //page.detachModels(); // TODO 1.3 doesn't work
+        detachModels(page);
         
         assertFalse(nestedModel.isAttached());
         
@@ -116,25 +119,42 @@ public class ContainerModelTest extends TestCase
         
         // Assert PropertyChangeListener on BeanForm is called.
         assertFalse( form.isComponentRefreshNeeded() );
-        nameFieldModel.setObject("test1");
+        nameFieldModel.setObject("test");
         assertTrue( form.isComponentRefreshNeeded() );
 
         // Clear the refresh components.
         form.clearRefreshComponents();
         
         // Assert PropertyChangeListener on BeanForm is called after detach()/attach().
-        page.detachModels();
-        nestedModel.detach(); // TODO 1.3 - why didn't page.detachModels() detach it???
+        //page.detachModels(); // TODO 1.3 doesn't work
+        detachModels(page);
         assertFalse(nestedModel.isAttached());
         
         assertFalse( form.isComponentRefreshNeeded() );
-        nameFieldModel.setObject("test2");
+        nameFieldModel.setObject("test");
         assertTrue( form.isComponentRefreshNeeded() );
 
         // Clear the refresh components.
         form.clearRefreshComponents();
     }
 
+    private void detachModels(Page page)
+    {
+        page.visitChildren(new IVisitor() {
+            public Object component(Component component)
+            {
+                try {
+                    // detach any models of the component
+                    component.detachModels();
+                }
+                catch (Exception e) {
+                    // Ignore
+                }
+                
+                return IVisitor.CONTINUE_TRAVERSAL;
+            }
+        });
+    }
 
     /**
      * Tests BeanForm with an IModel that represents a List. Form should use a BeanTablePanel rather

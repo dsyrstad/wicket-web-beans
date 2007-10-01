@@ -29,6 +29,8 @@ import java.util.TimeZone;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
@@ -38,6 +40,8 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
+import org.apache.wicket.util.string.Strings;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -68,7 +72,7 @@ public class DateTimeField extends AbstractField
     private static final String FORMAT_SUFFIX = ".format";
     
     private String fmt;
-    private Class type;
+    private Class<?> type;
 
     /**
      * Construct a new DateTimeField.
@@ -118,12 +122,17 @@ public class DateTimeField extends AbstractField
             setFieldParameters(dateField);
             fragment.add(dateField);
             
-            dateField.add(new DatePicker()
-            {
+            dateField.add(new DatePicker() {
                 @Override
                 protected boolean enableMonthYearSelection()
                 {
                     return false;
+                }
+
+                @Override
+                protected CharSequence getIconUrl()
+                {
+                    return RequestCycle.get().urlFor(new ResourceReference(DateTimeField.class, "calendar.gif"));
                 }
             });
             
@@ -132,7 +141,7 @@ public class DateTimeField extends AbstractField
                 fragment.add(tzLabel);
             }
             else {
-                fragment.add( new Label("timezone", "") );
+                fragment.add( new Label("timezone", "").setVisible(false) );
             }
         }
 
@@ -163,44 +172,49 @@ public class DateTimeField extends AbstractField
         
         public Object convertToObject(String value, Locale locale)
         {
-         // Convert String to Calendar or sql.Date/Time/Timestamp
-            Date date = null;
-            // First convert it to a date. We think it's GMT because no TZ is specified in the String.
-            SimpleDateFormat dateFmt = new SimpleDateFormat(fmt);
-            dateFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-            try {
-                date = dateFmt.parse((String)value);
-            }
-            catch (ParseException e) {
-                throw new ConversionException("Cannot convert '" + value + "' to a Date.").setSourceValue(value)
-                    .setTargetType(type).setConverter(this).setLocale(locale);
+            if (Strings.isEmpty(value)) {
+                return null;
             }
             
-            if (date != null)
-            {
-                if (Timestamp.class == type) {
-                    return new Timestamp( date.getTime() );
-                }
-                
-                if (java.sql.Date.class == type) {
-                    return new java.sql.Date( date.getTime() );
-                }
-                
-                if (Time.class == type) {
-                    return new Time( date.getTime() );
-                }
-                
-                if (Date.class == type) {
-                    return date;
-                }
-                
-                if (Calendar.class.isAssignableFrom(type)) {
-                    Calendar cal = new GregorianCalendar( TimeZone.getTimeZone("GMT") );
-                    cal.setTime(date);
-                    return cal;
-                }
+            // Convert String to Calendar or sql.Date/Time/Timestamp
+            // First convert it to a milliseconds. We think it's GMT because no TZ is specified in the String.
+            long date;
+            try {
+                DateTimeFormatter dateFmt = getFormat().withZone(DateTimeZone.UTC);
+                date = dateFmt.parseMillis(value);
             }
-            throw new RuntimeException("Don't know how to convert " + value.getClass() + " to a " + type);
+            catch (IllegalArgumentException e) {
+                // TODO I18N?
+                throw new ConversionException("Cannot convert '" + value + "' to a Date.")
+                    .setSourceValue(value)
+                    .setTargetType(type)
+                    .setConverter(this)
+                    .setLocale(locale);                
+            }
+            
+            if (Timestamp.class == type) {
+                return new Timestamp(date);
+            }
+            
+            if (java.sql.Date.class == type) {
+                return new java.sql.Date(date);
+            }
+            
+            if (Time.class == type) {
+                return new Time(date);
+            }
+            
+            if (Date.class == type) {
+                return new Date(date);
+            }
+            
+            if (Calendar.class.isAssignableFrom(type)) {
+                Calendar cal = new GregorianCalendar( TimeZone.getTimeZone("GMT") );
+                cal.setTimeInMillis(date);
+                return cal;
+            }
+
+            throw new RuntimeException("Don't know how to convert a String to " + type);
         }
         
         protected DateTimeFormatter getFormat()
@@ -223,13 +237,13 @@ public class DateTimeField extends AbstractField
         
         public String convertToString(Object value, Locale locale)
         {
-            SimpleDateFormat dateFmt = new SimpleDateFormat(fmt);
             if (value instanceof Calendar) {
                 Calendar cal = (Calendar)value;
                 TimeZone zone = cal.getTimeZone(); 
                 return zone.getDisplayName( zone.inDaylightTime(cal.getTime()), TimeZone.SHORT, locale);
             }
-            throw new RuntimeException("Don't know how to convert " + value.getClass() + " to a " + type);
+
+            throw new RuntimeException("Don't know how to convert " + value.getClass() + " to a String");
         }
 
         public Object convertToObject(String value, Locale locale)
