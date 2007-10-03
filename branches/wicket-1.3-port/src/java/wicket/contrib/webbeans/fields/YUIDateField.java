@@ -19,7 +19,6 @@ package wicket.contrib.webbeans.fields;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,36 +52,34 @@ import wicket.contrib.webbeans.model.ElementMetaData;
  * The enclosing component's properties file may define standard date/time formats 
  * using the following keys:
  * <ul>
- * <li><code>DateTimeField.date.format</code> - Format for java.sql.Date.</li>
- * <li><code>DateTimeField.datetime.format</code> - Format for java.sql.Timestamp or java.util.Date.</li>
- * <li><code>DateTimeField.time.format</code> - Format for java.sql.Time.</li>
- * <li><code>DateTimeField.datetimetz.format</code> - Format for java.util.Calendar types.</li>
- * </ul> 
+ * <li><code>YUIDateField.date.format</code> - Format for java.sql.Date, java.sql.Time, java.sql.Timestamp or java.util.Date.</li>
+ * <li><code>YUIDateField.datetz.format</code> - Format for java.util.Calendar types.</li>
+ * </ul>
+ * 
+ *  TODO This is a work in-progress. Note that the YUI Calendar doesn't support time. 
  * 
  * @author Dan Syrstad
  */
-public class DateTimeField extends AbstractField
+public class YUIDateField extends AbstractField
 {
     public static final String DATE_FMT_STR = "yyyy-MM-dd";
-    public static final String TIME_FMT_STR = "HH:mm";
-    public static final String DATE_TIME_FMT_STR = DATE_FMT_STR + ' ' + TIME_FMT_STR;
-    public static final String DATE_TIME_ZONE_FMT_STR = DATE_TIME_FMT_STR + " z";
+    public static final String DATE_ZONE_FMT_STR = DATE_FMT_STR + " z";
     
-    private static final String DATE_TIME_FIELD_PREFIX = "DateTimeField.";
+    private static final String DATE_TIME_FIELD_PREFIX = "YUIDateField.";
     private static final String FORMAT_SUFFIX = ".format";
     
     private String fmt;
     private Class<?> type;
 
     /**
-     * Construct a new DateTimeField.
+     * Construct a new YUIDateField.
      *
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
      * @param viewOnly true if the component should be view-only.
      */
-    public DateTimeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public YUIDateField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly);
         
@@ -90,19 +87,19 @@ public class DateTimeField extends AbstractField
         boolean displayTz = false;
         Component metaDataComponent = metaData.getBeanMetaData().getComponent();
         Localizer localizer = metaDataComponent.getLocalizer();
-        if (Time.class.isAssignableFrom(type)) {
-            fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "time" + FORMAT_SUFFIX, metaDataComponent, TIME_FMT_STR);
-        }
-        else if (java.sql.Date.class.isAssignableFrom(type)) {
+        if (Time.class.isAssignableFrom(type) ||
+            java.sql.Date.class.isAssignableFrom(type) ||
+            Date.class.isAssignableFrom(type) || 
+            Timestamp.class.isAssignableFrom(type)) {
             fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "date" + FORMAT_SUFFIX, metaDataComponent, DATE_FMT_STR);
         }
         else if (Calendar.class.isAssignableFrom(type)) {
-            fmt = viewOnly ? localizer.getString(DATE_TIME_FIELD_PREFIX + "datetimetz" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_ZONE_FMT_STR) : 
-                             localizer.getString(DATE_TIME_FIELD_PREFIX + "datetime" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_FMT_STR);
+            fmt = viewOnly ? localizer.getString(DATE_TIME_FIELD_PREFIX + "datetz" + FORMAT_SUFFIX, metaDataComponent, DATE_ZONE_FMT_STR) : 
+                             localizer.getString(DATE_TIME_FIELD_PREFIX + "date" + FORMAT_SUFFIX, metaDataComponent, DATE_FMT_STR);
             displayTz = true;
         }
-        else { // if (Date.class.isAssignableFrom(type) || Timestamp.class.isAssignableFrom(type)) 
-            fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "datetime" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_FMT_STR);
+        else { 
+            throw new RuntimeException("YUIDateField does not handle " + type);
         }
         
         String customFmt = getFormat();
@@ -132,7 +129,7 @@ public class DateTimeField extends AbstractField
                 @Override
                 protected CharSequence getIconUrl()
                 {
-                    return RequestCycle.get().urlFor(new ResourceReference(DateTimeField.class, "calendar.gif"));
+                    return RequestCycle.get().urlFor(new ResourceReference(YUIDateField.class, "calendar.gif"));
                 }
             });
             
