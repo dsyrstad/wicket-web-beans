@@ -45,8 +45,10 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationTo
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 
 /**
  * An implementation of the DataTable that aims to solve the 90% usecase by
@@ -66,6 +68,7 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Igor Vaynberg ( ivaynberg )
  * @author Dan Syrstad (From AjaxFallbackDefaultDataTable).
+ * @author Mark Southern (mrsouthern)
  */
 public class BeanDataTable extends DataTable
 {
@@ -83,11 +86,31 @@ public class BeanDataTable extends DataTable
      * @param rowsPerPage
      *            number of rows per page
      */
-    public BeanDataTable(String id, final List<IColumn>columns, SortableDataProvider dataProvider, int rowsPerPage)
+    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage)
     {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
+        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage);
     }
-
+    
+    /**
+     * Constructor
+     * 
+     * @param id
+     *            component id
+     * @param columns
+     *            List of columns
+     * @param dataProvider
+     *            data provider
+     * @param sortStateLocator
+     *            sorter           
+     * @param rowsPerPage
+     *            number of rows per page
+     */
+    public BeanDataTable(String id, final List<IColumn> columns,
+            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage)
+    {
+        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage);
+    }
+    
     /**
      * Constructor
      * 
@@ -97,19 +120,21 @@ public class BeanDataTable extends DataTable
      *            array of columns
      * @param dataProvider
      *            data provider
+     * @param sortStateLocator
+     *            sorter           
      * @param rowsPerPage
      *            number of rows per page
      */
     public BeanDataTable(String id, final IColumn[] columns,
-            SortableDataProvider dataProvider, int rowsPerPage)
+            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage)
     {
         super(id, columns, dataProvider, rowsPerPage);
         setOutputMarkupId(true);
         setVersioned(false);
-        addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider));
+        addTopToolbar(new AjaxFallbackHeadersToolbar(this, sortSateLocator));
         addBottomToolbar(new NoRecordsToolbar(this));
     }
-
+    
     protected Item newRowItem(String id, int index, IModel model)
     {
         return new OddEvenItem(id, index, model);
