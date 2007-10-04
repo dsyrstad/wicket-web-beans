@@ -30,6 +30,8 @@ import wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
 import wicket.contrib.webbeans.actions.BeanActionButton;
 import wicket.contrib.webbeans.model.BeanMetaData;
 import wicket.contrib.webbeans.model.ElementMetaData;
+import wicket.extensions.markup.html.repeater.data.IDataProvider;
+import wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import wicket.extensions.markup.html.repeater.data.table.IColumn;
 import wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
 import wicket.extensions.markup.html.repeater.refreshing.Item;
@@ -74,7 +76,38 @@ public class BeanTablePanel extends Panel
      */
     public BeanTablePanel(String id, IModel model, BeanMetaData metaData, boolean viewOnly, int numRows)
     {
-        super(id, model);
+        this(id, 
+             new BeanSortableDataProvider(metaData, model),
+             metaData,
+             viewOnly,
+             numRows);
+    }
+    
+    /**
+     * Construct a new BeanTablePanel.
+     *
+     * @param id the Wicket id for the editor.
+     * @param dataProvider - sortable source of the data
+     * @param metaData the meta data for the bean/row.
+     * @param numRows the number of rows to be displayed.
+     */
+    public BeanTablePanel(String id, SortableDataProvider dataProvider, BeanMetaData metaData, boolean viewOnly, int numRows)
+    {
+          this(id, dataProvider, dataProvider, metaData, viewOnly, numRows);
+    }
+    
+    /**
+     * Construct a new BeanTablePanel.
+     *
+     * @param id the Wicket id for the editor.
+     * @param dataProvider - source of the data
+     * @param sortStateLocator - the sorter for the dataProvider
+     * @param metaData the meta data for the bean/row.
+     * @param numRows the number of rows to be displayed.
+     */
+    public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator, BeanMetaData metaData, boolean viewOnly, int numRows)
+    {
+        super(id);
 
         this.metaData = metaData;
         List<IColumn> columns = new ArrayList<IColumn>();
@@ -83,8 +116,8 @@ public class BeanTablePanel extends Panel
             columns.add(new BeanElementColumn(element, this) );
         }
 
-        final BeanDataTable table = new BeanDataTable("t", columns, 
-                    new BeanSortableDataProvider(metaData, model), numRows);
+        final BeanDataTable table = new BeanDataTable("t", columns, dataProvider, 
+                    sortStateLocator, numRows);
         add(table);
 
         final NavigatorLabel navigatorLabel = new NavigatorLabel("nl", table);
@@ -97,7 +130,7 @@ public class BeanTablePanel extends Panel
                 target.addComponent(table);
                 target.addComponent(navigatorLabel);
             }
-        });
+        }); 
     }
 
     @Override
