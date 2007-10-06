@@ -5,18 +5,28 @@
   <artifactId>wicketwebbeans-examples</artifactId>
   <version>1.0-rc1</version>
   <description>Wicket Web Beans Examples</description>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <parent>
-        <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
-        <artifactId>WicketWebBeans</artifactId>
-        <version>1.0-rc1</version>
-  </parent>  
-  <dependencies>  
+    <artifactId>WicketWebBeans</artifactId>
+    <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
+    <version>1.0-rc1</version>
+  </parent>
+  <dependencies>
     <dependency>
-        <groupId>wicket.contrib.wicketwebbeans</groupId>
-        <artifactId>wicketwebbeans</artifactId>
-        <version>1.0-rc1</version>
-     </dependency>
+      <groupId>wicket.contrib.wicketwebbeans</groupId>
+      <artifactId>wicketwebbeans</artifactId>
+      <version>1.0-rc1</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.jdo</groupId>
+      <artifactId>jdo2-api</artifactId>
+      <version>SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.persistence</groupId>
+      <artifactId>jpa</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 </project>
 

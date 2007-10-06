@@ -18,13 +18,42 @@
                 </configuration>
             </plugin>
         </plugins>
+        
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+
     </build>
+    
     <modules>
         <module>wicketwebbeans</module>
         <module>wicketwebbeans-examples</module>
         <module>wicketwebbeans-databinder</module>
         <module>wicketwebbeans-databinder-examples</module>
     </modules>
+    
     <dependencies>
         <dependency>
             <groupId>wicket</groupId>
