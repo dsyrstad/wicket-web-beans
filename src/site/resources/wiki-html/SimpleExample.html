@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Simple Example</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Simple Example</h1>
+<p>
+Back: <a href="Requirements.html">Requirements</a> Next: <a href="Actions.html">Actions</a></p>
+<p>
+</p>
+<p>
+Let's take a look at a simple bean from the examples: wicket.contrib.webbeans.examples.simple.TestBean</p>
+<p>
+</p>
+<p>
+This is a Java Bean compliant POJO. As most people know, getters start with &quot;get&quot; or &quot;is&quot; and setters start with &quot;set&quot;. Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.</p>
+<p>
+</p>
+<p>
+This bean also implements PropertyChangeListeners and Events. This is an optional part of the Java Beans spec. However, if your bean implements add/removePropertyChangeListener(), BeanForm will automatically register itself as a listener to your bean. In this example, we're going to use PropertyChangeEvents to notify BeanForm when dependent properties change. </p>
+<p>
+</p>
+<p>
+If you don't implement PropertyChangeListeners, BeanForm already knows if a single property changes from a change on the form. For example, setFirstName() automatically changes the input value to upper case. BeanForm knows to refresh this field on the form because the user changed it. If you type &quot;xyzzy&quot; in the First Name field and tab or click away from the field, the field is sent to the bean and the field is dynamically refreshed to it's new value &quot;XYZZY&quot;.</p>
+<p>
+</p>
+<p>
+Before we get too deep, let's take a look at the Wicket page (wicket.contrib.webbeans.examples.simple.SimpleBeanPage) and HTML:</p>
+<p>
+</p>
+<pre>	&lt;html xmlns:wicket&gt;
+	&lt;head&gt;
+	&lt;wicket:head&gt;
+	    &lt;wicket:link&gt;&lt;link href=&quot;bean.css&quot; type=&quot;text/css&quot; rel=&quot;stylesheet&quot; &gt;&lt;/link&gt;&lt;/wicket:link&gt;
+		&lt;title&gt;Simple Bean Page&lt;/title&gt;
+	&lt;/wicket:head&gt;
+	&lt;/head&gt;
+	&lt;body &gt;
+		&lt;span wicket:id=&quot;beanForm&quot;&gt;&lt;/span&gt;
+	&lt;/body&gt;
+	&lt;/html&gt;</pre><p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.simple.SimpleBeanPage</p>
+<p>
+</p>
+<p>
+You can see this is pretty simple. There is only a single component added to the page - &quot;beanForm&quot; - which is an instance of wicket.contrib.webbeans.containers.BeanForm. You can see in the constructor that we create an instance of TestBean which is passed to BeanForm. We also create an instance of wicket.contrib.webbeans.model.BeanMetaData. BeanMetaData reflects on the TestBean class to derive the fields and actions for the form.</p>
+<p>
+</p>
+<p>
+Note that you can also pass a Wicket IModel that contains your bean, rather than the bean itself, to BeanForm. If the bean is a List, or the IModel contains a List, the results will be displayed as a data table.</p>
+<p>
+</p>
+<p>
+If you bring up this page in a browser (see <a href="RunningSamples.html">RunningSamples</a>), you will see something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/SimpleBeanScreenShot.png" src="workspace/WicketWebBeans/doc/wiki/images/SimpleBeanScreenShot.png"/></p>
+<p>
+</p>
+<p>
+Note that &quot;Result&quot; is not editable because there is no setter method on the bean. Also, if you type numbers into Operand 1 and Operand 2, you'll see that the Result field automatically is calculated and updated. The calculation is done by TestBean and the PropertyChangeEvents are notifying WWB to update the result field.</p>
+<p>
+</p>
+<p>
+As we mentioned, BeanMetaData represents the metadata for a bean properties and actions. By default, the metadata originates by convention:</p>
+<p>
+</p>
+<ul><li>Label names for properties are derived from the property name. E.g., &quot;customerName&quot; becomes &quot;Customer Name&quot;; &quot;address2&quot; becomes &quot;Address 2&quot; (or from the JavaBean BeanInfo &quot;displayName&quot;).</li>
+<li>Field components for the Java primitive/wrapper types, enum types, java.util.Date and java.util.Calendar thier sub-classes, and java.util.Lists are pre-configured.</li>
+<li>All JavaBean properties are displayed. Non-JavaBean methods are not displayed.</li>
+<li>All fields are editable if viewOnly is false (see the BeanMetaData constructor). Otherwise they are all view-only.</li>
+<li>If a property is not writable, it is displayed view-only.</li>
+<li>If your beans use JPA or JDO, other property aspects can be controlled by annotations available in these APIs.</li>
+<li>Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.</li>
+<li>All fields are displayed in alphabetical order by property name.</li>
+<li>All fields are displayed in a single page. (Known as the &quot;default tab&quot;, but the tab is hidden).</li>
+</ul><p>
+</p>
+<p>
+Field types are deduced from the property's Java type. The mappings from the property's Java class to the wicket.contrib.webbeans.fields.Field type is done by wicket.contrib.webbeans.model.ComponentRegistry. ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the &quot;beanprops&quot; file, which we'll discuss later.  </p>
+<p>
+</p>
+<p>
+Back: <a href="Requirements.html">Requirements</a> Next: <a href="Actions.html">Actions</a></p>
+  </body>
+</html>

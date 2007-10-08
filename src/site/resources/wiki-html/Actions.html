@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Actions</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Actions</h1>
+<p>
+Back: <a href="SimpleExample.html">SimpleExample</a> Next: <a href="Customization.html">Customization</a></p>
+<p>
+</p>
+<p>
+It's simple to add actions to your form. Here's the code for wicket.contrib.webbeans.examples.actions.ActionBeanPage:</p>
+<p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.actions.ActionBeanPage</p>
+<p>
+</p>
+<p>
+Note the methods in ActionBeanPage.java: save, cancel, and clearLastName. These methods define the actions available from your Page (or whatever component the form is embedded in). By default, the action's label is derived from the method name. Every action method must have the following method signature:</p>
+<p>
+</p>
+<pre>    public void actionName(AjaxRequestTarget target, Form form, &lt;BeanClassName&gt; bean) 
+    { 
+        ...
+    }</pre><p>
+</p>
+<p>
+The target parameter normally null. The Wicket Form is always passed in &quot;form&quot; and the bean that the action applies to is in &quot;bean&quot;. <em>BeanClassName</em> is the class name of the bean to which the action will apply. Optionally this may be &quot;Object&quot; if the action should apply to all beans on your page. WWB only automatically matches actions whose &quot;bean&quot; parameter type matches the bean in question or Object. </p>
+<p>
+</p>
+<p>
+This configuration yields the following page:</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/ActionBeanSimpleScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/ActionBeanSimpleScreenshot.png"/></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+Back: <a href="SimpleExample.html">SimpleExample</a> Next: <a href="Customization.html">Customization</a></p>
+  </body>
+</html>
