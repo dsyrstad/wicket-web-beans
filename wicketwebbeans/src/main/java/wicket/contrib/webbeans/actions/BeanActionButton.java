@@ -38,6 +38,7 @@ import wicket.model.IModel;
  * <p>
  * 
  * @author Dan Syrstad
+ * @author Mark Southern (mrsouthern) - fix bug 1808364.
  */
 public class BeanActionButton extends BeanSubmitButton
 {
@@ -63,36 +64,33 @@ public class BeanActionButton extends BeanSubmitButton
     protected void onAction(AjaxRequestTarget target, Form form, Object bean)
     {
         if (bean instanceof IModel) {
-            bean = ((IModel)bean).getObject(this);
+            bean = ((IModel)bean).getObject();
         }
         
-        Page page = getPage();
+        Component component = element.getBeanMetaData().getComponent();
         String methodName = element.getActionMethodName();
-        if (page == null) {
-            throw new RuntimeException("BeanActionButton for action " + methodName + " is not on a Page");
-        }
         
         try {
             // Try first to find a bean-specific method.
             Method method;
             try {
-                method = page.getClass().getMethod(methodName, new Class[] { AjaxRequestTarget.class, Form.class, bean.getClass() } );
+                method = component.getClass().getMethod(methodName, new Class[] { AjaxRequestTarget.class, Form.class, bean.getClass() } );
             }
             catch (Exception e) {
                 // Ignore and try generic parameters.
-                method = page.getClass().getMethod(methodName, GENERIC_ACTION_PARAMS);
+                method = component.getClass().getMethod(methodName, GENERIC_ACTION_PARAMS);
             }
             
-            method.invoke(page, new Object[] { target, form, bean });
+            method.invoke(component, new Object[] { target, form, bean });
         }
         catch (NoSuchMethodException e) {
-            throw new RuntimeException("Action method " + methodName + "(AjaxRequestTarget, Form, " + bean.getClass().getName() + "/Object) is not defined in class " + page.getClass());
+            throw new RuntimeException("Action method " + methodName + "(AjaxRequestTarget, Form, " + bean.getClass().getName() + "/Object) is not defined in class " + component.getClass());
         }
         catch (IllegalAccessException e) {
-            throw new RuntimeException("Action method " + methodName + " defined in class " + page.getClass() + " must be declared public");
+            throw new RuntimeException("Action method " + methodName + " defined in class " + component.getClass() + " must be declared public");
         }
         catch (InvocationTargetException e) {
-            throw new RuntimeException("Error invoking action " + methodName + " defined in class " + page.getClass(), e.getCause());
+            throw new RuntimeException("Error invoking action " + methodName + " defined in class " + component.getClass(), e.getCause());
         }
     }
 }
