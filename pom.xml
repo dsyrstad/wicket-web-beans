@@ -2,12 +2,68 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <name>Wicket Web Beans</name>
     <modelVersion>4.0.0</modelVersion>
     <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
     <artifactId>WicketWebBeans</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-rc1</version>
-    <description>Test</description>
+    <version>1.0-rc2SNAPSHOT</version>
+    <developers>
+        <developer>
+            <name>Dan Syrstad</name>
+            <organizationUrl>http://www.vscorp.com</organizationUrl>
+            <organization>Visual Systems Corp.</organization>
+            <roles>
+                <role>Lead &amp; Admin</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Mark Southern</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <organization>
+        <name>Visual Systems Corporation</name>
+        <url>http://www.vscorp.com</url>
+    </organization>
+    <url>http://wicketwebbeans.sourceforge.net/</url>
+    <scm>
+        <connection>svn https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans</connection>
+        <url>http://wicketwebbeans.svn.sourceforge.net/viewvc/wicketwebbeans/</url>
+    </scm>
+    <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=205206</url>
+    </issueManagement>
+    <inceptionYear>2007</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <mailingLists>
+        <mailingList>
+            <name>Wicket Web Beans Users</name>
+            <post>wicketwebbeans-users@lists.sourceforge.net</post>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/wicketwebbeans-users</subscribe>
+            <unsubscribe>
+                http://lists.sourceforge.net/lists/listinfo/wicketwebbeans-users
+            </unsubscribe>
+            <archive>
+                http://sourceforge.net/mailarchive/forum.php?forum_name=wicketwebbeans-users
+            </archive>
+        </mailingList>
+    </mailingLists>
+    <description>
+        Wicket Web Beans (WWB) is an Apache Wicket component toolkit for displaying and editing
+        POJOs that conform to the JavaBeans specification. Web pages are automatically generated
+        based on bean properties and certain conventions. If necessary, the layout, editability, and
+        actions of these pages can be customized on an exception basis. In other words, the toolkit
+        normally does what you'd expect, but when it doesn't, you can override its behavior.
+    </description>
     <build>
         <plugins>
             <plugin>
@@ -18,7 +74,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        
+
         <resources>
             <resource>
                 <filtering>false</filtering>
@@ -46,14 +102,15 @@
         </testResources>
 
     </build>
-    
+
     <modules>
         <module>wicketwebbeans</module>
         <module>wicketwebbeans-examples</module>
         <module>wicketwebbeans-databinder</module>
         <module>wicketwebbeans-databinder-examples</module>
+        <module>wicketwebbeans-skin</module>
     </modules>
-    
+
     <dependencies>
         <dependency>
             <groupId>wicket</groupId>

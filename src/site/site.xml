@@ -1,15 +1,14 @@
 <project name="${project.name}">
-    <bannerLeft>
-        <name>Wicket Web Beans</name>
-        <src>images/dynamic/key_train.jpg</src>
-        <href>http://wicketwebbeans.sourceforge.net</href>
-    </bannerLeft>
+    <skin>
+        <groupId>wicket.contrib.wicketwebbeans.skin</groupId>
+        <artifactId>wicketwebbeans-skin</artifactId>
+    </skin>
     <body>
-        <menu ref="modules" />
-        <menu ref="reports" />
         <menu name="Documentation">
             <item name="Getting Started" href="wiki-html/WicketWebBeans.html" />
             <item name="Index" href="wiki-html/AAATableOfContents.html" />
         </menu>
+        <menu ref="modules" />
+        <menu ref="reports" />
     </body>
 </project>
