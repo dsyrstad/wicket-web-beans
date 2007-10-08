@@ -17,5 +17,11 @@
             <version>1.0-rc2SNAPSHOT</version>
         </dependency>
   </dependencies>
+    <distributionManagement>
+        <site>
+            <id>wicketwebbeans.sourceforge.net</id>
+            <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
+        </site>
+    </distributionManagement>
 </project>
 
