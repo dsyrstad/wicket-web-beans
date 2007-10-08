@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Tables</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Tables</h1>
+<p>
+Back: <a href="EnumeratedTypes.html">EnumeratedTypes</a>  Next: <a href="CreatingYourOwnFieldTypes.html">CreatingYourOwnFieldTypes</a></p>
+<p>
+</p>
+<p>
+You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: wicket.contrib.webbeans.examples.tables.TableBeanPage:</p>
+<p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.tables.TableBeanPage</p>
+<p>
+</p>
+<p>
+This page references two beans wicket.contrib.webbeans.examples.tables.Invoice and wicket.contrib.webbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
+<p>
+</p>
+<pre>	# Table Bean Example
+	Invoice {
+		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
+			shipToAddress{colspan: 3},
+			action.addLine{colspan: 3},
+			lines{colspan: 3};
+	}
+	
+	InvoiceLine {
+		props: action.removeLine{labelImage: &quot;remove.gif&quot;},
+			quantity, itemCode, cost, total; 
+	}
+	
+	Address {
+		props: address1{colspan: 3}, address2{colspan: 3}, city, state, zip;
+	}</pre><p>
+</p>
+<p>
+You'll note a couple of new things here. First, the pseudo-property &quot;EMPTY&quot;. In the BeanGridPanel (the default layout for BeanForm), EMPTY consumes a blank cell in the grid. Second, the &quot;action.removeLine&quot; action specifies a &quot;labelImage&quot; parameter. This allows you to display an image in place of a text label. Also note that Invoice has an addLine action that will add a line to the invoice. InvoiceLine has a removeLine action that will remove a line from the table. </p>
+<p>
+</p>
+<p>
+When you bring up the page, it will look something like:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/TableBeanScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/TableBeanScreenshot.png"/></p>
+<p>
+</p>
+<p>
+Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking &quot;Add Line&quot; adds a new line to the table. Clicking the trash can icon on one of the lines will remove the corresponding line. </p>
+<p>
+</p>
+<p>
+The screenshot also shows the Invoice Date field with a calendar pop-up displayed. WWB displays properties of java.util.Date (date/time), java.sql.Date (date only), java.sql.Time (time only), java.sql.Timestamp (date/time), and java.util.Calendar (date/time with timezone) in a field with a pop-up calendar button.  </p>
+<p>
+</p>
+<p>
+Back: <a href="EnumeratedTypes.html">EnumeratedTypes</a>  Next: <a href="CreatingYourOwnFieldTypes.html">CreatingYourOwnFieldTypes</a></p>
+<p>
+</p>
+  </body>
+</html>

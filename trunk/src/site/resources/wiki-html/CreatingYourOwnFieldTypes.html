@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Creating Your Own Field Types</title>
+<style type="text/css"><!--
+body {
+	text-align:justify;
+	font: 10pt verdana, sans-serif; 
+	color: #000000; 
+	background: #ffffff;
+}
+
+.monospace {font-family:monospace;}
+
+.quote {
+	padding: 0.5em;
+	margin: 0 0 0.5em 0.5em;	
+	border: 1px solid #ccc;	
+	background: #eee;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-variant: small-caps;
+	color: #111;
+}
+
+li {
+	text-align: left
+}
+
+table {
+	border-size:0;
+}
+
+th {
+	vertical-align: top;
+	color: #FFFF99;
+	background: #0c2577;
+}
+
+td {
+	vertical-align: top;
+	padding: 1px;
+	margin; 2px;
+	font: 10pt verdana, sans-serif;
+}
+--></style>
+  </head>
+  <body>
+<h1>Creating Your Own Field Types</h1>
+<p>
+Back: <a href="Tables.html">Tables</a> Next: <a href="MoreInformation.html">MoreInformation</a></p>
+<p>
+</p>
+<p>
+There are times when you may want to implement your own Fields (wicket.contrib.webbeans.fields.Field). wicket.contrib.webbeans.fields.AbstractField is the base class for the Field interface. It is recommended that you use the AbstractField base class, or an extension of it, if your field will participate in a BeanForm. </p>
+<p>
+</p>
+<p>
+By convention, all Fields must define a constructor with the signature:</p>
+<p>
+ </p>
+<pre>	public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)</pre><p>
+</p>
+<p>
+In this example, we're going to enhance the wicket.contrib.webbeans.examples.customfields.Address bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things simpler for you, WWB defines an interface called wicket.contrib.webbeans.model.NonJavaEnum. It also has a base class for this interface called wicket.contrib.webbeans.model.BaseNonJavaEnum. So let's look at our wicket.contrib.webbeans.examples.customfields.Country enumeration:</p>
+<p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.customfields.Country</p>
+<p>
+</p>
+<p>
+You would normally query the database for countries in the static values() method. However, we don't have a database, so we just hard coded them. The idea is that you would retrieve these values at runtime. The static values() and valueOf() methods are similar to those found on a Java language enum.</p>
+<p>
+</p>
+<p>
+Next we need to implement the Field. WWB has a base Field class wicket.contrib.webbeans.fields.EnumField that can be used for Java enums and NonJavaEnums. Here's our wicket.contrib.webbeans.examples.customfields.CountryField that extends EnumField:</p>
+<p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.customfields.CountryField</p>
+<p>
+</p>
+<p>
+Next, we need to register the CountryField type so that whenever WWB sees a Country bean, it will know how to handle it. In this example, this is done in wicket.contrib.webbeans.examples.customfields.CustomFieldPage:</p>
+<p>
+</p>
+<p>
+Embed:wicket.contrib.webbeans.examples.customfields.CustomFieldPage</p>
+<p>
+ </p>
+<p>
+For simplicity, we add the mapping to ComponentRegistry directly in our Page code. However, you would normally create your instance or sub-class of ComponentRegistry outside of the Page code so that it can be used from multiple pages.</p>
+<p>
+</p>
+<p>
+The end result looks like this:</p>
+<p>
+</p>
+<p>
+<img alt="Eclipse:/WicketWebBeans/doc/wiki/images/CustomFieldScreenshot.png" src="workspace/WicketWebBeans/doc/wiki/images/CustomFieldScreenshot.png"/> </p>
+<p>
+</p>
+<p>
+Back: <a href="Tables.html">Tables</a> Next: <a href="MoreInformation.html">MoreInformation</a></p>
+<p>
+</p>
+  </body>
+</html>
