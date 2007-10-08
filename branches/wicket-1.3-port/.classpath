@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/geronimo-jpa_3.0_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/jdo2-api-20070816-SNAPSHOT.jar"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
