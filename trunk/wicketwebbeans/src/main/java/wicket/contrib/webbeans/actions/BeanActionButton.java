@@ -19,7 +19,7 @@ package wicket.contrib.webbeans.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import wicket.Page;
+import wicket.Component;
 import wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.model.ElementMetaData;
 import wicket.markup.html.form.Form;
@@ -64,7 +64,7 @@ public class BeanActionButton extends BeanSubmitButton
     protected void onAction(AjaxRequestTarget target, Form form, Object bean)
     {
         if (bean instanceof IModel) {
-            bean = ((IModel)bean).getObject();
+            bean = ((IModel)bean).getObject(form);
         }
         
         Component component = element.getBeanMetaData().getComponent();
