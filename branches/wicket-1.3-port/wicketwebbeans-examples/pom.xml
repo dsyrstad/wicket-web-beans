@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <name>Examples</name>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>wicket.contrib.wicketwebbeans.examples</groupId>
-  <artifactId>wicketwebbeans-examples</artifactId>
-  <description>Wicket Web Beans Examples</description>
-  <packaging>war</packaging>
   <parent>
     <artifactId>WicketWebBeans</artifactId>
     <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
-        <version>1.0-rc2SNAPSHOT-wicket-1.3</version>
+    <version>1.0-rc2SNAPSHOT-wicket-1.3</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>wicket.contrib.wicketwebbeans.examples</groupId>
+  <artifactId>wicketwebbeans-examples</artifactId>
+  <packaging>war</packaging>
+  <name>Examples</name>
+  <description>Wicket Web Beans Examples</description>
   <dependencies>
     <dependency>
       <groupId>wicket.contrib.wicketwebbeans</groupId>
       <artifactId>wicketwebbeans</artifactId>
-        <version>1.0-rc2SNAPSHOT-wicket-1.3</version>
+      <version>1.0-rc2SNAPSHOT-wicket-1.3</version>
     </dependency>
     <dependency>
       <groupId>javax.jdo</groupId>
