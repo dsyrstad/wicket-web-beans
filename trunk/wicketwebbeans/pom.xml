@@ -10,12 +10,5 @@
         <artifactId>WicketWebBeans</artifactId>
         <version>1.0-rc2SNAPSHOT</version>
   </parent>
-  <dependencies>  
-        <dependency>
-            <groupId>wicket.contrib.wicketwebbeans.skin</groupId>
-            <artifactId>wicketwebbeans-skin</artifactId>
-            <version>1.0-rc2SNAPSHOT</version>
-        </dependency>
-  </dependencies>
 </project>
 
