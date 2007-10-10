@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <name>Examples</name>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>wicket.contrib.wicketwebbeans.examples</groupId>
-  <artifactId>wicketwebbeans-examples</artifactId>
-  <description>Wicket Web Beans Examples</description>
-  <packaging>war</packaging>
-  <parent>
-    <artifactId>WicketWebBeans</artifactId>
-    <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <name>Examples</name>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>wicket.contrib.wicketwebbeans.examples</groupId>
+    <artifactId>wicketwebbeans-examples</artifactId>
+    <description>Wicket Web Beans Examples</description>
+    <packaging>war</packaging>
+    <parent>
+        <artifactId>WicketWebBeans</artifactId>
+        <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
         <version>1.0-rc2SNAPSHOT</version>
-  </parent>
-  <dependencies>
-    <dependency>
-      <groupId>wicket.contrib.wicketwebbeans</groupId>
-      <artifactId>wicketwebbeans</artifactId>
-        <version>1.0-rc2SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.jdo</groupId>
-      <artifactId>jdo2-api</artifactId>
-      <version>SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>jpa</artifactId>
-      <version>1.0</version>
-    </dependency>
-  </dependencies>
+    </parent>
+    <repositories>
+        <repository>
+            <!--  For JDO2 Annotations in the javax.jdo package. -->
+            <id>javax.jdo.snapshots</id>
+            <url>http://www.jpox.org/downloads/maven-nightly</url>
+            <layout>legacy</layout>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>wicket.contrib.wicketwebbeans</groupId>
+            <artifactId>wicketwebbeans</artifactId>
+            <version>1.0-rc2SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.jdo</groupId>
+            <artifactId>jdo2-api</artifactId>
+            <version>20070920-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+    </dependencies>
 </project>
 
