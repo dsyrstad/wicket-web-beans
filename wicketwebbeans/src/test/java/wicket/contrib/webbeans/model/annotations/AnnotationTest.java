@@ -87,8 +87,8 @@ public class AnnotationTest extends TestCase
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("action.save", false, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", false, null, null, "Add Row", null, "listOfBeans"),
+            new ElementInfo("action.save", false, null, null, "Save", null, "nameInfo"),
             new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
@@ -164,8 +164,8 @@ public class AnnotationTest extends TestCase
         assertEquals("Bean View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
+            new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
             // firstName was explicitly overridden as not viewOnly.
@@ -204,8 +204,8 @@ public class AnnotationTest extends TestCase
             ++elementIdx;
         }
         
-        // action.save (first element) should have a parameter of colspan: 4
-        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(0).getIntegerParameter("colspan"));
+        // action.save (second element) should have a parameter of colspan: 4
+        assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
         
         List<TabMetaData> tabs = beanMetaData.getTabs();
         assertEquals(3, tabs.size());
