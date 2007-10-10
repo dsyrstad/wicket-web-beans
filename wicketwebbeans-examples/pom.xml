@@ -9,7 +9,7 @@
     <description>Wicket Web Beans Examples</description>
     <packaging>war</packaging>
     <parent>
-        <artifactId>WicketWebBeans</artifactId>
+        <artifactId>WicketWebBeans-parent</artifactId>
         <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
         <version>1.0-rc2SNAPSHOT</version>
     </parent>
