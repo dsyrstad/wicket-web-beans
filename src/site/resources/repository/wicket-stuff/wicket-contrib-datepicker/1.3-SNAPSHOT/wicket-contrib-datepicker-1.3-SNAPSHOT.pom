@@ -159,7 +159,7 @@
 					<descriptors>
 						<descriptor>src/assembly/bin.xml</descriptor>
 					</descriptors>
-					<finalName>${artifactId}-${version}</finalName>
+					<finalName>${pom.artifactId}-${pom.version}</finalName>
 					<outputDirectory>target/distributions</outputDirectory>
 					<workDirectory>target/assembly/work</workDirectory>
 				</configuration>
