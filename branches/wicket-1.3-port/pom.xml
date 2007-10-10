@@ -111,6 +111,20 @@
             <name>Wicket Stuff Repository</name>
             <url>http://wicketstuff.org/maven/repository</url>
         </repository>
+        <repository>
+            <id>java.net.maven.1</id>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>java.net.maven.2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>wicket.contrib.wicketwebbeans.repository</id>
+            <name>Wicket Web Beans Repository</name>
+            <url>http://wicketwebbeans.sourceforge.net/repository</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
