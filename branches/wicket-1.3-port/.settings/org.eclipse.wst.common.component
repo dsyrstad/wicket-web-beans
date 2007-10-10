@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="WicketWebBeans-wicket-1.3-port">
-        <wb-resource deploy-path="/" source-path="/WebContent"/>
+        <wb-resource deploy-path="/" source-path="/wicketwebbeans-examples/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/wicketwebbeans-examples/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/wicketwebbeans-databinder/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/wicketwebbeans/src/test/java"/>
