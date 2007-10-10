@@ -747,7 +747,7 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param aClass the class.
      * 
-     * @return an List of action methods, possibly empty.
+     * @return an List of sorted action methods, possibly empty.
      */
     private List<Method> getActionMethods(Class<? extends Component> aClass)
     {
@@ -763,6 +763,13 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
         
+        Collections.sort(result, new Comparator<Method>() {
+            public int compare(Method o1, Method o2)
+            {
+                return o1.getName().compareTo(o2.getName());
+            }
+            
+        });
         return result;
     }
 
