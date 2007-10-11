@@ -58,7 +58,7 @@
     </licenses>
     <scm>
         <connection>
-            svn https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans
+            scm:svn:https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans
         </connection>
         <url>http://wicketwebbeans.svn.sourceforge.net/viewvc/wicketwebbeans/</url>
     </scm>
@@ -95,6 +95,15 @@
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans/tags
+                    </tagBase>
                 </configuration>
             </plugin>
         </plugins>
@@ -154,11 +163,63 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans/tags
+                    </tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
     <distributionManagement>
         <site>
             <id>wicketwebbeans.sourceforge.net</id>
             <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
         </site>
+        <repository>
+            <id>wicketwebbeans.</id>
+            <name>Repository Name</name>
+            <url>scp://host/path/to/repo</url>
+        </repository>
     </distributionManagement>
 </project>
 
