@@ -44,6 +44,11 @@ public abstract class DataBeanListPanel extends Panel
     private BeanTablePanel panel;
     private BeanMetaData metaData;
     
+    public DataBeanListPanel(String id, Class beanClass)
+    {
+    	this(id,beanClass.getName());
+    }
+    
     /**
      *
      * @param beanClass the fully qualified class name of the bean to be edited 
@@ -67,7 +72,17 @@ public abstract class DataBeanListPanel extends Panel
             };
             add(search);
     		
-    		DataSorter sorter = new DataSorter(metaData.getParameter("orderBy"));
+            DataSorter sorter;
+            String orderBy = metaData.getParameter("orderBy");
+            if( orderBy.contains(" ") )
+            {
+            	String[] items = orderBy.split("\\s+");
+            	boolean asc = ( "desc".equalsIgnoreCase(items[1]) ? false : true );
+            		sorter = new DataSorter(items[0], asc);
+            }
+            else
+            	sorter = new DataSorter(orderBy);
+    		
     		String filter = metaData.getParameter("filter");
     		IDataProvider provider = new DatabinderProvider(clazz,new DataSearchFilter(search,filter),sorter);
     		panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
