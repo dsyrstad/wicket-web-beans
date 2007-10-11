@@ -76,13 +76,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     void applyBeanProps(List<Parameter> params)
     {
         for (Parameter param : params) {
-            List<ParameterValue> values = param.getValues();
-            if (values.size() != 1) {
-                throw new RuntimeException("Parameter " + param.getName() + "on element " + propertyName + " on bean " + beanMetaData.getBeanClass().getSimpleName() + " does not specify exactly one value.");
-            }
-            
-            String value = values.get(0).getValue();
-            setParameter(param.getName(), value);
+            setParameterValues(param.getName(), param.getValuesAsStrings());
         }
     }
     
@@ -104,7 +98,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     public void setFieldType(String fieldType)
     {
-        getParameters().setProperty(PARAM_FIELD_TYPE, fieldType);
+        setParameter(PARAM_FIELD_TYPE, fieldType);
     }
 
     public String getTabId()
@@ -124,7 +118,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     public void setLabel(String label)
     {
-        getParameters().setProperty(PARAM_LABEL, label);
+        setParameter(PARAM_LABEL, label);
     }
     
     public String getDefaultValue()
@@ -135,7 +129,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     public void setDefaultValue(String value)
     {
         if (value != null) {
-            getParameters().setProperty(PARAM_DEFAULT_VALUE, value);
+            setParameter(PARAM_DEFAULT_VALUE, value);
         }
     }
     
@@ -155,7 +149,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     public void setMaxLength(Integer maxLength)
     {
         if (maxLength != null && maxLength != 0) {
-            getParameters().setProperty(PARAM_MAX_LENGTH, maxLength.toString());
+            setParameter(PARAM_MAX_LENGTH, maxLength.toString());
         }
     }
     
@@ -166,7 +160,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     public void setRequired(boolean required)
     {
-        getParameters().setProperty(PARAM_REQUIRED, String.valueOf(required));
+        setParameter(PARAM_REQUIRED, String.valueOf(required));
     }
     
     /**
@@ -219,7 +213,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     public void setViewOnly(boolean viewOnly)
     {
-        getParameters().setProperty(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
+        setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
     }
     
     @Override

@@ -843,19 +843,11 @@ public class BeanMetaData extends MetaData implements Serializable
                 !name.equals(PARAM_ACTIONS) &&
                 !name.equals(PARAM_TABS)) {
 
-                // Just handle a regular single-valued parameter.
-                List<ParameterValue> values = param.getValues();
-                if (values.size() != 1) {
-                    throw new RuntimeException("Parameter " + name + " on bean " + bean.getName()
-                                    + " does not specify exactly one value.");
-                }
-
-                String value = values.get(0).getValue();
-                setParameter(name, value);
+                setParameterValues(name, param.getValuesAsStrings());
                 if (name.equals(PARAM_VIEW_ONLY)) {
                     // Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
                     // that they can override the bean setting if necessary.
-                    boolean viewOnly = Boolean.valueOf(value);
+                    boolean viewOnly = getBooleanParameter(name);
                     for (ElementMetaData element : elements) {
                         element.setViewOnly(viewOnly);
                     }

@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 import wicket.contrib.webbeans.annotations.Bean;
 import wicket.contrib.webbeans.annotations.Beans;
+import wicket.contrib.webbeans.annotations.Parameter;
 import wicket.contrib.webbeans.annotations.Property;
 import wicket.contrib.webbeans.annotations.Tab;
 
@@ -16,7 +17,8 @@ import wicket.contrib.webbeans.annotations.Tab;
             @Tab(name = "Address", propertyNames = { 
                 "address1", EMPTY, EMPTY, 
                 "address2", EMPTY, EMPTY, "city", "state", "zip" })
-        }
+        },
+        params = @Parameter(name = "customParam", value = { "value1", "value2", "value3"})
     ),
 
     // Inherits from default context.

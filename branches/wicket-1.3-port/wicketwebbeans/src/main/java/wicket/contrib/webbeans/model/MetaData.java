@@ -17,8 +17,9 @@
 
 package wicket.contrib.webbeans.model;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Component;
@@ -32,7 +33,7 @@ import org.apache.wicket.util.string.Strings;
  */
 public class MetaData
 {
-    private Properties parameters = new Properties();
+    private Map<String, String[]> parameters = new HashMap<String, String[]>();
     private Set<String> consumedParameters = new HashSet<String>();
     private Component component;
 
@@ -75,7 +76,7 @@ public class MetaData
     }
 
     /**
-     * Gets the specified parameter.
+     * Gets the specified parameter. If the parameter has multiple values, the first value is returned.
      *
      * @param key the parameter key.
      * 
@@ -84,13 +85,19 @@ public class MetaData
     public String getParameter(String key)
     {
         consumeParameter(key);
-        return parameters.getProperty(key);
+        String[] values = parameters.get(key);
+        if (values == null || values.length == 0) {
+            return null;
+        }
+        
+        return values[0];
     }
     
     /**
-     * Gets the specified parameter.
+     * Gets the specified parameter. If the parameter has multiple values, the first value is returned.
      *
      * @param key the parameter key.
+     * @param defaultValue the default value to be returned if the parameter value is null.
      * 
      * @return the parameter value, or defaultValue if not set.
      */
@@ -98,6 +105,19 @@ public class MetaData
     {
         String value = getParameter(key);
         return value == null ? defaultValue : value;
+    }
+    
+    /**
+     * Gets the specified parameter as a multi-valued array.
+     *
+     * @param key the parameter key.
+     * 
+     * @return the parameter values, or null if not set.
+     */
+    public String[] getParameterValues(String key)
+    {
+        consumeParameter(key);
+        return parameters.get(key);
     }
     
     /**
@@ -146,8 +166,23 @@ public class MetaData
      */
     public void setParameter(String key, String value)
     {
-        ;
-        parameters.setProperty(key, WicketUtil.substituteMacros(value, component));
+        parameters.put(key, new String[] { WicketUtil.substituteMacros(value, component) });
+    }
+    
+    /**
+     * Sets a parameter that has multiple values. 
+     *
+     * @param key the parameter key.
+     * 
+     * @param values the parameter values. Macros ("${...}")) in these values will be substituted from the component's localizer.
+     */
+    public void setParameterValues(String key, String[] values)
+    {
+        for (int i = 0; i < values.length; i++) {
+            values[i] = WicketUtil.substituteMacros(values[i], component);
+        }
+        
+        parameters.put(key, values);
     }
     
     /**
@@ -159,7 +194,20 @@ public class MetaData
     public void setParameterIfNotEmpty(String key, String value)
     {
         if (!Strings.isEmpty(key) && !Strings.isEmpty(value)) {
-            setParameter(key,value);
+            setParameter(key, value);
+        }
+    }
+    
+    /**
+     * Sets a parameter if the values array is not empty or null.
+     *
+     * @param key the parameter key. If empty or null, the parameter is not set.
+     * @param values the parameter values. If empty or null, the parameter is not set.
+     */
+    public void setParameterIfNotEmpty(String key, String[] values)
+    {
+        if (!Strings.isEmpty(key) && values != null && values.length > 0) {
+            setParameterValues(key, values);
         }
     }
     
@@ -168,7 +216,7 @@ public class MetaData
      *
      * @return the parameters.
      */
-    public Properties getParameters()
+    public Map<String, String[]> getParameters()
     {
         return parameters;
     }
@@ -178,7 +226,7 @@ public class MetaData
      *
      * @param parameters the parameters to set.
      */
-    public void setParameters(Properties parameters)
+    public void setParameters(Map<String, String[]> parameters)
     {
         this.parameters = parameters;
     }

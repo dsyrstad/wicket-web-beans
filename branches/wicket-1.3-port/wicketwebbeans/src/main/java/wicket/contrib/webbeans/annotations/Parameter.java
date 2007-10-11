@@ -37,6 +37,6 @@ public @interface Parameter {
     /** The parameter name. */
     String name();
     
-    /** The parameter's string value. */
-    String value() default "";
+    /** The parameter's string value. Also supports multi-valued parameters. */
+    String[] value() default "";
 }

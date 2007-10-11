@@ -45,4 +45,13 @@ public class Parameter
         return values;
     }
 
+    public String[] getValuesAsStrings()
+    {
+        String[] stringValues = new String[values.size()];
+        for (int i = 0; i < stringValues.length; i++) {
+            stringValues[i] = values.get(i).getValue();
+        }
+        
+        return stringValues;
+    }
 }
