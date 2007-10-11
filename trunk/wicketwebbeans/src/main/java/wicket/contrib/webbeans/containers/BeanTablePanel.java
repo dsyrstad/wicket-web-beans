@@ -19,6 +19,7 @@ package wicket.contrib.webbeans.containers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -57,7 +58,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model, which must return a Collection type for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -70,7 +71,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model, which must return a Collection type for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -156,12 +157,17 @@ public class BeanTablePanel extends Panel
         
         List getList()
         {
-            List list = (List)listModel.getObject(null);
-            if (list == null) {
-                list = new ArrayList();
+            Collection collection = (Collection)listModel.getObject(null);
+            if (collection == null) {
+                return new ArrayList();
             }
             
-            return list;
+            if (collection instanceof List) {
+                return (List)collection;
+            }
+
+            // Make any other kind of non-List collection a List.
+            return new ArrayList(collection);
         }
 
         public Iterator iterator(int first, int count)
@@ -169,8 +175,9 @@ public class BeanTablePanel extends Panel
             List list = getList();
             final SortParam sortParam = getSort();
             if (sortParam != null) {
-                if (lastSortParam == null || 
-                    !lastSortParam.getProperty().equals(sortParam.getProperty()) ||
+                if (list != listModel.getObject(null) || // Synthesized list. Always sort. 
+                    lastSortParam == null ||             // Haven't sorted yet.
+                    !lastSortParam.getProperty().equals(sortParam.getProperty()) ||  // Sort params changed.
                      lastSortParam.isAscending() != sortParam.isAscending()) {
                     
                     lastSortParam = new SortParam(sortParam.getProperty(), sortParam.isAscending());
@@ -184,7 +191,12 @@ public class BeanTablePanel extends Panel
 
         public int size()
         {
-            return getList().size();
+            Collection collection = (Collection)listModel.getObject(null);
+            if (collection == null) {
+                return 0;
+            }
+            
+            return collection.size();
         }
 
         /**

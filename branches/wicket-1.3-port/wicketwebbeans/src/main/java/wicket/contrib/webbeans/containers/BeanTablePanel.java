@@ -19,6 +19,7 @@ package wicket.contrib.webbeans.containers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -27,22 +28,23 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
-import wicket.contrib.webbeans.actions.BeanActionButton;
-import wicket.contrib.webbeans.model.BeanMetaData;
-import wicket.contrib.webbeans.model.ElementMetaData;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+
+import wicket.contrib.webbeans.actions.BeanActionButton;
+import wicket.contrib.webbeans.model.BeanMetaData;
+import wicket.contrib.webbeans.model.ElementMetaData;
 
 /**
  * Displays a list of beans as an editable or viewable table. <p>
@@ -59,7 +61,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model, which must return a Collection type for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -72,7 +74,7 @@ public class BeanTablePanel extends Panel
      * Construct a new BeanTablePanel.
      *
      * @param id the Wicket id for the editor.
-     * @param model the model, which must return a List for its object.
+     * @param model the model, which must return a Collection type for its object.
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
@@ -158,12 +160,17 @@ public class BeanTablePanel extends Panel
         
         List getList()
         {
-            List list = (List)listModel.getObject();
-            if (list == null) {
-                list = new ArrayList();
+            Collection collection = (Collection)listModel.getObject();
+            if (collection == null) {
+                return new ArrayList();
             }
             
-            return list;
+            if (collection instanceof List) {
+                return (List)collection;
+            }
+
+            // Make any other kind of non-List collection a List.
+            return new ArrayList(collection);
         }
 
         public Iterator iterator(int first, int count)
@@ -171,8 +178,9 @@ public class BeanTablePanel extends Panel
             List list = getList();
             final SortParam sortParam = getSort();
             if (sortParam != null) {
-                if (lastSortParam == null || 
-                    !lastSortParam.getProperty().equals(sortParam.getProperty()) ||
+                if (list != listModel.getObject() || // Synthesized list. Always sort. 
+                    lastSortParam == null ||             // Haven't sorted yet.
+                    !lastSortParam.getProperty().equals(sortParam.getProperty()) ||  // Sort params changed.
                      lastSortParam.isAscending() != sortParam.isAscending()) {
                     
                     lastSortParam = new SortParam(sortParam.getProperty(), sortParam.isAscending());
@@ -186,7 +194,12 @@ public class BeanTablePanel extends Panel
 
         public int size()
         {
-            return getList().size();
+            Collection collection = (Collection)listModel.getObject();
+            if (collection == null) {
+                return 0;
+            }
+            
+            return collection.size();
         }
 
         /**
