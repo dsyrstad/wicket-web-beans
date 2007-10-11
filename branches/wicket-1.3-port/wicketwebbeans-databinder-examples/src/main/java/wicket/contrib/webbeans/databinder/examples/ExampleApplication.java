@@ -10,7 +10,8 @@ public class ExampleApplication extends DataApplication
 {
 	public ExampleApplication()
 	{
-	    
+	    URL url = getClass().getResource("/wicket/contrib/webbeans/databinder/examples/log4j.config.xml");
+        org.apache.log4j.xml.DOMConfigurator.configure(url);
 	}
 
 	@Override
@@ -25,8 +26,7 @@ public class ExampleApplication extends DataApplication
 	    super.configureHibernate(config);
 	    URL url = getClass().getResource("/wicket/contrib/webbeans/databinder/examples/hibernate.cfg.xml");
         config.configure(url);
-        config.addAnnotatedClass(Player.class);
-        config.addAnnotatedClass(Country.class);
-        config.addAnnotatedClass(City.class);
+        config.addAnnotatedClass(Contact.class);
+        config.addAnnotatedClass(Category.class);
     }
 }
