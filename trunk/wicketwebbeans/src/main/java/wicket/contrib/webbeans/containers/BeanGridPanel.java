@@ -22,6 +22,7 @@ import java.util.List;
 
 import wicket.AttributeModifier;
 import wicket.Component;
+import wicket.behavior.SimpleAttributeModifier;
 import wicket.contrib.webbeans.actions.BeanActionButton;
 import wicket.contrib.webbeans.fields.LabeledField;
 import wicket.contrib.webbeans.fields.UnlabeledField;
@@ -198,6 +199,7 @@ public class BeanGridPanel extends Panel
             if (element.isAction()) {
                 Form form = (Form)findParent(Form.class);
                 component = new BeanActionButton("c", element, form, bean);
+                item.add( new SimpleAttributeModifier("class", "beanActionButtonCell") );
             }
             else {
                 component = beanMetaData.getComponentRegistry().getComponent(bean, "c", element);

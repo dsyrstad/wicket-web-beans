@@ -105,6 +105,10 @@
 	vertical-align: top;
 }
 
+td.beanActionButtonCell  {
+	vertical-align: middle;
+}
+
 .labeledField {
 	float: left;
 	padding: 0px 0px 0px 0px;
