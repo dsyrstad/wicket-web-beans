@@ -59,7 +59,6 @@ public abstract class DataBeanListPanel extends Panel
 	    try
 	    {  
 	        Class clazz = Class.forName(beanClass);
-	        DataStaticService.getHibernateSession().beginTransaction();
     		metaData = new BeanMetaData(clazz, null, this, null, true);
     		Label label = new Label("label", new Model(metaData.getParameter("label")));
     		add(label);
@@ -74,7 +73,7 @@ public abstract class DataBeanListPanel extends Panel
     		
             DataSorter sorter;
             String orderBy = metaData.getParameter("orderBy");
-            if( orderBy.contains(" ") )
+            if( orderBy != null && orderBy.contains(" ") )
             {
             	String[] items = orderBy.split("\\s+");
             	boolean asc = ( "desc".equalsIgnoreCase(items[1]) ? false : true );
