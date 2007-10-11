@@ -84,13 +84,13 @@ public class BeanActionButton extends BeanSubmitButton
             method.invoke(component, new Object[] { target, form, bean });
         }
         catch (NoSuchMethodException e) {
-            throw new RuntimeException("Action method " + methodName + "(AjaxRequestTarget, Form, " + bean.getClass().getName() + "/Object) is not defined in class " + component.getClass());
+            throw new RuntimeException("Action method " + methodName + "(AjaxRequestTarget, Form, " + bean.getClass().getName() + "/Object) is not defined in " + component.getClass());
         }
         catch (IllegalAccessException e) {
-            throw new RuntimeException("Action method " + methodName + " defined in class " + component.getClass() + " must be declared public");
+            throw new RuntimeException("Action method " + methodName + " defined in " + component.getClass() + " must be declared public");
         }
         catch (InvocationTargetException e) {
-            throw new RuntimeException("Error invoking action " + methodName + " defined in class " + component.getClass(), e.getCause());
+            throw new RuntimeException("Error invoking action " + methodName + " defined in " + component.getClass(), e.getCause());
         }
     }
 }
