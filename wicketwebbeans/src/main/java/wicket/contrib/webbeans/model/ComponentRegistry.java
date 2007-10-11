@@ -24,6 +24,7 @@ import java.math.BigInteger;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +105,7 @@ public class ComponentRegistry implements Serializable
         register(Object[].class, Enum.class, MultiSelectEnumField.class);
         register(List.class, Enum.class, MultiSelectEnumField.class);
 
-        register(List.class, BeanTableField.class);
+        register(Collection.class, BeanTableField.class);
         
         // Register the following so that they're available for findMatchingFieldClass(), but not really available otherwise.
         register(BeanGridField.class, BeanGridField.class);

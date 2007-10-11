@@ -1,8 +1,8 @@
 package wicket.contrib.webbeans.examples.complex;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import wicket.ajax.AjaxRequestTarget;
 import wicket.contrib.webbeans.containers.BeanForm;
@@ -17,7 +17,7 @@ public class ExpPage2 extends WebPage
     
     public ExpPage2()
     {
-        List<TestBean2> beans = new ArrayList<TestBean2>();
+        Set<TestBean2> beans = new HashSet<TestBean2>();
         beans.add( new TestBean2("Dan", "Syrstad") );
         beans.add( new TestBean2("Joe", "Smith") );
         for (int i = 0; i < 25; i++) {

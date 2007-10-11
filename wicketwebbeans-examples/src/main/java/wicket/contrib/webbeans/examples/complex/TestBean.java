@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class TestBean implements Serializable
 {
@@ -53,7 +54,7 @@ public class TestBean implements Serializable
     private TestBean2 blockBean;
     private TestBean2 inlineBean;
     private TestBean2 popupBean;
-    private List<TestBean2> beans;
+    private Set<TestBean2> beans;
     private List<ColorEnum> palette = new ArrayList<ColorEnum>();
     private String description;
     private SubComponent subComponent;
@@ -327,9 +328,9 @@ public class TestBean implements Serializable
     /**
      * Gets the beans.
      *
-     * @return a List<TestBean2>.
+     * @return a Set<TestBean2>.
      */
-    public List<TestBean2> getBeans()
+    public Set<TestBean2> getBeans()
     {
         return beans;
     }
@@ -337,9 +338,9 @@ public class TestBean implements Serializable
     /**
      * Sets beans.
      *
-     * @param beans a List<TestBean2>.
+     * @param beans a Set<TestBean2>.
      */
-    public void setBeans(List<TestBean2> beans)
+    public void setBeans(Set<TestBean2> beans)
     {
         this.beans = beans;
     }
