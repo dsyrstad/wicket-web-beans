@@ -38,7 +38,7 @@ TestBean {
 		lastName{required: true},
 		EMPTY,
 		activePrimitive,
-		color{required: true},
+		color{required: true; customParam: value1, value2, value3},
 		# Note that only the base class name for fieldType is specified, not the package (wicket.contrib.beancomponents.fields) which is optional.
 		# This class must be in the ComponentRegistry for this to work. Otherwise, you can explicitly specify the package name. 
 		inlineBean{fieldType: BeanInlineField; colspan: 3},
