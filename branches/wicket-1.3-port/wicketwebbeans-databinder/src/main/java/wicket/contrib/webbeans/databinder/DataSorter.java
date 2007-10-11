@@ -45,6 +45,7 @@ public class DataSorter implements ISortStateLocator, ICriteriaBuilder, Serializ
 {
     private SingleSortState sortState = new SingleSortState();
     private String defaultProperty = null;
+    boolean asc = true;
     
     /**
      * Construct a new DataSorter with no default sort
@@ -61,13 +62,24 @@ public class DataSorter implements ISortStateLocator, ICriteriaBuilder, Serializ
      */
     public DataSorter(String defaultProperty)
     {
+        this(defaultProperty,true);
+    }
+    
+    /**
+     * Construct a new DataSorter.
+     *
+     * @param defaultProperty the default sort.
+     * @param asc sort ascending/descending
+     */
+    public DataSorter(String defaultProperty, boolean asc)
+    {
         this.defaultProperty = defaultProperty;
+        this.asc = asc;
     }
 
     public void build(Criteria criteria)
     {
         String property;
-        boolean asc = true;
         SortParam sort = sortState.getSort();
         if( sort != null && sort.getProperty() != null )
         {
