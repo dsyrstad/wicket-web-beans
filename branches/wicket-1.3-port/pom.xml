@@ -134,11 +134,11 @@
             <name>Wicket Web Beans Repository</name>
             <url>http://wicketwebbeans.sourceforge.net/repository</url>
         </repository>
-        <repository>
+        <!-- repository>
             <id>org.apache.repository</id>
             <name>Apache Repository For Recent Releases</name>
             <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-        </repository>
+        </repository -->
     </repositories>
     <dependencies>
         <dependency>
