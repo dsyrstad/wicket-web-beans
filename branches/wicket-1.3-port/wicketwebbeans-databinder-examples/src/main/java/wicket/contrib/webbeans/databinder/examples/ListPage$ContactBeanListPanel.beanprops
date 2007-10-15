@@ -1,0 +1,12 @@
+Category
+{
+	orderBy: "name desc";
+	props: -id, name;
+}
+
+Contact
+{
+	actions: edit, delete;
+	orderBy: name;
+	props: -id, name, phoneNumber, category;
+}
