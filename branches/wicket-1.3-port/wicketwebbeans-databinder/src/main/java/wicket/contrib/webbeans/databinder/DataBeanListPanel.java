@@ -59,6 +59,7 @@ public abstract class DataBeanListPanel extends Panel
 	    try
 	    {  
 	        Class clazz = Class.forName(beanClass);
+	        DataStaticService.getHibernateSession().beginTransaction();
     		metaData = new BeanMetaData(clazz, null, this, null, true);
     		Label label = new Label("label", new Model(metaData.getParameter("label")));
     		add(label);
@@ -96,8 +97,6 @@ public abstract class DataBeanListPanel extends Panel
 	        throw new RuntimeException(ex);
 	    }
 	}
-	
-	public abstract void create(AjaxRequestTarget target, Form form, Object bean);
 	
 	public abstract void edit(AjaxRequestTarget target, Form form, Object bean);
 	

@@ -51,7 +51,7 @@ public abstract class DataBeanEditPanel extends Panel
         super(id);
 	    this.returnPage = returnPage;
         metaData = new BeanMetaData(bean.getClass(), null, this, null, false);
-        beanForm = new BeanForm("bean", bean, metaData);
+        beanForm = new BeanForm("beanForm", bean, metaData);
         add(beanForm);
     }
     
