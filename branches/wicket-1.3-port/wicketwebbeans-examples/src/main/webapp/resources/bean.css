@@ -126,6 +126,10 @@ td.beanActionButtonCell  {
 	padding: 10px 0px 0px 0px;
 	height: auto;
 	font-weight: bold;
+	/* If you want labels to the left instead of above, uncomment the 3 lines below: */
+	/*float: left; 
+	width: 15em;  
+	text-align: bottom;*/
 }
 
 .field {
