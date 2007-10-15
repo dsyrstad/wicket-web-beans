@@ -1,6 +1,13 @@
 package wicket.contrib.webbeans.databinder.examples;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Random;
+
 
 import org.hibernate.cfg.AnnotationConfiguration;
 
@@ -28,16 +35,39 @@ public class ExampleApplication extends DataApplication
 	{
 	    super.init();
 	    // load some example contacts
-	    Session session = DataStaticService.getHibernateSession();
+	    Session session = DataStaticService.getHibernateSessionFactory().openSession();
 	    session.beginTransaction();
-	    Category category = new Category();
-	    category.setName("Friends");
-	    session.save(category);
-	    Contact contact = new Contact();
-	    contact.setName("John Smith");
-	    contact.setCategory(category);
-	    contact.setPhoneNumber("1-800-555-1234");
-	    session.save(contact);
+	    Map<Integer,Category> categories = new HashMap<Integer,Category>();
+	    String[] names = new String[]{"Friends","Family","Business"};
+	    for(int ii = 0; ii < names.length; ii++ )
+	    {
+	    	Category category = new Category();
+		    category.setName(names[ii]);
+		    session.save(category);	
+		    categories.put(ii, category);
+	    }
+	    URL url = getClass().getResource("/wicket/contrib/webbeans/databinder/examples/RandomNames.txt");
+	    Random random = new Random();
+	    int numberBase = 1;
+	    String line = null;
+	    try
+	    {
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		    while(null != (line = reader.readLine()))
+		    {
+		    	String[] name = line.split("\\t");
+		    	Contact contact = new Contact();
+			    contact.setFirstName(name[0]);
+			    contact.setLastName(name[1]);
+			    contact.setCategory(categories.get(random.nextInt(2)));
+			    contact.setPhoneNumber(String.format("800-555-%04d",numberBase++));
+			    session.save(contact);	
+		    }
+	    }
+	    catch(IOException ex)
+	    {
+	    	throw new RuntimeException(ex);
+	    }
 	    session.getTransaction().commit();
 	}
 	

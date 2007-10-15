@@ -1,12 +1,13 @@
+Contact
+{
+	actions: edit, delete;
+	orderBy: name;
+	filter: name;
+	props: -id, action.edit, action.delete, firstName, lastName, phoneNumber, category{fieldType: wicket.contrib.webbeans.databinder.examples.CategoryField};
+}
 Category
 {
 	orderBy: "name desc";
 	props: -id, name;
 }
 
-Contact
-{
-	actions: edit, delete;
-	orderBy: name;
-	props: -id, name, phoneNumber, category;
-}

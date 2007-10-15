@@ -13,7 +13,8 @@ import javax.persistence.ManyToOne;
 public class Contact implements Serializable
 {
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String phoneNumber;
     private Category category;
 
@@ -28,18 +29,27 @@ public class Contact implements Serializable
         this.id = id;
     }
     
-    @Column(nullable=false, unique=true)
-    public String getName()
+    @Column(nullable=false, unique=false)
+    public String getFirstName()
     {
-        return name;
+        return firstName;
     }
     
-    public void setName(String name)
+    public void setFirstName(String firstName)
     {
-        this.name = name;
+        this.firstName = firstName;
     }
     
-    public String getPhoneNumber()
+    @Column(nullable=false, unique=false)
+    public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getPhoneNumber()
     {
         return phoneNumber;
     }
@@ -61,47 +71,48 @@ public class Contact implements Serializable
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.phoneNumber == null) ? 0 : this.phoneNumber.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result
+				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+		return result;
+	}
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof Contact))
-            return false;
-        final Contact other = (Contact) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
-            return false;
-        if (this.name == null)
-        {
-            if (other.name != null)
-                return false;
-        }
-        else if (!this.name.equals(other.name))
-            return false;
-        if (this.phoneNumber == null)
-        {
-            if (other.phoneNumber != null)
-                return false;
-        }
-        else if (!this.phoneNumber.equals(other.phoneNumber))
-            return false;
-        return true;
-    }
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Contact))
+			return false;
+		final Contact other = (Contact) obj;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (phoneNumber == null) {
+			if (other.phoneNumber != null)
+				return false;
+		} else if (!phoneNumber.equals(other.phoneNumber))
+			return false;
+		return true;
+	}
 }
