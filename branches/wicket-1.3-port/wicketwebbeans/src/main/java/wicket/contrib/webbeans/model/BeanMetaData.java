@@ -250,17 +250,23 @@ public class BeanMetaData extends MetaData implements Serializable
         hasAddPropertyChangeListenerMethod = getAddPropertyChangeListenerMethod() != null;
         hasRemovePropertyChangeListenerMethod = getRemovePropertyChangeListenerMethod() != null;
         
+        String baseBeanClassName = getBaseClassName(beanClass);
+
         // Deduce actions from the component.
         List<Method> actionMethods = getActionMethods(component.getClass());
         for (Method method : actionMethods) {
             String name = method.getName();
-            ElementMetaData actionMeta = new ElementMetaData(this, ACTION_PROPERTY_PREFIX + name, createLabel(name), null);
+            String prefixedName = ACTION_PROPERTY_PREFIX + name;
+            String label = getLabelFromLocalizer(baseBeanClassName, prefixedName);
+            if (label == null) {
+                label = createLabel(name);
+            }
+            
+            ElementMetaData actionMeta = new ElementMetaData(this, prefixedName, label, null);
             actionMeta.setAction(true);
             elements.add(actionMeta);
         }
         
-        String baseBeanClassName = getBaseClassName(beanClass);
-
         // Create defaults based on the bean itself.
         PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(beanClass);
         for (PropertyDescriptor descriptor : descriptors) {
@@ -271,15 +277,8 @@ public class BeanMetaData extends MetaData implements Serializable
                 continue;
             }
             
-            // Try to retrieve label from properties file in the form of "Bean.propertyName.label" or
-            // simply propertyName.label.
-            String propLabelKey = name + ".label";
-            String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
-            if (label == DEFAULT_RESOURCE_KEY) {
-                label = component.getLocalizer().getString(propLabelKey, component, DEFAULT_RESOURCE_KEY);
-            }
-            
-            if (label == DEFAULT_RESOURCE_KEY) {
+            String label = getLabelFromLocalizer(baseBeanClassName, name);
+            if (label == null) {
                 label = descriptor.getDisplayName();
             }
             
@@ -332,6 +331,31 @@ public class BeanMetaData extends MetaData implements Serializable
                 return (o1.getOrder() > o2.getOrder() ? 1 : (o1.getOrder() < o2.getOrder() ? -1 : 0));
             }
         });
+    }
+
+    /**
+     * Attempts to get the label for the given action or property name from the Localizer.
+     *
+     * @param baseBeanClassName
+     * @param name
+     * 
+     * @return the label, or null if not defined.
+     */
+    private String getLabelFromLocalizer(String baseBeanClassName, String name)
+    {
+        // Try to retrieve label from properties file in the form of "Bean.{name}.label" or
+        // simply {name}.label.
+        String propLabelKey = name + ".label";
+        String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
+        if (label == DEFAULT_RESOURCE_KEY) {
+            label = component.getLocalizer().getString(propLabelKey, component, DEFAULT_RESOURCE_KEY);
+        }
+        
+        if (label == DEFAULT_RESOURCE_KEY) {
+            label = null;
+        }
+        
+        return label;
     }
     
     /**
