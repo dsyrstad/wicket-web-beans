@@ -66,7 +66,8 @@ public abstract class DataBeanEditPanel extends Panel
 	
 	public void cancel(AjaxRequestTarget target, Form form, Object bean)
 	{
-	    DataStaticService.getHibernateSession().evict(bean);
+	    Session session = DataStaticService.getHibernateSession();
+	    session.evict(bean);
 	    returnPage.info("Canceled edit.");
 	    setResponsePage(returnPage);
 	}

@@ -83,8 +83,8 @@ public abstract class DataBeanListPanel extends Panel
             else
             	sorter = new DataSorter(orderBy);
     		
-    		String filter = metaData.getParameter("filter");
-    		IDataProvider provider = new DatabinderProvider(clazz,new DataSearchFilter(search,filter),sorter);
+    		String[] filters = metaData.getParameterValues("filter");
+    		IDataProvider provider = new DatabinderProvider(clazz,new DataSearchFilter(search,filters),sorter);
     		panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
     		panel.setOutputMarkupId(true);
     		Form form = new Form("form");
@@ -104,6 +104,7 @@ public abstract class DataBeanListPanel extends Panel
     {
         // confirm message shown by wwb. If we get here we do a delete
 	    Session session = DataStaticService.getHibernateSession();
+	    session.beginTransaction();
 	    session.delete(bean);
 	    session.getTransaction().commit();
 	    if( target != null ) // ajax request
