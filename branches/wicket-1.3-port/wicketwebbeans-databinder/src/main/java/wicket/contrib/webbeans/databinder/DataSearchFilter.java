@@ -18,6 +18,8 @@
 package wicket.contrib.webbeans.databinder;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.HashSet;
 
 import net.databinder.components.hibernate.SearchPanel;
 import net.databinder.models.ICriteriaBuilder;
@@ -49,7 +51,8 @@ import org.hibernate.criterion.Restrictions;
 public class DataSearchFilter implements ICriteriaBuilder, Serializable
 {
     private SearchPanel searchPanel;
-    private String property = null;
+    private String[] properties = null;
+    private Set<String> aliases = new HashSet();
     
     /**
      * Construct a new DataSearchFilter.
@@ -57,23 +60,37 @@ public class DataSearchFilter implements ICriteriaBuilder, Serializable
      * @param searchPanel the Databinder SearchPanel where the user types the search criteria
      * @param property the bean field on which to perform the search
      */
-    public DataSearchFilter(SearchPanel searchPanel, String property)
+    public DataSearchFilter(SearchPanel searchPanel, String[] properties)
     {
         this.searchPanel = searchPanel;
-        this.property = property;
+        setProperties(properties);
     }
     
-    public void build(Criteria criteria)
+    public void setProperties(String[] properties)
     {
-        if( searchPanel.getModelObject() != null && property != null )
+        this.properties = properties;
+        aliases = new HashSet<String>();
+        for(String property: properties)
         {
             if( property.contains(".") ) // i.e. property from another bean
             {
                     String[] path = property.split("\\.");
                     for(int ii = 0; ii < path.length - 1; ii++)
-                        criteria.createAlias(path[ii], path[ii]);
+                        aliases.add(path[ii]);
             }
-            criteria.add(Restrictions.ilike(property, searchPanel.getModelObject().toString(), MatchMode.ANYWHERE));
+        }
+    }
+    
+    public void build(Criteria criteria)
+    {
+        if( searchPanel.getModelObject() != null && properties != null )
+        {
+            for(String alias: aliases)
+                criteria.createAlias(alias, alias);
+            for(String property: properties)
+                criteria.add(Restrictions.ilike(property, 
+                                                searchPanel.getModelObject().toString(),
+                                                MatchMode.ANYWHERE));
         }
     }
 }
