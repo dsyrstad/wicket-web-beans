@@ -70,13 +70,16 @@ public class DataSearchFilter implements ICriteriaBuilder, Serializable
     {
         this.properties = properties;
         aliases = new HashSet<String>();
-        for(String property: properties)
+        if( properties != null )
         {
-            if( property.contains(".") ) // i.e. property from another bean
+            for(String property: properties)
             {
-                    String[] path = property.split("\\.");
-                    for(int ii = 0; ii < path.length - 1; ii++)
-                        aliases.add(path[ii]);
+                if( property.contains(".") ) // i.e. property from another bean
+                {
+                        String[] path = property.split("\\.");
+                        for(int ii = 0; ii < path.length - 1; ii++)
+                            aliases.add(path[ii]);
+                }
             }
         }
     }
