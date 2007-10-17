@@ -69,6 +69,7 @@ public class ExampleApplication extends DataApplication
 	    	throw new RuntimeException(ex);
 	    }
 	    session.getTransaction().commit();
+	    session.close();
 	}
 	
 	@Override
