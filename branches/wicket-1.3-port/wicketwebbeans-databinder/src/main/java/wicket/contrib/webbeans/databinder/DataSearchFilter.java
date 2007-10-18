@@ -48,7 +48,7 @@ import org.hibernate.criterion.Restrictions;
  * 
  * @author Mark Southern (mrsouthern)
  */
-public class DataSearchFilter implements ICriteriaBuilder, Serializable
+public class DataSearchFilter extends CriteriaBuilderDelegate implements ICriteriaBuilder, Serializable
 {
     private SearchPanel searchPanel;
     private String[] properties = null;
@@ -86,6 +86,8 @@ public class DataSearchFilter implements ICriteriaBuilder, Serializable
     
     public void build(Criteria criteria)
     {
+    	super.build(criteria);
+    	
         if( searchPanel.getModelObject() != null && properties != null )
         {
             for(String alias: aliases)

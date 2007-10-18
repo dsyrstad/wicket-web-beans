@@ -28,6 +28,7 @@ import wicket.contrib.webbeans.model.BeanMetaData;
 
 import net.databinder.components.hibernate.SearchPanel;
 import net.databinder.models.DatabinderProvider;
+import net.databinder.models.ICriteriaBuilder;
 import net.databinder.DataStaticService;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 
@@ -44,21 +45,31 @@ public abstract class DataBeanListPanel extends Panel
     private BeanTablePanel panel;
     private BeanMetaData metaData;
     
-    public DataBeanListPanel(String id, Class beanClass)
+    public DataBeanListPanel(String id, Class<?> beanClass, ICriteriaBuilder criteriaBuilder)
     {
-    	this(id,beanClass.getName());
+    	this(id,beanClass.getName(),criteriaBuilder);
+    }
+    
+    public DataBeanListPanel(String id, Class<?> beanClass)
+    {
+    	this(id,beanClass.getName(),null);
+    }
+    
+    public DataBeanListPanel(String id, String beanClass)
+    {
+    	this(id,beanClass,null);
     }
     
     /**
      *
      * @param beanClass the fully qualified class name of the bean to be edited 
      */
-	public DataBeanListPanel(String id, String beanClass)
+	public DataBeanListPanel(String id, String beanClass, ICriteriaBuilder criteriaBuilder)
 	{
 	    super(id);
 	    try
 	    {  
-	        Class clazz = Class.forName(beanClass);
+	        Class<?> clazz = Class.forName(beanClass);
 	        DataStaticService.getHibernateSession().beginTransaction();
     		metaData = new BeanMetaData(clazz, null, this, null, true);
     		Label label = new Label("label", new Model(metaData.getParameter("label")));
@@ -84,7 +95,10 @@ public abstract class DataBeanListPanel extends Panel
             	sorter = new DataSorter(orderBy);
     		
     		String[] filters = metaData.getParameterValues("filter");
-    		IDataProvider provider = new DatabinderProvider(clazz,new DataSearchFilter(search,filters),sorter);
+    		DataSearchFilter filter = new DataSearchFilter(search,filters);
+    		if(criteriaBuilder != null)
+    			filter.addCriteriaBuilder(criteriaBuilder);
+    		IDataProvider provider = new DatabinderProvider(clazz, filter,sorter);
     		panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
     		panel.setOutputMarkupId(true);
     		Form form = new Form("form");
@@ -98,7 +112,10 @@ public abstract class DataBeanListPanel extends Panel
 	    }
 	}
 	
-	public abstract void edit(AjaxRequestTarget target, Form form, Object bean);
+	public void edit(AjaxRequestTarget target, Form form, Object bean)
+	{
+		
+	}
 	
 	public void delete(AjaxRequestTarget target, Form form, Object bean)
     {
