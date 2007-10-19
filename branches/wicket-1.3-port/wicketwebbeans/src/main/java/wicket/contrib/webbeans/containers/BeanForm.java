@@ -126,6 +126,9 @@ public class BeanForm extends Panel
         String title = beanMetaData.getLabel();
         form.add( new Label("title", title) );
         
+        String serverErrorMsg = getLocalizer().getString("beanFormError.msg", this, "An error occurred on the server. Your session may have timed out.");
+        form.add( new Label("beanFormIndicatorErrorLabel", serverErrorMsg) );
+        
         beanMetaData.consumeParameter(PARAM_ROWS);
         
         final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
