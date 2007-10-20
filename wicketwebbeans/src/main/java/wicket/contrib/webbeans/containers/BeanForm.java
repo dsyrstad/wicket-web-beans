@@ -19,6 +19,7 @@ package wicket.contrib.webbeans.containers;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,8 +45,6 @@ import wicket.extensions.markup.html.tabs.AbstractTab;
 import wicket.extensions.markup.html.tabs.ITab;
 import wicket.extensions.markup.html.tabs.TabbedPanel;
 import wicket.markup.ComponentTag;
-import wicket.markup.Markup;
-import wicket.markup.MarkupStream;
 import wicket.markup.html.WebMarkupContainer;
 import wicket.markup.html.basic.Label;
 import wicket.markup.html.form.Form;
@@ -66,6 +65,15 @@ import wicket.util.string.Strings;
  * <ul>
  * <li>label - the form's label.</li>
  * <li>rows - if the bean is a List, this is the number of rows to be displayed. Defaults to 10.</li>
+ * <li>container - a container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
+ *   implement a constructor of the form: <p>
+ *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+ *   <p>
+ *   where id = Wicket component ID<br>
+ *   bean = the bean, or IModel containing the bean<br>
+ *   beanMetaData = the BeanMetaData for bean<br>
+ *   tabMetaData = the tab metadata
+ *   </li>
  * </ul>
  *
  * @author Dan Syrstad
@@ -76,6 +84,7 @@ public class BeanForm extends Panel
     
     private static Logger logger = Logger.getLogger(BeanForm.class.getName());
     private static final long serialVersionUID = -7287729257178283645L;
+    private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, BeanMetaData.class, TabMetaData.class };
 
     private Form form;
     private FormVisitor formVisitor;
@@ -103,6 +112,30 @@ public class BeanForm extends Panel
      *  the BeanMetaData for a single element (row) of the List. 
      */
     public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData)
+    {
+        this(id, bean, beanMetaData, null);
+    }
+    
+    /**
+     * Construct a new BeanForm.
+     *
+     * @param id the Wicket id for the panel.
+     * @param bean the bean to be displayed. This may be an IModel or regular bean object.
+     *  The bean may be a List or, if an IModel, a model that returns a List. If so, the bean is display is
+     *  displayed using BeanTablePanel. Otherwise BeanGridPanel is used.
+     * @param beanMetaData the meta data for the bean. If bean is a List or model of a List, then this must be
+     *  the BeanMetaData for a single element (row) of the List.
+     * @param container an optional container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
+     *   implement a constructor of the form: <p>
+     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+     *   <p>
+     *   where id = Wicket component ID<br>
+     *   bean = the bean, or IModel containing the bean<br>
+     *   beanMetaData = the BeanMetaData for bean<br>
+     *   tabMetaData = the tab metadata<p>
+     *   May be null.
+     */
+    public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData, final Class<? extends Panel> container)
     {
         super(id);
         
@@ -147,7 +180,7 @@ public class BeanForm extends Panel
         List<TabMetaData> tabMetaDataList = beanMetaData.getTabs();
         if (tabMetaDataList.get(0).getId().equals(BeanMetaData.DEFAULT_TAB_ID)) {
             // Single default tab - none explicitly specified. Don't add a tab panel.
-            form.add( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0)) );
+            form.add( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0), container) );
         }
         else {
             List<AbstractTab> tabs = new ArrayList<AbstractTab>();
@@ -155,7 +188,7 @@ public class BeanForm extends Panel
                 tabs.add( new AbstractTab( new Model(tabMetaData.getLabel()) ) {
                     public Panel getPanel(String panelId)
                     {
-                        return createPanel(panelId, bean, beanMetaData, tabMetaData);
+                        return createPanel(panelId, bean, beanMetaData, tabMetaData, container);
                     }
                 } );
             }
@@ -193,11 +226,26 @@ public class BeanForm extends Panel
      * @param bean may be a bean or an IModel containing a bean.
      * @param beanMetaData the BeanMetaData.
      * @param tabMetaData the TabMetaData.
+     * @param container the container class to use. May be null.
      * 
      * @return a Panel.
      */
-    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)
+    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData, Class<? extends Panel> containerClass)
     {
+        if (containerClass == null) {
+            containerClass = beanMetaData.getContainerClass();
+        }
+        
+        if (containerClass != null) {
+            try {
+                Constructor<? extends Panel> constructor = containerClass.getConstructor(CONTAINER_CONSTRUCTOR_PARAMS);
+                return constructor.newInstance(panelId, bean, beanMetaData, tabMetaData);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Error instantiating container", e);
+            }
+        }
+        
         boolean isList = (bean instanceof List);
         if (bean instanceof IModel) {
             Object modelBean = ((IModel)bean).getObject(this);

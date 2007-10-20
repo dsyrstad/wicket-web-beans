@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.containers.BeanGridPanel;
 import wicket.contrib.webbeans.model.BeanMetaData;
+import wicket.markup.html.panel.Panel;
 
 /**
  * Top or second-level annotation describing a bean and, optionally, its context. <p>
@@ -72,6 +73,17 @@ public @interface Bean {
     
     /** Defines the tabs and order of them. */
     Tab[] tabs() default {};
+    
+    /** A container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
+     *   implement a constructor of the form: <p>
+     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+     *   <p>
+     *   where id = Wicket component ID<br>
+     *   bean = the bean, or IModel containing the bean<br>
+     *   beanMetaData = the BeanMetaData for bean<br>
+     *   tabMetaData = the tab metadata.
+     */
+    Class<? extends Panel> container() default Panel.class;
     
     /** Arbitrary non-standard parameters. These are interpreted by the component. */
     Parameter[] params() default {};
