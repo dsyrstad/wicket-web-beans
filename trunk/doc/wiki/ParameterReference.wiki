@@ -27,6 +27,15 @@ The target parameter may be null for non-Ajax requests.
    * *cols* - Number of columns in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
    
    * *rows* - If the bean or bean's IModel passed to !BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10.
+   
+   * *container* - a container component to use in place of the default !BeanGridPanel or !BeanTablePanel. This container must be a Panel and implement a constructor of the form:
+
+public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)
+ 
+where id = Wicket component ID<br>
+bean = the bean, or IModel containing the bean<br>
+beanMetaData = the BeanMetaData for bean<br>
+tabMetaData = the tab metadata 
 
 ---++ Standard Property Parameters
    * *label* - Specifies the label for the property.

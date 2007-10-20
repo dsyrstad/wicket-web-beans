@@ -86,7 +86,7 @@
 	font-weight: bold;
 }
 
-.beanGridPanel { /* For Top-most bean-panels */
+.beanGridPanel { /* For Top-most bean panels */
 	clear: both;
 	padding: 5px 5px 5px 5px;
 	border: 1px solid #a3bed8;
@@ -103,6 +103,22 @@
 
 .beanGridTable td {
 	vertical-align: top;
+}
+
+.verticalLayoutBeanPanel { /* For Top-most veritcal layout bean panels */
+	clear: both;
+	padding: 5px 5px 5px 5px;
+	border: 1px solid #a3bed8;
+	background-color: #d9e5ef;
+	overflow: auto;
+}
+
+.verticalLayoutBeanTable {
+	width: 100%;
+}
+
+.verticalLayoutBeanTable tbody tr td {
+	vertical-align: bottom;
 }
 
 td.beanActionButtonCell  {

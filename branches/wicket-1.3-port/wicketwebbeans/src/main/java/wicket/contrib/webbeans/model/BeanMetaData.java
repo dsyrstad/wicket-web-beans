@@ -38,9 +38,12 @@ import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+
 import wicket.contrib.webbeans.actions.BeanSubmitButton;
 import wicket.contrib.webbeans.annotations.Action;
 import wicket.contrib.webbeans.annotations.Beans;
@@ -50,8 +53,6 @@ import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.containers.BeanGridPanel;
 import wicket.contrib.webbeans.fields.EmptyField;
 import wicket.contrib.webbeans.fields.Field;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
@@ -77,6 +78,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String PARAM_PROPS = "props";
     public static final String PARAM_ACTIONS = "actions";
     public static final String PARAM_LABEL = "label";
+    public static final String PARAM_CONTAINER = "container";
 
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
@@ -424,6 +426,10 @@ public class BeanMetaData extends MetaData implements Serializable
         setParameter(BeanGridPanel.PARAM_COLS, String.valueOf(bean.columns()));
         setParameter(PARAM_DISPLAYED, String.valueOf(bean.displayed()));
         setParameterIfNotEmpty(PARAM_LABEL, bean.label());
+        if (bean.container() != Panel.class) {
+            setParameter(PARAM_CONTAINER, bean.container().getName());
+        }
+        
         setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
         if (bean.viewOnly().length > 0) {
             // Only set if explicitly set.
@@ -1137,6 +1143,21 @@ public class BeanMetaData extends MetaData implements Serializable
     public String getLabel()
     {
         return getParameter(PARAM_LABEL);
+    }
+    
+    public Class<? extends Panel> getContainerClass()
+    {
+        String container = getParameter(PARAM_CONTAINER);
+        if (container == null) {
+            return null;
+        }
+
+        try {
+            return (Class<? extends Panel>)Class.forName(container);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Cannot load container class " + container);
+        }
     }
 
     /**
