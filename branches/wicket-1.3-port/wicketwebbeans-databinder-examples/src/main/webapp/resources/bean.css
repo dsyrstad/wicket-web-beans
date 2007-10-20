@@ -50,7 +50,7 @@
 	left: 0px;
 	top: 0px;
 	width: 30em;
-	height: 2em;
+	height: 4em;
 	background-color: red;
 	color: white;
 	display: none;
@@ -86,7 +86,7 @@
 	font-weight: bold;
 }
 
-.beanGridPanel { /* For Top-most bean-panels */
+.beanGridPanel { /* For Top-most bean panels */
 	clear: both;
 	padding: 5px 5px 5px 5px;
 	border: 1px solid #a3bed8;
@@ -103,6 +103,22 @@
 
 .beanGridTable td {
 	vertical-align: top;
+}
+
+.verticalLayoutBeanPanel { /* For Top-most veritcal layout bean panels */
+	clear: both;
+	padding: 5px 5px 5px 5px;
+	border: 1px solid #a3bed8;
+	background-color: #d9e5ef;
+	overflow: auto;
+}
+
+.verticalLayoutBeanTable {
+	width: 100%;
+}
+
+.verticalLayoutBeanTable tbody tr td {
+	vertical-align: bottom;
 }
 
 td.beanActionButtonCell  {
@@ -126,6 +142,10 @@ td.beanActionButtonCell  {
 	padding: 10px 0px 0px 0px;
 	height: auto;
 	font-weight: bold;
+	/* If you want labels to the left instead of above, uncomment the 3 lines below: */
+	/*float: left; 
+	width: 15em;  
+	text-align: bottom;*/
 }
 
 .field {
