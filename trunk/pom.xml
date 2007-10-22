@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
+    <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
     <artifactId>WicketWebBeans-parent</artifactId>
     <packaging>pom</packaging>
     <name>Wicket Web Beans</name>
@@ -52,7 +52,7 @@
     </developers>
     <licenses>
         <license>
-            <name>The Apache License 2.0</name>
+            <name>The Apache License Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
@@ -213,13 +213,18 @@
     <distributionManagement>
         <site>
             <id>wicketwebbeans.sourceforge.net</id>
-            <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
         </site>
         <repository>
-            <id>wicketwebbeans.</id>
-            <name>Repository Name</name>
-            <url>scp://host/path/to/repo</url>
+            <id>wicketwebbeans-sourceforge-net</id>
+            <name>Wicket Web Beans Release</name>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/repository</url>
         </repository>
+        <snapshotRepository>
+            <id>wicketwebbeans-sourceforge-net</id>
+            <name>Wicket Web Beans Snapshot</name>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/repository</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
 
