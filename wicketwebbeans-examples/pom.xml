@@ -4,13 +4,13 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <name>Examples</name>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>wicket.contrib.wicketwebbeans.examples</groupId>
+    <groupId>net.sourceforge.wicketwebbeans.examples</groupId>
     <artifactId>wicketwebbeans-examples</artifactId>
     <description>Wicket Web Beans Examples</description>
     <packaging>war</packaging>
     <parent>
         <artifactId>WicketWebBeans-parent</artifactId>
-        <groupId>wicket.contrib.wicketwebbeans.parent</groupId>
+        <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
         <version>1.0-rc2SNAPSHOT</version>
     </parent>
     <repositories>
@@ -23,7 +23,7 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>wicket.contrib.wicketwebbeans</groupId>
+            <groupId>net.sourceforge.wicketwebbeans</groupId>
             <artifactId>wicketwebbeans</artifactId>
             <version>1.0-rc2SNAPSHOT</version>
         </dependency>
