@@ -9,5 +9,3 @@ Trunk changes past this revision can be made as a patch.
 
 - Merged Mark Southern's changes. 9/27/07 changes from zip file.
 - Merged Mark's changes to use new date/time field.
-
- 
