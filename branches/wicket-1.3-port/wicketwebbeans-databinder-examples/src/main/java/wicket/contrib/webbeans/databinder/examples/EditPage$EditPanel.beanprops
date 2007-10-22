@@ -3,8 +3,8 @@ Contact
 	label: "Edit Contact";
 	actions: save, cancel;
 	props: -id,
-			action.save{labelImage: "resources/images/toolbarButtonGraphics/general/Save16.gif"},
-			action.cancel{labelImage: "/resources/images/toolbarButtonGraphics/general/Undo16.gif"},
+			action.save{labelImage: "Save16.gif"},
+			action.cancel{labelImage: "Undo16.gif"},
 			firstName, lastName, phoneNumber, 
 			category{fieldType: wicket.contrib.webbeans.databinder.examples.CategoryField};
 }

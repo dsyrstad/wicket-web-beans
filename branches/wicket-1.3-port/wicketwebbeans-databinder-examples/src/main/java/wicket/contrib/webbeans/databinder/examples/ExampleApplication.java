@@ -20,12 +20,11 @@ public class ExampleApplication extends DataApplication
 {
 	public ExampleApplication()
 	{
-	    URL url = getClass().getResource("/wicket/contrib/webbeans/databinder/examples/log4j.config.xml");
-        org.apache.log4j.xml.DOMConfigurator.configure(url);
+	    
 	}
 
 	@Override
-	public Class getHomePage()
+	public Class<?> getHomePage()
 	{
 		return ListPage.class;
 	}
@@ -34,6 +33,13 @@ public class ExampleApplication extends DataApplication
 	protected void init()
 	{
 	    super.init();
+	    
+	    if( isDevelopment() )
+	    {
+	        URL url = getClass().getResource("/wicket/contrib/webbeans/databinder/examples/log4j.config.xml");
+	        org.apache.log4j.xml.DOMConfigurator.configure(url);
+	    }
+	    
 	    // load some example contacts
 	    Session session = DataStaticService.getHibernateSessionFactory().openSession();
 	    session.beginTransaction();
