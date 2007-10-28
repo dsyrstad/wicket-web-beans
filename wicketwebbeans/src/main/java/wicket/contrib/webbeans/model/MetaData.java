@@ -17,6 +17,7 @@
 
 package wicket.contrib.webbeans.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,7 +32,7 @@ import wicket.util.string.Strings;
  * 
  * @author Dan Syrstad
  */
-public class MetaData
+public class MetaData implements Serializable
 {
     private Map<String, String[]> parameters = new HashMap<String, String[]>();
     private Set<String> consumedParameters = new HashSet<String>();
