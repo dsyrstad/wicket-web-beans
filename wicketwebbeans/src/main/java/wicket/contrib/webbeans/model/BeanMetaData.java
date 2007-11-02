@@ -937,7 +937,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 ElementMetaData element = findElementAddPseudos(elementName);
                 List<Parameter> elementParams = value.getParameters();
                 element.applyBeanProps(elementParams);
-                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER || (element.isAction() && !element.isActionSpecifiedInProps())) {
                     element.setOrder(order++);
                 }
     
