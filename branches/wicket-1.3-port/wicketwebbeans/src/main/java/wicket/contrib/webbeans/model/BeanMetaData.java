@@ -322,7 +322,7 @@ public class BeanMetaData extends MetaData implements Serializable
             // appear on a tab. Otherwise it is a global action.
             if (elementMeta.getTabId() ==  null &&
                 (!elementMeta.isAction() || 
-                 (elementMeta.isAction() && elementMeta.getOrder() != ElementMetaData.DEFAULT_ORDER))) {
+                 (elementMeta.isAction() && elementMeta.isActionSpecifiedInProps()))) {
                 elementMeta.setTabId(defaultTabId);
             }
         }
@@ -448,23 +448,6 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         int order = 1;
-        for (Property property : bean.properties()) {
-            if (!handleElementRemove(property.name(), false)) {
-                ElementMetaData element = processPropertyAnnotation(property, null);
-                element.setOrder(order++);
-            }
-        }
-
-        // Process propertyNames after properties because propertyNames is typically used to define order.
-        order = 1;
-        for (String propName : bean.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                element.setOrder(order++);
-            }
-        }
-        
-        order = 1;
         for (Action action : bean.actions()) {
             if (!handleElementRemove(action.name(), false)) {
                 ElementMetaData element = processActionAnnotation(action, null);
@@ -478,6 +461,34 @@ public class BeanMetaData extends MetaData implements Serializable
             if (!handleElementRemove(actionName, true)) {
                 ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
                 element.setOrder(order++);
+            }
+        }
+        
+        order = 1;
+        for (Property property : bean.properties()) {
+            if (!handleElementRemove(property.name(), false)) {
+                ElementMetaData element = processPropertyAnnotation(property, null);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
+                
+                element.setOrder(order++);
+            }
+        }
+
+        // Process propertyNames after properties because propertyNames is typically used to define order.
+        order = 1;
+        for (String propName : bean.propertyNames()) {
+            if (!handleElementRemove(propName, false)) {
+                ElementMetaData element = findElementAddPseudos(propName);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
+                
+                element.setOrder(order++);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
             }
         }
         
@@ -644,6 +655,9 @@ public class BeanMetaData extends MetaData implements Serializable
                 ElementMetaData element = processPropertyAnnotation(property, null);
                 element.setTabId( tabMetaData.getId() );
                 element.setOrder(order++);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
             }
         }
 
@@ -654,6 +668,9 @@ public class BeanMetaData extends MetaData implements Serializable
                 ElementMetaData element = findElementAddPseudos(propName);
                 element.setTabId( tabMetaData.getId() );
                 element.setOrder(order++);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
             }
         }
         
@@ -927,6 +944,10 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setOrder(order++);
                 }
     
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
+
                 if (tabId != null) {
                     element.setTabId(tabId);
                 }
@@ -942,6 +963,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private void applyActions(List<ParameterValue> values)
     {
         // Add action to the list of elements
+        int order = 1;
         for (ParameterValue value : values) {
             String elementName = value.getValue();
             if (!handleElementRemove(elementName, true)) {
@@ -951,6 +973,14 @@ public class BeanMetaData extends MetaData implements Serializable
                     element = new ElementMetaData(this, actionName, createLabel(elementName), null);
                     element.setAction(true);
                     elements.add(element);
+                }
+
+                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
+                }
+
+                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
                 }
 
                 List<Parameter> elementParams = value.getParameters();
@@ -1200,7 +1230,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         List<ElementMetaData> elems = new ArrayList<ElementMetaData>();
         for (ElementMetaData elem : elements) {
-            if (elem.isAction() && elem.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+            if (elem.isAction() && !elem.isActionSpecifiedInProps()) {
                 elems.add(elem);
             }
         }

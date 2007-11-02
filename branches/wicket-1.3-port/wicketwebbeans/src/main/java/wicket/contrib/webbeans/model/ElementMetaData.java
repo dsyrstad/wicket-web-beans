@@ -50,6 +50,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     private int order;
     private String tabId;
     private boolean isAction = false;
+    private boolean actionSpecifiedInProps = false;
     
     ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class propertyType)
     {
@@ -341,6 +342,26 @@ public final class ElementMetaData extends MetaData implements Serializable
         this.isAction = isAction;
     }
     
+    /**
+     * Gets the actionSpecifiedInProps.
+     *
+     * @return a boolean.
+     */
+    public boolean isActionSpecifiedInProps()
+    {
+        return actionSpecifiedInProps;
+    }
+
+    /**
+     * Sets actionSpecifiedInProps.
+     *
+     * @param actionSpecifiedInProps a boolean.
+     */
+    public void setActionSpecifiedInProps(boolean actionSpecifiedInProps)
+    {
+        this.actionSpecifiedInProps = actionSpecifiedInProps;
+    }
+
     /**
      * If this is an action, return the action's method name. 
      *
