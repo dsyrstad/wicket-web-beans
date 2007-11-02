@@ -35,6 +35,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLab
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -118,6 +119,10 @@ public class BeanTablePanel extends Panel
 
         for (ElementMetaData element : metaData.getDisplayedElements()) {
             columns.add(new BeanElementColumn(element, this) );
+        }
+        
+        if (columns.isEmpty()) {
+            columns.add( new EmptyColumn() );
         }
 
         final BeanDataTable table = new BeanDataTable("t", columns, dataProvider, 
@@ -310,6 +315,33 @@ public class BeanTablePanel extends Panel
             }
             
             return rc;
+        }
+    }
+    
+    private static final class EmptyColumn implements IColumn
+    {
+        public Component getHeader(String id)
+        {
+            return new Label(id, "");
+        }
+
+        public String getSortProperty()
+        {
+            return "";
+        }
+
+        public boolean isSortable()
+        {
+            return false;
+        }
+
+        public void populateItem(Item cellItem, String componentId, IModel rowModel)
+        {
+            cellItem.add( new Label(componentId, "") );
+        }
+
+        public void detach()
+        {
         }
     }
 }
