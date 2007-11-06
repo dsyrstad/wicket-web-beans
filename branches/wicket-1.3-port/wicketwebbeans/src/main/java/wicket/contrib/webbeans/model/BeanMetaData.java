@@ -46,6 +46,7 @@ import org.apache.wicket.model.IModel;
 
 import wicket.contrib.webbeans.actions.BeanSubmitButton;
 import wicket.contrib.webbeans.annotations.Action;
+import wicket.contrib.webbeans.annotations.Bean;
 import wicket.contrib.webbeans.annotations.Beans;
 import wicket.contrib.webbeans.annotations.Property;
 import wicket.contrib.webbeans.annotations.Tab;
@@ -53,6 +54,7 @@ import wicket.contrib.webbeans.containers.BeanForm;
 import wicket.contrib.webbeans.containers.BeanGridPanel;
 import wicket.contrib.webbeans.fields.EmptyField;
 import wicket.contrib.webbeans.fields.Field;
+import wicket.contrib.webbeans.model.api.JBeans;
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
@@ -68,7 +70,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private static Logger logger = Logger.getLogger(BeanMetaData.class.getName());
 
     private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
-    /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Bean ASTs. */
+    /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of BeanAST ASTs. */
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
     private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
 
@@ -85,6 +87,7 @@ public class BeanMetaData extends MetaData implements Serializable
     
     private Class<?> beanClass;
     private Class<?> metaDataClass;
+    private Beans beansMetaData;
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
@@ -111,7 +114,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, null, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, null, null, component, componentRegistry, viewOnly, false);
     }
 
     /**
@@ -120,7 +123,7 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param beanClass the bean's class.
      * @param context specifies a context to use when looking up beans in beanprops. May be null to not
      *  use a context.
-     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link wicket.contrib.webbeans.annotations.Bean} annotations.
+     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link Bean} annotations.
      *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
@@ -130,7 +133,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, metaDataClass, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, null, metaDataClass, component, componentRegistry, viewOnly, false);
     }
 
     /**
@@ -139,7 +142,44 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param beanClass the bean's class.
      * @param context specifies a context to use when looking up beans in beanprops. May be null to not
      *  use a context.
-     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link wicket.contrib.webbeans.annotations.Bean} annotations.
+     * @param beans an implementation using the Beans annotation to provide meta data. May be null. 
+     * @param component the component used to get the Localizer.
+     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
+     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
+     *  Localizer configuration.
+     */
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry,
+                    boolean viewOnly)
+    {
+        this(beanClass, context, beans, null, component, componentRegistry, viewOnly, false);
+    }
+
+    /**
+     * Construct a BeanMetaData. 
+     *
+     * @param beanClass the bean's class.
+     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
+     *  use a context.
+     * @param bean an implementation using the Bean annotation to provide meta data. May be null. 
+     * @param component the component used to get the Localizer.
+     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
+     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
+     *  Localizer configuration.
+     */
+    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry,
+                    boolean viewOnly)
+    {
+        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly, false);
+    }
+
+    /**
+     * Construct a BeanMetaData. 
+     *
+     * @param beanClass the bean's class.
+     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
+     *  use a context.
+     * @param beans an implementation using the Beans annotation to provide meta data.  May be null. 
+     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link Bean} annotations.
      *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
@@ -147,13 +187,14 @@ public class BeanMetaData extends MetaData implements Serializable
      *  Localizer configuration.
      * @param isChildBean true if this bean is a child of another bean.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly, boolean isChildBean)
     {
         super(component);
         
         this.beanClass = beanClass;
         this.context = context;
+        this.beansMetaData = beans;
         this.metaDataClass = metaDataClass;
         this.component = component;
         if (componentRegistry == null) {
@@ -189,7 +230,7 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     public boolean areAllParametersConsumed(Set<String> unconsumedMsgs, TabMetaData tabMetaData)
     {
-        if (!super.areAllParametersConsumed("Bean " + beanClass.getName(), unconsumedMsgs)) {
+        if (!super.areAllParametersConsumed("BeanAST " + beanClass.getName(), unconsumedMsgs)) {
             return false;
         }
 
@@ -301,8 +342,9 @@ public class BeanMetaData extends MetaData implements Serializable
 
         processAnnotations();
         processBeanProps();
+        processBeansAnnotation(beansMetaData, false);
 
-        // Process Bean-level parameters
+        // Process BeanAST-level parameters
         if (!getBooleanParameter(PARAM_DISPLAYED)) {
             elements.clear();
             tabs.clear();
@@ -345,7 +387,7 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     private String getLabelFromLocalizer(String baseBeanClassName, String name)
     {
-        // Try to retrieve label from properties file in the form of "Bean.{name}.label" or
+        // Try to retrieve label from properties file in the form of "BeanAST.{name}.label" or
         // simply {name}.label.
         String propLabelKey = name + ".label";
         String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
@@ -362,25 +404,25 @@ public class BeanMetaData extends MetaData implements Serializable
     
     /**
      * Process any WWB annotations that may exist on the component, bean, or meta-data class.
-     * Order of processing is: Bean, Metadata class, then Component. Hence, Component annotations
-     * augment or override those of the Metadata class and the Bean.  
+     * Order of processing is: BeanAST, Metadata class, then Component. Hence, Component annotations
+     * augment or override those of the Metadata class and the BeanAST.  
      */
     private void processAnnotations()
     {
-        // Bean
+        // BeanAST
         processBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
-        processBeanAnnotation( beanClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), true);
+        processBeanAnnotation( beanClass.getAnnotation(Bean.class), true);
 
         // Metadata class
         if (metaDataClass != null) {
             processBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
-            processBeanAnnotation( metaDataClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
+            processBeanAnnotation( metaDataClass.getAnnotation(Bean.class), false);
         }
         
         // Component
         Class<? extends Component> componentClass = component.getClass(); 
         processBeansAnnotation( componentClass.getAnnotation(Beans.class), false);
-        processBeanAnnotation( componentClass.getAnnotation(wicket.contrib.webbeans.annotations.Bean.class), false);
+        processBeanAnnotation( componentClass.getAnnotation(Bean.class), false);
         
         for (Method method : getActionMethods(componentClass)) {
             Action action = method.getAnnotation(Action.class);
@@ -391,13 +433,13 @@ public class BeanMetaData extends MetaData implements Serializable
     private void processBeansAnnotation(Beans beans, boolean isBeanAnnotation)
     {
         if (beans != null) {
-            for (wicket.contrib.webbeans.annotations.Bean bean : beans.value()) {
+            for (Bean bean : beans.value()) {
                 processBeanAnnotation(bean, isBeanAnnotation);
             }
         }
     }
 
-    private void processBeanAnnotation(wicket.contrib.webbeans.annotations.Bean bean, boolean isBeanAnnotation)
+    private void processBeanAnnotation(Bean bean, boolean isBeanAnnotation)
     {
         if (bean == null) {
             return;
@@ -406,7 +448,7 @@ public class BeanMetaData extends MetaData implements Serializable
         Class<?> beanType = bean.type();
         if (beanType == Object.class) {
             if (!isBeanAnnotation) {
-                throw new RuntimeException("@Bean must include the type attribute when used on non-bean components. Occurred while processing annotations for bean " 
+                throw new RuntimeException("@BeanAST must include the type attribute when used on non-bean components. Occurred while processing annotations for bean " 
                                 + beanClass.getName());
             }
             
@@ -544,7 +586,7 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         if (element == null && property.name().length() == 0) {
-            throw new RuntimeException("@Property annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
+            throw new RuntimeException("@Property annotation of @BeanAST " + beanClass.getName() + " did not set the name attribute.");
         }
         
         if (element == null || property.name().length() > 0) {
@@ -601,7 +643,7 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         if (methodName == null && action.name().length() == 0) {
-            throw new RuntimeException("@Action annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
+            throw new RuntimeException("@Action annotation of @BeanAST " + beanClass.getName() + " did not set the name attribute.");
         }
         
         if (action.name().length() > 0) {
@@ -705,7 +747,7 @@ public class BeanMetaData extends MetaData implements Serializable
             InputStream propsStream = component.getClass().getResourceAsStream(propFileName);
             if (propsStream != null) {
                 try {
-                    List<Bean> beans = new BeanPropsParser(propFileName, propsStream).parse();
+                    List<BeanAST> beans = new BeanPropsParser(propFileName, propsStream).parse();
                     beanprops = new CachedBeanProps(beans, timestamp);
                     cachedBeanProps.put(propFileName, beanprops);
                 }
@@ -843,17 +885,17 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param beans the Bean ASTs.
      */
-    private void processBeans(List<Bean> beans)
+    private void processBeans(List<BeanAST> beans)
     {
         // Determine the hierarchy of Bean ASTs. I.e., the default Bean is always processed first, followed by those that
         // extend it, etc.
         // This acts as a stack.
-        List<Bean> beansHier = new ArrayList<Bean>();
+        List<BeanAST> beansHier = new ArrayList<BeanAST>();
         String currContext = context;
         // Note: Limit cyclical specs (e.g., A extends B, B extends A). This also limits the maximum hierarchy depth to the same 
         // amount, which should be plenty.
         for (int limit = 0; limit < 20; ++limit) {
-            Bean bean = getBean(beans, currContext);
+            BeanAST bean = getBean(beans, currContext);
             beansHier.add(0, bean);
             if (currContext == null) {
                 // Just processed the default context, so stop.
@@ -864,7 +906,7 @@ public class BeanMetaData extends MetaData implements Serializable
         }
 
         // Apply beans in order from highest to lowest. The default context will always be first.
-        for (Bean bean : beansHier) {
+        for (BeanAST bean : beansHier) {
             applyBean(bean);
         }
     }
@@ -874,17 +916,17 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param bean
      */
-    private void applyBean(Bean bean)
+    private void applyBean(BeanAST bean)
     {
         // Process actions first.
-        for (Parameter param : bean.getParameters()) {
+        for (ParameterAST param : bean.getParameters()) {
             if (param.getName().equals(PARAM_ACTIONS)) {
                 applyActions(param.getValues());
             }
         }
 
         // Process bean parameters next, but not props, tabs, or actions.
-        for (Parameter param : bean.getParameters()) {
+        for (ParameterAST param : bean.getParameters()) {
             String name = param.getName();
             if (!name.equals(PARAM_PROPS) &&
                 !name.equals(PARAM_ACTIONS) &&
@@ -903,7 +945,7 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         // Handle props.
-        for (Parameter param : bean.getParameters()) {
+        for (ParameterAST param : bean.getParameters()) {
             String name = param.getName();
             if (name.equals(PARAM_PROPS)) {
                 applyProps(param.getValues(), null);
@@ -918,7 +960,7 @@ public class BeanMetaData extends MetaData implements Serializable
         }
 
         // Process tabs last.
-        for (Parameter param : bean.getParameters()) {
+        for (ParameterAST param : bean.getParameters()) {
             if (param.getName().equals(PARAM_TABS)) {
                 applyTabs(param.getValues());
             }
@@ -931,14 +973,14 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param values
      * @param tabId the tab id to apply to the properties. May be null, in which case the tab id is not affected.
      */
-    void applyProps(List<ParameterValue> values, String tabId)
+    void applyProps(List<ParameterValueAST> values, String tabId)
     {
         int order = 1;
-        for (ParameterValue value : values) {
+        for (ParameterValueAST value : values) {
             String elementName = value.getValue();
             if (!handleElementRemove(elementName, false)) {
                 ElementMetaData element = findElementAddPseudos(elementName);
-                List<Parameter> elementParams = value.getParameters();
+                List<ParameterAST> elementParams = value.getParameters();
                 element.applyBeanProps(elementParams);
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER || (element.isAction() && !element.isActionSpecifiedInProps())) {
                     element.setOrder(order++);
@@ -960,11 +1002,11 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param values
      */
-    private void applyActions(List<ParameterValue> values)
+    private void applyActions(List<ParameterValueAST> values)
     {
         // Add action to the list of elements
         int order = 1;
-        for (ParameterValue value : values) {
+        for (ParameterValueAST value : values) {
             String elementName = value.getValue();
             if (!handleElementRemove(elementName, true)) {
                 String actionName = ACTION_PROPERTY_PREFIX + elementName;
@@ -983,7 +1025,7 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setOrder(order++);
                 }
 
-                List<Parameter> elementParams = value.getParameters();
+                List<ParameterAST> elementParams = value.getParameters();
                 element.applyBeanProps(elementParams);
             }
         }
@@ -994,10 +1036,10 @@ public class BeanMetaData extends MetaData implements Serializable
      *
      * @param values
      */
-    private void applyTabs(List<ParameterValue> values)
+    private void applyTabs(List<ParameterValueAST> values)
     {
         // Add tab to the list of tabs
-        for (ParameterValue value : values) {
+        for (ParameterValueAST value : values) {
             String tabName = value.getValue();
             boolean removeTab = false;
             if (tabName.startsWith("-") && tabName.length() > 1) {
@@ -1020,7 +1062,7 @@ public class BeanMetaData extends MetaData implements Serializable
                     tabs.add(foundTab);
                 }
 
-                List<Parameter> tabParams = value.getParameters();
+                List<ParameterAST> tabParams = value.getParameters();
                 foundTab.applyBeanProps(tabParams);
             }
         }
@@ -1054,12 +1096,12 @@ public class BeanMetaData extends MetaData implements Serializable
      * @throws RuntimeException if the context doesn't exist. Note that the default context
      *  does not need to explicitly exist in beans.
      */
-    private Bean getBean(List<Bean> beans, String context)
+    private BeanAST getBean(List<BeanAST> beans, String context)
     {
         String fullName = beanClass.getName();
         String baseName = getBaseClassName(beanClass); // Name without pkg but with parent of inner class
         String shortName = beanClass.getSimpleName(); // Short name without parent of inner class
-        for (Bean bean : beans) {
+        for (BeanAST bean : beans) {
             String beanName = bean.getName();
             if (shortName.equals(beanName) || baseName.equals(beanName) || fullName.equals(beanName)) {
                 String beanContext = bean.getContext();
@@ -1072,7 +1114,7 @@ public class BeanMetaData extends MetaData implements Serializable
         // Default context implicitly exists. Also, don't require the context to be 
         // explicitly specified for child beans.
         if (context == null || isChildBean) {
-            return new Bean("", null, null, Collections.EMPTY_LIST);
+            return new BeanAST("", null, null, Collections.EMPTY_LIST);
         }
 
         throw new RuntimeException("Bean context [" + context + "] does not exist.");
@@ -1257,6 +1299,16 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
+     * Gets the beansMetaData.
+     *
+     * @return a Beans.
+     */
+    public Beans getBeansMetaData()
+    {
+        return beansMetaData;
+    }
+
+    /**
      * @return the component.
      */
     public Component getComponent()
@@ -1349,16 +1401,16 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     private static final class CachedBeanProps implements Serializable
     {
-        private List<Bean> beans;
+        private List<BeanAST> beans;
         private long modTimestamp;
         
-        CachedBeanProps(List<Bean> beans, long modTimestamp)
+        CachedBeanProps(List<BeanAST> beans, long modTimestamp)
         {
             this.beans = beans;
             this.modTimestamp = modTimestamp;
         }
         
-        List<Bean> getBeans()
+        List<BeanAST> getBeans()
         {
             return beans;
         }

@@ -118,7 +118,7 @@ public class BeanPropsParser
      * 
      * @throws RuntimeException if a parsing error occurs.
      */
-    public List<Bean> parse()
+    public List<BeanAST> parse()
     {
         tokenizer = new StreamTokenizer( new BufferedReader( new InputStreamReader(stream) ) );
         tokenizer.resetSyntax();
@@ -135,7 +135,7 @@ public class BeanPropsParser
         tokenizer.commentChar('#');
         tokenizer.quoteChar('"');
         
-        List<Bean> beans = new ArrayList<Bean>();
+        List<BeanAST> beans = new ArrayList<BeanAST>();
         try {
             while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
                 if (tokenizer.ttype == StreamTokenizer.TT_WORD) {
@@ -153,7 +153,7 @@ public class BeanPropsParser
         return beans;
     }
     
-    private Bean parseBean()
+    private BeanAST parseBean()
     {
         String beanName = getToken();
 
@@ -180,22 +180,22 @@ public class BeanPropsParser
         expect("{");
         
         // Allow empty blocks...
-        List<Parameter> params;
+        List<ParameterAST> params;
         if (!getNextToken().equals("}")) {
             tokenizer.pushBack();
             params = parseParameters();
             expect("}");
         }
         else {
-            params = new ArrayList<Parameter>();
+            params = new ArrayList<ParameterAST>();
         }
         
-        return new Bean(beanName, context, extendsContext, params);
+        return new BeanAST(beanName, context, extendsContext, params);
     }
     
-    private List<Parameter> parseParameters()
+    private List<ParameterAST> parseParameters()
     {
-        List<Parameter> params = new ArrayList<Parameter>();
+        List<ParameterAST> params = new ArrayList<ParameterAST>();
         while (true) {
             params.add( parseParameter() );
             
@@ -210,12 +210,12 @@ public class BeanPropsParser
         return params;
     }
     
-    private Parameter parseParameter()
+    private ParameterAST parseParameter()
     {
         String paramName = getNextToken();
         expect(":");
         
-        List<ParameterValue> values = parseParameterValues();
+        List<ParameterValueAST> values = parseParameterValues();
 
         String nextToken = getNextToken();
         if (!nextToken.equals(";")) {
@@ -227,12 +227,12 @@ public class BeanPropsParser
             }
         }
         
-        return new Parameter(paramName, values);
+        return new ParameterAST(paramName, values);
     }
 
-    private List<ParameterValue> parseParameterValues()
+    private List<ParameterValueAST> parseParameterValues()
     {
-        List<ParameterValue> paramValues = new ArrayList<ParameterValue>();
+        List<ParameterValueAST> paramValues = new ArrayList<ParameterValueAST>();
         do {
             paramValues.add( parseParameterValue() );
         }
@@ -242,9 +242,9 @@ public class BeanPropsParser
         return paramValues;
     }
     
-    private ParameterValue parseParameterValue()
+    private ParameterValueAST parseParameterValue()
     {
-        ParameterValue param = new ParameterValue(getNextToken());
+        ParameterValueAST param = new ParameterValueAST(getNextToken());
         String nextToken = getNextToken();
         // Start of parameters for value?
         if (nextToken.equals("{")) {

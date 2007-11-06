@@ -24,12 +24,12 @@ import java.util.List;
  * 
  * @author Dan Syrstad 
  */
-public class Parameter
+public class ParameterAST
 {
     private String name;
-    private List<ParameterValue> values;
+    private List<ParameterValueAST> values;
 
-    Parameter(String name, List<ParameterValue> values)
+    ParameterAST(String name, List<ParameterValueAST> values)
     {
         this.name = name;
         this.values = values;
@@ -40,7 +40,7 @@ public class Parameter
         return name;
     }
 
-    public List<ParameterValue> getValues()
+    public List<ParameterValueAST> getValues()
     {
         return values;
     }

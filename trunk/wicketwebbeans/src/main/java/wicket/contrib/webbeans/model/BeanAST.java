@@ -16,40 +16,47 @@
 ---*/
 package wicket.contrib.webbeans.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * ParameterValue AST for BeanPropsParser. <p>
+ * BeanAST AST for BeanPropsParser. <p>
  * 
  * @author Dan Syrstad 
  */
-public class ParameterValue
+public class BeanAST
 {
-    private String value;
-    private List<Parameter> parameters = new ArrayList<Parameter>();
+    private String name;
+    private String context;
+    private String extendsContext;
+    private List<ParameterAST> parameters;
 
-    public ParameterValue(String value)
+    public BeanAST(String name, String context, String extendsContext, List<ParameterAST> parameters)
     {
-        this.value = value;
+        this.name = name;
+        this.context = context;
+        this.extendsContext = extendsContext;
+        this.parameters = parameters;
     }
 
-    public List<Parameter> getParameters()
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getContext()
+    {
+        return context;
+    }
+
+    public String getExtendsContext()
+    {
+        return extendsContext;
+    }
+
+    public List<ParameterAST> getParameters()
     {
         return parameters;
     }
 
-    public void setParameters(List<Parameter> parameters)
-    {
-        this.parameters = parameters;
-    }
-
-    /**
-     * @return the raw value without substitution of macros.
-     */
-    public String getValue()
-    {
-        return value;
-    }
 }

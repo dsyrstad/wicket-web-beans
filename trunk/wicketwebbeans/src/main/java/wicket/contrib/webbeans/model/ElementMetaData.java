@@ -74,9 +74,9 @@ public final class ElementMetaData extends MetaData implements Serializable
      *
      * @param params
      */
-    void applyBeanProps(List<Parameter> params)
+    void applyBeanProps(List<ParameterAST> params)
     {
-        for (Parameter param : params) {
+        for (ParameterAST param : params) {
             setParameterValues(param.getName(), param.getValuesAsStrings());
         }
     }
@@ -418,7 +418,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         // Compose a keyPrefix from the original bean meta data, the base bean class name, and this property name.
         BeanMetaData parentMetaData = getBeanMetaData();
             
-        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
+        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getBeansMetaData(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
                         parentMetaData.getComponentRegistry(), viewOnly, true);
     }
     
