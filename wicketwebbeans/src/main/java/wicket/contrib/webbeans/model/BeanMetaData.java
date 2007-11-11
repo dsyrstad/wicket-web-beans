@@ -533,20 +533,20 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
+        
         if (bean.viewOnly().length > 0) {
             // Only set if explicitly set.
             boolean viewOnly = bean.viewOnly()[0];
             setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
-            // Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
-            // that they can override the bean setting if necessary.
-            for (ElementMetaData element : elements) {
-                element.setViewOnly(viewOnly);
-            }
+            updateElementsViewOnlyState(viewOnly);
         }
 
         setParameterIfNotEmpty(bean.paramName(), bean.paramValue());
         for (wicket.contrib.webbeans.annotations.Parameter param : bean.params()) {
             setParameterIfNotEmpty(param.name(), param.value());
+            if (param.name().equals(PARAM_VIEW_ONLY)) {
+                updateElementsViewOnlyState( getBooleanParameter(PARAM_VIEW_ONLY) );
+            }
         }
         
         int order = 1;
@@ -611,6 +611,19 @@ public class BeanMetaData extends MetaData implements Serializable
             else {
                 processTabAnnotation(tab, foundTab);
             }
+        }
+    }
+
+    /**
+     * Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
+     * that they can override the bean setting if necessary.
+     *
+     * @param viewOnly
+     */
+    private void updateElementsViewOnlyState(boolean viewOnly)
+    {
+        for (ElementMetaData element : elements) {
+            element.setViewOnly(viewOnly);
         }
     }
     
