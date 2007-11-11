@@ -42,6 +42,8 @@ public @interface Bean {
     Class<?> type() default Object.class;
     /** The WWB context for this bean. */ 
     String context() default "";
+    /** The context being extended - default is the default context "". */
+    String extendsContext() default "";
     
     /** The label to display for the bean. */
     String label() default "";

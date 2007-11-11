@@ -25,6 +25,15 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import wicket.contrib.webbeans.annotations.Action;
+import wicket.contrib.webbeans.annotations.Property;
+import wicket.contrib.webbeans.annotations.Tab;
+import wicket.contrib.webbeans.model.api.JAction;
+import wicket.contrib.webbeans.model.api.JBean;
+import wicket.contrib.webbeans.model.api.JBeans;
+import wicket.contrib.webbeans.model.api.JProperty;
+import wicket.contrib.webbeans.model.api.JTab;
+
 /**
  * A recursive descent parser to parse a ".beanprops" stream. <p>
  * 
@@ -35,6 +44,7 @@ public class BeanPropsParser
     private String streamName;
     private InputStream stream;
     private StreamTokenizer tokenizer;
+    private BeanMetaData beanMetaData;
 
     /**
      * Construct a BeanPropsParser. 
@@ -112,9 +122,9 @@ public class BeanPropsParser
     }
     
     /**
-     * Parses the stream given on construction and updates the BeanMetaData.
+     * Parses the stream given on construction and returns the BeanASTs.
      *
-     * @return a list of Bean ASTs.
+     * @return a list of BeanASTs.
      * 
      * @throws RuntimeException if a parsing error occurs.
      */
@@ -153,6 +163,152 @@ public class BeanPropsParser
         return beans;
     }
     
+    /**
+     * Parses the stream given on construction.
+     *
+     * @return a JBeans object representing the parsed beans.
+     * 
+     * @throws RuntimeException if a parsing error occurs.
+     */
+    public JBeans parseToJBeans(BeanMetaData beanMetaData)
+    {
+        this.beanMetaData = beanMetaData;
+        return processBeans( parse() );
+    }
+
+    /**
+     * Process bean ASTs that apply to this bean. This does not update the meta data for this object,
+     * it simply creates a JBeans object containing the metadata.
+     *
+     * @param beans the BeanASTs.
+     * 
+     * @return a JBeans object containing the meta data. 
+     */
+    private JBeans processBeans(List<BeanAST> beans)
+    {
+        JBeans jbeans = new JBeans();
+        
+        Class<?> beanClass = beanMetaData.getBeanClass();
+        String fullName = beanClass.getName();
+        String baseName = BeanMetaData.getBaseClassName(beanClass); // Name without pkg but with parent of inner class
+        String shortName = beanClass.getSimpleName(); // Short name without parent of inner class
+
+        for (BeanAST bean : beans) {
+            String beanName = bean.getName();
+            if (shortName.equals(beanName) || baseName.equals(beanName) || fullName.equals(beanName)) {
+                jbeans.add( processBean(bean) );
+            }
+        }
+        
+        return jbeans;
+    }
+
+    /**
+     * Turns a BeanAST into a JBean.
+     *
+     * @param bean
+     */
+    private JBean processBean(BeanAST bean)
+    {
+        JBean jbean = new JBean( beanMetaData.getBeanClass() );
+        jbean.context( bean.getContext() );
+        jbean.extendsContext( bean.getExtendsContext() );
+        
+        for (ParameterAST param : bean.getParameters()) {
+            jbean.add(param.getName(), param.getValuesAsStrings());
+        }
+        
+        // Process actions first.
+        for (ParameterAST param : bean.getParameters()) {
+            String name = param.getName();
+            if (name.equals(BeanMetaData.PARAM_ACTIONS)) {
+                jbean.actions( processActions(param.getValues()) );
+            }
+            else if (name.equals(BeanMetaData.PARAM_PROPS)) {
+                jbean.properties( processProps(param.getValues()) );
+            }
+            else if (param.getName().equals(BeanMetaData.PARAM_TABS)) {
+                jbean.tabs( processTabs(param.getValues()) );
+            }
+            else {
+                jbean.add(name, param.getValuesAsStrings());
+            }
+        }
+        
+        return jbean;
+    }
+
+    /**
+     * Turns a BeanAST's "props" into a List of Property.
+     *
+     * @param values
+     * 
+     * @return a List of Property.
+     */
+    List<Property> processProps(List<ParameterValueAST> values)
+    {
+        List<Property> jproperties = new ArrayList<Property>();
+        for (ParameterValueAST value : values) {
+            String elementName = value.getValue();
+            JProperty jproperty = new JProperty(elementName);
+            jproperties.add(jproperty);
+            for (ParameterAST param : value.getParameters()) {
+                jproperty.add(param.getName(), param.getValuesAsStrings());
+            }
+        }
+        
+        return jproperties;
+    }
+
+    /**
+     * Turns a BeanAST's "actions" into a List of Action.
+     *
+     * @param values
+     * 
+     * @return a List of Action.
+     */
+    private List<Action> processActions(List<ParameterValueAST> values)
+    {
+        List<Action> jactions = new ArrayList<Action>();
+        for (ParameterValueAST value : values) {
+            String elementName = value.getValue();
+            JAction jaction = new JAction(elementName);
+            jactions.add(jaction);
+            for (ParameterAST param : value.getParameters()) {
+                jaction.add(param.getName(), param.getValuesAsStrings());
+            }
+        }
+        
+        return jactions;
+    }
+
+    /**
+     * Turns a BeanAST's "tabs" into a List of Tab.
+     *
+     * @param values
+     * 
+     * @return a List of Tab.
+     */
+    private List<Tab> processTabs(List<ParameterValueAST> values)
+    {
+        List<Tab> jtabs = new ArrayList<Tab>();
+        for (ParameterValueAST value : values) {
+            String elementName = value.getValue();
+            JTab jtab = new JTab(elementName);
+            jtabs.add(jtab);
+            for (ParameterAST param : value.getParameters()) {
+                if (param.getName().equals(BeanMetaData.PARAM_PROPS)) {
+                    jtab.properties( processProps(param.getValues()) );
+                }
+                else {
+                    jtab.add(param.getName(), param.getValuesAsStrings());
+                }
+            }
+        }
+        
+        return jtabs;
+    }
+
     private BeanAST parseBean()
     {
         String beanName = getToken();

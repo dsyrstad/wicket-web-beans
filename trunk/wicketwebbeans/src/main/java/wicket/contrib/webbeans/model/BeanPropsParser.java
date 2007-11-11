@@ -180,7 +180,7 @@ public class BeanPropsParser
      * Process bean ASTs that apply to this bean. This does not update the meta data for this object,
      * it simply creates a JBeans object containing the metadata.
      *
-     * @param beans the BeanAST ASTs.
+     * @param beans the BeanASTs.
      * 
      * @return a JBeans object containing the meta data. 
      */
@@ -213,6 +213,10 @@ public class BeanPropsParser
         JBean jbean = new JBean( beanMetaData.getBeanClass() );
         jbean.context( bean.getContext() );
         jbean.extendsContext( bean.getExtendsContext() );
+        
+        for (ParameterAST param : bean.getParameters()) {
+            jbean.add(param.getName(), param.getValuesAsStrings());
+        }
         
         // Process actions first.
         for (ParameterAST param : bean.getParameters()) {
