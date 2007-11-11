@@ -40,29 +40,6 @@ public final class TabMetaData extends MetaData implements Serializable
         consumeParameter(PARAM_LABEL);
     }
 
-    /**
-     * Applies parameters from a beanprops file to this tab.
-     *
-     * @param params
-     */
-    void applyBeanProps(List<ParameterAST> params)
-    {
-        for (ParameterAST param : params) {
-            if (param.getName().equals(BeanMetaData.PARAM_PROPS)) {
-                beanMetaData.applyProps(param.getValues(), id);
-            }
-            else {
-                List<ParameterValueAST> values = param.getValues();
-                if (values.size() != 1) {
-                    throw new RuntimeException("Parameter " + param.getName() + "on tab " + id + " on bean " + beanMetaData.getBeanClass().getSimpleName() + " does not specify exactly one value.");
-                }
-                
-                String value = values.get(0).getValue();
-                setParameter(param.getName(), value);
-            }
-        }
-    }
-
     public String getId()
     {
         return id;

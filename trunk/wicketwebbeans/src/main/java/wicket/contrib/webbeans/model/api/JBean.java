@@ -39,6 +39,7 @@ public class JBean implements Bean, Serializable
 {
     private Class<?> type = Object.class;
     private String context =  "";
+    private String extendsContext =  "";
     private String label =  "";
     private int columns =  3;
     private int rows =  10;
@@ -167,6 +168,22 @@ public class JBean implements Bean, Serializable
 
     /** 
      * {@inheritDoc}
+     * @see wicket.contrib.webbeans.annotations.Bean#extendsContext()
+     */
+    public String extendsContext()
+    {
+        return extendsContext;
+    }
+    
+    /** @see #extendsContext() */
+    public JBean extendsContext(String extendsContext)
+    {
+        this.extendsContext = extendsContext;
+        return this;
+    }
+
+    /** 
+     * {@inheritDoc}
      * @see wicket.contrib.webbeans.annotations.Bean#displayed()
      */
     public boolean displayed()
@@ -257,9 +274,9 @@ public class JBean implements Bean, Serializable
     /** 
      * Shortcut for {@link #paramName()} and {@link #paramValue()}. 
      */
-    public JBean add(String name, String value)
+    public JBean add(String name, String... values)
     {
-        params.add( new JParameter(name, value) );
+        params.add( new JParameter(name, values) );
         return this;
     }
 
