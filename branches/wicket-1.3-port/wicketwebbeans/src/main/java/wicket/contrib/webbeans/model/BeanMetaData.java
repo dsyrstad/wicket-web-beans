@@ -346,19 +346,29 @@ public class BeanMetaData extends MetaData implements Serializable
         collectFromBeanProps();
         collectBeansAnnotation(beansMetaData, false);
         
-        // Determine the hierarchy of Bean contexts. I.e., the default Bean is always processed first, followed by those that
-        // extend it, etc. This acts as a stack.
-        List<Bean> beansHier = buildContextStack();
-
         // Process action annotations on component.
         for (Method method : getActionMethods(component.getClass())) {
             Action action = method.getAnnotation(Action.class);
             processActionAnnotation(action, method.getName());
         }
 
+        // Determine the hierarchy of Bean contexts. I.e., the default Bean is always processed first, followed by those that
+        // extend it, etc. This acts as a stack.
+        List<Bean> beansHier = buildContextStack();
+        
         // Apply beans in order from highest to lowest. The default context will always be first.
+        boolean foundSpecifiedContext = false;
         for (Bean bean : beansHier) {
+            if (context != null && context.equals(bean.context())) {
+                foundSpecifiedContext = true;
+            }
+            
             processBeanAnnotation(bean);
+        }
+
+        // Ensure that if a context was specified, that we found one in the metadata. Otherwise it might have been a typo.
+        if (context != null && !foundSpecifiedContext) {
+            throw new RuntimeException("Could not find specified context '" + context + "' in metadata.");
         }
         
         // Post-process Bean-level parameters
@@ -549,20 +559,39 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
         
-        int order = 1;
-        for (Action action : bean.actions()) {
-            if (!handleElementRemove(action.name(), false)) {
-                ElementMetaData element = processActionAnnotation(action, null);
-                element.setOrder(order++);
-            }
-        }
-
         // Process actionNames after actions because actionNames is typically used to define order.
-        order = 1;
+        int order = 1;
         for (String actionName : bean.actionNames()) {
             if (!handleElementRemove(actionName, true)) {
                 ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
-                element.setOrder(order++);
+                if (!element.isActionSpecifiedInProps() && element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
+                }
+            }
+        }
+        
+        order = 1;
+        for (Action action : bean.actions()) {
+            if (!handleElementRemove(action.name(), false)) {
+                ElementMetaData element = processActionAnnotation(action, null);
+                if (!element.isActionSpecifiedInProps() && element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
+                }
+            }
+        }
+
+        // Process propertyNames before properties because propertyNames is typically used to define order.
+        order = 1;
+        for (String propName : bean.propertyNames()) {
+            if (!handleElementRemove(propName, false)) {
+                ElementMetaData element = findElementAddPseudos(propName);
+                if (element.isAction()) {
+                    element.setActionSpecifiedInProps(true);
+                }
+                
+                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
+                }
             }
         }
         
@@ -574,26 +603,12 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setActionSpecifiedInProps(true);
                 }
                 
-                element.setOrder(order++);
+                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
+                    element.setOrder(order++);
+                }
             }
         }
 
-        // Process propertyNames after properties because propertyNames is typically used to define order.
-        order = 1;
-        for (String propName : bean.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-                
-                element.setOrder(order++);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-            }
-        }
-        
         for (Tab tab : bean.tabs()) {
             String tabName = tab.name();
             boolean removeTab = false;
