@@ -184,9 +184,9 @@ public class JAction implements Action, Serializable
     /** 
      * Shortcut for {@link #paramName()} and {@link #paramValue()}. 
      */
-    public JAction add(String name, String value)
+    public JAction add(String name, String... values)
     {
-        params.add( new JParameter(name, value) );
+        params.add( new JParameter(name, values) );
         return this;
     }
 

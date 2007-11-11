@@ -179,9 +179,9 @@ public class JTab implements Tab, Serializable
     /** 
      * Shortcut for {@link #paramName()} and {@link #paramValue()}. 
      */
-    public JTab add(String name, String value)
+    public JTab add(String name, String... values)
     {
-        params.add( new JParameter(name, value) );
+        params.add( new JParameter(name, values) );
         return this;
     }
 

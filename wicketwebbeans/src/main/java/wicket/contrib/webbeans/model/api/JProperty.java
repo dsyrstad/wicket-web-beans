@@ -272,9 +272,9 @@ public class JProperty implements Property, Serializable
     /** 
      * Shortcut for {@link #paramName()} and {@link #paramValue()}. 
      */
-    public JProperty add(String name, String value)
+    public JProperty add(String name, String... values)
     {
-        params.add( new JParameter(name, value) );
+        params.add( new JParameter(name, values) );
         return this;
     }
 

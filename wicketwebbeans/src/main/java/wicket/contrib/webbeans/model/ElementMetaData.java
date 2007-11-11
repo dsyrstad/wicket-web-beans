@@ -69,18 +69,6 @@ public final class ElementMetaData extends MetaData implements Serializable
         consumeParameter(PARAM_ELEMENT_TYPE);
     }
     
-    /**
-     * Applies parameters from a beanprops file to this element.
-     *
-     * @param params
-     */
-    void applyBeanProps(List<ParameterAST> params)
-    {
-        for (ParameterAST param : params) {
-            setParameterValues(param.getName(), param.getValuesAsStrings());
-        }
-    }
-    
     public String getFieldType()
     {
         String fieldType = getParameter(PARAM_FIELD_TYPE);
