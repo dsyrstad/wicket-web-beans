@@ -82,6 +82,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String PARAM_LABEL = "label";
     public static final String PARAM_CONTAINER = "container";
 
+    public static final String TAB_PROPERTY_PREFIX = "tab.";
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
     
@@ -209,7 +210,13 @@ public class BeanMetaData extends MetaData implements Serializable
 
         setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
         setParameter(PARAM_DISPLAYED, "true");
-        setParameter(PARAM_LABEL, createLabel(beanClass.getSimpleName()));
+        
+        String beanClassName = getBaseClassName(beanClass);
+        String label = getLabelFromLocalizer(beanClassName, beanClassName);
+        if (label == null) {
+            label = createLabel(beanClassName);
+        }
+        setParameter(PARAM_LABEL, label);
 
         init();
 
@@ -773,7 +780,14 @@ public class BeanMetaData extends MetaData implements Serializable
         
         String tabName = tab.name();
         if (tabMetaData == null) {
-            tabMetaData = new TabMetaData(this, tabName, createLabel(tabName));
+        	String baseBeanClassName = getBaseClassName(beanClass);
+            String prefixedName = TAB_PROPERTY_PREFIX + tabName;
+            String label = getLabelFromLocalizer(baseBeanClassName, prefixedName);
+            if (label == null) {
+                label = createLabel(tabName);
+            }
+            
+            tabMetaData = new TabMetaData(this, tabName, label);
             tabs.add(tabMetaData);
         }
         
