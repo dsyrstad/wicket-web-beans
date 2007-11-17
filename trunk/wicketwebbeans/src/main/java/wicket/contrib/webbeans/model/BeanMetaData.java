@@ -421,7 +421,7 @@ public class BeanMetaData extends MetaData implements Serializable
             String extendsContext = null;
             for (Bean collectedBean : collectedBeans) {
                 String beanContext = collectedBean.context();
-                if (beanContext != null && beanContext.isEmpty()) {
+                if (beanContext != null && beanContext.length() == 0) {
                     beanContext = null;
                 }
                 
@@ -431,7 +431,7 @@ public class BeanMetaData extends MetaData implements Serializable
                     
                     if (extendsContext == null) {
                         extendsContext = collectedBean.extendsContext();
-                        if (extendsContext != null && extendsContext.isEmpty()) {
+                        if (extendsContext != null && extendsContext.length() == 0) {
                             extendsContext = null;
                         }
                     }

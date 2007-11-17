@@ -176,9 +176,9 @@ public class BeanSubmitButton extends Panel
      * @see wicket.Component#onAttach()
      */
     @Override
-    protected void onAttach()
+    protected void onBeforeRender()
     {
-        super.onAttach();
+        super.onBeforeRender();
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {
             // Only set this if we're in a BeanForm.
