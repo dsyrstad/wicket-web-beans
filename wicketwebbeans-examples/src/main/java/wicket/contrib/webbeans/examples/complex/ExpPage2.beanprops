@@ -6,7 +6,7 @@ TestBean {
 	
 	# $(property-name) to reference a Wicket property file property (i.e., Localizer). Can be used anywhere in a value and
 	# in any kind of value.  Double quotes may be used to embed whitespace in values.
-	label: "My ${TestBean.title} Title";   
+	#label: "My ${TestBean.title} Title";   
 
 	# Defines the actions available for the bean.
 	# This is a list of action methods available on the Wicket Page that the bean
