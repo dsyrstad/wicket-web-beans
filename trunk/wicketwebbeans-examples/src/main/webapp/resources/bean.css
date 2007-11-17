@@ -153,6 +153,11 @@ td.beanActionButtonCell  {
 	color: #3c3c3c;
 }
 
+.beanRequiredField:after {
+	color: red;
+	content: "*";
+}
+
 .beanInlineField .beanGridPanel {
 	/* For bean-panels that are inlined. */
 	padding: 0px 0px 0px 0px;

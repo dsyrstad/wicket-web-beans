@@ -19,11 +19,12 @@ package wicket.contrib.webbeans.model;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import wicket.Component;
+import wicket.behavior.AttributeAppender;
 import wicket.contrib.webbeans.fields.ImageLabel;
 import wicket.markup.html.basic.Label;
+import wicket.model.Model;
 import wicket.util.lang.PropertyResolver;
 
 /**
@@ -42,6 +43,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     public static final String PARAM_ROWS = "rows";
     public static final String PARAM_COLUMNS = "cols";
 
+    public static final String CSS_REQUIRED_FIELD_CLASS = "beanRequiredField";
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
     
     private BeanMetaData beanMetaData;
@@ -168,11 +170,19 @@ public final class ElementMetaData extends MetaData implements Serializable
      */
     public Component getLabelComponent(String wicketId)
     {
+        Component component;
         if (getLabelImage() == null) {
-            return new Label(wicketId, getLabel());
+            component = new Label(wicketId, getLabel());
         }
-
-        return new ImageLabel(wicketId, getBeanMetaData().getComponent().getClass(), getLabelImage(), getLabel());
+        else {
+            component = new ImageLabel(wicketId, getBeanMetaData().getComponent().getClass(), getLabelImage(), getLabel());
+        }
+        
+        if (isRequired()) {
+            component.add( new AttributeAppender("class", new Model(CSS_REQUIRED_FIELD_CLASS), " ") );
+        }
+        
+        return component; 
     }
     
     public int getOrder()
