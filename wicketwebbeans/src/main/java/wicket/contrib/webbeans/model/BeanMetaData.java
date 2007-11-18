@@ -41,6 +41,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import wicket.Component;
 import wicket.ajax.AjaxRequestTarget;
+import wicket.behavior.AttributeAppender;
 import wicket.contrib.webbeans.actions.BeanSubmitButton;
 import wicket.contrib.webbeans.annotations.Action;
 import wicket.contrib.webbeans.annotations.Bean;
@@ -55,6 +56,8 @@ import wicket.contrib.webbeans.model.api.JBeans;
 import wicket.markup.html.form.Form;
 import wicket.markup.html.panel.Panel;
 import wicket.model.IModel;
+import wicket.model.Model;
+import wicket.util.string.Strings;
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
@@ -81,6 +84,8 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String PARAM_ACTIONS = "actions";
     public static final String PARAM_LABEL = "label";
     public static final String PARAM_CONTAINER = "container";
+    public static final String PARAM_CSS = "css";
+    public static final String PARAM_DYNAMIC_CSS = "dynamicCss";
 
     public static final String TAB_PROPERTY_PREFIX = "tab.";
     public static final String ACTION_PROPERTY_PREFIX = "action.";
@@ -551,6 +556,9 @@ public class BeanMetaData extends MetaData implements Serializable
         
         setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
         
+        setParameter(PARAM_CSS, bean.css());
+        setParameter(PARAM_DYNAMIC_CSS, bean.dynamicCss());
+        
         if (bean.viewOnly().length > 0) {
             // Only set if explicitly set.
             boolean viewOnly = bean.viewOnly()[0];
@@ -711,6 +719,9 @@ public class BeanMetaData extends MetaData implements Serializable
         
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, property.label());
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, property.labelImage());
+        element.setParameter(PARAM_CSS, property.css());
+        element.setParameter(PARAM_DYNAMIC_CSS, property.dynamicCss());
+        
         if (property.maxLength() > 0) {
             element.setMaxLength(property.maxLength());
         }
@@ -1274,6 +1285,32 @@ public class BeanMetaData extends MetaData implements Serializable
             catch (Exception e) {
                 throw new RuntimeException("Error removing PropertyChangeListener: ", e);
             }
+        }
+    }
+    
+    /**
+     * Applies any metadata-based CSS classes for the given bean or property to the component.
+     */
+    public void applyCss(Object bean, MetaData metaData, Component applyToComponent)
+    {
+        String css = metaData.getParameter(PARAM_CSS);
+        
+        if (!Strings.isEmpty(css)) {
+            applyToComponent.add( new AttributeAppender("class", new Model(css), " ") );
+        }
+        
+        String dynamicCssMethod = metaData.getParameter(PARAM_DYNAMIC_CSS);
+        if (!Strings.isEmpty(dynamicCssMethod)) {
+            try {
+                Method method = component.getClass().getMethod(dynamicCssMethod, new Class[] { beanClass, metaData.getClass() } );
+                String cssReturn = (String)method.invoke(component, new Object[] { bean, metaData });
+                if (!Strings.isEmpty(cssReturn)) {
+                    applyToComponent.add( new AttributeAppender("class", new Model(cssReturn), " ") );
+                }
+            }
+            catch (Exception e) {
+                throw new RuntimeException("dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") is not defined in " + applyToComponent.getClass());
+            }            
         }
     }
     

@@ -52,6 +52,8 @@ public class JBean implements Bean, Serializable
     private List<Tab> tabs = new ArrayList<Tab>();
     private Class<? extends Panel> container = Panel.class;
     private List<Parameter> params = new ArrayList<Parameter>();
+    private String css = "";
+    private String dynamicCss = "";
     private String paramName = "";
     private String paramValue = "";
 
@@ -210,6 +212,38 @@ public class JBean implements Bean, Serializable
     public JBean label(String label)
     {
         this.label = label;
+        return this;
+    }
+
+    /** 
+     * {@inheritDoc}
+     * @see wicket.contrib.webbeans.annotations.Bean#css()
+     */
+    public String css()
+    {
+        return css;
+    }
+    
+    /** @see #css(). */
+    public JBean css(String css)
+    {
+        this.css = css;
+        return this;
+    }
+
+    /** 
+     * {@inheritDoc}
+     * @see wicket.contrib.webbeans.annotations.Bean#dynamicCss()
+     */
+    public String dynamicCss()
+    {
+        return dynamicCss;
+    }
+
+    /** @see #dynamicCss(). */
+    public JBean dynamicCss(String dynamicCss)
+    {
+        this.dynamicCss = dynamicCss;
         return this;
     }
 

@@ -86,6 +86,12 @@ public @interface Property {
      * which is the default layout used by {@link BeanForm}. See {@link BeanGridPanel} parameters for more details. */
     int colspan() default 1;
     
+    /** CSS class to be used for the property. */
+    String css() default "";
+    
+    /** Dynamic CSS class method name to be used for the property. This method must have the signature: public String methodName(<BeanClass> bean, ElementMetaData elementMetaData). */
+    String dynamicCss() default "";
+
     /** Arbitrary non-standard parameters. These are interpreted by the component. */
     Parameter[] params() default {};
     /** Short-cut to specify a single parameter. This is the parameter's name. */
