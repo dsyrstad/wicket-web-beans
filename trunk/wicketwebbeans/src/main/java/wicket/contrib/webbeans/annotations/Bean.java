@@ -87,6 +87,12 @@ public @interface Bean {
      */
     Class<? extends Panel> container() default Panel.class;
     
+    /** CSS class to be used for the bean. */
+    String css() default "";
+    
+    /** Dynamic CSS class method name to be used for the bean. This method must have the signature: public String methodName(<BeanClass> bean, BeanMetaData beanMetaData). */
+    String dynamicCss() default "";
+    
     /** Arbitrary non-standard parameters. These are interpreted by the component. */
     Parameter[] params() default {};
     /** Short-cut to specify a single parameter. This is the parameter's name. */

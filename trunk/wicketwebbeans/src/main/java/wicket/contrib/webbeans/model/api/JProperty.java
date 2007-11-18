@@ -48,6 +48,8 @@ public class JProperty implements Property, Serializable
     private String label =  "";
     private String labelImage = "";
     private int colspan = 1;
+    private String css = "";
+    private String dynamicCss = "";
     private List<Parameter> params = new ArrayList<Parameter>();
     private String paramName = "";
     private String paramValue = "";
@@ -211,6 +213,38 @@ public class JProperty implements Property, Serializable
         return this;
     }
     
+    /** 
+     * {@inheritDoc}
+     * @see wicket.contrib.webbeans.annotations.Bean#css()
+     */
+    public String css()
+    {
+        return css;
+    }
+    
+    /** @see #css(). */
+    public JProperty css(String css)
+    {
+        this.css = css;
+        return this;
+    }
+
+    /** 
+     * {@inheritDoc}
+     * @see wicket.contrib.webbeans.annotations.Bean#dynamicCss()
+     */
+    public String dynamicCss()
+    {
+        return dynamicCss;
+    }
+
+    /** @see #dynamicCss(). */
+    public JProperty dynamicCss(String dynamicCss)
+    {
+        this.dynamicCss = dynamicCss;
+        return this;
+    }
+
     /** 
      * {@inheritDoc}
      * @see wicket.contrib.webbeans.annotations.Property#paramName()

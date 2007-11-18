@@ -104,6 +104,8 @@ public class BeanGridPanel extends Panel
         this.beanMetaData = beanMetaData;
         this.tabMetaData = tabMetaData;
         this.showLabels = showLabels;
+        
+        beanMetaData.applyCss(bean, beanMetaData, this);
 
         List<ElementMetaData> displayedProperties;
         if (tabMetaData == null) {
@@ -206,6 +208,8 @@ public class BeanGridPanel extends Panel
                 if (!(component instanceof UnlabeledField) && showLabels) {
                     component = new LabeledField("c", element.getLabelComponent("l"), component);
                 }
+                
+                beanMetaData.applyCss(bean, element, component);
             }
 
             item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))) );

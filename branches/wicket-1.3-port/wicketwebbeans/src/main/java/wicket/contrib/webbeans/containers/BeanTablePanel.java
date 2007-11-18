@@ -126,7 +126,7 @@ public class BeanTablePanel extends Panel
         }
 
         final BeanDataTable table = new BeanDataTable("t", columns, dataProvider, 
-                    sortStateLocator, numRows);
+                    sortStateLocator, numRows, metaData);
         add(table);
 
         final NavigatorLabel navigatorLabel = new NavigatorLabel("nl", table);
@@ -259,13 +259,14 @@ public class BeanTablePanel extends Panel
         {
             Object bean = rowModel.getObject();
             Component component;
+            BeanMetaData beanMetaData = element.getBeanMetaData();
             if (element.isAction()) {
                 Form form = (Form)parentComponent.findParent(Form.class);
                 component = new BeanActionButton(componentId, element, form, bean);
             }
             else {
-                component = element.getBeanMetaData().getComponentRegistry()
-                        .getComponent(bean, componentId, element);
+                component = beanMetaData.getComponentRegistry().getComponent(bean, componentId, element);
+                beanMetaData.applyCss(bean, element, component);
             }
 
             cellItem.add(component);

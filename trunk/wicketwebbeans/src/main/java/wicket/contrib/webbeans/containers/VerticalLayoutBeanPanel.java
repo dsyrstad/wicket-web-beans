@@ -81,6 +81,8 @@ public class VerticalLayoutBeanPanel extends Panel
         this.tabMetaData = tabMetaData;
         this.showLabels = showLabels;
 
+        beanMetaData.applyCss(bean, beanMetaData, this);
+
         List<ElementMetaData> displayedProperties;
         if (tabMetaData == null) {
             displayedProperties = beanMetaData.getDisplayedElements();
@@ -130,6 +132,8 @@ public class VerticalLayoutBeanPanel extends Panel
                 item.add(showLabels ? element.getLabelComponent("l") : new Label("l", ""));
                 item.add( beanMetaData.getComponentRegistry().getComponent(bean, "c", element) );
             }
+
+            beanMetaData.applyCss(bean, element, item);
         }
     }
 }

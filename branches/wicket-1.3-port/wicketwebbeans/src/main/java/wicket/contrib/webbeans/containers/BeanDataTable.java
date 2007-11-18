@@ -38,17 +38,19 @@ import java.util.List;
 
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.IModel;
+
+import wicket.contrib.webbeans.model.BeanMetaData;
 
 /**
  * An implementation of the DataTable that aims to solve the 90% usecase by
@@ -74,6 +76,8 @@ public class BeanDataTable extends DataTable
 {
     private static final long serialVersionUID = 1L;
 
+    private BeanMetaData beanMetaData;
+    
     /**
      * Constructor
      * 
@@ -86,9 +90,9 @@ public class BeanDataTable extends DataTable
      * @param rowsPerPage
      *            number of rows per page
      */
-    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage)
+    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage, BeanMetaData metaData)
     {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage);
+        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage, metaData);
     }
     
     /**
@@ -106,9 +110,9 @@ public class BeanDataTable extends DataTable
      *            number of rows per page
      */
     public BeanDataTable(String id, final List<IColumn> columns,
-            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage)
+            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, BeanMetaData metaData)
     {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage);
+        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage, metaData);
     }
     
     /**
@@ -126,9 +130,10 @@ public class BeanDataTable extends DataTable
      *            number of rows per page
      */
     public BeanDataTable(String id, final IColumn[] columns,
-            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage)
+            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage, BeanMetaData metaData)
     {
         super(id, columns, dataProvider, rowsPerPage);
+        this.beanMetaData = metaData;
         setOutputMarkupId(true);
         setVersioned(false);
         addTopToolbar(new AjaxFallbackHeadersToolbar(this, sortSateLocator));
@@ -137,6 +142,8 @@ public class BeanDataTable extends DataTable
     
     protected Item newRowItem(String id, int index, IModel model)
     {
-        return new OddEvenItem(id, index, model);
+        Item item = new OddEvenItem(id, index, model);
+        beanMetaData.applyCss(model.getObject(), beanMetaData, item);
+        return item;
     }
 }
