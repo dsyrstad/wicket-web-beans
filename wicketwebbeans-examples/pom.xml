@@ -11,7 +11,7 @@
     <parent>
         <artifactId>WicketWebBeans-parent</artifactId>
         <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
-        <version>1.0-rc2-SNAPSHOT</version>
+        <version>1.0-rc2-wicket-1.2.6</version>
     </parent>
     <repositories>
         <repository>
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>net.sourceforge.wicketwebbeans</groupId>
             <artifactId>wicketwebbeans</artifactId>
-            <version>1.0-rc2-SNAPSHOT</version>
+            <version>1.0-rc2-wicket-1.2.6</version>
         </dependency>
         <dependency>
             <groupId>javax.jdo</groupId>
