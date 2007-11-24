@@ -1,0 +1,5 @@
+Maven Notes:
+-------------
+- deploy: mvn clean package install javadoc:jar source:jar deploy
+- mvn install
+- After above, mvn site site:deploy

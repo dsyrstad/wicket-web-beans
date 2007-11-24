@@ -1,0 +1,17 @@
+Contact
+{
+	label: "Edit Contact";
+	actions: save, cancel;
+	props: -id,
+			action.save{labelImage: "Save16.gif"},
+			action.cancel{labelImage: "Undo16.gif"},
+			firstName, lastName, phoneNumber, 
+			category{fieldType: wicket.contrib.webbeans.databinder.examples.CategoryField};
+}
+Category
+{
+	label: "Edit Category";
+	actions: save, cancel;
+	props: -id, name;
+}
+
