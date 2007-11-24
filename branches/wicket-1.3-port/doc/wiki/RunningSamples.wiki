@@ -1,10 +1,17 @@
 ---+ Running the Samples
 
-You need Java 5+ to run the wwb.war file. If you're using Tomcat, we recommend 5.5.23 or later.
+0. Build WWB from the source distribution by typing: mvn clean package  
+1. cd wicketwebbeans-examples
+2. mvn jetty:run  (runs examples using Jetty)
+3. Point your browser at: http://localhost:8080/wicketwebbeans-examples/WebBeans
 
-0. If necessary, build WWB by typing:  ant clean all 
-1. Deploy releases/wwb.war or setup a project with Tomcat, Jetty, etc.
-2. For Tomcat, go to http://localhost:8080/wwb/WebBeans. This starts LauncherApplication and allows you to drill down on each sample. 
+You can also deploy the wicketwebbeans-examples.war file to your favorite app server. If you're using Tomcat, we recommend 5.5.23 or later.
+
+This release also contains a snapshot of the Databinder support. The examples can be run by following step 0 above and then doing:
+ 
+1. cd wicketwebbeans-databinder-examples
+2. mvn jetty:run  (runs examples using Jetty)
+3. Point your browser at: http://localhost:8080/wicketwebbeans-databinder-examples/app
 
 Back to WicketWebBeans
 

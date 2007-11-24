@@ -173,7 +173,7 @@ public class BeanSubmitButton extends Panel
     
     /**
      * {@inheritDoc}
-     * @see wicket.Component#onAttach()
+     * @see wicket.Component#onBeforeRender()
      */
     @Override
     protected void onBeforeRender()

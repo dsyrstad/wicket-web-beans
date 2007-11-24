@@ -28,13 +28,17 @@ The target parameter may be null for non-Ajax requests.
    
    * *rows* - If the bean or bean's IModel passed to !BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10.
    
+   * *css* - CSS class to be used for the bean container.
+    
+   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !BeanMetaData beanMetaData). See wicket.contrib.webbeans.examples.css.CssPage for an example.
+       
    * *container* - a container component to use in place of the default !BeanGridPanel or !BeanTablePanel. This container must be a Panel and implement a constructor of the form:
 
-public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)
+public Constructor(String id, final Object bean, !BeanMetaData beanMetaData, !TabMetaData tabMetaData)
  
-where id = Wicket component ID<br>
-bean = the bean, or IModel containing the bean<br>
-beanMetaData = the BeanMetaData for bean<br>
+where id = Wicket component ID
+bean = the bean, or IModel containing the bean
+beanMetaData = the !BeanMetaData for bean
 tabMetaData = the tab metadata 
 
 ---++ Standard Property Parameters
@@ -65,6 +69,10 @@ Actions (action.action-name) additionally support the following parameters (supp
    * *default* - If "true", the action will be fired when the Enter key is pressed anywhere on the form.
 
    * *rows* - the number of rows to display in a !BeanTableField or !TextAreaField. 
+
+   * *css* - CSS class to be used for the bean container.
+    
+   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !ElementMetaData elementMetaData propertyMetaData). See wicket.contrib.webbeans.examples.css.CssPage for an example.
 
 ---++ Standard Tab Parameters
 
@@ -119,10 +127,10 @@ A Field that presents a property's bean in a panel, but the bean's properties do
      java.util.Calendar: yyyy-MM-dd HH:MM z
      
      You may override this defaults in the enclosing Page's properties using the following keys:
-		DateTimeField.date.format - Format for java.sql.Date.
-		DateTimeField.datetime.format - Format for java.sql.Timestamp or java.util.Date.
-		DateTimeField.time.format - Format for java.sql.Time.
-		DateTimeField.datetimetz.format - Format for java.util.Calendar types.
+		!DateTimeField.date.format - Format for java.sql.Date.
+		!DateTimeField.datetime.format - Format for java.sql.Timestamp or java.util.Date.
+		!DateTimeField.time.format - Format for java.sql.Time.
+		!DateTimeField.datetimetz.format - Format for java.util.Calendar types.
 
 ---+++ !EnumField/!JavaEnumField
 

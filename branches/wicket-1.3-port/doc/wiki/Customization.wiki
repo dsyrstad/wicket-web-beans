@@ -1,10 +1,11 @@
 
 Back: [[Actions]] Next: [[Tabs]]
 
-WWB is a method of programming by exception. That is, you only tell WWB to do something when its not doing what you want. Most commonly, WWB doesn't really know a good way to order fields on the page. By default, they are in alphabetical order and laid out in a three column grid. Alphabetical order isn't typically want you want, though. To change this, you can customize the WWB metadata for a bean in a number of different ways. These methods include using:
+WWB is a method of programming by exception. You only tell WWB to do something when its not doing what you want. Most commonly, WWB doesn't really know a good way to order fields on the page. By default, they are in alphabetical order and laid out in a three column grid. Alphabetical order isn't typically want you want, though. To change this, you can customize the WWB metadata for a bean in a number of different ways. These methods include using:
 
    1. A "beanprops" property file. This is similar to a Wicket .properties file for your component except that it is specific to your bean.
-   1. WWB annotations on your component (typically a Page), bean, and/or a special metadata class. 
+   1. WWB annotations on your component (typically a Page), bean, and/or a special metadata class.
+   1. The WWB metadata API (JBean and friends). This is mirrored after the WWB annotations.   
    1. A Wicket .properties file.
    1. JDO or JPA @Column annotations on your bean properties. Note that the latest versions of Hibernate support the JPA annotations. 
 
@@ -21,7 +22,7 @@ Let's say you don't like the generated label "Operand 1" and "Operand 2" in the 
 	operand2.label=Enter Second Value
 </verbatim>
 
-And the default labels will be overridden. This will override the labels for the operand1 and operand2 property on _any_ bean that defines those properties. To restrict this, you may prefix the property key with the bean name, such as:
+The default labels for these fields will be overridden. This will override the labels for the operand1 and operand2 property on _any_ bean that defines those properties. To restrict this, you may prefix the property key with the bean name, such as:
  
 <verbatim>
 	TestBean.operand1.label=Enter First Value
@@ -32,7 +33,7 @@ WWB always tries to find the label using a key with the bean name first, then it
 
 ---+ Customization Using Beanprops
 
-Note: If you want to use annotations instead of beanprops, you should still read this section. The features of WWB annotations and beanprops are almost identical.
+Note: If you want to use the WWB API or annotations instead of beanprops, you should still read this section. The features of the WWB API, annotations and beanprops are almost identical.
 
 A "beanprops" file is named like your Wicket properties and html files - it has the same based name as your Page (or component that the !BeanForm is embedded in). 
 
@@ -169,6 +170,39 @@ Sometimes you may want to reuse bean metadata in more than one page. If you don'
 
 See wicket.contrib.webbeans.examples.annotations.AnnotationsOnMetaDataClassPage for the full Page code.
 
+---+ WWB Java API
+
+WWB comes with a Java API that mirrors the functionality of the annotations. You might choose to use the API over examples if, for example, you want to do conditional configuration of the metadata. As with annotations, the API can be used in combination with annotations and beanprops. 
+
+The WWB API is comprised of:
+
+   * JBeans - used to hold more than one JBean. This is equivalent to a beanprops file that contains several beans.
+   * JBean - describes a bean. This is equivalent to saying "!TestBean { ... }" in a beanprops file. You can use this directly instead of JBeans if you are just describing a single bean.
+   * JAction - used to customize an action within JBean.actions().
+   * JProperty - used to customize a property within JBean.properties and JTab.properties.
+   * JTab - used to customize a tab within JBean.tabs.
+   * JParameter - used to set a non-standard parameter on JBean, JAction, JProperty, and JTab. If you need to set just a single non-standard parameter, there are short-cut attributes on these annotations: paramName and paramValue. However, 90% of the time, you won't even need to set a non-standard parameter. 
+
+Here's an example of the API. It is equivalent to the annotations example (wicket.contrib.webbeans.examples.api.ApiPage):
+
+<verbatim>
+        // Create the meta data
+        JBean jbean = new JBean(TestBean.class)
+            .tabs(
+                new JTab("General").propertyNames("firstName", "lastName", "idNumber"),
+                new JTab("Address")
+                    .propertyNames("address1", EMPTY, EMPTY, 
+                                   "address2", EMPTY, EMPTY, "city", "state", "zip")
+            )
+            // Customize certain properties from above.
+            .properties(
+                new JProperty("firstName").required(true).maxLength(10),
+                new JProperty("lastName").required(true)
+            )
+            .actions( new JAction("save").confirm("Are you sure you want to save?") );
+</verbatim>
+
+
 ---+ JDO and JPA Annotations
 
 As previously mentioned, if your beans use JDO or JPA @Column annotations, WWB will extract certain information from them. 
@@ -211,5 +245,6 @@ So which one takes precedence - is required true or false? WWB derives metadata 
    1. @Bean annotations on your Page.
    1. @Action annotations on your action methods in your Page.
    1. From your beanprops file, if any.
+   1. From metadata supplied from the WWB API (JBean).
 
 Back: [[Actions]] Next: [[Tabs]]
