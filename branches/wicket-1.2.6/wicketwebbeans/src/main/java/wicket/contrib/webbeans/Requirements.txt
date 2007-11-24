@@ -1,0 +1,37 @@
+- Fields as props from bean properties
+  - Meta: 
+  	- Specified as exceptions (e.g. don't display these), override default editor view. Whether particular
+  	  property is view-only. 
+  	- if displayed, Order to display, override edit/view Component, tab index, group
+  	- Actions (e.g., Add new line) just call back to bean action.
+  	- bean actions, by default, are non-setters/getters with no params returning void. Labels can
+  	  be specified for actions in .properties just like regular props.
+  	- Name, by default is derived from camel case
+    - tab names, group names
+    - layout (grid 3 columns, etc.).
+  - Deduces editor/view component from type:
+  	- Primitives - auto registered
+  	- Date vs. Time (Date/Time or just Time).
+  	- enums are choice fields by default.
+  	- Custom editors can be registered by user by class name. They are registered on the 
+  	  component instance (panel) doing the rendering. 
+  	  They can be built in a registry class and that instance is passed to the panel.  	  
+  	- Collections - can be rendered as edit or view grid
+  	- Other objects that do not have a registered editor open a nested panel. [...]
+
+  	- BigDecimal - how many decimals? Unspecified by default. Maybe a money type for money????.
+  	  Currency specifies this...
+  	
+- Choice fields can be based on enums.
+- Beans must have a public no-arg xtor, as in bean spec.
+
+
+----
+Revised beanprops syntax:
+
+Goals:
+- Simplicity of specification and specification by exception.
+- Can be non-property file based.
+- Validation of properties. Right now if properties are mistyped, they are ignored. Same with property names - if misspelled, they're ignored.
+- Components should "check-off" used properties, any properties not consumed should be error after construction.
+- L10N: References to actual Wicket property files via ${prop}

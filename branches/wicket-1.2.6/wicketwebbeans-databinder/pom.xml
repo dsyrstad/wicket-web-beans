@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <name>Databinder Support</name>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sourceforge.wicketwebbeans.databinder</groupId>
+    <artifactId>wicketwebbeans-databinder</artifactId>
+    <description>Wicket Web Beans Databinder Support</description>
+    <packaging>jar</packaging>
+    <parent>
+        <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
+        <artifactId>WicketWebBeans-parent</artifactId>
+        <version>1.0-rc2-SNAPSHOT</version>
+    </parent>
+    <dependencies>
+        <dependency>
+            <groupId>net.sourceforge.wicketwebbeans</groupId>
+            <artifactId>wicketwebbeans</artifactId>
+            <version>1.0-rc2-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>
+

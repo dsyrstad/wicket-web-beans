@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
+    <artifactId>WicketWebBeans-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Wicket Web Beans</name>
+    <version>1.0-rc2-SNAPSHOT</version>
+    <description>
+        Wicket Web Beans (WWB) is an Apache Wicket component toolkit for displaying and editing
+        POJOs that conform to the JavaBeans specification. Web pages are automatically generated
+        based on bean properties and certain conventions. If necessary, the layout, editability, and
+        actions of these pages can be customized on an exception basis. In other words, the toolkit
+        normally does what you'd expect, but when it doesn't, you can override its behavior.
+    </description>
+    <url>http://wicketwebbeans.sourceforge.net/</url>
+    <issueManagement>
+        <system>SourceForge Tracker</system>
+        <url>http://sourceforge.net/tracker/?group_id=205206</url>
+    </issueManagement>
+    <inceptionYear>2007</inceptionYear>
+    <mailingLists>
+        <mailingList>
+            <name>Wicket Web Beans Users</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/wicketwebbeans-users</subscribe>
+            <unsubscribe>
+                http://lists.sourceforge.net/lists/listinfo/wicketwebbeans-users
+            </unsubscribe>
+            <post>wicketwebbeans-users@lists.sourceforge.net</post>
+            <archive>
+                http://sourceforge.net/mailarchive/forum.php?forum_name=wicketwebbeans-users
+            </archive>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <name>Dan Syrstad</name>
+            <organization>Visual Systems Corp.</organization>
+            <organizationUrl>http://www.vscorp.com</organizationUrl>
+            <roles>
+                <role>Lead &amp; Admin</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Mark Southern</name>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>The Apache License Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>
+            scm:svn:https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans
+        </connection>
+        <url>http://wicketwebbeans.svn.sourceforge.net/viewvc/wicketwebbeans/</url>
+    </scm>
+    <organization>
+        <name>Visual Systems Corporation</name>
+        <url>http://www.vscorp.com</url>
+    </organization>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans/tags
+                    </tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.2</version>
+            </plugin>
+        </plugins>
+    </build>
+    <modules>
+        <module>wicketwebbeans</module>
+        <module>wicketwebbeans-examples</module>
+        <module>wicketwebbeans-databinder</module>
+        <module>wicketwebbeans-databinder-examples</module>
+    </modules>
+    <repositories>
+        <repository>
+            <id>org.wicketstuff</id>
+            <name>Wicket Stuff Repository</name>
+            <url>http://wicketstuff.org/maven/repository</url>
+        </repository>
+        <repository>
+            <id>java.net.maven.1</id>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>java.net.maven.2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>wicket.contrib.wicketwebbeans.repository</id>
+            <name>Wicket Web Beans Repository</name>
+            <url>http://wicketwebbeans.sourceforge.net/repository</url>
+        </repository>
+        <repository>
+            <id>wicket.contrib.wicketwebbeans.snapshotRepository</id>
+            <name>Wicket Web Beans Snapshot Repository</name>
+            <url>http://wicketwebbeans.sourceforge.net/snapshotRepository</url>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>wicket</groupId>
+            <artifactId>wicket</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>wicket</groupId>
+            <artifactId>wicket-extensions</artifactId>
+            <version>1.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils-core</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>
+                        https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans/tags
+                    </tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>project-team</report>
+                            <report>mailing-list</report>
+                            <report>issue-tracking</report>
+                            <report>license</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+    <distributionManagement>
+        <site>
+            <id>wicketwebbeans-sourceforge-net</id>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
+        </site>
+        <repository>
+            <id>wicketwebbeans-sourceforge-net</id>
+            <name>Wicket Web Beans Release</name>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/repository</url>
+        </repository>
+        <snapshotRepository>
+            <id>wicketwebbeans-sourceforge-net</id>
+            <name>Wicket Web Beans Snapshot</name>
+            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/snapshotRepository</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
+
