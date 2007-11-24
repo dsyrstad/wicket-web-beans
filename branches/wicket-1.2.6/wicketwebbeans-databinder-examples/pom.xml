@@ -9,18 +9,18 @@
   <parent>
         <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
         <artifactId>WicketWebBeans-parent</artifactId>
-        <version>1.0-rc2-SNAPSHOT</version>
+        <version>1.0-rc2-wicket-1.2.6</version>
   </parent>
   <dependencies>  
     <dependency>
         <groupId>net.sourceforge.wicketwebbeans</groupId>
         <artifactId>wicketwebbeans</artifactId>
-        <version>1.0-rc2-SNAPSHOT</version>
+        <version>1.0-rc2-wicket-1.2.6</version>
      </dependency>
     <dependency>
         <groupId>net.sourceforge.wicketwebbeans.databinder</groupId>
         <artifactId>wicketwebbeans-databinder</artifactId>
-        <version>1.0-rc2-SNAPSHOT</version>
+        <version>1.0-rc2-wicket-1.2.6</version>
      </dependency>
   </dependencies>
 </project>
