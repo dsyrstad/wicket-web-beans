@@ -1,10 +1,10 @@
 Back: EnumeratedTypes  Next: CreatingYourOwnFieldTypes
 
-You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: wicket.contrib.webbeans.examples.tables.TableBeanPage:
+You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: net.sourceforge.wicketwebbeans.examples.tables.TableBeanPage:
 
-Embed:wicket.contrib.webbeans.examples.tables.TableBeanPage
+Embed:net.sourceforge.wicketwebbeans.examples.tables.TableBeanPage
 
-This page references two beans wicket.contrib.webbeans.examples.tables.Invoice and wicket.contrib.webbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
+This page references two beans net.sourceforge.wicketwebbeans.examples.tables.Invoice and net.sourceforge.wicketwebbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
 
 <verbatim>
 	# Table Bean Example

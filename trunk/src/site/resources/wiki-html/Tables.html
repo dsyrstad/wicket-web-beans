@@ -54,7 +54,7 @@ Back: <a href="EnumeratedTypes.html">EnumeratedTypes</a>  Next: <a href="Creatin
 <p>
 </p>
 <p>
-You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/TableBeanPage.java.html">wicket.contrib.webbeans.examples.tables.TableBeanPage</a>:</p>
+You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/TableBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.tables.TableBeanPage</a>:</p>
 <p>
 </p>
 <p>
@@ -70,11 +70,11 @@ You may encounter times when you need to manage Lists of nested beans. By defaul
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.tables;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.tables;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.ajax.AjaxRequestTarget;</font><br/>
-<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
-<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.containers.BeanForm;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.BeanMetaData;</font><br/>
 <font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.markup.html.WebPage;</font><br/>
 <font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.markup.html.form.Form;</font><br/>
 <font color="#808080">08</font>&nbsp;<font color="#ffffff"></font><br/>
@@ -124,7 +124,7 @@ You may encounter times when you need to manage Lists of nested beans. By defaul
 <p>
 </p>
 <p>
-This page references two beans <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/Invoice.java.html">wicket.contrib.webbeans.examples.tables.Invoice</a> and <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/InvoiceLine.java.html">wicket.contrib.webbeans.examples.tables.InvoiceLine</a> - the typical invoice pattern. If you look at InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
+This page references two beans <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/Invoice.java.html">net.sourceforge.wicketwebbeans.examples.tables.Invoice</a> and <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/tables/InvoiceLine.java.html">net.sourceforge.wicketwebbeans.examples.tables.InvoiceLine</a> - the typical invoice pattern. If you look at InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and PropertyChangeEvents. The enum is for the itemCode and the PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  </p>
 <p>
 </p>
 <pre>	# Table Bean Example

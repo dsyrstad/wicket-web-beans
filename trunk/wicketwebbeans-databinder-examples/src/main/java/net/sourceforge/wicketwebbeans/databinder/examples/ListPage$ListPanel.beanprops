@@ -1,0 +1,25 @@
+Contact
+{
+	label: Contacts;
+	actions: edit, delete;
+	orderBy: lastName;
+	filter: lastName, firstName;
+	confirm: "Really delete contact?";
+	props: -id,
+			action.edit{labelImage: "Edit16.gif"},
+			action.delete{labelImage: "Delete16.gif"},
+			firstName, lastName, 
+			category{fieldType: net.sourceforge.wicketwebbeans.databinder.examples.CategoryField};
+}
+Category
+{
+	label: Categories;
+	actions: edit, delete;
+	orderBy: "name desc";
+	confirm: "Really delete category?";
+	props: -id, 
+			action.edit{labelImage: "Edit16.gif"},
+			action.delete{labelImage: "Delete16.gif"},
+			name;
+}
+

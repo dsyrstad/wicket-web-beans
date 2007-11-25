@@ -54,7 +54,7 @@ Back: <a href="Tabs.html">Tabs</a> Next: <a href="NestedBeans.html">NestedBeans<
 <p>
 </p>
 <p>
-WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simply view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/contexts/ContextBeanPage.java.html">wicket.contrib.webbeans.examples.contexts.ContextBeanPage</a>:</p>
+WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simply view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/contexts/ContextBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.contexts.ContextBeanPage</a>:</p>
 <p>
 </p>
 <p>
@@ -70,13 +70,13 @@ WWB contexts allow you to develop different use cases for the same form and page
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.contexts;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.contexts;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.math.BigDecimal;</font><br/>
 <font color="#808080">04</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
-<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.simple.TestBean;</font><br/>
-<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.containers.BeanForm;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.simple.TestBean;</font><br/>
+<font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.BeanMetaData;</font><br/>
 <font color="#808080">08</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.markup.html.WebPage;</font><br/>
 <font color="#808080">09</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">10</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">ContextBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>

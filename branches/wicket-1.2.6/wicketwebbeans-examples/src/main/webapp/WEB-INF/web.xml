@@ -10,7 +10,7 @@
     <servlet-class>wicket.protocol.http.WicketServlet</servlet-class>
     <init-param>
       <param-name>applicationClassName</param-name>
-      <param-value>wicket.contrib.webbeans.examples.LauncherApplication</param-value>
+      <param-value>net.sourceforge.wicketwebbeans.examples.LauncherApplication</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
