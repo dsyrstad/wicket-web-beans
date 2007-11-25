@@ -54,7 +54,7 @@ Back: <a href="NestedBeans.html">NestedBeans</a>  Next: <a href="Tables.html">Ta
 <p>
 </p>
 <p>
-Sometimes a property represents a selection from a set of values. If the property returns a Java enum, WWB makes it really easy to present a drop-down list of choices. Let's look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/EnumBeanPage.java.html">wicket.contrib.webbeans.examples.enums.EnumBeanPage</a>: </p>
+Sometimes a property represents a selection from a set of values. If the property returns a Java enum, WWB makes it really easy to present a drop-down list of choices. Let's look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/EnumBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.enums.EnumBeanPage</a>: </p>
 <p>
 </p>
 <p>
@@ -70,10 +70,10 @@ Sometimes a property represents a selection from a set of values. If the propert
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.enums;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.enums;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.containers.BeanForm;</font><br/>
-<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.BeanMetaData;</font><br/>
 <font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.markup.html.WebPage;</font><br/>
 <font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">EnumBeanPage&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">WebPage</font><br/>
@@ -107,7 +107,7 @@ Sometimes a property represents a selection from a set of values. If the propert
 <p>
 </p>
 <p>
-The <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/Customer.java.html">wicket.contrib.webbeans.examples.enums.Customer</a> bean references a Java enum type called <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/CustomerType.java.html">wicket.contrib.webbeans.examples.enums.CustomerType</a>:</p>
+The <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/Customer.java.html">net.sourceforge.wicketwebbeans.examples.enums.Customer</a> bean references a Java enum type called <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/enums/CustomerType.java.html">net.sourceforge.wicketwebbeans.examples.enums.CustomerType</a>:</p>
 <p>
 </p>
 <p>
@@ -123,7 +123,7 @@ The <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/sr
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">1</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">wicket.contrib.webbeans.examples.enums;</font><br/>
+<font color="#808080">1</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.enums;</font><br/>
 <font color="#808080">2</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">3</font>&nbsp;<font color="#7f0055"><b>public&nbsp;enum&nbsp;</b></font><font color="#000000">CustomerType&nbsp;</font><font color="#000000">{</font><br/>
 <font color="#808080">4</font>&nbsp;<font color="#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">Consumer,&nbsp;Business,&nbsp;Government,&nbsp;International</font><br/>

@@ -37,7 +37,7 @@ Note: If you want to use the WWB API or annotations instead of beanprops, you sh
 
 A "beanprops" file is named like your Wicket properties and html files - it has the same based name as your Page (or component that the !BeanForm is embedded in). 
 
-Using the Simple Example from the previous section, let's customize it. Note that we're now using wicket.contrib.webbeans.examples.simple.CustomSimpleBeanPage (we won't reiterate the trivial HTML and Page code here). This page also has a !CustomSimpleBeanPage.beanprops file, seen below:
+Using the Simple Example from the previous section, let's customize it. Note that we're now using net.sourceforge.wicketwebbeans.examples.simple.CustomSimpleBeanPage (we won't reiterate the trivial HTML and Page code here). This page also has a !CustomSimpleBeanPage.beanprops file, seen below:
 
 <verbatim>
 	# Customize TestBean.
@@ -131,7 +131,7 @@ You can apply these annotations at various points in your code, as we'll see nex
 
 ---++ Annotations on Your Page
 
-Placing the WWB annotations on your Page (or other component containing the form) has the most direct correspondence to the beanprops file. A beanprops file is associated with your Page due to the Wicket naming convention, so placing annotations on your Page class is very similar. Let's look at an example:  wicket.contrib.webbeans.examples.annotations.AnnotationsOnPage.
+Placing the WWB annotations on your Page (or other component containing the form) has the most direct correspondence to the beanprops file. A beanprops file is associated with your Page due to the Wicket naming convention, so placing annotations on your Page class is very similar. Let's look at an example:  net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage.
 
 Here you can see that the @Bean annotation declares two tabs (see [[Tabs]]), with certain properties on each. After the tab declarations, we customize the firstName and lastName properties using the @Property annotation. Also, there is an @Action annotation on the action method that customizes the action to have a confirmation message/prompt. You can see that we have fewer files now, we've elminated the beanprops file and just have two files: the Page and the HTML. These annotations are equivalent to the beanprops file:
 
@@ -156,19 +156,19 @@ Here you can see that the @Bean annotation declares two tabs (see [[Tabs]]), wit
 
 You can also place annotations directly on your bean. This may arguably blur the line between the model and the view, but again it's your choice. If you're concerned about this, you can just use the more model-oriented @Property annotation and configure the view of your bean using annotations in your page or using beanprops file.
 
-Take a look at wicket.contrib.webbeans.examples.annotations.TestBeanWithAnnotations. These annotations functions almost exactly the same as the Page example. The only real difference is that we defined another WWB context (see [[BeanContexts]]) "someContext". We also placed the @Property annotations directly on the property methods and didn't have to specify @Bean.type (this is optional). If you look at wicket.contrib.webbeans.examples.annotations.AnnotationsOnBeanPage Page code, you'll see that the @Action annotation is still on the action method. 
+Take a look at net.sourceforge.wicketwebbeans.examples.annotations.TestBeanWithAnnotations. These annotations functions almost exactly the same as the Page example. The only real difference is that we defined another WWB context (see [[BeanContexts]]) "someContext". We also placed the @Property annotations directly on the property methods and didn't have to specify @Bean.type (this is optional). If you look at net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnBeanPage Page code, you'll see that the @Action annotation is still on the action method. 
 
 You can see that it may be more natural to place the @Property annotations directly on the bean properties so both are defined in one place. If you JDO or JPA, you can also use their @Column annotations to annotate propertys. More on that later.
 
 ---++ Annotations on a Special Metadata Class
 
-Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. wicket.contrib.webbeans.examples.annotations.TestBeanMetaData is an example of this. It has annotations similar to that of wicket.contrib.webbeans.examples.annotations.AnnotationsOnPage, but is reusable. To reuse it, simply pass the class to the !BeanMetaData constructor:
+Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. net.sourceforge.wicketwebbeans.examples.annotations.TestBeanMetaData is an example of this. It has annotations similar to that of net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage, but is reusable. To reuse it, simply pass the class to the !BeanMetaData constructor:
 
 <verbatim>
         BeanMetaData meta = new BeanMetaData(bean.getClass(), null, TestBeanMetaData.class, this, null, false);
 </verbatim>
 
-See wicket.contrib.webbeans.examples.annotations.AnnotationsOnMetaDataClassPage for the full Page code.
+See net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnMetaDataClassPage for the full Page code.
 
 ---+ WWB Java API
 
@@ -183,7 +183,7 @@ The WWB API is comprised of:
    * JTab - used to customize a tab within JBean.tabs.
    * JParameter - used to set a non-standard parameter on JBean, JAction, JProperty, and JTab. If you need to set just a single non-standard parameter, there are short-cut attributes on these annotations: paramName and paramValue. However, 90% of the time, you won't even need to set a non-standard parameter. 
 
-Here's an example of the API. It is equivalent to the annotations example (wicket.contrib.webbeans.examples.api.ApiPage):
+Here's an example of the API. It is equivalent to the annotations example (net.sourceforge.wicketwebbeans.examples.api.ApiPage):
 
 <verbatim>
         // Create the meta data

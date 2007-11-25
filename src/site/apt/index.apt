@@ -29,8 +29,7 @@ Wicket Web Beans
 * Java/Application server requirements
 
 	Wicket Web Beans requires at least Java 1.5. The application server for running your web
-	application should adhere to the servlet specification version 2.3 or newer. All
-	necessary dependencies are located in the /lib directory of this package.
+	application should adhere to the servlet specification version 2.3 or newer.
 
 Getting started
 

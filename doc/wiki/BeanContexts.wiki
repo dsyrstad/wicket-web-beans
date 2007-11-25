@@ -1,8 +1,8 @@
 Back: [[Tabs]] Next: [[NestedBeans]] 
 
-WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simply view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at wicket.contrib.webbeans.examples.contexts.ContextBeanPage:
+WWB contexts allow you to develop different use cases for the same form and page code. For example, in a simple CRUD application, you might want to allow the user to enter all fields on the add of a record, simply view the record without changing anything, and only allow certain fields to be changed on update. Let's take a look at net.sourceforge.wicketwebbeans.examples.contexts.ContextBeanPage:
 
-Embed:wicket.contrib.webbeans.examples.contexts.ContextBeanPage
+Embed:net.sourceforge.wicketwebbeans.examples.contexts.ContextBeanPage
  
 Note that we pass "view" to the !BeanMetaData constructor. This is the context (or use case) that we want. Of course, you can dynamically come up with this context in the Page constructor depending on parameters passed, etc.
  
