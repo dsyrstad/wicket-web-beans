@@ -107,7 +107,7 @@ A &quot;beanprops&quot; file is named like your Wicket properties and html files
 <p>
 </p>
 <p>
-Using the Simple Example from the previous section, let's customize it. Note that we're now using <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/simple/CustomSimpleBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.simple.CustomSimpleBeanPage</a> (we won't reiterate the trivial HTML and Page code here). This page also has a CustomSimpleBeanPage.beanprops file, seen below:</p>
+Using the Simple Example from the previous section, let's customize it. Note that we're now using <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/simple/CustomSimpleBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.simple.CustomSimpleBeanPage</a> (we won't reiterate the trivial HTML and Page code here). This page also has a CustomSimpleBeanPage.beanprops file, seen below:</p>
 <p>
 </p>
 <pre>	# Customize TestBean.
@@ -129,7 +129,7 @@ If you run this example, you'll see something like:</p>
 <p>
 </p>
 <p>
-<img alt="Eclipse:/WicketWebBeans-wicket-1.3-port/doc/wiki/images/CustomSimpleBeanScreenShot.png" src="workspace/WicketWebBeans-wicket-1.3-port/doc/wiki/images/CustomSimpleBeanScreenShot.png"/></p>
+Eclipse:/WicketWebBeans-wicket-1.3-port/doc/wiki/images/CustomSimpleBeanScreenShot.png</p>
 <p>
 </p>
 <p>
@@ -197,7 +197,7 @@ it will cause the Save button to be invoked using Ajax. Hence, the AjaxRequestTa
 <p>
 </p>
 <p>
-<img alt="Eclipse:/WicketWebBeans-wicket-1.3-port/doc/wiki/images/ActionBeanScreenshot.png" src="workspace/WicketWebBeans-wicket-1.3-port/doc/wiki/images/ActionBeanScreenshot.png"/></p>
+Eclipse:/WicketWebBeans-wicket-1.3-port/doc/wiki/images/ActionBeanScreenshot.png</p>
 <p>
 </p>
 <h1>WWB Annotations</h1>
@@ -227,7 +227,7 @@ You can apply these annotations at various points in your code, as we'll see nex
 <p>
 </p>
 <p>
-Placing the WWB annotations on your Page (or other component containing the form) has the most direct correspondence to the beanprops file. A beanprops file is associated with your Page due to the Wicket naming convention, so placing annotations on your Page class is very similar. Let's look at an example:  <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>.</p>
+Placing the WWB annotations on your Page (or other component containing the form) has the most direct correspondence to the beanprops file. A beanprops file is associated with your Page due to the Wicket naming convention, so placing annotations on your Page class is very similar. Let's look at an example:  <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>.</p>
 <p>
 </p>
 <p>
@@ -257,7 +257,7 @@ You can also place annotations directly on your bean. This may arguably blur the
 <p>
 </p>
 <p>
-Take a look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/TestBeanWithAnnotations.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestBeanWithAnnotations</a>. These annotations functions almost exactly the same as the Page example. The only real difference is that we defined another WWB context (see <a href="BeanContexts.html">BeanContexts</a>) &quot;someContext&quot;. We also placed the @Property annotations directly on the property methods and didn't have to specify @Bean.type (this is optional). If you look at <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/AnnotationsOnBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnBeanPage</a> Page code, you'll see that the @Action annotation is still on the action method. </p>
+Take a look at <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/TestBeanWithAnnotations.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestBeanWithAnnotations</a>. These annotations functions almost exactly the same as the Page example. The only real difference is that we defined another WWB context (see <a href="BeanContexts.html">BeanContexts</a>) &quot;someContext&quot;. We also placed the @Property annotations directly on the property methods and didn't have to specify @Bean.type (this is optional). If you look at <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnBeanPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnBeanPage</a> Page code, you'll see that the @Action annotation is still on the action method. </p>
 <p>
 </p>
 <p>
@@ -268,13 +268,13 @@ You can see that it may be more natural to place the @Property annotations direc
 <p>
 </p>
 <p>
-Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/TestBeanMetaData.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestBeanMetaData</a> is an example of this. It has annotations similar to that of <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>, but is reusable. To reuse it, simply pass the class to the BeanMetaData constructor:</p>
+Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/TestBeanMetaData.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestBeanMetaData</a> is an example of this. It has annotations similar to that of <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>, but is reusable. To reuse it, simply pass the class to the BeanMetaData constructor:</p>
 <p>
 </p>
 <pre>        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, TestBeanMetaData.class, this, null, false);</pre><p>
 </p>
 <p>
-See <a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/annotations/AnnotationsOnMetaDataClassPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnMetaDataClassPage</a> for the full Page code.</p>
+See <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnMetaDataClassPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnMetaDataClassPage</a> for the full Page code.</p>
 <p>
 </p>
 <h1>WWB Java API</h1>
@@ -297,7 +297,7 @@ The WWB API is comprised of:</p>
 </ul><p>
 </p>
 <p>
-Here's an example of the API. It is equivalent to the annotations example (<a href="workspace/WicketWebBeans-wicket-1.3-port/wicketwebbeans-examples/src/main/java/wicket/contrib/webbeans/examples/api/ApiPage.java.html">net.sourceforge.wicketwebbeans.examples.api.ApiPage</a>):</p>
+Here's an example of the API. It is equivalent to the annotations example (<a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/api/ApiPage.java.html">net.sourceforge.wicketwebbeans.examples.api.ApiPage</a>):</p>
 <p>
 </p>
 <pre>        // Create the meta data
