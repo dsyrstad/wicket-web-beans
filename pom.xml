@@ -253,7 +253,7 @@
     <distributionManagement>
         <site>
             <id>wicketwebbeans-sourceforge-net</id>
-            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
+            <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
         </site>
         <repository>
             <id>wicketwebbeans-sourceforge-net</id>
