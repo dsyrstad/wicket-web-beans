@@ -1,5 +1,6 @@
 Maven Notes:
 -------------
-- deploy: mvn clean package install javadoc:jar source:jar deploy
-- mvn install
-- After above, mvn site site:deploy
+- deploy: mvn clean package javadoc:jar source:jar install deploy
+- After above:
+- mvn site site:deploy
+  - Make sure to keep the parent pom <site><url>scp:, not scpexe: 

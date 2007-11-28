@@ -10,8 +10,8 @@
             <item name="Getting Started" href="wiki-html/WicketWebBeans.html" />
             <item name="Index" href="wiki-html/AAATableOfContents.html" />
         </menu>
-        <menu ref="reports" />
         <menu ref="modules"/>
+        <menu ref="reports" />
     </body>
     <poweredBy>
         <logo name="Wicket Web Beans at SourceForge" href="http://sourceforge.net/projects/wicketwebbeans"
