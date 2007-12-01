@@ -1,0 +1,148 @@
+Version: wicketwebbeans-1.0-rc2
+
+The SVN trunk now supports Wicket 1.3.0-rc1. There is also a wicket-1.2.6 branch that 
+supports the current Wicket release.  
+
+Most significant in this version is the introduction of a Java-based metadata
+API and annotations that can be used in place of, or in addition to, beanprops. In all,
+18 new features were introduced in this release. You'll want to take a look at the 
+latest Getting Started doc at http://wicketwebbeans.sourceforge.net to see the
+new features.
+
+In addition, a snapshot release of support for Databinder (http://databinder.net) is
+available.  
+
+Feature Requests
+----------------
+[1794729] Add Java API as alternative to beanprops
+    Annotations can now be placed in multiple places: on the Page component, the
+    bean, and/or a metadata class. You also always have the ability to use
+    different WWB contexts to implement different layouts with either beanprops
+    or annotations. Also, a straight Java API based on the annotation interfaces was added. 
+    In the model.api package there is JBeans, JBean, ... See the doc for more info.
+
+[1838268]  Rename packages
+    Rename packages from wicket.contrib.webbeans to net.sourceforge.wicketwebbeans
+
+[1809050] Maven Integration
+    Maven is now used for builds. Release builds are in the Maven central repository under 
+    net.sourceforge.wicketwebbeans. Snapshot builds are available from the repository located
+    at: http://wicketwebbeans.sourceforge.net/snapshotRepository 
+
+[1796306] Support AbstractDetachableModel in place of bean
+    Actually any type of IModel is now optionally supported in place of a bean in the 
+    constructor to BeanForm and BeanGridPanel. Models containing Serializable or Non-Serializable beans can
+    be attached and detached by Wicket. Even after detach()/attach(), BeanForm
+    will remain a PropertyChangeListener of the model's bean.
+
+[1833724] Allow bean and tab labels to be resolved from properties
+    Similar to how property labels are derived from properties files, allow bean and 
+    tab labels to be derived from there too.
+    
+    For beans, the property key would be:
+    
+    {SimpleBeanName}.label = ...
+    
+    For tabs, the property key would be:
+    
+    {SimpleBeanName}.tab.{tabId}.label = ...
+    tab.{tabId}.label = ...
+
+[1826995] Mark required fields
+    Visually mark fields that have the "required" parameter set true. bean.css also contains 
+    an example of how to mark the fields.
+
+[1817052] Create a Vertical Layout container
+    VerticalLayoutBeanPanel is another layout that can be used in BeanForm in place of
+    BeanGridPanel. This layout places labels on the left and fields on
+    the right in a vertical fashion. The labels and fields should form columns
+    that are evenly aligned. 
+
+[1807122] Support multiple parameter values on a custom parameter
+    Multi-valued parameters are now supported on beans and elements in
+    beanprops and annotations. This is primarily for custom parameters that
+    need multiple values.
+
+[1806424] Use Set as well as List
+    Display and Sorting of any kind of java.util.Collection is supported.
+
+[1803004] Add support for IDataProvider, ISortStateLocator
+    Enable BeanTablePanel and BeanDataTable in particular for IDataProvider
+    (for table rows) and ISortStateLocator (for sorting). IDataProvider would be more 
+    efficient than a List based model as the model data can be detached as part of the RequestCycle.
+
+[1799074] Allow customization of DateTimeField format
+    Allows date format to be set for DateTimeField via a "format" parameter. If not set there, the
+    format is derived from DateTimeField.{date|time|datetime|datetimetz}.format in Page's localizer.
+
+[1798465] Use JPA/Hibernate and JDO annotations
+    JDO and JPA @Column attributes are supported JDO Support:
+    @javax.jdo.annotations.Column:
+      -length - maximum length for Strings
+      -allowsNull - if false, field is required, else it's not.
+      -defaultValue - if non-null, the field will default to this value. 
+    
+    Additional Note JPA @Column is @javax.persistence.Column.
+    
+    For annotations to be detected, they annotation classes MUST be in the
+    classpath.
+    
+    JPA Support:
+    
+    @Column(
+      -length (for Strings)
+      -nullable - equates to required true/false
+      - if insertable and updatable are both false, property is viewOnly
+    )
+    
+    No addtional support for Hibernate annotations are required. Hibernate
+    supports JPA.
+
+[1795653] Reload beanprops on change
+    Allow beanprops files to be reloaded while app is running. How it stands
+    now I have to restart the app every time a change to beanprop file is
+    made, it can be time consuming.
+
+[1795652] Add support for Databinder/HibernateListModels
+    See [1796306]. IModels (including detachable), Lists, and
+    IModels containing Lists are now supported for the bean parameter of the
+    BeanForm constructor. This should also support Databinder's
+    HibernateListModel.
+
+[1795650] Add required field parameter
+    Added "required" parameter to AbstractField,
+    which can be used in beanprops "props:". User must call the following in
+    their action method when required validation is needed:
+    
+    if (!beanForm.validateRequired()) {
+        return;
+    }
+    
+    Note that we simply cannot use the Wicket FormComponent.isRequired()
+    because it doesn't play well with AJAX form submits. The required fields
+    start popping up as errors right away. Anyway, this gives the developer
+    control over when required field validation takes place.
+
+[1794936] Derive property labels from property files
+    Automatically finds a label in a Wicket property file, the property's key must bean of the form
+    BeanName.propertyName.label or, failing to find that, propertyName.label.
+    {BeanName.}action.actionName.label is now supported as well.
+
+[1814157] Provide a metadata provider interface
+    This can be provided now using the meta data API.
+
+[1814139] Add Ability to Set Custom Container for BeanForm
+    A "container" parameter was added to beanprops at
+    the bean level, to the @Bean annotation, and a new BeanForm constructor was
+    added that takes a container class.
+
+
+Bug Fixes
+---------
+[1821753] MetaData superclass not Serializable
+[1811839] Center action buttons that appear in grid
+[1811142] Actions with images have a black border
+[1808364] BeanActionButton looks for actions in the Page class
+[1795052] Allow empty blocks in beanprops
+[1795051] Don't require a context to be defined for a sub-bean
+[1793982] Deduce actions based on component method signatures
