@@ -10,7 +10,7 @@
     <parent>
         <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
         <artifactId>WicketWebBeans-parent</artifactId>
-        <version>1.0-rc2-wicket-1.2.6</version>
+        <version>1.0-SNAPSHOT-wicket-1.2.6</version>
     </parent>
 </project>
 
