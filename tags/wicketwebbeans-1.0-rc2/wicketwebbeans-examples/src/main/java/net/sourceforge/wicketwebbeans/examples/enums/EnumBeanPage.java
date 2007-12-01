@@ -1,0 +1,15 @@
+package net.sourceforge.wicketwebbeans.examples.enums;
+
+import net.sourceforge.wicketwebbeans.containers.BeanForm;
+import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import wicket.markup.html.WebPage;
+
+public class EnumBeanPage extends WebPage
+{
+    public EnumBeanPage()
+    {
+        Customer bean = new Customer();
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
+        add( new BeanForm("beanForm", bean, meta) );
+    }
+}
