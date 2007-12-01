@@ -1,9 +1,4 @@
 <project name="${project.name}">
-    <!--  skin>
-        <groupId>wicket.contrib.wicketwebbeans.skin</groupId>
-        <artifactId>wicketwebbeans-skin</artifactId>
-        <version>1.0-rc2SNAPSHOT</version>
-        </skin -->
     <body>
         <menu name="Documentation">
             <item name="About..." href="index.html" />
