@@ -7,7 +7,7 @@
     <artifactId>WicketWebBeans-parent</artifactId>
     <packaging>pom</packaging>
     <name>Wicket Web Beans</name>
-    <version>1.0-rc2</version>
+    <version>1.0-SNAPSHOT</version>
     <description>
         Wicket Web Beans (WWB) is an Apache Wicket component toolkit for displaying and editing
         POJOs that conform to the JavaBeans specification. Web pages are automatically generated
@@ -220,6 +220,7 @@
                 <reportSets>
                     <reportSet>
                         <reports>
+                            <report>index</report>
                             <report>dependencies</report>
                             <report>project-team</report>
                             <report>mailing-list</report>
@@ -258,13 +259,13 @@
         <repository>
             <id>wicketwebbeans-sourceforge-net</id>
             <name>Wicket Web Beans Release</name>
-            <url>scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/repository</url>
+            <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/repository</url>
         </repository>
         <snapshotRepository>
             <id>wicketwebbeans-sourceforge-net</id>
             <name>Wicket Web Beans Snapshot</name>
             <url>
-                scpexe://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/snapshotRepository
+                scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/snapshotRepository
             </url>
         </snapshotRepository>
     </distributionManagement>
