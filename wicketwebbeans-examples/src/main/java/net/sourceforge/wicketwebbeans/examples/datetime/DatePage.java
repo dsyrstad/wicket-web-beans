@@ -2,8 +2,7 @@ package net.sourceforge.wicketwebbeans.examples.datetime;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
-
-import org.apache.wicket.markup.html.WebPage;
+import wicket.markup.html.WebPage;
 
 public class DatePage extends WebPage
 {

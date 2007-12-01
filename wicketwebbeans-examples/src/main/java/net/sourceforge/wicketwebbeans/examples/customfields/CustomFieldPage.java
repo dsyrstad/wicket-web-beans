@@ -3,8 +3,7 @@ package net.sourceforge.wicketwebbeans.examples.customfields;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ComponentRegistry;
-
-import org.apache.wicket.markup.html.WebPage;
+import wicket.markup.html.WebPage;
 
 public class CustomFieldPage extends WebPage
 {

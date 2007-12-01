@@ -19,7 +19,6 @@ package net.sourceforge.wicketwebbeans.model.beanprops;
 
 import java.util.List;
 
-import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.fields.BeanGridField;
 import net.sourceforge.wicketwebbeans.fields.BeanInlineField;
 import net.sourceforge.wicketwebbeans.fields.EmptyField;
@@ -28,8 +27,9 @@ import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.util.tester.WicketTester;
+import junit.framework.TestCase;
+import wicket.Page;
+import wicket.util.tester.WicketTester;
 
 /**
  * Tests BeanMetaData, ElementMetaData, TabMetaData, and BeanPropsParser. <p>

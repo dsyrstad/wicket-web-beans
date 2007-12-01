@@ -34,33 +34,32 @@ import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
-import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.string.Strings;
-
+import wicket.Component;
+import wicket.MarkupContainer;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.ajax.IAjaxCallDecorator;
+import wicket.ajax.form.AjaxFormValidatingBehavior;
+import wicket.behavior.AbstractBehavior;
+import wicket.behavior.IBehavior;
+import wicket.behavior.SimpleAttributeModifier;
+import wicket.extensions.markup.html.tabs.AbstractTab;
+import wicket.extensions.markup.html.tabs.ITab;
+import wicket.extensions.markup.html.tabs.TabbedPanel;
+import wicket.markup.ComponentTag;
+import wicket.markup.html.WebMarkupContainer;
+import wicket.markup.html.basic.Label;
+import wicket.markup.html.form.Form;
+import wicket.markup.html.form.FormComponent;
+import wicket.markup.html.form.HiddenField;
+import wicket.markup.html.form.SubmitLink;
+import wicket.markup.html.list.ListItem;
+import wicket.markup.html.list.ListView;
+import wicket.markup.html.panel.FeedbackPanel;
+import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
+import wicket.model.Model;
+import wicket.model.PropertyModel;
+import wicket.util.string.Strings;
 
 /**
  * Generic component for presenting a bean form. Supports the following parameters: <p>
@@ -250,7 +249,7 @@ public class BeanForm extends Panel
         
         boolean isList = (bean instanceof List);
         if (bean instanceof IModel) {
-            Object modelBean = ((IModel)bean).getObject();
+            Object modelBean = ((IModel)bean).getObject(this);
             isList = (modelBean instanceof List);
         }
         
@@ -333,7 +332,7 @@ public class BeanForm extends Panel
                 // Needs to be part of the page for errors.
                 getPage().add(panel);
                 // Cause ListViews to be populated.
-                panel.beforeRender();
+                panel.internalAttach();
                 panel.visitChildren(AbstractField.class, validator);
                 getPage().remove(panel);
             }
@@ -517,7 +516,7 @@ public class BeanForm extends Panel
         }
 
         @Override
-        public void onSubmit()
+        protected void onSubmit()
         {
             if (tabbedPanel.getSelectedTab() != index) {
                 tabbedPanel.setSelectedTab(index);

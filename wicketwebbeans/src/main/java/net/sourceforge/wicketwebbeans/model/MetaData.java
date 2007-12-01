@@ -25,8 +25,8 @@ import java.util.Set;
 
 import net.sourceforge.wicketwebbeans.util.WicketUtil;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.util.string.Strings;
+import wicket.Component;
+import wicket.util.string.Strings;
 
 /**
  * Common metadata methods. <p>

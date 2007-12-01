@@ -7,9 +7,9 @@ import java.util.List;
 import net.sourceforge.wicketwebbeans.fields.EnumField;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IModel;
+import wicket.Component;
+import wicket.model.AbstractReadOnlyModel;
+import wicket.model.IModel;
 
 public class ModelField extends EnumField
 {
@@ -31,7 +31,7 @@ public class ModelField extends EnumField
     private final class ValuesModel extends AbstractReadOnlyModel 
     {
         @Override
-        public Object getObject()
+        public Object getObject(Component component)
         {
             // Retrieve the value of the dependent property.
             Make make = (Make)getDependentPropertyBean(makeProp);

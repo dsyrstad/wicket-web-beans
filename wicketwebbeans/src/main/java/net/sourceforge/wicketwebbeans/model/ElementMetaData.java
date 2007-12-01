@@ -22,12 +22,11 @@ import java.util.Iterator;
 
 import net.sourceforge.wicketwebbeans.fields.ImageLabel;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.util.lang.PropertyResolver;
-
+import wicket.Component;
+import wicket.behavior.AttributeAppender;
+import wicket.markup.html.basic.Label;
+import wicket.model.Model;
+import wicket.util.lang.PropertyResolver;
 
 /**
  * Represents the metadata for a single property of a bean or an action.

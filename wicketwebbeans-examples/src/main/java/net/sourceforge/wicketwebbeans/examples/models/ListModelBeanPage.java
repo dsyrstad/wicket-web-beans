@@ -8,9 +8,9 @@ import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.examples.SerializableBean;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import wicket.markup.html.WebPage;
+import wicket.model.IModel;
+import wicket.model.Model;
 
 public class ListModelBeanPage extends WebPage
 {

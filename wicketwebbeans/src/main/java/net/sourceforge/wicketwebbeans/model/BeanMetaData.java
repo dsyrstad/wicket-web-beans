@@ -50,15 +50,15 @@ import net.sourceforge.wicketwebbeans.model.api.JBeans;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.util.string.Strings;
 
+import wicket.Component;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.behavior.AttributeAppender;
+import wicket.markup.html.form.Form;
+import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
+import wicket.model.Model;
+import wicket.util.string.Strings;
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
@@ -1278,7 +1278,7 @@ public class BeanMetaData extends MetaData implements Serializable
             return;
         }
 
-        Object bean = beanModel.getObject();
+        Object bean = beanModel.getObject(null);
         if (bean != null) {
             try {
                 getRemovePropertyChangeListenerMethod().invoke(bean, new Object[] { listener });

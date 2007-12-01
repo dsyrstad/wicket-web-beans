@@ -20,9 +20,8 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
+import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
 
 
 /**

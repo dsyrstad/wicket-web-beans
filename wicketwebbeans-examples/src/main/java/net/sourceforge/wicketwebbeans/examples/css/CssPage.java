@@ -6,11 +6,9 @@ import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 import net.sourceforge.wicketwebbeans.model.api.JBeans;
 import net.sourceforge.wicketwebbeans.model.api.JProperty;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-
+import wicket.ajax.AjaxRequestTarget;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.form.Form;
 
 public class CssPage extends WebPage
 {

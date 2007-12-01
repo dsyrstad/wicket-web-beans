@@ -29,30 +29,26 @@ import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
+import wicket.Component;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.ajax.markup.html.navigation.paging.AjaxPagingNavigator;
+import wicket.extensions.markup.html.repeater.data.IDataProvider;
+import wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
+import wicket.extensions.markup.html.repeater.data.table.IColumn;
+import wicket.extensions.markup.html.repeater.data.table.NavigatorLabel;
+import wicket.extensions.markup.html.repeater.refreshing.Item;
+import wicket.extensions.markup.html.repeater.util.SortParam;
+import wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import wicket.markup.ComponentTag;
+import wicket.markup.html.form.Form;
+import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
+import wicket.model.Model;
 
 /**
  * Displays a list of beans as an editable or viewable table. <p>
  * 
  * @author Dan Syrstad
- * @author Mark Southern (mrsouthern)
  */
 public class BeanTablePanel extends Panel
 {
@@ -97,7 +93,7 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, ISortableDataProvider dataProvider, BeanMetaData metaData, boolean viewOnly, int numRows)
+    public BeanTablePanel(String id, SortableDataProvider dataProvider, BeanMetaData metaData, boolean viewOnly, int numRows)
     {
           this(id, dataProvider, dataProvider, metaData, viewOnly, numRows);
     }
@@ -120,10 +116,6 @@ public class BeanTablePanel extends Panel
 
         for (ElementMetaData element : metaData.getDisplayedElements()) {
             columns.add(new BeanElementColumn(element, this) );
-        }
-        
-        if (columns.isEmpty()) {
-            columns.add( new EmptyColumn() );
         }
 
         final BeanDataTable table = new BeanDataTable("t", columns, dataProvider, 
@@ -166,7 +158,7 @@ public class BeanTablePanel extends Panel
         
         List getList()
         {
-            Collection collection = (Collection)listModel.getObject();
+            Collection collection = (Collection)listModel.getObject(null);
             if (collection == null) {
                 return new ArrayList();
             }
@@ -184,7 +176,7 @@ public class BeanTablePanel extends Panel
             List list = getList();
             final SortParam sortParam = getSort();
             if (sortParam != null) {
-                if (list != listModel.getObject() || // Synthesized list. Always sort. 
+                if (list != listModel.getObject(null) || // Synthesized list. Always sort. 
                     lastSortParam == null ||             // Haven't sorted yet.
                     !lastSortParam.getProperty().equals(sortParam.getProperty()) ||  // Sort params changed.
                      lastSortParam.isAscending() != sortParam.isAscending()) {
@@ -200,7 +192,7 @@ public class BeanTablePanel extends Panel
 
         public int size()
         {
-            Collection collection = (Collection)listModel.getObject();
+            Collection collection = (Collection)listModel.getObject(null);
             if (collection == null) {
                 return 0;
             }
@@ -209,7 +201,7 @@ public class BeanTablePanel extends Panel
         }
 
         /**
-         * @see org.apache.wicket.extensions.markup.html.repeater.data.IDataProvider#model(java.lang.Object)
+         * @see wicket.extensions.markup.html.repeater.data.IDataProvider#model(java.lang.Object)
          */
         public IModel model(Object object)
         {
@@ -258,7 +250,7 @@ public class BeanTablePanel extends Panel
 
         public void populateItem(Item cellItem, String componentId, IModel rowModel)
         {
-            Object bean = rowModel.getObject();
+            Object bean = rowModel.getObject(null);
             Component component;
             BeanMetaData beanMetaData = element.getBeanMetaData();
             if (element.isAction()) {
@@ -271,11 +263,6 @@ public class BeanTablePanel extends Panel
             }
 
             cellItem.add(component);
-        }
-        
-        public void detach()
-        {
-            
         }
     }
     
@@ -317,33 +304,6 @@ public class BeanTablePanel extends Panel
             }
             
             return rc;
-        }
-    }
-    
-    private static final class EmptyColumn implements IColumn
-    {
-        public Component getHeader(String id)
-        {
-            return new Label(id, "");
-        }
-
-        public String getSortProperty()
-        {
-            return "";
-        }
-
-        public boolean isSortable()
-        {
-            return false;
-        }
-
-        public void populateItem(Item cellItem, String componentId, IModel rowModel)
-        {
-            cellItem.add( new Label(componentId, "") );
-        }
-
-        public void detach()
-        {
         }
     }
 }

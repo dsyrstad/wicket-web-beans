@@ -29,8 +29,7 @@ import net.sourceforge.wicketwebbeans.annotations.Parameter;
 import net.sourceforge.wicketwebbeans.annotations.Property;
 import net.sourceforge.wicketwebbeans.annotations.Tab;
 
-import org.apache.wicket.markup.html.panel.Panel;
-
+import wicket.markup.html.panel.Panel;
 
 /**
  * Bean API implementation. Provides information from the {@link Bean} annotation in a Java API form. <p>

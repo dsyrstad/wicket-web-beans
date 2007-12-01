@@ -20,20 +20,19 @@ package net.sourceforge.wicketwebbeans.actions;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.feedback.IFeedback;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.SubmitLink;
-import org.apache.wicket.markup.html.panel.Panel;
+import wicket.AttributeModifier;
+import wicket.Component;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.ajax.IAjaxCallDecorator;
+import wicket.ajax.markup.html.form.AjaxSubmitLink;
+import wicket.behavior.SimpleAttributeModifier;
+import wicket.feedback.IFeedback;
+import wicket.markup.ComponentTag;
+import wicket.markup.html.WebMarkupContainer;
+import wicket.markup.html.basic.Label;
+import wicket.markup.html.form.Form;
+import wicket.markup.html.form.SubmitLink;
+import wicket.markup.html.panel.Panel;
 
 /**
  * Bean Form submit button. <p>
@@ -140,7 +139,7 @@ public class BeanSubmitButton extends Panel
         else {
             button = new SubmitLink("button", form) {
                 @Override
-                public void onSubmit()
+                protected void onSubmit()
                 {
                     BeanSubmitButton.this.onAction(null, getForm(), bean);
                 }
@@ -174,12 +173,12 @@ public class BeanSubmitButton extends Panel
     
     /**
      * {@inheritDoc}
-     * @see wicket.Component#onBeforeRender()
+     * @see wicket.Component#onAttach()
      */
     @Override
-    protected void onBeforeRender()
+    protected void onAttach()
     {
-        super.onBeforeRender();
+        super.onAttach();
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {
             // Only set this if we're in a BeanForm.

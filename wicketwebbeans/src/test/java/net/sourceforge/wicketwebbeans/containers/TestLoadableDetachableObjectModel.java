@@ -17,7 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.containers;
 
-import org.apache.wicket.model.LoadableDetachableModel;
+import wicket.model.LoadableDetachableModel;
 
 /**
  * A LoadableDetachableModel that returns a single bean that is not Serializable. <p>
@@ -38,7 +38,7 @@ public class TestLoadableDetachableObjectModel extends LoadableDetachableModel
 
     /** 
      * {@inheritDoc}
-     * @see org.apache.wicket.model.LoadableDetachableModel#load()
+     * @see wicket.model.LoadableDetachableModel#load()
      */
     @Override
     protected Object load()

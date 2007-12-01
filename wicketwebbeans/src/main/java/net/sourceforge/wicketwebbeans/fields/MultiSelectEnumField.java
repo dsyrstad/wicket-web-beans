@@ -23,8 +23,8 @@ import java.util.Arrays;
 
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.model.IModel;
+import wicket.markup.html.form.ListMultipleChoice;
+import wicket.model.IModel;
 
 
 /**

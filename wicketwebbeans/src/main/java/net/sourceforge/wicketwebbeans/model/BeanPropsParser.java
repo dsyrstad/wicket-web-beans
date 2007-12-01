@@ -123,9 +123,9 @@ public class BeanPropsParser
     }
     
     /**
-     * Parses the stream given on construction and returns the BeanASTs.
+     * Parses the stream given on construction to a list of BeanAST.
      *
-     * @return a list of BeanASTs.
+     * @return a list of BeanAST.
      * 
      * @throws RuntimeException if a parsing error occurs.
      */

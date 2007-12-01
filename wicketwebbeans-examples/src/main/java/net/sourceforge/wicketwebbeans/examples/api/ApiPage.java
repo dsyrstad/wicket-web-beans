@@ -1,18 +1,15 @@
 package net.sourceforge.wicketwebbeans.examples.api;
 
 import static net.sourceforge.wicketwebbeans.annotations.Property.EMPTY;
-
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.api.JAction;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 import net.sourceforge.wicketwebbeans.model.api.JProperty;
 import net.sourceforge.wicketwebbeans.model.api.JTab;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-
+import wicket.ajax.AjaxRequestTarget;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.form.Form;
 
 public class ApiPage extends WebPage
 {

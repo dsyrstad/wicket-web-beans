@@ -38,20 +38,19 @@ import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
-import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
-
+import wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
+import wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
+import wicket.extensions.markup.html.repeater.data.IDataProvider;
+import wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
+import wicket.extensions.markup.html.repeater.data.table.DataTable;
+import wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
+import wicket.extensions.markup.html.repeater.data.table.IColumn;
+import wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
+import wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
+import wicket.extensions.markup.html.repeater.refreshing.Item;
+import wicket.extensions.markup.html.repeater.refreshing.OddEvenItem;
+import wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import wicket.model.IModel;
 
 /**
  * An implementation of the DataTable that aims to solve the 90% usecase by
@@ -78,7 +77,7 @@ public class BeanDataTable extends DataTable
     private static final long serialVersionUID = 1L;
 
     private BeanMetaData beanMetaData;
-    
+
     /**
      * Constructor
      * 
@@ -91,7 +90,7 @@ public class BeanDataTable extends DataTable
      * @param rowsPerPage
      *            number of rows per page
      */
-    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage, BeanMetaData metaData)
+    public BeanDataTable(String id, final List<IColumn>columns, SortableDataProvider dataProvider, int rowsPerPage, BeanMetaData metaData)
     {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage, metaData);
     }
@@ -144,7 +143,7 @@ public class BeanDataTable extends DataTable
     protected Item newRowItem(String id, int index, IModel model)
     {
         Item item = new OddEvenItem(id, index, model);
-        beanMetaData.applyCss(model.getObject(), beanMetaData, item);
+        beanMetaData.applyCss(model.getObject(this), beanMetaData, item);
         return item;
     }
 }

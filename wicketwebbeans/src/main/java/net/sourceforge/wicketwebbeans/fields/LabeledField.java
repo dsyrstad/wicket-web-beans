@@ -19,8 +19,8 @@
  */
 package net.sourceforge.wicketwebbeans.fields;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.Panel;
+import wicket.Component;
+import wicket.markup.html.panel.Panel;
 
 
 /**

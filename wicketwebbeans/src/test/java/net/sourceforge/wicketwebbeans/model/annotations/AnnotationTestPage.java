@@ -25,10 +25,9 @@ import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.fields.BeanGridField;
 import net.sourceforge.wicketwebbeans.fields.BeanInlineField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.form.Form;
 
 @Beans({
     @Bean(type = AnnotationTestBean.class, label = "My ${TestBean.title} Title",

@@ -20,11 +20,10 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
+import wicket.markup.ComponentTag;
+import wicket.markup.html.form.TextArea;
+import wicket.markup.html.form.TextField;
+import wicket.model.IModel;
 
 
 /**

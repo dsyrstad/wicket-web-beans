@@ -22,8 +22,7 @@ package net.sourceforge.wicketwebbeans.fields;
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.model.IModel;
+import wicket.model.IModel;
 
 
 /**
@@ -56,9 +55,9 @@ public class BeanWithParentLabelField extends AbstractField
             }
         }
         
-        if (!viewOnly && model.getObject() == null) {
+        if (!viewOnly && model.getObject(this) == null) {
             // Create a blank instance for editing.
-            model.setObject( metaData.createInstance() );
+            model.setObject(this, metaData.createInstance() );
         }
 
         add( new BeanGridPanel("p", model, beanMetaData, null, false) );

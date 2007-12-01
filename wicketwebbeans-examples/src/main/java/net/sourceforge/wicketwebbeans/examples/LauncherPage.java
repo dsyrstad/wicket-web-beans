@@ -1,6 +1,6 @@
 package net.sourceforge.wicketwebbeans.examples;
 
-import org.apache.wicket.markup.html.WebPage;
+import wicket.markup.html.WebPage;
 
 /**
  * @author Dan Syrstad

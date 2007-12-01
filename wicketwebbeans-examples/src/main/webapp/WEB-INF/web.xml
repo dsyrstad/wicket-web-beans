@@ -5,19 +5,20 @@
 
 <web-app>
 
-  <filter>
-    <filter-name>WebBeans</filter-name>
-    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+  <servlet>
+    <servlet-name>WebBeans</servlet-name>
+    <servlet-class>wicket.protocol.http.WicketServlet</servlet-class>
     <init-param>
       <param-name>applicationClassName</param-name>
       <param-value>net.sourceforge.wicketwebbeans.examples.LauncherApplication</param-value>
     </init-param>
-  </filter>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
   
-  <filter-mapping>
-    <filter-name>WebBeans</filter-name>
+  <servlet-mapping>
+    <servlet-name>WebBeans</servlet-name>
     <url-pattern>/WebBeans/*</url-pattern>
-  </filter-mapping>
+  </servlet-mapping>
   
 </web-app>
   

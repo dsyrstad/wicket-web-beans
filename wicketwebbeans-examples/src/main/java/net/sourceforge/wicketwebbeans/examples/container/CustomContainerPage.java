@@ -4,9 +4,7 @@ import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.containers.VerticalLayoutBeanPanel;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
-
-import org.apache.wicket.markup.html.WebPage;
-
+import wicket.markup.html.WebPage;
 
 @Bean(type = TestBean.class, container = VerticalLayoutBeanPanel.class)
 public class CustomContainerPage extends WebPage

@@ -7,13 +7,10 @@ import net.sourceforge.wicketwebbeans.annotations.Property;
 import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-
+import wicket.ajax.AjaxRequestTarget;
 import static net.sourceforge.wicketwebbeans.annotations.Property.EMPTY;
-
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.form.Form;
 
 public class AnnotationsOnBeanPage extends WebPage
 {

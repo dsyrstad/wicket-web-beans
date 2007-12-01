@@ -2,10 +2,9 @@ package net.sourceforge.wicketwebbeans.examples.tables;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
+import wicket.ajax.AjaxRequestTarget;
+import wicket.markup.html.WebPage;
+import wicket.markup.html.form.Form;
 
 public class TableBeanPage extends WebPage
 {

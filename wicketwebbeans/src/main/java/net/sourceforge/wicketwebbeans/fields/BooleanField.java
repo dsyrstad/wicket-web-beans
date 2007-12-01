@@ -20,9 +20,8 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.model.IModel;
+import wicket.markup.html.form.CheckBox;
+import wicket.model.IModel;
 
 
 /**

@@ -23,10 +23,10 @@ import java.util.Arrays;
 
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IModel;
+import wicket.markup.html.basic.Label;
+import wicket.markup.html.form.DropDownChoice;
+import wicket.markup.html.panel.Fragment;
+import wicket.model.IModel;
 
 
 /**

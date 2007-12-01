@@ -20,7 +20,7 @@ import java.util.List;
 
 
 /**
- * Bean AST for BeanPropsParser. <p>
+ * BeanAST AST for BeanPropsParser. <p>
  * 
  * @author Dan Syrstad 
  */

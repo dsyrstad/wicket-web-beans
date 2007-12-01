@@ -28,8 +28,7 @@ import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 
-import org.apache.wicket.markup.html.panel.Panel;
-
+import wicket.markup.html.panel.Panel;
 
 /**
  * Top or second-level annotation describing a bean and, optionally, its context. <p>

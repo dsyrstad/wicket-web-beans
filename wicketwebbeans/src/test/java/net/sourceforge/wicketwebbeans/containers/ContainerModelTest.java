@@ -20,23 +20,20 @@ package net.sourceforge.wicketwebbeans.containers;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.fields.InputField;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.Page;
-import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
-import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.util.tester.ITestPageSource;
-import org.apache.wicket.util.tester.WicketTester;
-
+import junit.framework.TestCase;
+import wicket.Component;
+import wicket.Page;
+import wicket.extensions.markup.html.repeater.data.grid.DataGridView;
+import wicket.extensions.markup.html.repeater.refreshing.OddEvenItem;
+import wicket.model.IModel;
+import wicket.model.Model;
+import wicket.util.tester.ITestPageSource;
+import wicket.util.tester.WicketTester;
 
 /**
  * Tests Models with bean containers. <p>
@@ -66,7 +63,7 @@ public class ContainerModelTest extends TestCase
         
 
         TestLoadableDetachableObjectModel nestedModel = new TestLoadableDetachableObjectModel();
-        BeanMetaData meta = new BeanMetaData(nestedModel.getObject().getClass(), null, page, null, false);
+        BeanMetaData meta = new BeanMetaData(nestedModel.getObject(page).getClass(), null, page, null, false);
         BeanForm form = new BeanForm("beanForm", nestedModel, meta);
 
         page.add(form);
@@ -101,19 +98,18 @@ public class ContainerModelTest extends TestCase
         assertFalse(nestedModel.isAttached());
 
         // Should attach the nested model's object.
-        nameFieldModel.getObject();
+        nameFieldModel.getObject(form);
         
         assertTrue(nestedModel.isAttached());
         
-        NonSerializableBean firstBean = (NonSerializableBean)nestedModel.getObject(); 
+        NonSerializableBean firstBean = (NonSerializableBean)nestedModel.getObject(null); 
         
         // Make the first bean detach. This also tests that the model is attached somewhere below the page.
-        //page.detachModels(); // TODO 1.3 doesn't work
-        detachModels(page);
+        page.detachModels();
         
         assertFalse(nestedModel.isAttached());
         
-        NonSerializableBean secondBean = (NonSerializableBean)nestedModel.getObject(); 
+        NonSerializableBean secondBean = (NonSerializableBean)nestedModel.getObject(null); 
 
         // Should be different and attached now.
         assertNotSame(firstBean, secondBean);
@@ -121,42 +117,24 @@ public class ContainerModelTest extends TestCase
         
         // Assert PropertyChangeListener on BeanForm is called.
         assertFalse( form.isComponentRefreshNeeded() );
-        nameFieldModel.setObject("test");
+        nameFieldModel.setObject(nameField, "test");
         assertTrue( form.isComponentRefreshNeeded() );
 
         // Clear the refresh components.
         form.clearRefreshComponents();
         
         // Assert PropertyChangeListener on BeanForm is called after detach()/attach().
-        //page.detachModels(); // TODO 1.3 doesn't work
-        detachModels(page);
+        page.detachModels();
         assertFalse(nestedModel.isAttached());
         
         assertFalse( form.isComponentRefreshNeeded() );
-        nameFieldModel.setObject("test");
+        nameFieldModel.setObject(nameField, "test");
         assertTrue( form.isComponentRefreshNeeded() );
 
         // Clear the refresh components.
         form.clearRefreshComponents();
     }
 
-    private void detachModels(Page page)
-    {
-        page.visitChildren(new IVisitor() {
-            public Object component(Component component)
-            {
-                try {
-                    // detach any models of the component
-                    component.detachModels();
-                }
-                catch (Exception e) {
-                    // Ignore
-                }
-                
-                return IVisitor.CONTINUE_TRAVERSAL;
-            }
-        });
-    }
 
     /**
      * Tests BeanForm with an IModel that represents a List. Form should use a BeanTablePanel rather
@@ -244,12 +222,12 @@ public class ContainerModelTest extends TestCase
             String firstCellPath = rowPath + ":cells:1:cell";
             tester.assertComponent(firstCellPath, InputField.class);
             Component nameField = tester.getComponentFromLastRenderedPage(firstCellPath);
-            assertEquals(beans[i - 1].getName(), nameField.getModel().getObject());
+            assertEquals(beans[i - 1].getName(), nameField.getModel().getObject(page));
 
             String secondCellPath = rowPath + ":cells:2:cell";
             tester.assertComponent(secondCellPath, InputField.class);
             Component serailNumField = tester.getComponentFromLastRenderedPage(secondCellPath);
-            assertEquals(beans[i - 1].getSerialNumber(), serailNumField.getModel().getObject());
+            assertEquals(beans[i - 1].getSerialNumber(), serailNumField.getModel().getObject(page));
         }
     }
 }

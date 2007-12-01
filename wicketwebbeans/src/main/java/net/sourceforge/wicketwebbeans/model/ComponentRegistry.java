@@ -43,13 +43,13 @@ import net.sourceforge.wicketwebbeans.fields.JavaEnumField;
 import net.sourceforge.wicketwebbeans.fields.MultiSelectEnumField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import wicket.Component;
+import wicket.MarkupContainer;
+import wicket.Component.IVisitor;
+import wicket.markup.html.basic.Label;
+import wicket.markup.html.form.FormComponent;
+import wicket.model.IModel;
+import wicket.model.Model;
 
 /**
  * Registers field and viewer components. 

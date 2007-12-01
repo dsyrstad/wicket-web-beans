@@ -25,21 +25,23 @@ import java.util.List;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 import net.sourceforge.wicketwebbeans.model.NonJavaEnum;
 
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.util.string.Strings;
-
+import wicket.markup.ComponentTag;
+import wicket.markup.MarkupStream;
+import wicket.markup.html.form.DropDownChoice;
+import wicket.markup.html.form.IChoiceRenderer;
+import wicket.markup.html.panel.Fragment;
+import wicket.model.IModel;
+import wicket.model.Model;
+import wicket.util.string.Strings;
 
 /**
  * A field for enumerated types. Presents the values as a drop-down list.
  * Accepts a parameter of "default" indicating the default choice if the current selection is null.
+ * The default value must match one of the enum.name() values if a Java enum or NonJavaEnum is used. If a {@link IChoiceRenderer}
+ * is used, the default value must match one of those returned by {@link IChoiceRenderer#getIdValue(Object, int)}.
  * 
  * @author Dan Syrstad
+ * @author Mark Southern (mrsouthern)
  */
 abstract public class EnumField extends AbstractField
 {

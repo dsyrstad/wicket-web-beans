@@ -2,8 +2,7 @@ package net.sourceforge.wicketwebbeans.examples;
 
 
 import net.sourceforge.wicketwebbeans.examples.complex.ExpPage2;
-
-import org.apache.wicket.protocol.http.WebApplication;
+import wicket.protocol.http.WebApplication;
 
 public class LauncherApplication extends WebApplication {
 

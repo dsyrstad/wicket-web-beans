@@ -22,12 +22,11 @@ package net.sourceforge.wicketwebbeans.fields;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
+import wicket.behavior.SimpleAttributeModifier;
+import wicket.markup.html.form.FormComponent;
+import wicket.markup.html.panel.Panel;
+import wicket.model.IModel;
+import wicket.util.string.Strings;
 
 
 /**
@@ -112,12 +111,12 @@ abstract public class AbstractField extends Panel implements Field
     
     /**
      * {@inheritDoc}
-     * @see org.apache.wicket.Component#onAttach()
+     * @see wicket.Component#onAttach()
      */
     @Override
-    protected void onBeforeRender()
+    protected void onAttach()
     {
-        super.onBeforeRender();
+        super.onAttach();
         // If we're part of a BeanForm, register ourself with it.
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {

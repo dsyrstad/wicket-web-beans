@@ -17,7 +17,7 @@
 package net.sourceforge.wicketwebbeans.model.beanprops;
 
 
-import org.apache.wicket.markup.html.WebPage;
+import wicket.markup.html.WebPage;
 
 public class BeanMetaDataTestNoPropsPage extends WebPage
 {
