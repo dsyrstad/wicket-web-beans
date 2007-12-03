@@ -4,6 +4,9 @@
 - Create release notes
 - Tag with Maven version #
 - Update web site (see Maven notes)
+
+- mvn clean ; zip full source tree: zip -r /tmp/wicketwebbeans-fullsrc-1.0-rc2.zip .
+
 - Upload bin/src/javadoc to SF.net
 - Change pom version #'s to next version + SNAPSHOT
 - Announce to wicketwebbeans mailing list, wicket-users, SF news, Freshmeat
