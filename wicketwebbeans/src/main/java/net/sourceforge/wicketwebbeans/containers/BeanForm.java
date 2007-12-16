@@ -59,6 +59,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 
 
@@ -77,6 +78,10 @@ import org.apache.wicket.util.string.Strings;
  *   tabMetaData = the tab metadata
  *   </li>
  * </ul>
+ * 
+ * You can override default error message for required field.<br>
+ * Property key of the message: <em>wicketwebbeans.BeanForm.fieldIsRequired</em><br>
+ * Variable in the message which will be substituted for field label: <em>${fieldLabel}</em>
  *
  * @author Dan Syrstad
  */
@@ -688,13 +693,21 @@ public class BeanForm extends Panel
      */
     private static final class RequiredFieldValidator implements IVisitor 
     {
+    	private class FieldLabel implements Serializable{
+    		String fieldLabel;
+    		public FieldLabel(String fieldLabel){this.fieldLabel = fieldLabel;}
+			public String getFieldLabel() {return fieldLabel;}
+			public void setFieldLabel(String fieldLabel) {this.fieldLabel = fieldLabel;}
+    	}
         boolean errorsFound = false;
         
         public Object component(Component component)
         {
             AbstractField field = (AbstractField)component;
             if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
-                field.error(field.getElementMetaData().getLabel() + " is required."); // TODO I18N
+            	FieldLabel fieldName = new FieldLabel(field.getElementMetaData().getLabel());
+            	StringResourceModel labelModel = new StringResourceModel("wicketwebbeans.BeanForm.fieldIsRequired", field.getElementMetaData().getBeanMetaData().getComponent(), new Model(fieldName), "${fieldLabel} is required");
+            	field.error(labelModel.getObject().toString());
                 errorsFound = true;
             }
             
