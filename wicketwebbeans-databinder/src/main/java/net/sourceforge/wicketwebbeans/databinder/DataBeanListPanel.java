@@ -41,86 +41,87 @@ import org.hibernate.classic.Session;
  * @author Mark Southern (mrsouthern)
  */
 public abstract class DataBeanListPanel extends Panel
-{    
+{
     private BeanTablePanel panel;
     private BeanMetaData metaData;
-    
-    public DataBeanListPanel(String id, Class<?> beanClass, ICriteriaBuilder criteriaBuilder)
-    {
-    	this(id,beanClass.getName(),criteriaBuilder);
-    }
-    
+
     public DataBeanListPanel(String id, Class<?> beanClass)
     {
-    	this(id,beanClass.getName(),null);
+        this(id, beanClass, null);
     }
-    
-    public DataBeanListPanel(String id, String beanClass)
+
+    public DataBeanListPanel(String id, String beanClassName) throws ClassNotFoundException
     {
-    	this(id,beanClass,null);
+        this(id, beanClassName, null);
+    }
+
+    public DataBeanListPanel(String id, String beanClassName, ICriteriaBuilder criteriaBuilder) throws ClassNotFoundException 
+    {
+        this(id, Class.forName(beanClassName), criteriaBuilder);
     }
     
     /**
      *
      * @param beanClass the fully qualified class name of the bean to be edited 
      */
-	public DataBeanListPanel(String id, String beanClass, ICriteriaBuilder criteriaBuilder)
-	{
-	    super(id);
-	    try
-	    {  
-	        Class<?> clazz = Class.forName(beanClass);
-	        DataStaticService.getHibernateSession().beginTransaction();
-    		metaData = new BeanMetaData(clazz, null, this, null, true);
-    		Label label = new Label("label", new Model(metaData.getParameter("label")));
-    		add(label);
+    public DataBeanListPanel(String id, Class<?> beanClass, ICriteriaBuilder criteriaBuilder)
+    {
+        super(id);
 
-            SearchPanel search = newSearchPanel("search", new Model(null), panel);
-            add(search);
-    		
-            DataSorter sorter;
-            String orderBy = metaData.getParameter("orderBy");
-            if( orderBy != null && orderBy.contains(" ") )
-            {
-            	String[] items = orderBy.split("\\s+");
-            	boolean asc = ( "desc".equalsIgnoreCase(items[1]) ? false : true );
-            		sorter = new DataSorter(items[0], asc);
-            }
-            else
-            	sorter = new DataSorter(orderBy);
-    		
-    		String[] filters = metaData.getParameterValues("filter");
-    		DataSearchFilter filter = new DataSearchFilter(search,filters);
-    		if(criteriaBuilder != null)
-    			filter.addCriteriaBuilder(criteriaBuilder);
-    		IDataProvider provider = new DatabinderProvider(clazz, filter,sorter);
-    		panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
-    		panel.setOutputMarkupId(true);
-    		Form form = new Form("form");
-    		add(form);
-    		form.add(panel);
-	    }
-	    catch(Exception ex)
-	    {
-	        ex.printStackTrace();
-	        throw new RuntimeException(ex);
-	    }
-	}
-	
-	public void edit(AjaxRequestTarget target, Form form, Object bean)
-	{
-		
-	}
-	
-	public void delete(AjaxRequestTarget target, Form form, Object bean)
+        DataStaticService.getHibernateSession().beginTransaction();
+        metaData = new BeanMetaData(beanClass, null, this, null, true);
+        Label label = new Label("label", new Model(metaData.getParameter("label")));
+        add(label);
+
+        SearchPanel search = newSearchPanel("search", new Model(null));
+        add(search);
+
+        DataSorter sorter;
+        String orderBy = metaData.getParameter("orderBy");
+        if (orderBy != null && orderBy.contains(" ")) {
+            String[] items = orderBy.split("\\s+");
+            boolean asc = ("desc".equalsIgnoreCase(items[1]) ? false : true);
+            sorter = new DataSorter(items[0], asc);
+        }
+        else
+            sorter = new DataSorter(orderBy);
+
+        String[] filters = metaData.getParameterValues("filter");
+        DataSearchFilter filter = new DataSearchFilter(search, filters);
+        if (criteriaBuilder != null) {
+            filter.addCriteriaBuilder(criteriaBuilder);
+        }
+        
+        IDataProvider provider = new DatabinderProvider(beanClass, filter, sorter);
+        panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
+        panel.setOutputMarkupId(true);
+        Form form = new Form("form");
+        add(form);
+        form.add(panel);
+    }
+
+    public void edit(AjaxRequestTarget target, Form form, Object bean)
+    {
+
+    }
+
+    public void delete(AjaxRequestTarget target, Form form, Object bean)
     {
         // confirm message shown by wwb. If we get here we do a delete
-	    Session session = DataStaticService.getHibernateSession();
-	    session.beginTransaction();
-	    session.delete(bean);
-	    session.getTransaction().commit();
-	    if( target != null ) // ajax request
-	        target.addComponent(panel);
+        Session session = DataStaticService.getHibernateSession();
+        session.beginTransaction();
+        session.delete(bean);
+        session.getTransaction().commit();
+        if (target != null) // ajax request
+            target.addComponent(panel);
+    }
+    
+    /**
+     * Gets the table panel to be refreshed on a search.
+     */
+    protected Component getTablePanel() 
+    {
+        return panel;
     }
 
     /**
@@ -128,18 +129,18 @@ public abstract class DataBeanListPanel extends Panel
      *  
      * @param wicketId
      * @param model
-     * @param componentToAddAsTarget
-     *              component which will be added to AjaxRequestTarget
      * @return the SearchPanel.
      */
-    protected SearchPanel newSearchPanel(String wicketId, IModel model, final Component componentToAddAsTarget){
-        SearchPanel search = new SearchPanel(wicketId, model)
-        {
-             public void onUpdate(AjaxRequestTarget target) {
-                     target.addComponent(componentToAddAsTarget);
-             }
-         };
-         
-         return search;
+    @SuppressWarnings("serial")
+    protected SearchPanel newSearchPanel(String wicketId, IModel model)
+    {
+        SearchPanel search = new SearchPanel(wicketId, model) {
+            public void onUpdate(AjaxRequestTarget target)
+            {
+                target.addComponent(getTablePanel());
+            }
+        };
+
+        return search;
     }
 }

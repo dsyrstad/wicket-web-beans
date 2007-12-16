@@ -267,8 +267,9 @@ public class BeanTablePanel extends Panel
             }
             else {
                 component = beanMetaData.getComponentRegistry().getComponent(bean, componentId, element);
-                beanMetaData.applyCss(bean, element, component);
             }
+
+            beanMetaData.applyCss(bean, element, component);
 
             cellItem.add(component);
         }
