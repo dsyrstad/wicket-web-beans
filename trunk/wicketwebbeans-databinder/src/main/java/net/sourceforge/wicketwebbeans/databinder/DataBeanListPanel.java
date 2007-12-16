@@ -17,22 +17,21 @@
 
 package net.sourceforge.wicketwebbeans.databinder;
 
+import net.databinder.DataStaticService;
+import net.databinder.components.hibernate.SearchPanel;
+import net.databinder.models.DatabinderProvider;
+import net.databinder.models.ICriteriaBuilder;
+import net.sourceforge.wicketwebbeans.containers.BeanTablePanel;
+import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
-
-
-import net.databinder.components.hibernate.SearchPanel;
-import net.databinder.models.DatabinderProvider;
-import net.databinder.models.ICriteriaBuilder;
-import net.databinder.DataStaticService;
-import net.sourceforge.wicketwebbeans.containers.BeanTablePanel;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
-
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hibernate.classic.Session;
 
 /**
@@ -76,12 +75,7 @@ public abstract class DataBeanListPanel extends Panel
     		Label label = new Label("label", new Model(metaData.getParameter("label")));
     		add(label);
 
-    		SearchPanel search = new SearchPanel("search", new Model(null))
-            {
-                public void onUpdate(AjaxRequestTarget target) {
-                        target.addComponent(panel);
-                }
-            };
+            SearchPanel search = newSearchPanel("search", new Model(null), panel);
             add(search);
     		
             DataSorter sorter;
@@ -127,5 +121,25 @@ public abstract class DataBeanListPanel extends Panel
 	    session.getTransaction().commit();
 	    if( target != null ) // ajax request
 	        target.addComponent(panel);
+    }
+
+    /**
+     * Creates instance of new search panel, override to supply your own search panel
+     *  
+     * @param wicketId
+     * @param model
+     * @param componentToAddAsTarget
+     *              component which will be added to AjaxRequestTarget
+     * @return the SearchPanel.
+     */
+    protected SearchPanel newSearchPanel(String wicketId, IModel model, final Component componentToAddAsTarget){
+        SearchPanel search = new SearchPanel(wicketId, model)
+        {
+             public void onUpdate(AjaxRequestTarget target) {
+                     target.addComponent(componentToAddAsTarget);
+             }
+         };
+         
+         return search;
     }
 }
