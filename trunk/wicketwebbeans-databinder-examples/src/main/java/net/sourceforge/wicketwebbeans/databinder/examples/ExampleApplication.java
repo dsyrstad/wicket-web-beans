@@ -18,6 +18,8 @@ import org.hibernate.Session;
 
 public class ExampleApplication extends DataApplication
 {
+    private static String PKG_PATH = "/" + ExampleApplication.class.getPackage().getName().replace('.', '/');
+    
 	public ExampleApplication()
 	{
 	    
@@ -36,7 +38,7 @@ public class ExampleApplication extends DataApplication
 	    
 	    if( isDevelopment() )
 	    {
-	        URL url = getClass().getResource("/net/sourceforge/wicketwebbeans/databinder/examples/log4j.config.xml");
+	        URL url = getClass().getResource(PKG_PATH + "/log4j.config.xml");
 	        org.apache.log4j.xml.DOMConfigurator.configure(url);
 	    }
 	    
@@ -52,13 +54,13 @@ public class ExampleApplication extends DataApplication
 		    session.save(category);	
 		    categories.put(ii, category);
 	    }
-	    URL url = getClass().getResource("/net/sourceforge/wicketwebbeans/databinder/examples/RandomNames.txt");
+
 	    Random random = new Random();
 	    int numberBase = 1;
 	    String line = null;
 	    try
 	    {
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(PKG_PATH + "/RandomNames.txt")));
 		    while(null != (line = reader.readLine()))
 		    {
 		    	String[] name = line.split("\\t");
@@ -82,8 +84,7 @@ public class ExampleApplication extends DataApplication
 	protected void configureHibernate(AnnotationConfiguration config)
     {
 	    super.configureHibernate(config);
-	    URL url = getClass().getResource("/net/sourceforge/wicketwebbeans/databinder/examples/hibernate.cfg.xml");
-        config.configure(url);
+        config.configure(PKG_PATH + "/hibernate.cfg.xml");
         config.addAnnotatedClass(Contact.class);
         config.addAnnotatedClass(Category.class);
     }

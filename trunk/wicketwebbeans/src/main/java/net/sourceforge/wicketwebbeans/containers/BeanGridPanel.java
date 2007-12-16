@@ -210,9 +210,9 @@ public class BeanGridPanel extends Panel
                 if (!(component instanceof UnlabeledField) && showLabels) {
                     component = new LabeledField("c", element.getLabelComponent("l"), component);
                 }
-                
-                beanMetaData.applyCss(bean, element, component);
             }
+
+            beanMetaData.applyCss(bean, element, component);
 
             item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))) );
             int pct100 = (colspan * 10000) / columns;
