@@ -1,7 +1,0 @@
-Maven Notes:
--------------
-- deploy: mvn clean package javadoc:jar source:jar install deploy
-- After above:
-- mvn site site:deploy
-  - Make sure to keep the parent pom <site><url>scp:, not scpexe: 
-  - Only working for parent site - children not generating index.html
