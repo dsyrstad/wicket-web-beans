@@ -6,11 +6,11 @@
   <artifactId>wicketwebbeans-databinder</artifactId>
   <description>Wicket Web Beans Databinder Support</description>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <parent>
         <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
         <artifactId>WicketWebBeans-parent</artifactId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
   </parent>
   <repositories>
     <repository>
@@ -23,7 +23,7 @@
     <dependency>
         <groupId>net.sourceforge.wicketwebbeans</groupId>
         <artifactId>wicketwebbeans</artifactId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
      </dependency>
      <dependency>
      	<groupId>net.databinder</groupId>
