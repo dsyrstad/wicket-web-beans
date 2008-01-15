@@ -78,6 +78,10 @@ public abstract class DataBeanEditPanel extends Panel {
 	}
 
 	public void save(AjaxRequestTarget target, Form form, Object bean) {
+        if (!beanForm.validateRequired()) {
+            return; // Errors
+        }
+        
 		Session session = DataStaticService.getHibernateSession();
 		session.saveOrUpdate(bean);
 		session.getTransaction().commit();
