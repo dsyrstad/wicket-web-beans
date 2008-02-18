@@ -46,6 +46,7 @@ TestBean {
 		blockBean{fieldType: BeanGridField; colspan: 3},
 		testBean2{colspan: 3},
 		popupBean{colspan: 3},
+		password{fieldType: PasswordField},
 		-subComponent;  # Explicitly hides subComponent.
 
 	# Tabs are optional. Only specify the properties not on the default tab. 
