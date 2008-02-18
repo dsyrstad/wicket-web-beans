@@ -41,6 +41,7 @@ import net.sourceforge.wicketwebbeans.fields.Field;
 import net.sourceforge.wicketwebbeans.fields.InputField;
 import net.sourceforge.wicketwebbeans.fields.JavaEnumField;
 import net.sourceforge.wicketwebbeans.fields.MultiSelectEnumField;
+import net.sourceforge.wicketwebbeans.fields.PasswordField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
 
 import org.apache.wicket.Component;
@@ -116,6 +117,7 @@ public class ComponentRegistry implements Serializable
         register(BeanWithParentLabelField.class, BeanWithParentLabelField.class);
         register(EmptyField.class, EmptyField.class);
         register(TextAreaField.class, TextAreaField.class);
+        register(PasswordField.class, PasswordField.class);
     }
     
     /**

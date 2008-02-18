@@ -25,7 +25,7 @@ import org.apache.wicket.util.string.Strings;
 
 
 /**
- * A Label that has a minimum size if it's model is null.
+ * A Label that has a minimum size if its model is null.
  * 
  * @author Dan Syrstad
  */
