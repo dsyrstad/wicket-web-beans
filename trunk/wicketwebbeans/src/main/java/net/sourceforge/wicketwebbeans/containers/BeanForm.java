@@ -36,6 +36,7 @@ import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
@@ -45,6 +46,8 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -142,6 +145,7 @@ public class BeanForm extends Panel
      *   tabMetaData = the tab metadata<p>
      *   May be null.
      */
+    @SuppressWarnings("serial")
     public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData, final Class<? extends Panel> container)
     {
         super(id);
@@ -211,7 +215,24 @@ public class BeanForm extends Panel
             form.add(tabbedPanel);
         }
         
-        feedback = new FeedbackPanel("feedback");
+        // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
+        IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
+                public boolean accept(FeedbackMessage message)
+                {
+                    // If the reporter is a field and this is refreshing because of a non-Ajax form submit, it's very likely that the field has been detached
+                    // from its parent because it is in a list view. As a result, findParent doesn't return the BeanForm.
+                    Component reporter = message.getReporter();
+                    AbstractField reporterField = (AbstractField)(reporter instanceof AbstractField ? reporter : reporter.findParent(AbstractField.class));
+                    if (reporterField != null) {
+                        return reporterField.getBeanForm().getId().equals(BeanForm.this.getId());
+                    }
+                    
+                    Component parent = (reporter instanceof BeanForm ? reporter : reporter.findParent(BeanForm.class));
+                    return reporter == BeanForm.this || parent == null || parent == BeanForm.this;
+                }
+        };
+        
+        feedback = new FeedbackPanel("feedback", feedbackFilter);
         feedback.setOutputMarkupId(true);
         form.add(feedback);        
 
@@ -290,12 +311,7 @@ public class BeanForm extends Panel
             return null;
         }
         
-        return (BeanForm)childComponent.visitParents(BeanForm.class, new IVisitor() {
-            public Object component(Component visited)
-            {
-                return (BeanForm)visited;
-            }
-        });
+        return (BeanForm)childComponent.findParent(BeanForm.class);
     }
     
     /**
@@ -691,15 +707,16 @@ public class BeanForm extends Panel
     /**
      * Validates required fields on the form and sets an error message on the component if necessary.
      */
-    private static final class RequiredFieldValidator implements IVisitor 
+    private final class RequiredFieldValidator implements IVisitor 
     {
-    	private class FieldLabel implements Serializable{
+    	private class FieldLabel implements Serializable {
     		String fieldLabel;
     		public FieldLabel(String fieldLabel){this.fieldLabel = fieldLabel;}
 			public String getFieldLabel() {return fieldLabel;}
 			public void setFieldLabel(String fieldLabel) {this.fieldLabel = fieldLabel;}
     	}
-        boolean errorsFound = false;
+
+    	boolean errorsFound = false;
         
         public Object component(Component component)
         {
@@ -707,7 +724,7 @@ public class BeanForm extends Panel
             if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
             	FieldLabel fieldName = new FieldLabel(field.getElementMetaData().getLabel());
             	StringResourceModel labelModel = new StringResourceModel("wicketwebbeans.BeanForm.fieldIsRequired", field.getElementMetaData().getBeanMetaData().getComponent(), new Model(fieldName), "${fieldLabel} is required");
-            	field.error(labelModel.getObject().toString());
+            	BeanForm.this.error(labelModel.getObject().toString());
                 errorsFound = true;
             }
             
