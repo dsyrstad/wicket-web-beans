@@ -41,6 +41,7 @@ abstract public class AbstractField extends Panel implements Field
     private static final long serialVersionUID = -5452855853289381110L;
     
     private ElementMetaData elementMetaData;
+    private BeanForm beanForm;
 
     /**
      * Construct a AbstractField. 
@@ -121,6 +122,7 @@ abstract public class AbstractField extends Panel implements Field
         // If we're part of a BeanForm, register ourself with it.
         BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
         if (beanForm != null) {
+            this.beanForm = beanForm;
             beanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
         }
     }
@@ -133,6 +135,15 @@ abstract public class AbstractField extends Panel implements Field
     public ElementMetaData getElementMetaData()
     {
         return elementMetaData;
+    }
+
+
+    /**
+     * For internal BeanForm use only. Returns the BeanForm that this component is contained in, only after onBeforeRender().
+     */
+    public BeanForm getBeanForm()
+    {
+        return beanForm;
     }
 
     /**

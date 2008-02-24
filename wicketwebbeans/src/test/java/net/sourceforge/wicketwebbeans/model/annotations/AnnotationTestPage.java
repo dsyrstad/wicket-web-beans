@@ -31,7 +31,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 
 @Beans({
-    @Bean(type = AnnotationTestBean.class, label = "My ${LoginBean.title} Title",
+    @Bean(type = AnnotationTestBean.class, label = "My ${TestBean.title} Title",
           propertyNames = { "action.save", "firstName", "lastName",
             EMPTY, "activePrimitive", "color", "inlineBean",
             "dateTimestamp", "blockBean", "testBean2", "popupBean",

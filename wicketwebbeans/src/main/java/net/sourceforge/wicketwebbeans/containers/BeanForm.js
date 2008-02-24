@@ -21,11 +21,11 @@
   
   function bfIndicatorError()
   {
-    var element = document.getElementById("beanFormIndicatorError");
-    if (element) {
-		element.style.display = "block";
-		alert(element.innerHTML);		
-	}
+    //var element = document.getElementById("beanFormIndicatorError");
+    //if (element) {
+	//	element.style.display = "block";
+	//	alert(element.innerHTML);		
+	//}
 	
     element = document.getElementById("beanFormIndicatorOn");
     if (element) element.style.display = "none";
