@@ -79,7 +79,6 @@ public class AnnotationTest extends TestCase
         tester.startPage(AnnotationTestPage.class);
         Page page = tester.getLastRenderedPage();
         
-        AnnotationTestBean bean = new AnnotationTestBean();
         BeanMetaData beanMetaData = new BeanMetaData(AnnotationTestBean.class, null, page, null, false);
         // Check parameters, elements, element parameters, tabs, tab elements.
         assertFalse( beanMetaData.isViewOnly() );
@@ -91,23 +90,23 @@ public class AnnotationTest extends TestCase
             new ElementInfo("action.addRow", false, null, null, "Add Row", null, "listOfBeans"),
             new ElementInfo("action.save", false, null, null, "Save", null, "nameInfo"),
             // firstName was explicitly overridden as not viewOnly.
-            new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
             new ElementInfo("gender", false, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
-            new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
+            new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
             new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
             new ElementInfo("age", false, null, null, "Age", null, "miscInfo"),
+            new ElementInfo("lastName", false, null, null, "Last Name", null, "nameInfo"),
+            new ElementInfo("operand1", false, null, null, "Operand 1", null, "miscInfo"),
             new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", false, null, null, "Active Primitive", null, "nameInfo"),
-            new ElementInfo("operand1", false, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("color", false, null, null, "Color", null, "nameInfo"),
             new ElementInfo("operand2", false, null, null, "Operand 2", null, "miscInfo"),
-            new ElementInfo("inlineBean", false, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("color", false, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null, "nameInfo"),
+            new ElementInfo("inlineBean", false, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
             new ElementInfo("palette", false, null, AnnotationTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
-            new ElementInfo("blockBean", false, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
+            new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null, "nameInfo"),
             new ElementInfo("palette2", true, null, AnnotationTestBean.ColorEnum.class.getName(), "Palette 2", null, "miscInfo"),
+            new ElementInfo("blockBean", false, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
             new ElementInfo("description", false, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", false, null, null, "Test Bean 2", null, "nameInfo"),
             new ElementInfo("popupBean", false, null, null, "Popup Bean", null, "nameInfo"),
@@ -157,7 +156,6 @@ public class AnnotationTest extends TestCase
         tester.startPage(AnnotationTestPage.class);
         Page page = tester.getLastRenderedPage();
         
-        AnnotationTestBean bean = new AnnotationTestBean();
         // Use the "view" context
         BeanMetaData beanMetaData = new BeanMetaData(AnnotationTestBean.class, "view", page, null, false);
         // Check parameters, elements, element parameters, tabs, tab elements.
@@ -169,21 +167,21 @@ public class AnnotationTest extends TestCase
             new ElementInfo("action.addRow", true, null, null, "Add Row", null, "listOfBeans"),
             new ElementInfo("action.save", true, null, null, "Save", null, "nameInfo"),
             // firstName was explicitly overridden as not viewOnly.
-            new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
             new ElementInfo("gender", true, null, null, "Gender", null, "miscInfo"),
             new ElementInfo("beans", true, null, null, "Beans", null, "listOfBeans"),
-            new ElementInfo("lastName", true, null, null, "Last Name", null, "nameInfo"),
+            new ElementInfo("firstName", false, null, null, "First Name", null, "nameInfo"),
             new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "miscInfo"),
             new ElementInfo("age", true, null, null, "Age", null, "miscInfo"),
+            new ElementInfo("lastName", true, null, null, "Last Name", null, "nameInfo"),
+            new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
             new ElementInfo("EMPTY:28", true, EmptyField.class.getName(), null, "", null, "nameInfo"),
             new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null, "nameInfo"),
-            new ElementInfo("operand1", true, null, null, "Operand 1", null, "miscInfo"),
-            new ElementInfo("color", true, null, null, "Color", null, "nameInfo"),
             new ElementInfo("operand2", true, null, null, "Operand 2", null, "miscInfo"),
-            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
+            new ElementInfo("color", true, null, null, "Color", null, "nameInfo"),
             new ElementInfo("result", true, null, null, "Result", null, "miscInfo"),
-            new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
+            new ElementInfo("inlineBean", true, BeanInlineField.class.getName(), null, "Inline Bean", null, "nameInfo"),
             new ElementInfo("palette", true, null, AnnotationTestBean.ColorEnum.class.getName(), "Palette", null, "miscInfo"),
+            new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null, "nameInfo"),
             new ElementInfo("blockBean", true, BeanGridField.class.getName(), null, "Block Bean", null, "nameInfo"),
             new ElementInfo("description", true, TextAreaField.class.getName(), null, "Description", null, "miscInfo"),
             new ElementInfo("testBean2", true, null, null, "Test Bean 2", null, "nameInfo"),
