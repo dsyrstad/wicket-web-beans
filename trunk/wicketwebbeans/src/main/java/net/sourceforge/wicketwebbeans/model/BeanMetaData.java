@@ -99,7 +99,6 @@ public class BeanMetaData extends MetaData implements Serializable
     private String context;
     private Component component;
     private ComponentRegistry componentRegistry;
-    private boolean isChildBean;
 
     // List of all properties.
     private List<ElementMetaData> elements = new ArrayList<ElementMetaData>();
@@ -211,8 +210,6 @@ public class BeanMetaData extends MetaData implements Serializable
         else {
             this.componentRegistry = componentRegistry;
         }
-
-        this.isChildBean = isChildBean;
 
         setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
         setParameter(PARAM_DISPLAYED, "true");
@@ -575,29 +572,20 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
         
-        // Process actionNames after actions because actionNames is typically used to define order.
-        int order = 1;
         for (String actionName : bean.actionNames()) {
             if (!handleElementRemove(actionName, true)) {
-                ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
-                if (!element.isActionSpecifiedInProps() && element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
-                    element.setOrder(order++);
-                }
+                findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
             }
         }
         
-        order = 1;
         for (Action action : bean.actions()) {
             if (!handleElementRemove(action.name(), false)) {
-                ElementMetaData element = processActionAnnotation(action, null);
-                if (!element.isActionSpecifiedInProps() && element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
-                    element.setOrder(order++);
-                }
+                processActionAnnotation(action, null);
             }
         }
 
         // Process propertyNames before properties because propertyNames is typically used to define order.
-        order = 1;
+        int order = 1;
         for (String propName : bean.propertyNames()) {
             if (!handleElementRemove(propName, false)) {
                 ElementMetaData element = findElementAddPseudos(propName);
@@ -805,6 +793,7 @@ public class BeanMetaData extends MetaData implements Serializable
         
         tabMetaData.setParameterIfNotEmpty(PARAM_LABEL, tab.label());
         
+        // Process propertyNames after properties because propertyNames is typically used to define order.
         int order = 1;
         for (Property property : tab.properties()) {
             if (!handleElementRemove(property.name(), false)) {
@@ -816,8 +805,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 }
             }
         }
-
-        // Process propertyNames after properties because propertyNames is typically used to define order.
+        
         order = 1;
         for (String propName : tab.propertyNames()) {
             if (!handleElementRemove(propName, false)) {
@@ -829,7 +817,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 }
             }
         }
-        
+
         tabMetaData.setParameterIfNotEmpty(tab.paramName(), tab.paramValue());
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : tab.params()) {
             tabMetaData.setParameterIfNotEmpty(param.name(), param.value());
@@ -1110,6 +1098,7 @@ public class BeanMetaData extends MetaData implements Serializable
         return getParameter(PARAM_LABEL);
     }
     
+    @SuppressWarnings("unchecked")
     public Class<? extends Panel> getContainerClass()
     {
         String container = getParameter(PARAM_CONTAINER);
@@ -1318,6 +1307,7 @@ public class BeanMetaData extends MetaData implements Serializable
     /**
      * A Cached Beanprops file.
      */
+    @SuppressWarnings("serial")
     private static final class CachedBeanProps implements Serializable
     {
         private JBeans beans;
