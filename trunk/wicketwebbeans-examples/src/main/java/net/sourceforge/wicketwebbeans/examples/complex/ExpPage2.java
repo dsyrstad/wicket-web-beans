@@ -1,7 +1,7 @@
 package net.sourceforge.wicketwebbeans.examples.complex;
 
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
@@ -18,7 +18,7 @@ public class ExpPage2 extends WebPage
     
     public ExpPage2()
     {
-        Set<TestBean2> beans = new HashSet<TestBean2>();
+        Set<TestBean2> beans = new LinkedHashSet<TestBean2>();
         beans.add( new TestBean2("Dan", "Syrstad") );
         beans.add( new TestBean2("Joe", "Smith") );
         for (int i = 0; i < 25; i++) {
