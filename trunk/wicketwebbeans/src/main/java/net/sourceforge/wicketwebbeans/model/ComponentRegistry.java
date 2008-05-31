@@ -63,7 +63,9 @@ import org.apache.wicket.model.Model;
  */
 public class ComponentRegistry implements Serializable
 {
-    private Class[] constructorArgs = new Class[] { String.class, IModel.class, ElementMetaData.class, Boolean.TYPE };
+    private static final long serialVersionUID = 1L;
+
+    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class, ElementMetaData.class, Boolean.TYPE };
     
     // Key is Target Type's class name (e.g., java.util.Date). Value is the
     // Wicket Component (Field) class name. If the mapping contains an element type, the key has a suffix of
@@ -125,6 +127,7 @@ public class ComponentRegistry implements Serializable
      *
      * @param anotherRegistry
      */
+    @SuppressWarnings("unchecked")
     public ComponentRegistry(ComponentRegistry anotherRegistry)
     {
         registry = (HashMap<String,String>)anotherRegistry.registry.clone();
@@ -136,7 +139,7 @@ public class ComponentRegistry implements Serializable
      * @param targetType
      * @param fieldComponent
      */
-    public void register(Class targetType, Class<? extends Field> fieldComponent)
+    public void register(Class<?> targetType, Class<? extends Field> fieldComponent)
     {
         register(targetType.getName(), null, fieldComponent.getName());
     }
@@ -147,7 +150,7 @@ public class ComponentRegistry implements Serializable
      * @param targetType
      * @param fieldComponent
      */
-    public void register(Class targetType, Class elementType, Class<? extends Field> fieldComponent)
+    public void register(Class<?> targetType, Class<?> elementType, Class<? extends Field> fieldComponent)
     {
         register(targetType.getName(), elementType.getName(), fieldComponent.getName());
     }
@@ -196,7 +199,7 @@ public class ComponentRegistry implements Serializable
      * 
      * @return the class name, or null if not found.
      */
-    private String getComponentClassName(Class type, Class elementType)
+    private String getComponentClassName(Class<?> type, Class<?> elementType)
     {
         String baseKey = type.getName();
         
@@ -208,7 +211,7 @@ public class ComponentRegistry implements Serializable
                 return componentClassName;
             }
             
-            Class[] intfs = elementType.getInterfaces();
+            Class<?>[] intfs = elementType.getInterfaces();
             for (int i = 0; i < intfs.length; i++) {
                 componentClassName = registry.get(elementBaseKey + intfs[i].getName());
                 if (componentClassName != null) {
@@ -238,18 +241,18 @@ public class ComponentRegistry implements Serializable
         boolean viewOnly = propertyMeta.isViewOnly();
         String componentClassName = propertyMeta.getFieldType();
         if (componentClassName == null) {
-            Class type = propertyMeta.getPropertyType();
+            Class<?> type = propertyMeta.getPropertyType();
             // For arrays, treat type as Object[]
             if (type.isArray()) {
                 type = Object[].class;
             }
             
-            Class elementType = propertyMeta.getElementType(null);
+            Class<?> elementType = propertyMeta.getElementType(null);
             
             // Work up class hierarchy until we find a more generalized component. Also check interface types.
             for (; type != null && componentClassName == null; type = type.getSuperclass()) {
                 componentClassName = getComponentClassName(type, elementType);
-                Class[] intfs = type.getInterfaces();
+                Class<?>[] intfs = type.getInterfaces();
                 for (int i = 0; componentClassName == null && i < intfs.length; i++) {
                     componentClassName = getComponentClassName(intfs[i], elementType);
                 }
@@ -258,8 +261,8 @@ public class ComponentRegistry implements Serializable
         
         if (componentClassName != null) {
             try {
-                Class componentClass = Class.forName(componentClassName);
-                Constructor xtor = componentClass.getConstructor(constructorArgs);
+                Class<?> componentClass = Class.forName(componentClassName);
+                Constructor<?> xtor = componentClass.getConstructor(constructorArgs);
                 
                 IModel model = new BeanPropertyModel(bean, propertyMeta);
                 Component component = (Component)xtor.newInstance( new Object[] { wicketId, model, propertyMeta, viewOnly } );

@@ -36,7 +36,6 @@ import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
@@ -62,6 +61,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 
@@ -170,8 +170,7 @@ public class BeanForm extends Panel
         String title = beanMetaData.getLabel();
         form.add( new Label("title", title) );
         
-        String serverErrorMsg = getLocalizer().getString("beanFormError.msg", this, "An error occurred on the server. Your session may have timed out.");
-        form.add( new Label("beanFormIndicatorErrorLabel", serverErrorMsg) );
+        form.add( new Label("beanFormIndicatorErrorLabel", new ResourceModel("beanFormError.msg", "An error occurred on the server. Your session may have timed out.")));
         
         beanMetaData.consumeParameter(PARAM_ROWS);
         
