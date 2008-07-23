@@ -62,7 +62,7 @@ import org.apache.wicket.util.string.Strings;
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
- * a number of different explicit sources. See the documentation for more information.
+ * by a number of different explicit sources. See the documentation for more information.
  * <p/>
  *  
  * @author Dan Syrstad
