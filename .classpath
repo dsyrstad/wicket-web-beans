@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="wicketwebbeans/src/main/java"/>
-	<classpathentry kind="src" path="wicketwebbeans-databinder-1.2/src/main/java"/>
-	<classpathentry kind="src" path="wicketwebbeans-databinder-1.2-examples/src/main/java"/>
 	<classpathentry kind="src" path="wicketwebbeans/src/test/java"/>
 	<classpathentry kind="src" path="wicketwebbeans-examples/src/main/java"/>
 	<classpathentry kind="src" path="wicketwebbeans-examples/src/test/java"/>
