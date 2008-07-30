@@ -50,6 +50,8 @@ import net.sourceforge.wicketwebbeans.model.api.JBeans;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -78,6 +80,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
     private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
 
+    public static final String PARAM_EXPLICIT_ONLY = "explicitOnly";
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_DISPLAYED = "displayed";
     public static final String PARAM_TABS = "tabs";
@@ -229,6 +232,7 @@ public class BeanMetaData extends MetaData implements Serializable
         consumeParameter(PARAM_TABS);
         consumeParameter(PARAM_DISPLAYED);
         consumeParameter(PARAM_VIEW_ONLY);
+        consumeParameter(PARAM_EXPLICIT_ONLY);
     }
 
     /**
@@ -395,15 +399,28 @@ public class BeanMetaData extends MetaData implements Serializable
         
         String defaultTabId = tabs.get(0).getId();
         
-        // Post-process each property based on bean parameters
-        for (ElementMetaData elementMeta : elements) {
-            // If element is not on a tab, add it to the first. If it's an action, it must have been assigned an order to
-            // appear on a tab. Otherwise it is a global action.
-            if (elementMeta.getTabId() ==  null &&
-                (!elementMeta.isAction() || 
-                 (elementMeta.isAction() && elementMeta.isActionSpecifiedInProps()))) {
-                elementMeta.setTabId(defaultTabId);
-            }
+        if (!getBooleanParameter(PARAM_EXPLICIT_ONLY)
+				|| defaultTabId.equals(DEFAULT_TAB_ID)) {
+			// Post-process each property based on bean parameters
+			for (ElementMetaData elementMeta : elements) {
+				// If element is not on a tab, add it to the first. If it's an
+				// action, it must have been assigned an order to
+				// appear on a tab. Otherwise it is a global action.
+				if (elementMeta.getTabId() == null
+						&& (!elementMeta.isAction() || (elementMeta.isAction() && elementMeta
+								.isActionSpecifiedInProps()))) {
+					elementMeta.setTabId(defaultTabId);
+				}
+			}
+		}
+        
+        // Remove elements not specified in props
+        if (getBooleanParameter(PARAM_EXPLICIT_ONLY)) {
+        	CollectionUtils.filter(elements, new Predicate() {
+				public boolean evaluate(Object object) {
+					return ((ElementMetaData)object).isSpecifiedInProps();
+				}
+        	});       	
         }
 
         Collections.sort(elements, new Comparator<ElementMetaData>() {
@@ -591,7 +608,8 @@ public class BeanMetaData extends MetaData implements Serializable
                 ElementMetaData element = findElementAddPseudos(propName);
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
-                }
+                } 
+                element.setSpecifiedInProps(true);
                 
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
                     element.setOrder(order++);
@@ -606,6 +624,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
                 }
+                element.setSpecifiedInProps(true);
                 
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
                     element.setOrder(order++);
@@ -803,6 +822,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
                 }
+                element.setSpecifiedInProps(true);
             }
         }
         
@@ -866,11 +886,11 @@ public class BeanMetaData extends MetaData implements Serializable
     }
     
     /**
-     * Derive metadata from standard annotations such as JPA and FindBugs.
-     *
-     * @param descriptor
-     * @param elementMetaData
-     */
+	 * Derive metadata from standard annotations such as JPA and FindBugs.
+	 * 
+	 * @param descriptor
+	 * @param elementMetaData
+	 */
     private void deriveElementFromAnnotations(PropertyDescriptor descriptor, ElementMetaData elementMetaData)
     {
         // NOTE: !!! The annotation classes must be present at runtime, otherwise getAnnotations() doesn't 
@@ -1153,10 +1173,18 @@ public class BeanMetaData extends MetaData implements Serializable
     public List<ElementMetaData> getGlobalActions()
     {
         List<ElementMetaData> elems = new ArrayList<ElementMetaData>();
-        for (ElementMetaData elem : elements) {
-            if (elem.isAction() && !elem.isActionSpecifiedInProps()) {
-                elems.add(elem);
-            }
+        if (getBooleanParameter(PARAM_EXPLICIT_ONLY)) {
+        	for (ElementMetaData elem : elements) {
+        		if (elem.isAction() && elem.getTabId()==null) {
+        			elems.add(elem);
+        		}
+        	}
+        } else {
+        	for (ElementMetaData elem : elements) {
+        		if (elem.isAction() && !elem.isActionSpecifiedInProps()) {
+        			elems.add(elem);
+        		}
+        	}
         }
 
         return elems;
