@@ -63,7 +63,7 @@ public class FileUploaderField extends AbstractField
         if (upload == null) {
             return null;
         }
-        
+
         // Try to use same file extension as client
         String clientFileName = upload.getClientFileName();
         int idx = clientFileName.lastIndexOf('.');
@@ -71,7 +71,7 @@ public class FileUploaderField extends AbstractField
         if (idx > 0 && clientFileName.length() > (idx + 1)) {
             suffix = clientFileName.substring(idx);
         }
-        
+
         try {
             return File.createTempFile("FileUploaderField", suffix).getAbsolutePath();
         }
@@ -110,6 +110,8 @@ public class FileUploaderField extends AbstractField
     private void addUploadIFrame()
     {
         IPageLink iFrameLink = new IPageLink() {
+            private static final long serialVersionUID = 1L;
+
             public Page getPage()
             {
                 return new FileUploaderIFrame() {
@@ -127,7 +129,7 @@ public class FileUploaderField extends AbstractField
                 };
             }
 
-            public Class getPageIdentity()
+            public Class<?> getPageIdentity()
             {
                 return FileUploaderIFrame.class;
             }
@@ -146,6 +148,8 @@ public class FileUploaderField extends AbstractField
         final OnUploadedBehavior onUploadBehavior = new OnUploadedBehavior();
         add(onUploadBehavior);
         add(new WebComponent("onUploaded") {
+            private static final long serialVersionUID = 1L;
+
             protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)
             {
                 // calling it through setTimeout we ensure that the callback is called
@@ -161,6 +165,7 @@ public class FileUploaderField extends AbstractField
 
     private class OnUploadedBehavior extends AbstractDefaultAjaxBehavior
     {
+        private static final long serialVersionUID = 1L;
 
         public String getCallback()
         {

@@ -36,6 +36,8 @@ import org.apache.wicket.model.IModel;
  */
 public class InputField extends AbstractField
 {
+    private static final long serialVersionUID = 1L;
+
     /**
      * Construct a new InputField.
      *
@@ -52,11 +54,11 @@ public class InputField extends AbstractField
         
         Fragment fragment;
         if (viewOnly) {
-            fragment = new Fragment("frag", "viewer");
+            fragment = new Fragment("frag", "viewer", this);
             fragment.add( new LabelWithMinSize("component", model) );
         }
         else {
-            fragment = new Fragment("frag", "editor");
+            fragment = new Fragment("frag", "editor", this);
 
             TextField field = new TextField("component", model, metaData.getPropertyType());
             

@@ -1,0 +1,50 @@
+2.0
+---
+
+- Elements are explicitly called out - no auto-derivation of elements from bean. However, can auto-derive label.
+- If we want pre-built components, then where do actions reside? ThreadLocal context that has component, AjaxRequestTarget, bean. 
+  Then we can call on any bean. Action method can return a List of ValidationMessages or IValidationError / ValidationError.
+  What about info/warn messages? 
+- ValidationMessage can have property name/expression - then message will be associated with that property.
+- Support attachment of IValidator to fields. Support construction in here.
+- Components are really beans .... So we could construct an IValidator above. Then it's starting to look a little spring-like.
+
+- Only consistent attribute is "class". 
+- No automatic nesting of bean forms....
+- How do dynamic values trigger? Do we evaluate each time? Less property events?
+- How are beanprops found?
+
+- Component Composition
+
+- ComponentRegistry can register one of these pre-configured components.
+
+Component0 {
+	class: TabbedLayout; # or component: for a pre-defined component - inherits those properities and extends them.
+	components: Component1 { label: "First Tab" }, Component4 { label: "Second Tab", displayed: ${someBooleanProp} };
+}
+
+Component1 {
+	class: BeanForm;
+	elements: 
+		"prop1/prop2" { params }, 
+		"prop3/collection" { component: Component2, override-props-for-component: x },
+		"prop3/collection" { class: ComponentClass, properties... },
+		prop5 { label : ${prop6/prop7} };  # Dynamic values    
+}
+
+Component2 { # Table
+	class: BeanTable;
+	rowComponent: Component3;
+	- or -
+	rowElements: "prop3", "prop4";
+}
+
+Component3 { # Row
+	elements: "prop3", "prop4";
+}
+
+Component4 {
+	class: BeanForm;
+	elements: 
+		"prop1/prop2" { params }; 
+}
