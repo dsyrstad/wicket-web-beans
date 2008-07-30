@@ -70,9 +70,45 @@ public abstract class DataBeanEditPanel extends Panel {
 		this.returnPage = returnPage;
 	}
 
+	/**
+	 * @param id
+	 *            wicket id
+	 * @param bean
+	 *            the Bean to be edited
+	 * @param replacementComponent
+	 *            component which will be switched with this panel after save
+	 * @param beanMetaData
+	 *            the BeanMetaData to use for rendering
+	 */
+	public DataBeanEditPanel(String id, Object bean,
+			Component replacementComponent, BeanMetaData beanMetaData) {
+		this(id, bean, beanMetaData);
+		this.replacementComponent = replacementComponent;
+	}
+
+	/**
+	 * @param id
+	 *            wicket id
+	 * @param bean
+	 *            the Bean to be edited
+	 * @param returnPage
+	 *            the page to return to after saving
+	 * @param beanMetaData
+	 *            the BeanMetaData to use for rendering
+	 */
+	public DataBeanEditPanel(String id, Object bean, 
+			Page returnPage, BeanMetaData beanMetaData) {
+		this(id, bean, beanMetaData);
+		this.returnPage = returnPage;
+	}
+
 	private DataBeanEditPanel(String id, Object bean) {
+		this(id, bean, (BeanMetaData) null);
+	}
+
+	private DataBeanEditPanel(String id, Object bean, BeanMetaData beanMetaData) {
 		super(id);
-		metaData = new BeanMetaData(bean.getClass(), null, this, null, false);
+		metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(bean.getClass(), null, this, null, false);
 		beanForm = new BeanForm("beanForm", bean, metaData);
 		add(beanForm);
 	}

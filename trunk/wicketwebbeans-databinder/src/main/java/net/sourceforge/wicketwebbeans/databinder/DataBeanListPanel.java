@@ -63,16 +63,22 @@ public abstract class DataBeanListPanel extends Panel
         this(id, Class.forName(beanClassName), criteriaBuilder);
     }
     
+    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder)
+    {
+        this(id, beanClass, criteriaBuilder, null);
+    }
+    
     /**
      *
      * @param beanClass the fully qualified class name of the bean to be edited 
      */
-    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder)
+    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder, BeanMetaData beanMetaData)
     {
         super(id);
 
         Databinder.getHibernateSession().beginTransaction();
         metaData = new BeanMetaData(beanClass, null, this, null, true);
+        metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(beanClass, null, this, null, true);
         Label label = new Label("label", new Model(metaData.getParameter("label")));
         add(label);
 
