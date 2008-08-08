@@ -6,8 +6,12 @@
 </head>
 <body>
 <wicket:panel>
-<form wicket:id="f" onkeypress="return bfHandleGlobalKeyEvent(event);">
-<input wicket:id="focusField" type="hidden" value=""/>
+<form wicket:id="f">
+	<input wicket:id="focusField" type="hidden" value=""/>
+	<input wicket:id="submitFieldName" type="hidden" value=""/>
+	<input wicket:id="submitFieldValue" type="hidden" value=""/>
+</form>
+<form wicket:id="nsf" onkeypress="return wwbBeanForm.handleGlobalKeyEvent(event);">
 <table class="beanFormTopContent" cellspacing="0" cellpadding="0">
   <tbody><tr>
     <td class="beanFormTitle" wicket:id="title">Title</td>
@@ -27,7 +31,7 @@
   [Tabs Appear Here]
 </div>
 <script type="text/javascript">
-  bfRefocus();
+  wwbBeanForm.refocus();
 </script>
 </form>
 </wicket:panel>

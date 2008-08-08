@@ -21,7 +21,7 @@ The software and documentation in the Wicket Web Beans project is:
 This project includes the following software (see the licenses directory):
 
 ---+ Wicket
-Wicket 1.2.6 and Wicket-Extensions 1.2.6  
+Wicket and Wicket-Extensions (http://wicket.apache.org)  
 Apache Software License, Version 2.0.
 http://www.apache.org/licenses/LICENSE-2.0
 
@@ -34,8 +34,8 @@ Apache Commons Logging
 Apache Software License, Version 2.0.
 http://www.apache.org/licenses/LICENSE-2.0
 
----+ !BeanUtils
-Apache Commons !BeanUtils
+---+ BeanUtils
+Apache Commons BeanUtils
 Apache Software License, Version 2.0.
 http://www.apache.org/licenses/LICENSE-2.0
 

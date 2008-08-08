@@ -1,5 +1,5 @@
-2.0
----
+v2.0
+----
 
 - Elements are explicitly called out - no auto-derivation of elements from bean. However, can auto-derive label.
 - If we want pre-built components, then where do actions reside? ThreadLocal context that has component, AjaxRequestTarget, bean. 
@@ -13,6 +13,11 @@
 - No automatic nesting of bean forms....
 - How do dynamic values trigger? Do we evaluate each time? Less property events?
 - How are beanprops found?
+- parameters are properties on beans?
+- Don't sumbit entire form. Have a form with one hidden field that gets submitted back to Wicket. This 
+would give knowledge of exactly what changed. How do we submit the entire thing on save - or do we?
+
+- Use new Wicket-stuff data grid (http://wicketstuff.org/grid-examples/data-grid/simple.2)
 
 - Component Composition
 
