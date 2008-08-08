@@ -1,3 +1,5 @@
+Note: These were the 1.0 requirements and are somewhat out of date.
+ 
 - Fields as props from bean properties
   - Meta: 
   	- Specified as exceptions (e.g. don't display these), override default editor view. Whether particular
