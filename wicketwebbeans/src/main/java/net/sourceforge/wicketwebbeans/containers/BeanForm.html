@@ -7,7 +7,7 @@
 <body>
 <wicket:panel>
 <form wicket:id="f">
-	<input wicket:id="focusField" type="hidden" value=""/>
+	<input wicket:id="focusFieldId" type="hidden" value=""/>
 	<input wicket:id="submitFieldName" type="hidden" value=""/>
 	<input wicket:id="submitFieldValue" type="hidden" value=""/>
 </form>
@@ -26,7 +26,9 @@
 <div class="beanFormFeedback" >
   <span wicket:id = "feedback">msg</span>
 </div>
-
+<div class="beanTabContainer" wicket:id="tabs" >
+  [Tabs Appear Here]
+</div>
 <script type="text/javascript">
   wwbBeanForm.refocus();
 </script>
