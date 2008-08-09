@@ -20,7 +20,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,26 +37,18 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
-import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -100,8 +91,8 @@ public class BeanForm extends Panel
     private FeedbackPanel feedback;
     // Wicket ID/HTML ID of field with focus.
     private String focusField = null;
-    private String submitFormFieldName;
-    private String submitFormFieldValue;
+    private String submitFieldName;
+    private String submitFieldValue;
     private BeanPropertyChangeListener listener = new BeanPropertyChangeListener();
 
     /** Maps components in this form to their properties. */
@@ -150,8 +141,20 @@ public class BeanForm extends Panel
     {
         super(id);
 
-        Form hiddenForm = new Form("f", new CompoundPropertyModel(this));
+        Form hiddenForm = new Form("f");
         hiddenForm.setOutputMarkupId(true);
+        final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
+        focusField.add(new SimpleAttributeModifier("id", "bfFocusField"));
+        hiddenForm.add(focusField);
+
+        final HiddenField submitFieldName = new HiddenField("submitFieldName", new PropertyModel(this, "submitFieldName"));
+        submitFieldName.add(new SimpleAttributeModifier("id", "bfSubmitFieldName"));
+        hiddenForm.add(submitFieldName);
+
+        final HiddenField submitFieldValue = new HiddenField("submitFieldValue", new PropertyModel(this, "submitFieldValue"));
+        submitFieldValue.add(new SimpleAttributeModifier("id", "bfSubmitFieldValue"));
+        hiddenForm.add(submitFieldValue);
+
         add(hiddenForm);
 
         // This form is never actually submitted. It exists to hold input fields only.
@@ -165,17 +168,6 @@ public class BeanForm extends Panel
                         "An error occurred on the server. Your session may have timed out.")));
 
         beanMetaData.consumeParameter(PARAM_ROWS);
-
-        final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
-        focusField.add(new AbstractBehavior() {
-            public void onComponentTag(Component component, ComponentTag tag)
-            {
-                tag.put("id", "bfFocusField");
-                super.onComponentTag(component, tag);
-            }
-        });
-
-        form.add(focusField);
 
         formVisitor = new FormVisitor();
 
@@ -377,6 +369,46 @@ public class BeanForm extends Panel
     public void setFocusField(String focusField)
     {
         this.focusField = focusField;
+    }
+
+    /**
+     * Gets the submitFieldName.
+     *
+     * @return a String.
+     */
+    public String getSubmitFieldName()
+    {
+        return submitFieldName;
+    }
+
+    /**
+     * Sets submitFieldName.
+     *
+     * @param submitFieldName a String.
+     */
+    public void setSubmitFieldName(String submitFormFieldName)
+    {
+        this.submitFieldName = submitFormFieldName;
+    }
+
+    /**
+     * Gets the submitFieldValue.
+     *
+     * @return a String.
+     */
+    public String getSubmitFieldValue()
+    {
+        return submitFieldValue;
+    }
+
+    /**
+     * Sets submitFieldValue.
+     *
+     * @param submitFieldValue a String.
+     */
+    public void setSubmitFieldValue(String submitFormFieldValue)
+    {
+        this.submitFieldValue = submitFormFieldValue;
     }
 
     /**
