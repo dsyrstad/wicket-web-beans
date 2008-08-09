@@ -1,0 +1,9 @@
+#Fri Aug 08 11:43:08 CDT 2008
+WARNING=DO NOT MODIFY THIS FILE IF YOU DON'T UNDERSTAND
+defaultDestination=C\:/Java/Tomcat/apache-tomcat-5.5.20/webapps/wwb
+defaultVariables=
+eclipse.preferences.version=1
+map|0=target|C\:/Java/Tomcat/apache-tomcat-5.5.20/webapps/wwb/WEB-INF|,|,|,
+map|1=wicketwebbeans-examples/src/main/webapp|,|,|,|,
+map|2=wicketwebbeans-examples/target/wicketwebbeans-examples-2.0-SNAPSHOT/WEB-INF/lib|C\:/Java/Tomcat/apache-tomcat-5.5.20/webapps/wwb/WEB-INF/lib|,|,|,
+useCurrentDateForDestinationFiles=true
