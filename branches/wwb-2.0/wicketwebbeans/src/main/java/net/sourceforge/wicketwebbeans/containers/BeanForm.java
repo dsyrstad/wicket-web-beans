@@ -80,9 +80,10 @@ import org.apache.wicket.util.string.Strings;
  */
 public class BeanForm extends Panel
 {
+    private static final long serialVersionUID = -7287729257178283645L;
+
     public static final String PARAM_ROWS = "rows";
 
-    private static final long serialVersionUID = -7287729257178283645L;
     private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, BeanMetaData.class,
                     TabMetaData.class };
 
@@ -90,7 +91,7 @@ public class BeanForm extends Panel
     private FormVisitor formVisitor;
     private FeedbackPanel feedback;
     // Wicket ID/HTML ID of field with focus.
-    private String focusField = null;
+    private String focusFieldId = null;
     private String submitFieldName;
     private String submitFieldValue;
     private BeanPropertyChangeListener listener = new BeanPropertyChangeListener();
@@ -143,7 +144,7 @@ public class BeanForm extends Panel
 
         Form hiddenForm = new Form("f");
         hiddenForm.setOutputMarkupId(true);
-        final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
+        final HiddenField focusField = new HiddenField("focusFieldId", new PropertyModel(this, "focusFieldId"));
         focusField.add(new SimpleAttributeModifier("id", "bfFocusField"));
         hiddenForm.add(focusField);
 
@@ -170,6 +171,10 @@ public class BeanForm extends Panel
         beanMetaData.consumeParameter(PARAM_ROWS);
 
         formVisitor = new FormVisitor();
+
+        // Single default tab - none explicitly specified. Don't add a tab panel.
+        // TODO - Go away.
+        form.add( createPanel("tabs", bean, beanMetaData, beanMetaData.getTabs().get(0), container) );
 
         // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
         IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
@@ -263,6 +268,7 @@ public class BeanForm extends Panel
      * 
      * @return the parent BeanForm, or null if childComponent is not part of a BeanForm.
      */
+    // TODO Would really like to get rid of this - BeanForm shouldn't need to be known to children.
     public static BeanForm findBeanFormParent(Component childComponent)
     {
         if (childComponent == null) {
@@ -327,7 +333,7 @@ public class BeanForm extends Panel
             ((MarkupContainer)component).visitChildren(formVisitor);
         }
         else {
-            component.add(new FormSubmitter("onchange"));
+            formVisitor.component(component);
         }
     }
 
@@ -348,27 +354,27 @@ public class BeanForm extends Panel
      */
     public void setFocusComponent(Component component)
     {
-        setFocusField(component == null ? null : component.getId());
+        setFocusFieldId(component == null ? null : component.getId());
     }
 
     /**
-     * Gets the focusField.
+     * Gets the focusFieldId.
      *
-     * @return the focusField.
+     * @return the focusFieldId.
      */
-    public String getFocusField()
+    public String getFocusFieldId()
     {
-        return focusField;
+        return focusFieldId;
     }
 
     /**
-     * Sets the focusField.
+     * Sets the focusFieldId.
      *
-     * @param focusField the focusField to set.
+     * @param focusFieldId the focusFieldId to set.
      */
-    public void setFocusField(String focusField)
+    public void setFocusFieldId(String focusField)
     {
-        this.focusField = focusField;
+        this.focusFieldId = focusField;
     }
 
     /**
@@ -504,24 +510,24 @@ public class BeanForm extends Panel
 
     private final class FormVisitor implements IVisitor, Serializable
     {
+        private static final long serialVersionUID = 8134029312041772069L;
+
         public Object component(Component component)
         {
             if (component instanceof FormComponent) {
                 boolean addBehavior = true;
                 for (IBehavior behavior : (List<IBehavior>)component.getBehaviors()) {
-                    if (behavior instanceof FormSubmitter) {
-                        addBehavior = false;
-                        break;
+                    if (behavior instanceof SimpleAttributeModifier) {
+                        if (((SimpleAttributeModifier)behavior).getAttribute().equals("onchange")) {
+                            addBehavior = false;
+                            break;
+                        }
                     }
                 }
 
                 if (addBehavior) {
-                    FormSubmitter behavior = new FormSubmitter("onchange");
-                    // Note: Do NOT set a delay. The delay can cause an onchange to be sent AFTER a button submit
-                    // which causes the submit button's messages to be erased. <- That was true when we used AjaxSubmitButtons, we don't anymore.
-                    //behavior.setThrottleDelay(Duration.milliseconds(250));
-                    component.add(behavior);
                     component.add(new SimpleAttributeModifier("onfocus", "wwbBeanForm.onFocus(this)"));
+                    component.add(new SimpleAttributeModifier("onchange", "wwbBeanForm.onChange(this)"));
                 }
             }
 
@@ -530,8 +536,10 @@ public class BeanForm extends Panel
     }
 
 
-    private final class FormSubmitter extends AjaxFormValidatingBehavior implements Serializable
+    private final class FormSubmitter extends AjaxFormValidatingBehavior
     {
+        private static final long serialVersionUID = 1L;
+
         private FormSubmitter(String event)
         {
             super(form, event);
@@ -570,6 +578,7 @@ public class BeanForm extends Panel
 
     public static final class AjaxBusyDecorator implements IAjaxCallDecorator
     {
+        private static final long serialVersionUID = 1L;
         public static final AjaxBusyDecorator INSTANCE = new AjaxBusyDecorator();
 
         public CharSequence decorateOnFailureScript(CharSequence script)
@@ -594,6 +603,8 @@ public class BeanForm extends Panel
      */
     private static final class ComponentPropertyMapping implements Serializable
     {
+        private static final long serialVersionUID = 1L;
+        
         /** IModel holding the bean. */
         private BeanPropertyModel beanModel;
         private ElementMetaData elementMetaData;
@@ -646,6 +657,8 @@ public class BeanForm extends Panel
      */
     public final class BeanPropertyChangeListener implements PropertyChangeListener, Serializable
     {
+        private static final long serialVersionUID = 1L;
+
         public void propertyChange(PropertyChangeEvent evt)
         {
             // Find matching component
@@ -667,6 +680,8 @@ public class BeanForm extends Panel
     {
         private class FieldLabel implements Serializable
         {
+            private static final long serialVersionUID = 1L;
+            
             String fieldLabel;
 
             public FieldLabel(String fieldLabel)
