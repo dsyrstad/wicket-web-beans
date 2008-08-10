@@ -12,26 +12,27 @@
 	<input wicket:id="submitFieldValue" type="hidden" value=""/>
 </form>
 <form wicket:id="nsf" onkeypress="return wwbBeanForm.handleGlobalKeyEvent(event);">
-<table class="beanFormTopContent" cellspacing="0" cellpadding="0">
-  <tbody><tr>
-    <td class="beanFormTitle" wicket:id="title">Title</td>
-    <td class="beanFormActionContainer">
-    	<span wicket:id="actions"><span wicket:id="action">[action]</span></span>
-    </td>
-    <td>&nbsp;</td>
-  </tr></tbody>
-</table>
-
-<div id="beanFormIndicatorOff"></div><div id="beanFormIndicatorOn"></div><div id="beanFormIndicatorError" wicket:id="beanFormIndicatorErrorLabel"></div>
-<div class="beanFormFeedback" >
-  <span wicket:id = "feedback">msg</span>
-</div>
-<div class="beanTabContainer" wicket:id="tabs" >
-  [Tabs Appear Here]
-</div>
-<script type="text/javascript">
-  wwbBeanForm.refocus();
-</script>
+	<input wicket:id="ajaxFormId" id="ajaxFormId" type="hidden" value=""/>
+	<table class="beanFormTopContent" cellspacing="0" cellpadding="0">
+	  <tbody><tr>
+	    <td class="beanFormTitle" wicket:id="title">Title</td>
+	    <td class="beanFormActionContainer">
+	    	<span wicket:id="actions"><span wicket:id="action">[action]</span></span>
+	    </td>
+	    <td>&nbsp;</td>
+	  </tr></tbody>
+	</table>
+	
+	<div id="beanFormIndicatorOff"></div><div id="beanFormIndicatorOn"></div><div id="beanFormIndicatorError" wicket:id="beanFormIndicatorErrorLabel"></div>
+	<div class="beanFormFeedback" >
+	  <span wicket:id = "feedback">msg</span>
+	</div>
+	<div class="beanTabContainer" wicket:id="tabs" >
+	  [Tabs Appear Here]
+	</div>
+	<script type="text/javascript">
+	  wwbBeanForm.refocus();
+	</script>
 </form>
 </wicket:panel>
 </body>

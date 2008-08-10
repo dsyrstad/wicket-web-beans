@@ -26,43 +26,42 @@ var wwbBeanForm =  {
     },
 
     // Track field with last focus in case we're refreshed.
+    focusFieldId: null,
+    
     onFocus: function(field) {
-        var element = document.getElementById("bfFocusField");
-        if (element) {
-            element.value = field.id;
-        }
+        wwbBeanForm.focusFieldId = field.name;
     },
      
     onChange: function(field) {
-        alert("changed " + field.id);
+        var form = document.forms[field.form.ajaxFormId.value];
+        form.elements['focusFieldId'].value = wwbBeanForm.focusFieldId;
+        form.elements['submitFieldName'].value = field.name;
+        form.elements['submitFieldValue'].value = field.value;
+        eval(form.attributes['onajax'].value);
     },
 
     refocus: function() {
-        var element = document.getElementById("bfFocusField");
-        if (element) {
-            var field = element.value ? document.getElementById(element.value) : null;
-            if (field) {
-                field.focus();
-            }
-            else {
-                bfFocusFirst(element.form, false);
-            }
+        var field = document.getElementById(wwbBeanForm.focusFieldId);
+        if (field) {
+            field.focus();
+        }
+        else {
+            wwbBeanForm.focusFirst(false);
         }
     },
      
-    focusFirst: function(form, focusFirstEmpty) {
-        for (var i = 0; i < form.elements.length; i++ ) {
-            if (form.elements[ i ].type != "hidden" &&
-                !form.elements[ i ].disabled &&
-                !form.elements[ i ].readOnly &&
-                (!focusFirstEmpty || form.elements[i].value == "")) {
-                var field = form.elements[ i ];
-                field.focus();
-                var element = document.getElementById("bfFocusField");
-                if (element) {
-                    element.value = field.id;
+    focusFirst: function(focusFirstEmpty) {
+        for (var form in document.forms) {
+            for (var i = 0; i < form.elements.length; i++ ) {
+                if (form.elements[ i ].type != "hidden" &&
+                    !form.elements[ i ].disabled &&
+                    !form.elements[ i ].readOnly &&
+                    (!focusFirstEmpty || form.elements[i].value == "")) {
+                    var field = form.elements[ i ];
+                    field.focus();
+                    wwbBeanForm.focusFieldId = field.name;
+                    break;
                 }
-                break;
             }
         }
     },

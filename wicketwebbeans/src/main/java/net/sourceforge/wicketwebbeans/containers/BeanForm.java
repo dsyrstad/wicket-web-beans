@@ -27,6 +27,7 @@ import java.util.Set;
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
 import net.sourceforge.wicketwebbeans.fields.AbstractField;
 import net.sourceforge.wicketwebbeans.fields.Field;
+import net.sourceforge.wicketwebbeans.fields.InputField;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
@@ -45,6 +46,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -144,22 +146,15 @@ public class BeanForm extends Panel
 
         Form hiddenForm = new Form("f");
         hiddenForm.setOutputMarkupId(true);
-        final HiddenField focusField = new HiddenField("focusFieldId", new PropertyModel(this, "focusFieldId"));
-        focusField.add(new SimpleAttributeModifier("id", "bfFocusField"));
-        hiddenForm.add(focusField);
-
-        final HiddenField submitFieldName = new HiddenField("submitFieldName", new PropertyModel(this, "submitFieldName"));
-        submitFieldName.add(new SimpleAttributeModifier("id", "bfSubmitFieldName"));
-        hiddenForm.add(submitFieldName);
-
-        final HiddenField submitFieldValue = new HiddenField("submitFieldValue", new PropertyModel(this, "submitFieldValue"));
-        submitFieldValue.add(new SimpleAttributeModifier("id", "bfSubmitFieldValue"));
-        hiddenForm.add(submitFieldValue);
-
+        hiddenForm.add(new AjaxFieldUpdater(hiddenForm, "onajax"));
+        hiddenForm.add(new HiddenField("focusFieldId", new PropertyModel(this, "focusFieldId")));
+        hiddenForm.add(new HiddenField("submitFieldName", new PropertyModel(this, "submitFieldName")));
+        hiddenForm.add(new HiddenField("submitFieldValue", new PropertyModel(this, "submitFieldValue")));
         add(hiddenForm);
 
         // This form is never actually submitted. It exists to hold input fields only.
         form = new Form("nsf");
+        form.add(new HiddenField("ajaxFormId", new Model(hiddenForm.getMarkupId())));
         add(form);
 
         String title = beanMetaData.getLabel();
@@ -536,11 +531,11 @@ public class BeanForm extends Panel
     }
 
 
-    private final class FormSubmitter extends AjaxFormValidatingBehavior
+    private final class AjaxFieldUpdater extends AjaxFormValidatingBehavior
     {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -6152087577132232936L;
 
-        private FormSubmitter(String event)
+        private AjaxFieldUpdater(Form form, String event)
         {
             super(form, event);
         }
@@ -558,6 +553,9 @@ public class BeanForm extends Panel
             }
             */
             super.onSubmit(target);
+            System.out.println("Got " + submitFieldName + '=' + submitFieldValue + " focus=" + focusFieldId);
+            // FormComponent.getInputName()
+            TextField x; x.
             refreshComponents(target, getComponent());
         }
 
@@ -565,6 +563,7 @@ public class BeanForm extends Panel
         protected void onError(AjaxRequestTarget target)
         {
             super.onError(target);
+            System.out.println("Error Got " + submitFieldName + '=' + submitFieldValue + " focus=" + focusFieldId);
             refreshComponents(target, getComponent());
         }
 
