@@ -265,20 +265,6 @@ public class BeanForm extends Panel
     }
 
     /**
-     * Determines if the BeanForm associated with childComponent is currently in a form
-     * submit phase.
-     * 
-     * @param childComponent the child, may be null.
-     * 
-     * @return true if the BeanForm is validating, or false if not.
-     */
-    // TODO Go away.
-    public static boolean isInSubmit(Component childComponent)
-    {
-        return false;
-    }
-
-    /**
      * Rather than using Wicket's required field validation, which doesn't play well with Ajax and forms,
      * allow validation of fields on actions. User must call this from the action method.
      * Adds errors to the page if empty required fields are found. 
@@ -514,27 +500,17 @@ public class BeanForm extends Panel
         @Override
         protected void onSubmit(final AjaxRequestTarget target)
         {
-            /*
-            // NOTE: The following code fails to clear off field errors that have been corrected.
-             
-            // Only refresh messages if we have one. Otherwise previous error messages go away on the
-            // first field change.
-            if (form.getPage().hasFeedbackMessage()) {
-                super.onSubmit(target);
-            }
-            */
             super.onSubmit(target);
-            System.out.println("Got " + submitFieldName + " focus=" + focusFieldId);
-            // FormComponent.getInputName()
             refreshComponents(target, getComponent());
+            setSubmitFieldName(null);
         }
 
         @Override
         protected void onError(AjaxRequestTarget target)
         {
             super.onError(target);
-            System.out.println("Error Got " + submitFieldName + " focus=" + focusFieldId);
             refreshComponents(target, getComponent());
+            setSubmitFieldName(null);
         }
 
         @Override

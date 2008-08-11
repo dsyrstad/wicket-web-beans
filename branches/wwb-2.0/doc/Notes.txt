@@ -18,6 +18,7 @@ v2.0
 would give knowledge of exactly what changed. How do we submit the entire thing on save - or do we?
 
 - Use new Wicket-stuff data grid (http://wicketstuff.org/grid-examples/data-grid/simple.2)
+- TinyMCE support at wicket-stuff: wicket-contrib-tinymce
 
 - Component Composition
 

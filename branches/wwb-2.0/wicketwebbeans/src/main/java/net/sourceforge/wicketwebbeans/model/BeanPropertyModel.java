@@ -19,19 +19,17 @@ package net.sourceforge.wicketwebbeans.model;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.string.Strings;
 
 
 
 /**
  * An extension of PropertyModel so that we can get the backing bean and check for
- * modifications. We only set the bean property if the value from the form has changed with respect
- * to the value that was retrieved from the model when the form was rendered. 
+ * modifications. We only set the bean property if it has changed. 
  * This is important because setting one property on a bean via this model may cause other properties to be
  * set indirectly. Wicket dumps the whole form back every time and we do not want to wipe out those
  * properties that were indirectly set.<p>
@@ -40,19 +38,12 @@ import org.apache.wicket.util.string.Strings;
  */
 public class BeanPropertyModel extends PropertyModel implements IComponentAssignedModel, IWrapModel
 {
+    private static final long serialVersionUID = 5558211992175238860L;
+    
     private ElementMetaData elementMetaData;
-    // This value is tracked from onGetObject to see if the value changes. The assumption is that
-    // Wicket calls getObject() when populating the HTML form on the way out, so this is the last value
-    // that Wicket got. It is then used for comparison purposes when setObject() is called to see
-    // if the value has changed. 
-    private Object lastValueGot = null;
-    // This flag tracks whether lastValueGot is valid.
-    private boolean getObjectCalled = false;
     // If this model is registered with a BeanForm, this is it.
     private BeanForm beanForm = null;
-
-    // TODO Why aren't we using ComponentPropertyModel in 1.3?
-    private Component component;
+    private Component component = null;
     
     private transient boolean attached = false;
     
@@ -103,14 +94,7 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
     public Object getObject()
     {
         attach();
-        Object value = super.getObject();
-        if (!BeanForm.isInSubmit(component)) {
-            // Only set these if we're not in submit processing.
-            lastValueGot = value;
-            getObjectCalled = true;
-        }
-        
-        return value;
+        return super.getObject();
     }
 
     /**
@@ -123,30 +107,17 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
     public void setObject(Object object)
     {
         attach();
-        Object newValue = object;
-        // This, unfortunately, comes in as a String in most cases, so convert it.
-        if (newValue instanceof String) {
-            final String string = (String)newValue;
-            if (!Strings.isEmpty(string)) {
-                // and there is a non-null property type for the component
-                if (getObjectClass() != null) {
-                    // convert the String to the right type
-                    IConverter converter = component.getConverter(getObjectClass());
-                    if (converter != null) {
-                        newValue = converter.convertToObject(string, null);
-                    }
-                }
+        if (beanForm != null && component instanceof FormComponent) {
+            FormComponent formComponent = (FormComponent)component;
+            String fieldName = beanForm.getSubmitFieldName();
+            if (fieldName != null && !formComponent.getInputName().equals(fieldName)) {
+                // Not the field being set - don't set it.
+                return;
             }
+            System.out.println("Setting " + fieldName);
         }
 
-        // Below in parens is an equality expression that is inverted to say "not (equal)".
-        if ( !(getObjectCalled                        // If lastValueGot is valid.
-               && lastValueGot == newValue            // If they're the same object, or both null
-               && (lastValueGot == null || lastValueGot.equals(newValue))) ) {
-            super.setObject(object);
-        }
-        
-        getObjectCalled = false;
+        super.setObject(object);
     }
 
     public BeanForm getBeanForm()
@@ -180,6 +151,4 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
         super.detach();
         attached = false;
     }
-    
-
 }
