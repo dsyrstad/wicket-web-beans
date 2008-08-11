@@ -33,10 +33,9 @@ var wwbBeanForm =  {
     },
      
     onChange: function(field) {
-        var form = document.forms[field.form.ajaxFormId.value];
+        var form = field.form;
         form.elements['focusFieldId'].value = wwbBeanForm.focusFieldId;
         form.elements['submitFieldName'].value = field.name;
-        form.elements['submitFieldValue'].value = field.value;
         eval(form.attributes['onajax'].value);
     },
 

@@ -6,13 +6,9 @@
 </head>
 <body>
 <wicket:panel>
-<form wicket:id="f">
+<form wicket:id="f" onkeypress="return wwbBeanForm.handleGlobalKeyEvent(event);">
 	<input wicket:id="focusFieldId" type="hidden" value=""/>
 	<input wicket:id="submitFieldName" type="hidden" value=""/>
-	<input wicket:id="submitFieldValue" type="hidden" value=""/>
-</form>
-<form wicket:id="nsf" onkeypress="return wwbBeanForm.handleGlobalKeyEvent(event);">
-	<input wicket:id="ajaxFormId" id="ajaxFormId" type="hidden" value=""/>
 	<table class="beanFormTopContent" cellspacing="0" cellpadding="0">
 	  <tbody><tr>
 	    <td class="beanFormTitle" wicket:id="title">Title</td>
