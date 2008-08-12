@@ -80,7 +80,6 @@ public class BeanMetaData extends MetaData implements Serializable
 
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_DISPLAYED = "displayed";
-    public static final String PARAM_TABS = "tabs";
     public static final String PARAM_PROPS = "props";
     public static final String PARAM_ACTIONS = "actions";
     public static final String PARAM_LABEL = "label";
@@ -226,7 +225,6 @@ public class BeanMetaData extends MetaData implements Serializable
         consumeParameter(PARAM_LABEL);
         consumeParameter(PARAM_ACTIONS);
         consumeParameter(PARAM_PROPS);
-        consumeParameter(PARAM_TABS);
         consumeParameter(PARAM_DISPLAYED);
         consumeParameter(PARAM_VIEW_ONLY);
     }
@@ -235,25 +233,18 @@ public class BeanMetaData extends MetaData implements Serializable
      * Determines if all parameters specified have been consumed for a specific tab, or all tabs.
      * 
      * @param unconsumedMsgs messages that report the parameter keys that were specified but not consumed.
-     * @param tabMetaData the tab to be checked. If null, all elements and tabs are checked.
      * 
      * @return true if all parameters specified have been consumed.
      */
-    public boolean areAllParametersConsumed(Set<String> unconsumedMsgs, TabMetaData tabMetaData)
+    public boolean areAllParametersConsumed(Set<String> unconsumedMsgs)
     {
         if (!super.areAllParametersConsumed("Bean " + beanClass.getName(), unconsumedMsgs)) {
             return false;
         }
 
         // Make sure all elements and tabs have their parameters consumed.
-        for (ElementMetaData element : tabMetaData == null ? getDisplayedElements() : getTabElements(tabMetaData)) {
+        for (ElementMetaData element : getDisplayedElements()) {
             if (!element.areAllParametersConsumed("Property " + element.getPropertyName(), unconsumedMsgs)) {
-                return false;
-            }
-        }
-
-        for (TabMetaData tab : tabMetaData == null ? tabs : Collections.singletonList(tabMetaData)) {
-            if (!tab.areAllParametersConsumed("Tab " + tab.getId(), unconsumedMsgs)) {
                 return false;
             }
         }
@@ -263,13 +254,11 @@ public class BeanMetaData extends MetaData implements Serializable
 
     /**
      * Logs a warning if any parameter specified have not been consumed for a specific tab, or all tabs.
-     * 
-     * @param tabMetaData the tab to be checked. If null, all elements and tabs are checked.
      */
-    public void warnIfAnyParameterNotConsumed(TabMetaData tabMetaData)
+    public void warnIfAnyParameterNotConsumed()
     {
         Set<String> msgs = new HashSet<String>();
-        if (!areAllParametersConsumed(msgs, tabMetaData)) {
+        if (!areAllParametersConsumed(msgs)) {
             for (String msg : msgs) {
                 logger.warning(msg);
             }

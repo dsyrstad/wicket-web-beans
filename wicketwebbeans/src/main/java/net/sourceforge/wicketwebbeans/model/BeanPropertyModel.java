@@ -111,10 +111,9 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
             FormComponent formComponent = (FormComponent)component;
             String fieldName = beanForm.getSubmitFieldName();
             if (fieldName != null && !formComponent.getInputName().equals(fieldName)) {
-                // Not the field being set - don't set it.
+                // Not the field being submitted - don't set it.
                 return;
             }
-            System.out.println("Setting " + fieldName);
         }
 
         super.setObject(object);

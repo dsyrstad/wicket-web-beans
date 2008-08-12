@@ -91,7 +91,7 @@ public class BeanForm extends Panel
     private FormVisitor formVisitor;
     private FeedbackPanel feedback;
     // Wicket ID/HTML ID of field with focus.
-    private String focusFieldId = null;
+    private String focusFieldName = null;
     private String submitFieldName;
     private BeanPropertyChangeListener listener = new BeanPropertyChangeListener();
 
@@ -99,6 +99,7 @@ public class BeanForm extends Panel
     private Set<ComponentPropertyMapping> componentPropertyMappings = new HashSet<ComponentPropertyMapping>(200);
     /** Components that should be refreshed on the new Ajax Component update. */
     private Set<ComponentPropertyMapping> refreshComponents = new HashSet<ComponentPropertyMapping>(200);
+
     /** Form submit recursion counter. Zero means we're not validating currently. */
 
     /**
@@ -144,7 +145,7 @@ public class BeanForm extends Panel
         // This form is never actually submitted. It exists to hold input fields only.
         form = new Form("f");
         form.add(new AjaxFieldUpdater(form, "onajax"));
-        form.add(new HiddenField("focusFieldId", new PropertyModel(this, "focusFieldId")));
+        form.add(new HiddenField("focusFieldName", new PropertyModel(this, "focusFieldName")));
         form.add(new HiddenField("submitFieldName", new PropertyModel(this, "submitFieldName")));
         add(form);
 
@@ -160,7 +161,7 @@ public class BeanForm extends Panel
 
         // Single default tab - none explicitly specified. Don't add a tab panel.
         // TODO - Go away.
-        form.add( createPanel("tabs", bean, beanMetaData, beanMetaData.getTabs().get(0), container) );
+        form.add(createPanel("tabs", bean, beanMetaData, beanMetaData.getTabs().get(0), container));
 
         // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
         IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
@@ -326,27 +327,27 @@ public class BeanForm extends Panel
      */
     public void setFocusComponent(Component component)
     {
-        setFocusFieldId(component == null ? null : component.getId());
+        setFocusFieldName(component == null ? null : component.getId());
     }
 
     /**
-     * Gets the focusFieldId.
+     * Gets the focusFieldName.
      *
-     * @return the focusFieldId.
+     * @return the focusFieldName.
      */
-    public String getFocusFieldId()
+    public String getFocusFieldName()
     {
-        return focusFieldId;
+        return focusFieldName;
     }
 
     /**
-     * Sets the focusFieldId.
+     * Sets the focusFieldName.
      *
-     * @param focusFieldId the focusFieldId to set.
+     * @param focusFieldName the focusFieldName to set.
      */
-    public void setFocusFieldId(String focusField)
+    public void setFocusFieldName(String focusFieldName)
     {
-        this.focusFieldId = focusField;
+        this.focusFieldName = focusFieldName;
     }
 
     /**
@@ -390,13 +391,23 @@ public class BeanForm extends Panel
      * due to property change events.
      *
      * @param target
-     * @param targetComponent the targetComponent, may be null.
+     * @param targetComponent the targetComponent.
      */
-    public void refreshComponents(final AjaxRequestTarget target, Component targetComponent)
+    private void refreshComponents(final AjaxRequestTarget target, Form form)
     {
-        if (targetComponent != null) {
-            refreshComponent(target, targetComponent);
-        }
+        // Only refresh the field that was submitted by default.
+        form.visitChildren(new IVisitor() {
+            public Object component(Component component)
+            {
+                if (component instanceof FormComponent
+                    && ((FormComponent)component).getInputName().equals(getSubmitFieldName())) {
+                    refreshComponent(target, component);
+                    return IVisitor.STOP_TRAVERSAL;
+                }
+
+                return IVisitor.CONTINUE_TRAVERSAL;
+            }
+        });
 
         if (!refreshComponents.isEmpty()) {
             // Refresh components fired from our PropertyChangeListener.
@@ -451,7 +462,6 @@ public class BeanForm extends Panel
 
                         return IVisitor.CONTINUE_TRAVERSAL;
                     }
-
                 });
             }
         }
@@ -459,6 +469,7 @@ public class BeanForm extends Panel
             target.addComponent(targetComponent);
         }
     }
+
 
     private final class FormVisitor implements IVisitor, Serializable
     {
@@ -501,7 +512,7 @@ public class BeanForm extends Panel
         protected void onSubmit(final AjaxRequestTarget target)
         {
             super.onSubmit(target);
-            refreshComponents(target, getComponent());
+            refreshComponents(target, (Form)getComponent());
             setSubmitFieldName(null);
         }
 
@@ -509,7 +520,7 @@ public class BeanForm extends Panel
         protected void onError(AjaxRequestTarget target)
         {
             super.onError(target);
-            refreshComponents(target, getComponent());
+            refreshComponents(target, (Form)getComponent());
             setSubmitFieldName(null);
         }
 
@@ -549,7 +560,7 @@ public class BeanForm extends Panel
     private static final class ComponentPropertyMapping implements Serializable
     {
         private static final long serialVersionUID = 1L;
-        
+
         /** IModel holding the bean. */
         private BeanPropertyModel beanModel;
         private ElementMetaData elementMetaData;
@@ -626,7 +637,7 @@ public class BeanForm extends Panel
         private class FieldLabel implements Serializable
         {
             private static final long serialVersionUID = 1L;
-            
+
             String fieldLabel;
 
             public FieldLabel(String fieldLabel)
