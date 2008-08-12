@@ -26,21 +26,25 @@ var wwbBeanForm =  {
     },
 
     // Track field with last focus in case we're refreshed.
-    focusFieldId: null,
+    focusFieldName: null,
     
     onFocus: function(field) {
-        wwbBeanForm.focusFieldId = field.name;
+        wwbBeanForm.focusFieldName = field.name;
     },
      
     onChange: function(field) {
         var form = field.form;
-        form.elements['focusFieldId'].value = wwbBeanForm.focusFieldId;
+        form.elements['focusFieldName'].value = wwbBeanForm.focusFieldName;
         form.elements['submitFieldName'].value = field.name;
         eval(form.attributes['onajax'].value);
     },
 
     refocus: function() {
-        var field = document.getElementById(wwbBeanForm.focusFieldId);
+        var fields = document.getElementsByName(wwbBeanForm.focusFieldName);
+        if (fields && fields.length > 0) {
+            var field = fields[0];
+        }
+        
         if (field) {
             field.focus();
         }
@@ -50,15 +54,16 @@ var wwbBeanForm =  {
     },
      
     focusFirst: function(focusFirstEmpty) {
-        for (var form in document.forms) {
-            for (var i = 0; i < form.elements.length; i++ ) {
+        for (var formId in document.forms) {
+            var form = document.forms[formId];
+            for (var i = 0; form.elements && i < form.elements.length; i++ ) {
                 if (form.elements[ i ].type != "hidden" &&
                     !form.elements[ i ].disabled &&
                     !form.elements[ i ].readOnly &&
                     (!focusFirstEmpty || form.elements[i].value == "")) {
                     var field = form.elements[ i ];
                     field.focus();
-                    wwbBeanForm.focusFieldId = field.name;
+                    wwbBeanForm.focusFieldName = field.name;
                     break;
                 }
             }
