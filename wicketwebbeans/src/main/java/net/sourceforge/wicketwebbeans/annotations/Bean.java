@@ -75,9 +75,6 @@ public @interface Bean {
      * include an action. Also, Property.EMPTY can be used to specify an empty cell. */
     String[] propertyNames() default {}; 
     
-    /** Defines the tabs and order of them. */
-    Tab[] tabs() default {};
-    
     /** A container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
      *   implement a constructor of the form: <p>
      *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>

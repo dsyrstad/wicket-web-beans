@@ -8,16 +8,13 @@ import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Beans;
 import net.sourceforge.wicketwebbeans.annotations.Parameter;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 
 
 @Beans({
     @Bean(
-        tabs = {
-            @Tab(name = "General", propertyNames = { "firstName", "lastName", "idNumber" }),
-            @Tab(name = "Address", propertyNames = { 
+        propertyNames = { "firstName", "lastName", "idNumber",
                 "address1", EMPTY, EMPTY, 
-                "address2", EMPTY, EMPTY, "city", "state", "zip" })
+                "address2", EMPTY, EMPTY, "city", "state", "zip"
         },
         params = @Parameter(name = "customParam", value = { "value1", "value2", "value3"})
     ),

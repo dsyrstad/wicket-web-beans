@@ -41,7 +41,6 @@ import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Beans;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
 import net.sourceforge.wicketwebbeans.fields.EmptyField;
@@ -101,7 +100,6 @@ public class BeanMetaData extends MetaData implements Serializable
 
     // List of all properties.
     private List<ElementMetaData> elements = new ArrayList<ElementMetaData>();
-    private List<TabMetaData> tabs = new ArrayList<TabMetaData>();
 
     private boolean hasAddPropertyChangeListenerMethod;
     private boolean hasRemovePropertyChangeListenerMethod;
@@ -373,26 +371,6 @@ public class BeanMetaData extends MetaData implements Serializable
         // Post-process Bean-level parameters
         if (!getBooleanParameter(PARAM_DISPLAYED)) {
             elements.clear();
-            tabs.clear();
-        }
-        
-        // Configure tabs
-        if (tabs.isEmpty()) {
-            // Create single default tab.
-            tabs.add( new TabMetaData(this, DEFAULT_TAB_ID, getParameter(PARAM_LABEL) ) );
-        }
-        
-        String defaultTabId = tabs.get(0).getId();
-        
-        // Post-process each property based on bean parameters
-        for (ElementMetaData elementMeta : elements) {
-            // If element is not on a tab, add it to the first. If it's an action, it must have been assigned an order to
-            // appear on a tab. Otherwise it is a global action.
-            if (elementMeta.getTabId() ==  null &&
-                (!elementMeta.isAction() || 
-                 (elementMeta.isAction() && elementMeta.isActionSpecifiedInProps()))) {
-                elementMeta.setTabId(defaultTabId);
-            }
         }
 
         Collections.sort(elements, new Comparator<ElementMetaData>() {
@@ -601,28 +579,6 @@ public class BeanMetaData extends MetaData implements Serializable
                 }
             }
         }
-
-        for (Tab tab : bean.tabs()) {
-            String tabName = tab.name();
-            boolean removeTab = false;
-            if (tabName.startsWith("-") && tabName.length() > 1) {
-                tabName = tabName.substring(1);
-                removeTab = true;
-            }
-
-            TabMetaData foundTab = findTab(tabName);
-
-            if (removeTab) {
-                if (foundTab == null) {
-                    throw new RuntimeException("Tab " + tabName + " does not exist in exposed list of tabs.");
-                }
-
-                tabs.remove(foundTab);
-            }
-            else {
-                processTabAnnotation(tab, foundTab);
-            }
-        }
     }
 
     /**
@@ -753,64 +709,6 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         return element;
-    }
-    
-    /**
-     * Process a Tab annotation.
-     *
-     * @param tab the annotation.
-     * @param tabMetaData the tab metadata, if it already exists.
-     */
-    private void processTabAnnotation(Tab tab, TabMetaData tabMetaData)
-    {
-        if (tab == null) {
-            return;
-        }
-        
-        String tabName = tab.name();
-        if (tabMetaData == null) {
-        	String baseBeanClassName = getBaseClassName(beanClass);
-            String prefixedName = TAB_PROPERTY_PREFIX + tabName;
-            String label = getLabelFromLocalizer(baseBeanClassName, prefixedName);
-            if (label == null) {
-                label = createLabel(tabName);
-            }
-            
-            tabMetaData = new TabMetaData(this, tabName, label);
-            tabs.add(tabMetaData);
-        }
-        
-        tabMetaData.setParameterIfNotEmpty(PARAM_LABEL, tab.label());
-        
-        // Process propertyNames after properties because propertyNames is typically used to define order.
-        int order = 1;
-        for (Property property : tab.properties()) {
-            if (!handleElementRemove(property.name(), false)) {
-                ElementMetaData element = processPropertyAnnotation(property, null);
-                element.setTabId( tabMetaData.getId() );
-                element.setOrder(order++);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-            }
-        }
-        
-        order = 1;
-        for (String propName : tab.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                element.setTabId( tabMetaData.getId() );
-                element.setOrder(order++);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-            }
-        }
-
-        tabMetaData.setParameterIfNotEmpty(tab.paramName(), tab.paramValue());
-        for (net.sourceforge.wicketwebbeans.annotations.Parameter param : tab.params()) {
-            tabMetaData.setParameterIfNotEmpty(param.name(), param.value());
-        }
     }
     
     /**
@@ -973,24 +871,6 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
-     * Finds a tab.
-     *
-     * @param tabName the tab name
-     * @return the TabMetaData, or null if not found.
-     */
-    private TabMetaData findTab(String tabName)
-    {
-        TabMetaData foundTab = null;
-        for (TabMetaData tab : tabs) {
-            if (tab.getId().equals(tabName)) {
-                foundTab = tab;
-                break;
-            }
-        }
-        return foundTab;
-    }
-
-    /**
      * Finds the specified element in the list of all elements. Handles special
      * Pseudo property names (e.g., "EMPTY") by adding a new one to the list.
      * 
@@ -1101,29 +981,6 @@ public class BeanMetaData extends MetaData implements Serializable
         catch (Exception e) {
             throw new RuntimeException("Cannot load container class " + container);
         }
-    }
-
-    /**
-     * @return the tabs defined for this bean. There will always be at least one tab.
-     */
-    public List<TabMetaData> getTabs()
-    {
-        return tabs;
-    }
-
-    /**
-     * @return a list of all displayed elements for a tab.
-     */
-    public List<ElementMetaData> getTabElements(TabMetaData tab)
-    {
-        List<ElementMetaData> elems = new ArrayList<ElementMetaData>();
-        for (ElementMetaData elem : elements) {
-            if (elem.getTabId() != null && elem.getTabId().equals(tab.getId())) {
-                elems.add(elem);
-            }
-        }
-
-        return elems;
     }
 
     /**

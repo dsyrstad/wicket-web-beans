@@ -30,7 +30,6 @@ import net.sourceforge.wicketwebbeans.fields.Field;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -84,8 +83,7 @@ public class BeanForm extends Panel
 
     public static final String PARAM_ROWS = "rows";
 
-    private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, BeanMetaData.class,
-                    TabMetaData.class };
+    private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, BeanMetaData.class };
 
     private Form form;
     private FormVisitor formVisitor;
@@ -161,7 +159,7 @@ public class BeanForm extends Panel
 
         // Single default tab - none explicitly specified. Don't add a tab panel.
         // TODO - Go away.
-        form.add(createPanel("tabs", bean, beanMetaData, beanMetaData.getTabs().get(0), container));
+        form.add(createPanel("tabs", bean, beanMetaData, container));
 
         // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
         IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
@@ -202,13 +200,11 @@ public class BeanForm extends Panel
      * @param panelId the Wicket id for the panel component.
      * @param bean may be a bean or an IModel containing a bean.
      * @param beanMetaData the BeanMetaData.
-     * @param tabMetaData the TabMetaData.
      * @param container the container class to use. May be null.
      * 
      * @return a Panel.
      */
-    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData,
-                    Class<? extends Panel> containerClass)
+    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, Class<? extends Panel> containerClass)
     {
         if (containerClass == null) {
             containerClass = beanMetaData.getContainerClass();
@@ -217,7 +213,7 @@ public class BeanForm extends Panel
         if (containerClass != null) {
             try {
                 Constructor<? extends Panel> constructor = containerClass.getConstructor(CONTAINER_CONSTRUCTOR_PARAMS);
-                return constructor.newInstance(panelId, bean, beanMetaData, tabMetaData);
+                return constructor.newInstance(panelId, bean, beanMetaData);
             }
             catch (Exception e) {
                 throw new RuntimeException("Error instantiating container", e);
@@ -245,7 +241,7 @@ public class BeanForm extends Panel
             return new BeanTablePanel(panelId, model, beanMetaData, rows);
         }
 
-        return new BeanGridPanel(panelId, bean, beanMetaData, tabMetaData);
+        return new BeanGridPanel(panelId, bean, beanMetaData);
     }
 
     /**
@@ -400,7 +396,7 @@ public class BeanForm extends Panel
             public Object component(Component component)
             {
                 if (component instanceof FormComponent
-                    && ((FormComponent)component).getInputName().equals(getSubmitFieldName())) {
+                                && ((FormComponent)component).getInputName().equals(getSubmitFieldName())) {
                     refreshComponent(target, component);
                     return IVisitor.STOP_TRAVERSAL;
                 }

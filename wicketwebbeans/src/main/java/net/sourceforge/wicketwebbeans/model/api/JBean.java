@@ -27,7 +27,6 @@ import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Parameter;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -39,6 +38,8 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class JBean implements Bean, Serializable
 {
+    private static final long serialVersionUID = 5990309478843128345L;
+    
     private Class<?> type = Object.class;
     private String context =  "";
     private String extendsContext =  "";
@@ -51,7 +52,6 @@ public class JBean implements Bean, Serializable
     private String[] actionNames =  {};
     private List<Property> properties = new ArrayList<Property>();
     private String[] propertyNames =  {}; 
-    private List<Tab> tabs = new ArrayList<Tab>();
     private Class<? extends Panel> container = Panel.class;
     private List<Parameter> params = new ArrayList<Parameter>();
     private String css = "";
@@ -375,36 +375,6 @@ public class JBean implements Bean, Serializable
     public JBean rows(int rows)
     {
         this.rows = rows;
-        return this;
-    }
-
-    /** 
-     * {@inheritDoc}
-     * @see net.sourceforge.wicketwebbeans.annotations.Bean#tabs()
-     */
-    public Tab[] tabs()
-    {
-        return tabs.toArray(new Tab[tabs.size()]);
-    }
-
-    /** @see #tabs() */
-    public JBean tabs(Tab... tabs)
-    {
-        this.tabs = new ArrayList<Tab>( Arrays.asList(tabs) ); // Must be mutable
-        return this;
-    }
-    
-    /** @see #tabs() */
-    public JBean tabs(List<Tab> tabs)
-    {
-        this.tabs = tabs;
-        return this;
-    }
-    
-    /** @see #tabs() */
-    public JBean add(Tab tab)
-    {
-        this.tabs.add(tab);
         return this;
     }
 

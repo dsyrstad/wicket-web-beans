@@ -27,12 +27,10 @@ import java.util.List;
 
 import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.model.api.JAction;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 import net.sourceforge.wicketwebbeans.model.api.JBeans;
 import net.sourceforge.wicketwebbeans.model.api.JProperty;
-import net.sourceforge.wicketwebbeans.model.api.JTab;
 
 
 /**
@@ -228,9 +226,6 @@ public class BeanPropsParser
             else if (name.equals(BeanMetaData.PARAM_PROPS)) {
                 jbean.properties( processProps(param.getValues()) );
             }
-            else if (param.getName().equals(BeanMetaData.PARAM_TABS)) {
-                jbean.tabs( processTabs(param.getValues()) );
-            }
             else {
                 jbean.add(name, param.getValuesAsStrings());
             }
@@ -281,33 +276,6 @@ public class BeanPropsParser
         }
         
         return jactions;
-    }
-
-    /**
-     * Turns a BeanAST's "tabs" into a List of Tab.
-     *
-     * @param values
-     * 
-     * @return a List of Tab.
-     */
-    private List<Tab> processTabs(List<ParameterValueAST> values)
-    {
-        List<Tab> jtabs = new ArrayList<Tab>();
-        for (ParameterValueAST value : values) {
-            String elementName = value.getValue();
-            JTab jtab = new JTab(elementName);
-            jtabs.add(jtab);
-            for (ParameterAST param : value.getParameters()) {
-                if (param.getName().equals(BeanMetaData.PARAM_PROPS)) {
-                    jtab.properties( processProps(param.getValues()) );
-                }
-                else {
-                    jtab.add(param.getName(), param.getValuesAsStrings());
-                }
-            }
-        }
-        
-        return jtabs;
     }
 
     private BeanAST parseBean()

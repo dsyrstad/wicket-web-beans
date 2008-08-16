@@ -21,7 +21,6 @@ import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Beans;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.fields.BeanGridField;
 import net.sourceforge.wicketwebbeans.fields.BeanInlineField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
@@ -36,14 +35,6 @@ import org.apache.wicket.markup.html.form.Form;
             EMPTY, "activePrimitive", "color", "inlineBean",
             "dateTimestamp", "blockBean", "testBean2", "popupBean",
             "-subComponent" },
-          tabs = {
-            @Tab(name = "nameInfo"),
-            @Tab(name = "miscInfo", label = "${MiscInfo.title}", 
-                 propertyNames = { "gender", EMPTY, "age", "operand1", "operand2",
-                    "result", "palette", "palette2", "description" 
-                 }),
-            @Tab(name = "listOfBeans", propertyNames = { "action.addRow", "beans" }) 
-          },
           properties = {
             @Property(name = "inlineBean", fieldType = BeanInlineField.class, colspan = 3),
             @Property(name = "blockBean", fieldType = BeanGridField.class, colspan = 3),
@@ -66,8 +57,7 @@ import org.apache.wicket.markup.html.form.Form;
           properties = {
             @Property(name = "action.save", colspan = 4),
             @Property(name = "firstName", viewOnly = false)
-          },
-          tabs = @Tab(name = "miscInfo", propertyNames = "-palette2")
+          }
     ),
      
     @Bean(type = AnnotationTestBean2.class, actionNames = "-doIt",

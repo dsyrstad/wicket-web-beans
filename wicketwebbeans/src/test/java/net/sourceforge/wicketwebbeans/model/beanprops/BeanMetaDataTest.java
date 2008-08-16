@@ -17,8 +17,6 @@
 
 package net.sourceforge.wicketwebbeans.model.beanprops;
 
-import java.util.List;
-
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.fields.BeanGridField;
 import net.sourceforge.wicketwebbeans.fields.BeanInlineField;
@@ -26,7 +24,6 @@ import net.sourceforge.wicketwebbeans.fields.EmptyField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.WicketTester;
@@ -67,7 +64,6 @@ public class BeanMetaDataTest extends TestCase
         assertEquals(expected.propName, expected.label, element.getLabel());
         assertNotNull(expected.propName, element.getLabelComponent("test"));
         assertEquals(expected.propName, expected.labelImage, element.getLabelImage());
-        assertEquals(expected.propName, expected.tabId, element.getTabId());
     }
     
     /**
@@ -130,21 +126,6 @@ public class BeanMetaDataTest extends TestCase
         
         // action.save (second element) should have a parameter of colspan: 3
         assertEquals(Integer.valueOf(3), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
-        
-        List<TabMetaData> tabs = beanMetaData.getTabs();
-        assertEquals(3, tabs.size());
-        
-        assertEquals("nameInfo", tabs.get(0).getId());
-        assertEquals("Name Info", tabs.get(0).getLabel());
-        assertEquals(16, beanMetaData.getTabElements(tabs.get(0)).size());
-        
-        assertEquals("miscInfo", tabs.get(1).getId());
-        assertEquals("Miscellaneous", tabs.get(1).getLabel());
-        assertEquals(9, beanMetaData.getTabElements(tabs.get(1)).size());
-        
-        assertEquals("listOfBeans", tabs.get(2).getId());
-        assertEquals("List Of Beans", tabs.get(2).getLabel());
-        assertEquals(2, beanMetaData.getTabElements(tabs.get(2)).size());
     }
     
     /**
@@ -201,12 +182,6 @@ public class BeanMetaDataTest extends TestCase
             assertElement(beanMetaData, element, expectedProps[elementIdx]);
             ++elementIdx;
         }
-        
-        List<TabMetaData> tabs = beanMetaData.getTabs();
-        assertEquals(1, tabs.size());
-        
-        assertEquals("DEFAULT_TAB", tabs.get(0).getId());
-        assertEquals("Bean Meta Data Test Bean", tabs.get(0).getLabel());
     }
     
     /**
@@ -269,21 +244,6 @@ public class BeanMetaDataTest extends TestCase
         
         // action.save (second element) should have a parameter of colspan: 4
         assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
-        
-        List<TabMetaData> tabs = beanMetaData.getTabs();
-        assertEquals(3, tabs.size());
-        
-        assertEquals("nameInfo", tabs.get(0).getId());
-        assertEquals("Name Info", tabs.get(0).getLabel());
-        assertEquals(16, beanMetaData.getTabElements(tabs.get(0)).size());
-        
-        assertEquals("miscInfo", tabs.get(1).getId());
-        assertEquals("Miscellaneous", tabs.get(1).getLabel());
-        assertEquals(8, beanMetaData.getTabElements(tabs.get(1)).size());
-        
-        assertEquals("listOfBeans", tabs.get(2).getId());
-        assertEquals("List Of Beans", tabs.get(2).getLabel());
-        assertEquals(2, beanMetaData.getTabElements(tabs.get(2)).size());
     }
     
     /**
@@ -345,21 +305,6 @@ public class BeanMetaDataTest extends TestCase
         
         // action.save (second element) should have a parameter of colspan: 4
         assertEquals(Integer.valueOf(4), beanMetaData.getDisplayedElements().get(1).getIntegerParameter("colspan"));
-        
-        List<TabMetaData> tabs = beanMetaData.getTabs();
-        assertEquals(3, tabs.size());
-        
-        assertEquals("nameInfo", tabs.get(0).getId());
-        assertEquals("Name Info", tabs.get(0).getLabel());
-        assertEquals(15, beanMetaData.getTabElements(tabs.get(0)).size());
-        
-        assertEquals("miscInfo", tabs.get(1).getId());
-        assertEquals("Miscellaneous", tabs.get(1).getLabel());
-        assertEquals(8, beanMetaData.getTabElements(tabs.get(1)).size());
-        
-        assertEquals("listOfBeans", tabs.get(2).getId());
-        assertEquals("List Of Beans", tabs.get(2).getLabel());
-        assertEquals(2, beanMetaData.getTabElements(tabs.get(2)).size());
     }
     
     /**

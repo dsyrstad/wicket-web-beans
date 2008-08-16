@@ -34,6 +34,8 @@ import org.apache.wicket.util.lang.PropertyResolver;
  */
 public final class ElementMetaData extends MetaData implements Serializable
 {
+    private static final long serialVersionUID = -997774600732259920L;
+    
     public static final String PARAM_ELEMENT_TYPE = "elementType";
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_LABEL_IMAGE = "labelImage";
@@ -50,13 +52,12 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     private BeanMetaData beanMetaData;
     private String propertyName;
-    private Class propertyType;
+    private Class<?> propertyType;
     private int order;
-    private String tabId;
     private boolean isAction = false;
     private boolean actionSpecifiedInProps = false;
     
-    ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class propertyType)
+    ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class<?> propertyType)
     {
         super(beanMetaData.getComponent());
         
@@ -92,16 +93,6 @@ public final class ElementMetaData extends MetaData implements Serializable
     public void setFieldType(String fieldType)
     {
         setParameter(PARAM_FIELD_TYPE, fieldType);
-    }
-
-    public String getTabId()
-    {
-        return tabId;
-    }
-    
-    public void setTabId(String groupId)
-    {
-        this.tabId = groupId;
     }
 
     public String getLabel()
@@ -246,7 +237,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         return propertyName.equals(other.propertyName);
     }
     
-    public Class getPropertyType()
+    public Class<?> getPropertyType()
     {
         return propertyType;
     }
@@ -287,9 +278,9 @@ public final class ElementMetaData extends MetaData implements Serializable
      * 
      * @return the elementType or null if not defined.
      */
-    public Class getElementType(Object value)
+    public Class<?> getElementType(Object value)
     {
-        Class elementType = null;
+        Class<?> elementType = null;
         String elementTypeName = getElementTypeName();
         if (elementTypeName == null) {
             // This only returns the element type if the property is an array, otherwise null.
@@ -299,13 +290,13 @@ public final class ElementMetaData extends MetaData implements Serializable
         if (elementType == null) {
             // Try to detect it from first element if non-empty.
             if (value instanceof Collection) {
-                Iterator iter = ((Collection)value).iterator();
+                Iterator<?> iter = ((Collection<?>)value).iterator();
                 if (iter.hasNext()) {
                     elementType = iter.next().getClass();
                 }
                 else {
                     // If empty - just use Object.
-                    elementType = new Serializable() { }.getClass();
+                    elementType = new Serializable() { private static final long serialVersionUID = 1L; }.getClass();
                 }
             }
         }
@@ -413,7 +404,7 @@ public final class ElementMetaData extends MetaData implements Serializable
      * 
      * @return a new BeanMetaData.
      */
-    public BeanMetaData createBeanMetaData(Class beanType, boolean viewOnly)
+    public BeanMetaData createBeanMetaData(Class<?> beanType, boolean viewOnly)
     {
         // Compose a keyPrefix from the original bean meta data, the base bean class name, and this property name.
         BeanMetaData parentMetaData = getBeanMetaData();
