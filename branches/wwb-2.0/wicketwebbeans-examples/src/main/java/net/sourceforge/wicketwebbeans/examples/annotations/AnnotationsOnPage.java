@@ -4,7 +4,6 @@ import static net.sourceforge.wicketwebbeans.annotations.Property.EMPTY;
 import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 
@@ -13,11 +12,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 
 @Bean(type = TestBean.class, 
-    tabs = {
-        @Tab(name = "General", propertyNames = { "firstName", "lastName", "idNumber" }),
-        @Tab(name = "Address", propertyNames = { 
+    propertyNames = { "firstName", "lastName", "idNumber",
             "address1", EMPTY, EMPTY, 
-            "address2", EMPTY, EMPTY, "city", "state", "zip" })
+            "address2", EMPTY, EMPTY, "city", "state", "zip"
     },
     // Customize certain properties from above.
     properties = {

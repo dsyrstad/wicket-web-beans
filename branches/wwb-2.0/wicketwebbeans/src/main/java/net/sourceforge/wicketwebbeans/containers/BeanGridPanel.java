@@ -25,7 +25,6 @@ import net.sourceforge.wicketwebbeans.fields.LabeledField;
 import net.sourceforge.wicketwebbeans.fields.UnlabeledField;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -38,7 +37,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-
 /**
  * A panel for generically displaying Java Beans in a grid-style layout.
  * The Bean config may specify the number of columns as "cols". The default is 3.
@@ -50,14 +48,13 @@ import org.apache.wicket.model.Model;
  */
 public class BeanGridPanel extends Panel
 {
+    private static final long serialVersionUID = -2149828837634944417L;
+
     public static final String PARAM_COLSPAN = "colspan";
     public static final String PARAM_COLS = "cols";
 
-    private static final long serialVersionUID = -2149828837634944417L;
-
-    private Object bean; 
+    private Object bean;
     private BeanMetaData beanMetaData;
-    private TabMetaData tabMetaData;
     private boolean showLabels;
     private int columns;
 
@@ -70,23 +67,9 @@ public class BeanGridPanel extends Panel
      */
     public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData)
     {
-        this(id, bean, beanMetaData, null);
+        this(id, bean, beanMetaData, true);
     }
 
-    /**
-     * Construct a new BeanGridPanel.
-     *
-     * @param id the Wicket id for the panel.
-     * @param bean the bean to be displayed. This may be an IModel or regular bean object.
-     * @param beanMetaData the meta data for the bean
-     * @param groupMetaData the tab to be displayed. If this is null, all displayed properties 
-     *  for the bean will be displayed.
-     */
-    public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData, TabMetaData groupMetaData)
-    {
-        this(id, bean, beanMetaData, groupMetaData, true);
-    }
-    
     /**
      * Construct a new BeanGridPanel.
      *
@@ -97,40 +80,33 @@ public class BeanGridPanel extends Panel
      *  for the bean will be displayed.
      * @param showLabels if true, property labels will be displayed, otherwise they won't. 
      */
-    public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData, TabMetaData tabMetaData, 
-                final boolean showLabels)
+    public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData, final boolean showLabels)
     {
         super(id);
 
         this.bean = bean;
         this.beanMetaData = beanMetaData;
-        this.tabMetaData = tabMetaData;
         this.showLabels = showLabels;
-        
+
         beanMetaData.applyCss(bean, beanMetaData, this);
 
         List<ElementMetaData> displayedProperties;
-        if (tabMetaData == null) {
-            displayedProperties = beanMetaData.getDisplayedElements();
-        }
-        else {
-            displayedProperties = beanMetaData.getTabElements(tabMetaData);
-        }
-        
+        displayedProperties = beanMetaData.getDisplayedElements();
+
         // Get Number of rows from config
         //Properties config = beanMetaData.getParameters();
         columns = beanMetaData.getIntParameter(PARAM_COLS, 3);
         if (columns < 1) {
             throw new RuntimeException("Invalid columns config value: " + columns);
         }
-        
+
         // Break out the rows and columns ahead of time.
         List<List<ElementMetaData>> rowsAndCols = new ArrayList<List<ElementMetaData>>();
         int colPos = 0;
         List<ElementMetaData> currRow = null;
         for (ElementMetaData element : displayedProperties) {
             int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
-            if (colspan < 1 || colspan > columns) { 
+            if (colspan < 1 || colspan > columns) {
                 throw new RuntimeException("Invalid colspan parameter value: " + colspan);
             }
 
@@ -138,7 +114,7 @@ public class BeanGridPanel extends Panel
             if ((colPos + colspan) > columns) {
                 colPos = 0;
             }
-            
+
             if (colPos == 0) {
                 currRow = new ArrayList<ElementMetaData>();
                 rowsAndCols.add(currRow);
@@ -150,9 +126,9 @@ public class BeanGridPanel extends Panel
                 colPos = 0;
             }
         }
-        
+
         Model propModel = new Model((Serializable)rowsAndCols);
-        add( new RowListView("r", propModel) );
+        add(new RowListView("r", propModel));
     }
 
     @Override
@@ -168,12 +144,13 @@ public class BeanGridPanel extends Panel
     protected void onComponentTag(ComponentTag tag)
     {
         super.onComponentTag(tag);
-        beanMetaData.warnIfAnyParameterNotConsumed(tabMetaData);
+        beanMetaData.warnIfAnyParameterNotConsumed();
     }
-    
+
+
     private final class RowListView extends ListView
     {
-        
+
         RowListView(String id, IModel model)
         {
             super(id, model);
@@ -182,10 +159,11 @@ public class BeanGridPanel extends Panel
         protected void populateItem(ListItem item)
         {
             List<ElementMetaData> columns = (List<ElementMetaData>)item.getModelObject();
-            
-            item.add( new ColListView("c", new Model((Serializable)columns)));
+
+            item.add(new ColListView("c", new Model((Serializable)columns)));
         }
     }
+
 
     private final class ColListView extends ListView
     {
@@ -198,12 +176,12 @@ public class BeanGridPanel extends Panel
         {
             ElementMetaData element = (ElementMetaData)item.getModelObject();
             int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
-            
+
             Component component;
             if (element.isAction()) {
                 Form form = (Form)findParent(Form.class);
                 component = new BeanActionButton("c", element, form, bean);
-                item.add( new SimpleAttributeModifier("class", "beanActionButtonCell") );
+                item.add(new SimpleAttributeModifier("class", "beanActionButtonCell"));
             }
             else {
                 component = beanMetaData.getComponentRegistry().getComponent(bean, "c", element);
@@ -214,10 +192,10 @@ public class BeanGridPanel extends Panel
 
             beanMetaData.applyCss(bean, element, component);
 
-            item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))) );
+            item.add(new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))));
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            item.add( new AttributeModifier("style", true, new Model(width)) );
+            item.add(new AttributeModifier("style", true, new Model(width)));
             item.add(component);
         }
     }

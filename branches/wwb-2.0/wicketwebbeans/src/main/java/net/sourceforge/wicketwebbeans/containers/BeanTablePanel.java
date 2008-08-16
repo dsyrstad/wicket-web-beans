@@ -147,7 +147,7 @@ public class BeanTablePanel extends Panel
     protected void onComponentTag(ComponentTag tag)
     {
         super.onComponentTag(tag);
-        metaData.warnIfAnyParameterNotConsumed(null);
+        metaData.warnIfAnyParameterNotConsumed();
     }
 
     public static class BeanSortableDataProvider extends SortableDataProvider

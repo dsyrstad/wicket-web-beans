@@ -61,6 +61,6 @@ public class BeanWithParentLabelField extends AbstractField
             model.setObject( metaData.createInstance() );
         }
 
-        add( new BeanGridPanel("p", model, beanMetaData, null, false) );
+        add( new BeanGridPanel("p", model, beanMetaData, false) );
     }
 }

@@ -22,7 +22,6 @@ import java.util.List;
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
 import net.sourceforge.wicketwebbeans.model.BeanMetaData;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
-import net.sourceforge.wicketwebbeans.model.TabMetaData;
 
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.ComponentTag;
@@ -46,7 +45,6 @@ public class VerticalLayoutBeanPanel extends Panel
 
     private Object bean; 
     private BeanMetaData beanMetaData;
-    private TabMetaData tabMetaData;
     private boolean showLabels;
 
     /**
@@ -55,12 +53,10 @@ public class VerticalLayoutBeanPanel extends Panel
      * @param id the Wicket id for the panel.
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
      * @param beanMetaData the meta data for the bean
-     * @param groupMetaData the tab to be displayed. If this is null, all displayed properties 
-     *  for the bean will be displayed.
      */
-    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData, TabMetaData groupMetaData)
+    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData)
     {
-        this(id, bean, beanMetaData, groupMetaData, true);
+        this(id, bean, beanMetaData, true);
     }
     
     /**
@@ -69,29 +65,19 @@ public class VerticalLayoutBeanPanel extends Panel
      * @param id the Wicket id for the panel.
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
      * @param beanMetaData the meta data for the bean
-     * @param tabMetaData the tab to be displayed. If this is null, all displayed properties 
-     *  for the bean will be displayed.
      * @param showLabels if true, property labels will be displayed, otherwise they won't. 
      */
-    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData, TabMetaData tabMetaData, 
-                final boolean showLabels)
+    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData, final boolean showLabels)
     {
         super(id);
 
         this.bean = bean;
         this.beanMetaData = beanMetaData;
-        this.tabMetaData = tabMetaData;
         this.showLabels = showLabels;
 
         beanMetaData.applyCss(bean, beanMetaData, this);
 
-        List<ElementMetaData> displayedProperties;
-        if (tabMetaData == null) {
-            displayedProperties = beanMetaData.getDisplayedElements();
-        }
-        else {
-            displayedProperties = beanMetaData.getTabElements(tabMetaData);
-        }
+        List<ElementMetaData> displayedProperties = beanMetaData.getDisplayedElements();
         
         Model propModel = new Model((Serializable)displayedProperties);
         add( new RowListView("r", propModel) );
@@ -110,7 +96,7 @@ public class VerticalLayoutBeanPanel extends Panel
     protected void onComponentTag(ComponentTag tag)
     {
         super.onComponentTag(tag);
-        beanMetaData.warnIfAnyParameterNotConsumed(tabMetaData);
+        beanMetaData.warnIfAnyParameterNotConsumed();
     }
     
     private final class RowListView extends ListView

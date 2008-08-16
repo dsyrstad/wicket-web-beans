@@ -4,15 +4,12 @@ import static net.sourceforge.wicketwebbeans.annotations.Property.EMPTY;
 import net.sourceforge.wicketwebbeans.annotations.Bean;
 import net.sourceforge.wicketwebbeans.annotations.Beans;
 import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.annotations.Tab;
 
 @Beans({
     @Bean(type = TestBean.class,
-        tabs = {
-            @Tab(name = "General", propertyNames = { "firstName", "lastName", "idNumber" }),
-            @Tab(name = "Address", propertyNames = { 
+        propertyNames = { "firstName", "lastName", "idNumber",
                 "address1", EMPTY, EMPTY, 
-                "address2", EMPTY, EMPTY, "city", "state", "zip" })
+                "address2", EMPTY, EMPTY, "city", "state", "zip"
         },
         
         // Customize certain properties from above.
