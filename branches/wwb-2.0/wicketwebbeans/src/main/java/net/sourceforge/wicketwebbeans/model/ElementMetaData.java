@@ -410,7 +410,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         BeanMetaData parentMetaData = getBeanMetaData();
             
         return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getBeansMetaData(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
-                        parentMetaData.getComponentRegistry(), viewOnly, true);
+                        parentMetaData.getComponentRegistry(), viewOnly);
     }
     
     /**

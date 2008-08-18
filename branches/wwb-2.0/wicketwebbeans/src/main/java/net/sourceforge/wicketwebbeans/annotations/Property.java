@@ -31,7 +31,7 @@ import net.sourceforge.wicketwebbeans.fields.Field;
 
 
 /**
- * Property annotation. May be specified within {@link Bean}, {@link Tab}, or on a property method. 
+ * Property annotation. May be specified within {@link Bean} or on a property method. 
  * <p>
  * 
  * @author Dan Syrstad

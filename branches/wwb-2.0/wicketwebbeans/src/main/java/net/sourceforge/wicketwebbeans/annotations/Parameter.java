@@ -25,7 +25,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Parameter annotation. Specified within a {@link Bean}, {@link Tab}, {@link Property}, or {@link Action} annotation
+ * Parameter annotation. Specified within a {@link Bean}, {@link Property}, or {@link Action} annotation
  * to supply non-standard parameters. 
  * <p>
  * 

@@ -75,9 +75,7 @@ public class BeanGridPanel extends Panel
      *
      * @param id the Wicket id for the panel.
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
-     * @param beanMetaData the meta data for the bean
-     * @param tabMetaData the tab to be displayed. If this is null, all displayed properties 
-     *  for the bean will be displayed.
+     * @param beanMetaData the meta data for the bean.
      * @param showLabels if true, property labels will be displayed, otherwise they won't. 
      */
     public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData, final boolean showLabels)

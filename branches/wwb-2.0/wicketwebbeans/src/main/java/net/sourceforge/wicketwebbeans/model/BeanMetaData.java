@@ -86,7 +86,6 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String PARAM_CSS = "css";
     public static final String PARAM_DYNAMIC_CSS = "dynamicCss";
 
-    public static final String TAB_PROPERTY_PREFIX = "tab.";
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
     
@@ -118,7 +117,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, null, null, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, null, null, component, componentRegistry, viewOnly);
     }
 
     /**
@@ -137,7 +136,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, null, metaDataClass, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, null, metaDataClass, component, componentRegistry, viewOnly);
     }
 
     /**
@@ -155,7 +154,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, beans, null, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, beans, null, component, componentRegistry, viewOnly);
     }
 
     /**
@@ -173,7 +172,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry,
                     boolean viewOnly)
     {
-        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly);
     }
 
     /**
@@ -189,10 +188,9 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
-     * @param isChildBean true if this bean is a child of another bean.
      */
     public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly, boolean isChildBean)
+                    boolean viewOnly)
     {
         super(component);
         
@@ -228,7 +226,7 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
-     * Determines if all parameters specified have been consumed for a specific tab, or all tabs.
+     * Determines if all parameters specified have been consumed.
      * 
      * @param unconsumedMsgs messages that report the parameter keys that were specified but not consumed.
      * 
@@ -240,7 +238,7 @@ public class BeanMetaData extends MetaData implements Serializable
             return false;
         }
 
-        // Make sure all elements and tabs have their parameters consumed.
+        // Make sure all elements have their parameters consumed.
         for (ElementMetaData element : getDisplayedElements()) {
             if (!element.areAllParametersConsumed("Property " + element.getPropertyName(), unconsumedMsgs)) {
                 return false;
@@ -251,7 +249,7 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
-     * Logs a warning if any parameter specified have not been consumed for a specific tab, or all tabs.
+     * Logs a warning if any parameter specified have not been consumed.
      */
     public void warnIfAnyParameterNotConsumed()
     {

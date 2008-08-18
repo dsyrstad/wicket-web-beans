@@ -9,10 +9,10 @@ v2.0
 - Support attachment of IValidator to fields. Support construction in here.
 - Components are really beans .... So we could construct an IValidator above. Then it's starting to look a little spring-like.
 
-- Only consistent attribute is "class". 
+- Only generic parameter is "class" or "component". 
 - No automatic nesting of bean forms....
-- How do dynamic values trigger? Do we evaluate each time? Less property events?
-- How are beanprops found?
+- How do dynamic values trigger? Do we evaluate each time? 
+- How are beanprops found? Can be optionally explicit (InputStream/Reader or URL). 
 - parameters are properties on beans?
 - Don't sumbit entire form. Have a form with one hidden field that gets submitted back to Wicket. This 
 would give knowledge of exactly what changed. How do we submit the entire thing on save - or do we?
@@ -23,14 +23,24 @@ would give knowledge of exactly what changed. How do we submit the entire thing 
 - Component Composition
 
 - ComponentRegistry can register one of these pre-configured components.
+- How does initial matching of component name work? Passed to BeanMetaData as option, otherwise based on the 
+bean class? Since implicit nesting of beans is no longer supported, it could just be called out in the constructor or
+default to the "ROOT" component. 
+
+- Distinguish parameter values as literals ("xyz", 5, 5.5) or symbols (prop/path/expr). Symbols are those that are
+  not literals. 
+
+- Automagic property change support via Ener-J derived agent. (Later) 
+
 
 Component0 {
-	class: TabbedLayout; # or component: for a pre-defined component - inherits those properities and extends them.
-	components: Component1 { label: "First Tab" }, Component4 { label: "Second Tab", displayed: ${someBooleanProp} };
+	class: TabbedLayout; # or component: for a pre-defined component - inherits those parameters and extends them.
+	components: Component1 { label: "First Tab" }, Component4 { label: "Second Tab", displayed: someBooleanProp };
 }
 
 Component1 {
 	class: BeanForm;
+	layout: BeanGridPanel;
 	elements: 
 		"prop1/prop2" { params }, 
 		"prop3/collection" { component: Component2, override-props-for-component: x },
@@ -46,6 +56,7 @@ Component2 { # Table
 }
 
 Component3 { # Row
+	class: BeanTableRow;
 	elements: "prop3", "prop4";
 }
 
