@@ -81,7 +81,7 @@ public class ContainerModelTest extends TestCase
         //tester.debugComponentTrees();
 
         // Check elements, labels.
-        String firstRowPath = "beanForm:f:tabs:r:0";
+        String firstRowPath = "beanForm:f:panel:r:0";
         String namePath = firstRowPath + ":c:0:c";
         String nameFieldPath = namePath + ":c";
         
@@ -234,7 +234,7 @@ public class ContainerModelTest extends TestCase
     private void checkListPage(WicketTester tester, final ContainerModelTestPage page, SerializableBean[] beans)
     {
         // Check that we have a data grid view and repeating fields.
-        String tablePath = "beanForm:f:tabs:t:rows";
+        String tablePath = "beanForm:f:panel:t:rows";
         tester.assertComponent(tablePath, DataGridView.class);
 
         for (int i = 1; i <= 10; i++) {

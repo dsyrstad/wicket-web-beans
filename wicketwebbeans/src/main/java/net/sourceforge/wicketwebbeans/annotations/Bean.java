@@ -77,12 +77,11 @@ public @interface Bean {
     
     /** A container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
      *   implement a constructor of the form: <p>
-     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
      *   <p>
      *   where id = Wicket component ID<br>
      *   bean = the bean, or IModel containing the bean<br>
      *   beanMetaData = the BeanMetaData for bean<br>
-     *   tabMetaData = the tab metadata.
      */
     Class<? extends Panel> container() default Panel.class;
     

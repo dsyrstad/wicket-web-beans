@@ -62,12 +62,11 @@ import org.apache.wicket.util.string.Strings;
  * <li>rows - if the bean is a List, this is the number of rows to be displayed. Defaults to 10.</li>
  * <li>container - a container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
  *   implement a constructor of the form: <p>
- *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+ *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
  *   <p>
  *   where id = Wicket component ID<br>
  *   bean = the bean, or IModel containing the bean<br>
  *   beanMetaData = the BeanMetaData for bean<br>
- *   tabMetaData = the tab metadata
  *   </li>
  * </ul>
  * 
@@ -126,12 +125,12 @@ public class BeanForm extends Panel
      *  the BeanMetaData for a single element (row) of the List.
      * @param container an optional container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
      *   implement a constructor of the form: <p>
-     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</code>
+     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
      *   <p>
      *   where id = Wicket component ID<br>
      *   bean = the bean, or IModel containing the bean<br>
      *   beanMetaData = the BeanMetaData for bean<br>
-     *   tabMetaData = the tab metadata<p>
+     *   <p>
      *   May be null.
      */
     @SuppressWarnings("serial")
@@ -157,9 +156,7 @@ public class BeanForm extends Panel
 
         formVisitor = new FormVisitor();
 
-        // Single default tab - none explicitly specified. Don't add a tab panel.
-        // TODO - Go away.
-        form.add(createPanel("tabs", bean, beanMetaData, container));
+        form.add(createPanel("panel", bean, beanMetaData, container));
 
         // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
         IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
@@ -195,7 +192,7 @@ public class BeanForm extends Panel
     }
 
     /**
-     * Creates the panel for the given tab.
+     * Creates the panel.
      *
      * @param panelId the Wicket id for the panel component.
      * @param bean may be a bean or an IModel containing a bean.
