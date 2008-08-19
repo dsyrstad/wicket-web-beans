@@ -49,9 +49,8 @@ abstract public class AbstractField extends Panel implements Field
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public AbstractField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public AbstractField(String id, IModel model, ElementMetaData metaData)
     {
         super(id, model);
         this.elementMetaData = metaData;

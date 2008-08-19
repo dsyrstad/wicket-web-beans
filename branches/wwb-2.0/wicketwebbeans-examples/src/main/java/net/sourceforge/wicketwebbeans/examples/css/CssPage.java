@@ -31,7 +31,7 @@ public class CssPage extends WebPage
                 .properties( new JProperty("description").dynamicCss("getDescriptionCss") )
         );
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbeans, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbeans, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

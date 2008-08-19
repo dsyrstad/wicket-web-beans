@@ -25,7 +25,7 @@ public class DatePage extends WebPage
         registry.register(Calendar.class, YUIDateField.class);
 
         TestBean bean = new TestBean();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry);
         add( new BeanForm("beanForm", bean, meta) );
     }
 }

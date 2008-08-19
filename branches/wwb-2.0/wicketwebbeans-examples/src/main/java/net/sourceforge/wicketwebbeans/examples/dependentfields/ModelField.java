@@ -15,12 +15,12 @@ public class ModelField extends EnumField
 {
     private ElementMetaData makeProp;
     
-    public ModelField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public ModelField(String id, IModel model, ElementMetaData metaData)
     {
         // Init with an empty set of values. We can't build the list until later. 
         // We also cannot pass in an instance of ValuesModel at this time because it is
         // dependent on this instance.
-        super(id, model, metaData, viewOnly, Collections.EMPTY_LIST);
+        super(id, model, metaData, Collections.EMPTY_LIST);
         
         // Retrieve the parameter that defines which Make property we need.
         makeProp = getDependentProperty(metaData, "makeProp", Make.class);

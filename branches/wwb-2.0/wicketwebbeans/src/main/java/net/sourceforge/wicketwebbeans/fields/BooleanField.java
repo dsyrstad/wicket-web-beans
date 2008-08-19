@@ -38,14 +38,13 @@ public class BooleanField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public BooleanField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public BooleanField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
 
         CheckBox checkBox =  new CheckBox("component", model) ;
-        checkBox.setEnabled(!viewOnly);
+        checkBox.setEnabled(true/*!viewOnly*/);
         add(checkBox);
     }
 }

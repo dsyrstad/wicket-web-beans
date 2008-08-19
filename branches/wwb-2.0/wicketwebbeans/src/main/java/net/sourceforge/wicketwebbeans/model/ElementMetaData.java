@@ -28,16 +28,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.PropertyResolver;
 
-
 /**
  * Represents the metadata for a single property of a bean or an action.
  */
 public final class ElementMetaData extends MetaData implements Serializable
 {
     private static final long serialVersionUID = -997774600732259920L;
-    
+
     public static final String PARAM_ELEMENT_TYPE = "elementType";
-    public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_LABEL_IMAGE = "labelImage";
     public static final String PARAM_LABEL = "label";
     public static final String PARAM_FIELD_TYPE = "fieldType";
@@ -49,31 +47,30 @@ public final class ElementMetaData extends MetaData implements Serializable
 
     public static final String CSS_REQUIRED_FIELD_CLASS = "beanRequiredField";
     public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
-    
+
     private BeanMetaData beanMetaData;
     private String propertyName;
     private Class<?> propertyType;
     private int order;
     private boolean isAction = false;
     private boolean actionSpecifiedInProps = false;
-    
+
     ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class<?> propertyType)
     {
         super(beanMetaData.getComponent());
-        
+
         this.beanMetaData = beanMetaData;
         this.propertyName = propertyName;
         this.propertyType = propertyType;
         setLabel(label);
         this.order = DEFAULT_ORDER;
-        
+
         consumeParameter(PARAM_FIELD_TYPE);
         consumeParameter(PARAM_LABEL);
         consumeParameter(PARAM_LABEL_IMAGE);
-        consumeParameter(PARAM_VIEW_ONLY);
         consumeParameter(PARAM_ELEMENT_TYPE);
     }
-    
+
     public String getFieldType()
     {
         String fieldType = getParameter(PARAM_FIELD_TYPE);
@@ -83,13 +80,13 @@ public final class ElementMetaData extends MetaData implements Serializable
             if (fullFieldType != null) {
                 // Store it now that we know it.
                 setFieldType(fullFieldType);
-                return fullFieldType; 
+                return fullFieldType;
             }
         }
-        
+
         return fieldType;
     }
-    
+
     public void setFieldType(String fieldType)
     {
         setParameter(PARAM_FIELD_TYPE, fieldType);
@@ -99,24 +96,24 @@ public final class ElementMetaData extends MetaData implements Serializable
     {
         return getParameter(PARAM_LABEL);
     }
-    
+
     public void setLabel(String label)
     {
         setParameter(PARAM_LABEL, label);
     }
-    
+
     public String getDefaultValue()
     {
         return getParameter(PARAM_DEFAULT_VALUE);
     }
-    
+
     public void setDefaultValue(String value)
     {
         if (value != null) {
             setParameter(PARAM_DEFAULT_VALUE, value);
         }
     }
-    
+
     /**
      * @return the maximum length for the field, or null if no maxmimum length.
      */
@@ -124,7 +121,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     {
         return getIntegerParameter(PARAM_MAX_LENGTH);
     }
-    
+
     /**
      * Sets the maximum length.
      *
@@ -136,17 +133,17 @@ public final class ElementMetaData extends MetaData implements Serializable
             setParameter(PARAM_MAX_LENGTH, maxLength.toString());
         }
     }
-    
+
     public boolean isRequired()
     {
         return getBooleanParameter(PARAM_REQUIRED);
     }
-    
+
     public void setRequired(boolean required)
     {
         setParameter(PARAM_REQUIRED, String.valueOf(required));
     }
-    
+
     /**
      * Gets the labelImage.
      *
@@ -168,46 +165,37 @@ public final class ElementMetaData extends MetaData implements Serializable
             component = new Label(wicketId, getLabel());
         }
         else {
-            component = new ImageLabel(wicketId, getBeanMetaData().getComponent().getClass(), getLabelImage(), getLabel());
+            component = new ImageLabel(wicketId, getBeanMetaData().getComponent().getClass(), getLabelImage(),
+                            getLabel());
         }
-        
+
         if (isRequired()) {
-            component.add( new AttributeAppender("class", new Model(CSS_REQUIRED_FIELD_CLASS), " ") );
+            component.add(new AttributeAppender("class", new Model(CSS_REQUIRED_FIELD_CLASS), " "));
         }
-        
-        return component; 
+
+        return component;
     }
-    
+
     public int getOrder()
     {
         return order;
     }
-    
+
     public void setOrder(int order)
     {
         this.order = order;
     }
-    
+
     public String getPropertyName()
     {
         return propertyName;
     }
-    
+
     public void setPropertyName(String propertyName)
     {
         this.propertyName = propertyName;
     }
-    
-    public boolean isViewOnly()
-    {
-        return getBooleanParameter(PARAM_VIEW_ONLY);
-    }
-    
-    public void setViewOnly(boolean viewOnly)
-    {
-        setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
-    }
-    
+
     @Override
     public int hashCode()
     {
@@ -222,12 +210,12 @@ public final class ElementMetaData extends MetaData implements Serializable
         if (this == obj) {
             return true;
         }
-        
+
         if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        
-        final ElementMetaData other = (ElementMetaData) obj;
+
+        final ElementMetaData other = (ElementMetaData)obj;
         if (propertyName == null) {
             if (other.propertyName != null) {
                 return false;
@@ -236,7 +224,7 @@ public final class ElementMetaData extends MetaData implements Serializable
 
         return propertyName.equals(other.propertyName);
     }
-    
+
     public Class<?> getPropertyType()
     {
         return propertyType;
@@ -263,10 +251,10 @@ public final class ElementMetaData extends MetaData implements Serializable
                 setParameter(PARAM_ELEMENT_TYPE, elementType);
             }
         }
-        
+
         return elementType;
     }
-    
+
     /**
      * Gets the array/collection element type of the property. If elementTypeName is 
      * not defined and the property type is an array, the element type of the array is returned.
@@ -286,7 +274,7 @@ public final class ElementMetaData extends MetaData implements Serializable
             // This only returns the element type if the property is an array, otherwise null.
             elementType = getPropertyType().getComponentType();
         }
-        
+
         if (elementType == null) {
             // Try to detect it from first element if non-empty.
             if (value instanceof Collection) {
@@ -296,7 +284,9 @@ public final class ElementMetaData extends MetaData implements Serializable
                 }
                 else {
                     // If empty - just use Object.
-                    elementType = new Serializable() { private static final long serialVersionUID = 1L; }.getClass();
+                    elementType = new Serializable() {
+                        private static final long serialVersionUID = 1L;
+                    }.getClass();
                 }
             }
         }
@@ -306,10 +296,11 @@ public final class ElementMetaData extends MetaData implements Serializable
                 return Class.forName(elementTypeName);
             }
             catch (ClassNotFoundException e) {
-                throw new RuntimeException("Cannot load class for elementType: " + elementTypeName + " for property " + getPropertyName(), e);
+                throw new RuntimeException("Cannot load class for elementType: " + elementTypeName + " for property "
+                                + getPropertyName(), e);
             }
         }
-        
+
         return elementType;
     }
 
@@ -332,7 +323,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     {
         this.isAction = isAction;
     }
-    
+
     /**
      * Gets the actionSpecifiedInProps.
      *
@@ -363,7 +354,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         if (isAction()) {
             return getPropertyName().substring(BeanMetaData.ACTION_PROPERTY_PREFIX.length());
         }
-        
+
         return null;
     }
 
@@ -379,40 +370,38 @@ public final class ElementMetaData extends MetaData implements Serializable
         if (bean == null) {
             return null;
         }
-        
+
         return PropertyResolver.getValue(getPropertyName(), bean);
     }
 
     /**
      * Creates a new BeanMetaData based on this property's type.
      * 
-     * @param viewOnly
-     * 
      * @return a new BeanMetaData.
      */
-    public BeanMetaData createBeanMetaData(boolean viewOnly)
+    public BeanMetaData createBeanMetaData()
     {
-        return createBeanMetaData(getPropertyType(), viewOnly);
+        return createBeanMetaData(getPropertyType());
     }
-    
+
     /**
      * Creates a new BeanMetaData for the given beanType based on this property. Context and ComponentRegistry are
      * inherited from this element's BeanMetaData (the parent).
      * 
      * @param beanType
-     * @param viewOnly
      * 
      * @return a new BeanMetaData.
      */
-    public BeanMetaData createBeanMetaData(Class<?> beanType, boolean viewOnly)
+    public BeanMetaData createBeanMetaData(Class<?> beanType)
     {
         // Compose a keyPrefix from the original bean meta data, the base bean class name, and this property name.
         BeanMetaData parentMetaData = getBeanMetaData();
-            
-        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getBeansMetaData(), parentMetaData.getMetaDataClass(), parentMetaData.getComponent(),
-                        parentMetaData.getComponentRegistry(), viewOnly);
+
+        return new BeanMetaData(beanType, parentMetaData.getContext(), parentMetaData.getBeansMetaData(),
+                        parentMetaData.getMetaDataClass(), parentMetaData.getComponent(), parentMetaData
+                                        .getComponentRegistry());
     }
-    
+
     /**
      * @return a new instance of the object represented by this property's type.
      */

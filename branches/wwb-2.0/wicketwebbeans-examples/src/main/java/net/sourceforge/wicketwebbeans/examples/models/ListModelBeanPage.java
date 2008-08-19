@@ -23,7 +23,7 @@ public class ListModelBeanPage extends WebPage
         
         IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, this, null, false);
+        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, this, null);
         add( new BeanForm("beanForm", beanModel, meta) );
     }
 }

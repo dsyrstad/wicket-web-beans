@@ -46,8 +46,6 @@ public class JBean implements Bean, Serializable
     private String label =  "";
     private int columns =  3;
     private int rows =  10;
-    private boolean displayed =  true;
-    private boolean[] viewOnly =  {};
     private List<Action> actions = new ArrayList<Action>();
     private String[] actionNames =  {};
     private List<Property> properties = new ArrayList<Property>();
@@ -183,22 +181,6 @@ public class JBean implements Bean, Serializable
     public JBean extendsContext(String extendsContext)
     {
         this.extendsContext = extendsContext;
-        return this;
-    }
-
-    /** 
-     * {@inheritDoc}
-     * @see net.sourceforge.wicketwebbeans.annotations.Bean#displayed()
-     */
-    public boolean displayed()
-    {
-        return displayed;
-    }
-    
-    /** @see #displayed() */
-    public JBean displayed(boolean displayed)
-    {
-        this.displayed = displayed;
         return this;
     }
 
@@ -391,30 +373,6 @@ public class JBean implements Bean, Serializable
     public JBean type(Class<?> type)
     {
         this.type = type;
-        return this;
-    }
-
-    /** 
-     * {@inheritDoc}
-     * @see net.sourceforge.wicketwebbeans.annotations.Bean#viewOnly()
-     */
-    public boolean[] viewOnly()
-    {
-        return viewOnly;
-    }
-    
-    /**
-     * @return true if viewOnly is set, else false. Simplified version of {@link #viewOnly()}. Returns false if viewOnly has not been set on this bean. 
-     */
-    public boolean viewOnlyFlag()
-    {
-        return viewOnly.length > 0 ? viewOnly[0] : false;
-    }
-    
-    /** @see #viewOnly() */
-    public JBean viewOnly(boolean flag)
-    {
-        this.viewOnly = new boolean[] { flag };
         return this;
     }
 

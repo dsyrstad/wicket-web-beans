@@ -45,7 +45,6 @@ public class BeanMetaDataTest extends TestCase
     private void assertElement(BeanMetaData beanMetaData, ElementMetaData element, ElementInfo expected)
     {
         assertEquals(expected.propName, expected.propName, element.getPropertyName());
-        assertEquals(expected.propName, expected.viewOnly, element.isViewOnly());
         assertEquals(expected.propName, expected.propName.startsWith("action."), element.isAction());
         assertSame(beanMetaData, element.getBeanMetaData());
         if (element.isAction()) {
@@ -71,42 +70,39 @@ public class BeanMetaDataTest extends TestCase
         tester.startPage(BeanMetaDataTestPage.class);
         Page page = tester.getLastRenderedPage();
         
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null, false);
-        // Check parameters, elements, element parameters
-        assertFalse( beanMetaData.isViewOnly() );
-        assertTrue( beanMetaData.isDisplayed() );
+        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null);
         // Test that ${} substitution works and that the properties file is referenced.
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("action.save", false, null, null, "Save", null),
-            new ElementInfo("firstName", false, null, null, "First Name", null),
-            new ElementInfo("lastName", false, null, null, "Last Name", null),
-            new ElementInfo("EMPTY:28", true, "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
-            new ElementInfo("activePrimitive", false, null, null, "Active Primitive", null),
-            new ElementInfo("color", false, null, null, "Color", null),
-            new ElementInfo("inlineBean", false, "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
-            new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null),
-            new ElementInfo("blockBean", false, "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
-            new ElementInfo("testBean2", false, null, null, "Test Bean 2", null),
-            new ElementInfo("popupBean", false, null, null, "Popup Bean", null),
-            new ElementInfo("action.addRow", false, null, null, "Add Row", null),
-            new ElementInfo("action.cancel", false, null, null, "Cancel", null),
-            new ElementInfo("action.doIt", false, null, null, "Do It", null),
-            new ElementInfo("age", false, null, null, "Age", null),
-            new ElementInfo("beans", false, null, null, "Beans", null),
-            new ElementInfo("dateOnly", false, null, null, "Date Only", null),
-            new ElementInfo("description", false, null, null, "Description", null),
-            new ElementInfo("gender", false, null, null, "Gender", null),
-            new ElementInfo("isActive", false, null, null, "Is Active", null),
-            new ElementInfo("operand1", false, null, null, "Operand 1", null),
-            new ElementInfo("operand2", false, null, null, "Operand 2", null),
-            new ElementInfo("palette", false, null, null, "Palette", null),
-            new ElementInfo("palette2", true, null, null, "Palette 2", null),
-            new ElementInfo("result", true, null, null, "Result", null),
-            new ElementInfo("savingsAmount", false, null, null, "Savings Amount", null),
-            new ElementInfo("startDate", false, null, null, "Start Date", null),
-            new ElementInfo("timeOnly", false, null, null, "Time Only", null),
+            new ElementInfo("action.save", null, null, "Save", null),
+            new ElementInfo("firstName", null, null, "First Name", null),
+            new ElementInfo("lastName", null, null, "Last Name", null),
+            new ElementInfo("EMPTY:28", "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
+            new ElementInfo("activePrimitive", null, null, "Active Primitive", null),
+            new ElementInfo("color", null, null, "Color", null),
+            new ElementInfo("inlineBean", "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
+            new ElementInfo("dateTimestamp", null, null, "Date Timestamp", null),
+            new ElementInfo("blockBean", "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
+            new ElementInfo("testBean2", null, null, "Test Bean 2", null),
+            new ElementInfo("popupBean", null, null, "Popup Bean", null),
+            new ElementInfo("action.addRow", null, null, "Add Row", null),
+            new ElementInfo("action.cancel", null, null, "Cancel", null),
+            new ElementInfo("action.doIt", null, null, "Do It", null),
+            new ElementInfo("age", null, null, "Age", null),
+            new ElementInfo("beans", null, null, "Beans", null),
+            new ElementInfo("dateOnly", null, null, "Date Only", null),
+            new ElementInfo("description", null, null, "Description", null),
+            new ElementInfo("gender", null, null, "Gender", null),
+            new ElementInfo("isActive", null, null, "Is Active", null),
+            new ElementInfo("operand1", null, null, "Operand 1", null),
+            new ElementInfo("operand2", null, null, "Operand 2", null),
+            new ElementInfo("palette", null, null, "Palette", null),
+            new ElementInfo("palette2", null, null, "Palette 2", null),
+            new ElementInfo("result", null, null, "Result", null),
+            new ElementInfo("savingsAmount", null, null, "Savings Amount", null),
+            new ElementInfo("startDate", null, null, "Start Date", null),
+            new ElementInfo("timeOnly", null, null, "Time Only", null),
         };
 
         //assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -131,40 +127,36 @@ public class BeanMetaDataTest extends TestCase
         tester.startPage(BeanMetaDataTestNoPropsPage.class);
         Page page = tester.getLastRenderedPage();
         
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null, false);
-        // Check parameters, elements, element parameters.
-        assertFalse( beanMetaData.isViewOnly() );
-        assertTrue( beanMetaData.isDisplayed() );
+        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null);
         
         assertEquals("Bean Meta Data Test Bean", beanMetaData.getLabel() );
         
         // Props should be in alphabetical order
         ElementInfo[] expectedProps = { 
-            new ElementInfo("activePrimitive", false, null, null, "Active Primitive", null),
-            new ElementInfo("age", false, null, null, "Age", null),
-            new ElementInfo("beans", false, null, null, "Beans", null),
-            new ElementInfo("blockBean", false, null, null, "Block Bean", null),
-            new ElementInfo("color", false, null, null, "Color", null),
-            new ElementInfo("dateOnly", false, null, null, "Date Only", null),
-            new ElementInfo("dateTimestamp", false, null, null, "Date Timestamp", null),
-            new ElementInfo("description", false, null, null, "Description", null),
-            new ElementInfo("firstName", false, null, null, "First Name", null),
-            new ElementInfo("gender", false, null, null, "Gender", null),
-            new ElementInfo("inlineBean", false, null, null, "Inline Bean", null),
-            new ElementInfo("isActive", false, null, null, "Is Active", null),
-            new ElementInfo("lastName", false, null, null, "Last Name", null),
-            new ElementInfo("operand1", false, null, null, "Operand 1", null),
-            new ElementInfo("operand2", false, null, null, "Operand 2", null),
-            new ElementInfo("palette", false, null, null, "Palette", null),
-            new ElementInfo("palette2", true, null, null, "Palette 2", null),
-            new ElementInfo("popupBean", false, null, null, "Popup Bean", null),
-            // Result is viewOnly because it only has a getter.
-            new ElementInfo("result", true, null, null, "Result", null),
-            new ElementInfo("savingsAmount", false, null, null, "Savings Amount", null),
-            new ElementInfo("startDate", false, null, null, "Start Date", null),
-            new ElementInfo("subComponent", false, null, null, "Sub Component", null),
-            new ElementInfo("testBean2", false, null, null, "Test Bean 2", null),
-            new ElementInfo("timeOnly", false, null, null, "Time Only", null),
+            new ElementInfo("activePrimitive", null, null, "Active Primitive", null),
+            new ElementInfo("age", null, null, "Age", null),
+            new ElementInfo("beans", null, null, "Beans", null),
+            new ElementInfo("blockBean", null, null, "Block Bean", null),
+            new ElementInfo("color", null, null, "Color", null),
+            new ElementInfo("dateOnly", null, null, "Date Only", null),
+            new ElementInfo("dateTimestamp", null, null, "Date Timestamp", null),
+            new ElementInfo("description", null, null, "Description", null),
+            new ElementInfo("firstName", null, null, "First Name", null),
+            new ElementInfo("gender", null, null, "Gender", null),
+            new ElementInfo("inlineBean", null, null, "Inline Bean", null),
+            new ElementInfo("isActive", null, null, "Is Active", null),
+            new ElementInfo("lastName", null, null, "Last Name", null),
+            new ElementInfo("operand1", null, null, "Operand 1", null),
+            new ElementInfo("operand2", null, null, "Operand 2", null),
+            new ElementInfo("palette", null, null, "Palette", null),
+            new ElementInfo("palette2", null, null, "Palette 2", null),
+            new ElementInfo("popupBean", null, null, "Popup Bean", null),
+            new ElementInfo("result", null, null, "Result", null),
+            new ElementInfo("savingsAmount", null, null, "Savings Amount", null),
+            new ElementInfo("startDate", null, null, "Start Date", null),
+            new ElementInfo("subComponent", null, null, "Sub Component", null),
+            new ElementInfo("testBean2", null, null, "Test Bean 2", null),
+            new ElementInfo("timeOnly", null, null, "Time Only", null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -187,42 +179,39 @@ public class BeanMetaDataTest extends TestCase
         Page page = tester.getLastRenderedPage();
         
         // Use the "view" context
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "view", page, null, false);
+        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "view", page, null);
         // Check parameters, elements, element parameters, tabs, tab elements.
-        assertTrue( beanMetaData.isViewOnly() );
-        assertTrue( beanMetaData.isDisplayed() );
         assertEquals("Bean View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("action.save", true, null, null, "Save", null),
-            // firstName was explicitly overridden as not viewOnly.
-            new ElementInfo("firstName", false, null, null, "First Name", null),
-            new ElementInfo("lastName", true, null, null, "Last Name", null),
-            new ElementInfo("EMPTY:28", true, "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
-            new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null),
-            new ElementInfo("color", true, null, null, "Color", null),
-            new ElementInfo("inlineBean", true, "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
-            new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null),
-            new ElementInfo("blockBean", true, "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
-            new ElementInfo("testBean2", true, null, null, "Test Bean 2", null),
-            new ElementInfo("popupBean", true, null, null, "Popup Bean", null),
-            new ElementInfo("action.addRow", true, null, null, "Add Row", null),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null),
-            new ElementInfo("age", true, null, null, "Age", null),
-            new ElementInfo("beans", true, null, null, "Beans", null),
-            new ElementInfo("dateOnly", true, null, null, "Date Only", null),
-            new ElementInfo("description", true, null, null, "Description", null),
-            new ElementInfo("gender", true, null, null, "Gender", null),
-            new ElementInfo("isActive", true, null, null, "Is Active", null),
-            new ElementInfo("operand1", true, null, null, "Operand 1", null),
-            new ElementInfo("operand2", true, null, null, "Operand 2", null),
-            new ElementInfo("palette", true, null, null, "Palette", null),
-            new ElementInfo("palette2", true, null, null, "Palette 2", null),
-            new ElementInfo("result", true, null, null, "Result", null),
-            new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null),
-            new ElementInfo("startDate", true, null, null, "Start Date", null),
-            new ElementInfo("timeOnly", true, null, null, "Time Only", null),
+            new ElementInfo("action.save", null, null, "Save", null),
+            new ElementInfo("firstName", null, null, "First Name", null),
+            new ElementInfo("lastName", null, null, "Last Name", null),
+            new ElementInfo("EMPTY:28", "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
+            new ElementInfo("activePrimitive", null, null, "Active Primitive", null),
+            new ElementInfo("color", null, null, "Color", null),
+            new ElementInfo("inlineBean", "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
+            new ElementInfo("dateTimestamp", null, null, "Date Timestamp", null),
+            new ElementInfo("blockBean", "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
+            new ElementInfo("testBean2", null, null, "Test Bean 2", null),
+            new ElementInfo("popupBean", null, null, "Popup Bean", null),
+            new ElementInfo("action.addRow", null, null, "Add Row", null),
+            new ElementInfo("action.cancel", null, null, "Cancel", null),
+            new ElementInfo("action.doIt", null, null, "Do It", null),
+            new ElementInfo("age", null, null, "Age", null),
+            new ElementInfo("beans", null, null, "Beans", null),
+            new ElementInfo("dateOnly", null, null, "Date Only", null),
+            new ElementInfo("description", null, null, "Description", null),
+            new ElementInfo("gender", null, null, "Gender", null),
+            new ElementInfo("isActive", null, null, "Is Active", null),
+            new ElementInfo("operand1", null, null, "Operand 1", null),
+            new ElementInfo("operand2", null, null, "Operand 2", null),
+            new ElementInfo("palette", null, null, "Palette", null),
+            new ElementInfo("palette2", null, null, "Palette 2", null),
+            new ElementInfo("result", null, null, "Result", null),
+            new ElementInfo("savingsAmount", null, null, "Savings Amount", null),
+            new ElementInfo("startDate", null, null, "Start Date", null),
+            new ElementInfo("timeOnly", null, null, "Time Only", null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -248,41 +237,37 @@ public class BeanMetaDataTest extends TestCase
         Page page = tester.getLastRenderedPage();
         
         // Use the "popupView" context
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "popupView", page, null, false);
-        // Check parameters, elements, element parameters.
-        assertTrue( beanMetaData.isViewOnly() );
-        assertTrue( beanMetaData.isDisplayed() );
+        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "popupView", page, null);
         assertEquals("Bean Popup View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
-            new ElementInfo("action.save", true, null, null, "Save", null),
-            // firstName was explicitly overridden as not viewOnly.
-            new ElementInfo("firstName", false, null, null, "First Name", null),
-            new ElementInfo("lastName", false, null, null, "Last Name", null),
-            new ElementInfo("EMPTY:28", true, "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
-            new ElementInfo("activePrimitive", true, null, null, "Active Primitive", null),
-            new ElementInfo("inlineBean", true, "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
-            new ElementInfo("dateTimestamp", true, null, null, "Date Timestamp", null),
-            new ElementInfo("blockBean", true, "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
-            new ElementInfo("testBean2", true, null, null, "Test Bean 2", null),
-            new ElementInfo("popupBean", true, null, null, "Popup Bean", null),
-            new ElementInfo("action.addRow", true, null, null, "Add Row", null),
-            new ElementInfo("action.cancel", true, null, null, "Cancel", null),
-            new ElementInfo("action.doIt", true, null, null, "Do It", null),
-            new ElementInfo("age", true, null, null, "Age", null),
-            new ElementInfo("beans", true, null, null, "Beans", null),
-            new ElementInfo("dateOnly", true, null, null, "Date Only", null),
-            new ElementInfo("description", true, null, null, "Description", null),
-            new ElementInfo("gender", true, null, null, "Gender", null),
-            new ElementInfo("isActive", true, null, null, "Is Active", null),
-            new ElementInfo("operand1", true, null, null, "Operand 1", null),
-            new ElementInfo("operand2", true, null, null, "Operand 2", null),
-            new ElementInfo("palette", true, null, null, "Palette", null),
-            new ElementInfo("palette2", true, null, null, "Palette 2", null),
-            new ElementInfo("result", true, null, null, "Result", null),
-            new ElementInfo("savingsAmount", true, null, null, "Savings Amount", null),
-            new ElementInfo("startDate", true, null, null, "Start Date", null),
-            new ElementInfo("timeOnly", true, null, null, "Time Only", null),
+            new ElementInfo("action.save", null, null, "Save", null),
+            new ElementInfo("firstName", null, null, "First Name", null),
+            new ElementInfo("lastName", null, null, "Last Name", null),
+            new ElementInfo("EMPTY:28", "net.sourceforge.wicketwebbeans.fields.EmptyField", null, "", null),
+            new ElementInfo("activePrimitive", null, null, "Active Primitive", null),
+            new ElementInfo("inlineBean", "net.sourceforge.wicketwebbeans.fields.BeanInlineField", null, "Inline Bean", null),
+            new ElementInfo("dateTimestamp", null, null, "Date Timestamp", null),
+            new ElementInfo("blockBean", "net.sourceforge.wicketwebbeans.fields.BeanGridField", null, "Block Bean", null),
+            new ElementInfo("testBean2", null, null, "Test Bean 2", null),
+            new ElementInfo("popupBean", null, null, "Popup Bean", null),
+            new ElementInfo("action.addRow", null, null, "Add Row", null),
+            new ElementInfo("action.cancel", null, null, "Cancel", null),
+            new ElementInfo("action.doIt", null, null, "Do It", null),
+            new ElementInfo("age", null, null, "Age", null),
+            new ElementInfo("beans", null, null, "Beans", null),
+            new ElementInfo("dateOnly", null, null, "Date Only", null),
+            new ElementInfo("description", null, null, "Description", null),
+            new ElementInfo("gender", null, null, "Gender", null),
+            new ElementInfo("isActive", null, null, "Is Active", null),
+            new ElementInfo("operand1", null, null, "Operand 1", null),
+            new ElementInfo("operand2", null, null, "Operand 2", null),
+            new ElementInfo("palette", null, null, "Palette", null),
+            new ElementInfo("palette2", null, null, "Palette 2", null),
+            new ElementInfo("result", null, null, "Result", null),
+            new ElementInfo("savingsAmount", null, null, "Savings Amount", null),
+            new ElementInfo("startDate", null, null, "Start Date", null),
+            new ElementInfo("timeOnly", null, null, "Time Only", null),
         };
 
         assertEquals(expectedProps.length, beanMetaData.getDisplayedElements().size());
@@ -308,7 +293,7 @@ public class BeanMetaDataTest extends TestCase
         Page page = tester.getLastRenderedPage();
         
         try {
-            new BeanMetaData(BeanMetaDataTestBean.class, "missingContext", page, null, false);
+            new BeanMetaData(BeanMetaDataTestBean.class, "missingContext", page, null);
             fail("Expected exception on missing context");
         }
         catch (RuntimeException e) {
@@ -320,16 +305,14 @@ public class BeanMetaDataTest extends TestCase
     private static final class ElementInfo
     {
         String propName;
-        boolean viewOnly;
         String fieldType;
         String elementType;
         String label;
         String labelImage;
  
-        ElementInfo(String propName, boolean viewOnly, String fieldType, String elementType, String label, String labelImage)
+        ElementInfo(String propName, String fieldType, String elementType, String label, String labelImage)
         {
             this.propName = propName;
-            this.viewOnly = viewOnly;
             this.fieldType = fieldType;
             this.elementType = elementType;
             this.label = label;

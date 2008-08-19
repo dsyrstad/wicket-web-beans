@@ -66,7 +66,7 @@ public class ContainerModelTest extends TestCase
         
 
         TestLoadableDetachableObjectModel nestedModel = new TestLoadableDetachableObjectModel();
-        BeanMetaData meta = new BeanMetaData(nestedModel.getObject().getClass(), null, page, null, false);
+        BeanMetaData meta = new BeanMetaData(nestedModel.getObject().getClass(), null, page, null);
         BeanForm form = new BeanForm("beanForm", nestedModel, meta);
 
         page.add(form);
@@ -175,7 +175,7 @@ public class ContainerModelTest extends TestCase
         
         IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null, false);
+        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null);
         BeanForm form = new BeanForm("beanForm", beanModel, meta);
 
         page.add(form);
@@ -207,7 +207,7 @@ public class ContainerModelTest extends TestCase
             beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
         }
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null, false);
+        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null);
         BeanForm form = new BeanForm("beanForm", Arrays.asList(beans), meta);
 
         page.add(form);

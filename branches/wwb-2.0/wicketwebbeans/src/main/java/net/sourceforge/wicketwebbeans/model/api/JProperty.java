@@ -43,7 +43,6 @@ public class JProperty implements Property, Serializable
     private Class<?> elementType = Object.class;
     private int rows = 0;
     private int columns = 0;
-    private boolean[] viewOnly = {};
 
     // --- Common to Action and Property
     private String label =  "";
@@ -342,30 +341,6 @@ public class JProperty implements Property, Serializable
     public JProperty rows(int rows)
     {
         this.rows = rows;
-        return this;
-    }
-
-    /** 
-     * {@inheritDoc}
-     * @see net.sourceforge.wicketwebbeans.annotations.Property#viewOnly()
-     */
-    public boolean[] viewOnly()
-    {
-        return viewOnly;
-    }
-    
-    /**
-     * @return true if viewOnly is set, else false. Simplified version of {@link #viewOnly()}. Returns false if viewOnly has not been set on this bean. 
-     */
-    public boolean viewOnlyFlag()
-    {
-        return viewOnly.length > 0 ? viewOnly[0] : false;
-    }
-    
-    /** @see #viewOnly() */
-    public JProperty viewOnly(boolean flag)
-    {
-        this.viewOnly = new boolean[] { flag };
         return this;
     }
 

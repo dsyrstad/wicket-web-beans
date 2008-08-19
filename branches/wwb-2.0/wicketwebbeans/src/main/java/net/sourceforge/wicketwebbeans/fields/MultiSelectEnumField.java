@@ -40,11 +40,10 @@ public class MultiSelectEnumField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public MultiSelectEnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public MultiSelectEnumField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
         final Class elementType = metaData.getElementType(null);
         if (elementType == null) {
@@ -54,7 +53,7 @@ public class MultiSelectEnumField extends AbstractField
         Object[] enumValues = elementType.getEnumConstants();
 
         ListMultipleChoice multChoice = new ListMultipleChoice("component", model, Arrays.asList(enumValues));
-        multChoice.setEnabled(!viewOnly);
+        multChoice.setEnabled(true/*!viewOnly*/);
         
         add(multChoice);
     }

@@ -28,7 +28,7 @@ public class AnnotationsOnPage extends WebPage
     public AnnotationsOnPage()
     {
         TestBean bean = new TestBean();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

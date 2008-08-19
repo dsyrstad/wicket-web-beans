@@ -23,7 +23,7 @@ package net.sourceforge.wicketwebbeans.fields;
 /**
  * Interface for Fields. All Fields must define a constructor with the signature:<p>
  * 
- *  public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)<p>
+ *  public SomeField(String id, IModel model, ElementMetaData metaData)<p>
  *
  * @author Dan Syrstad
  */

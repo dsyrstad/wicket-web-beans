@@ -55,14 +55,6 @@ public @interface Bean {
     /** If the bean or bean's IModel passed to !BeanForm is a List, this is the number of rows to be displayed in a single page. The default is 10. */
     int rows() default 10;
     
-    /** Tell WWB whether to display the bean. This is only useful on nested beans. */
-    boolean displayed() default true;
-    /** Tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the {@link BeanMetaData} constructor. 
-     * Individual properties in may override this default. 
-     * Note that this is defined as an array so WWB can tell if the attribute was explicitly set. However, you should just say viewOnly = true/false 
-     * and not use the array syntax. */
-    boolean[] viewOnly() default {};
-    
     /** Specify detailed parameters for each action. */
     Action[] actions() default {};
     /** A short-cut in place of specifying individual Actions. Simply specify the action method names. This may include "-actionName" to remove an action. */

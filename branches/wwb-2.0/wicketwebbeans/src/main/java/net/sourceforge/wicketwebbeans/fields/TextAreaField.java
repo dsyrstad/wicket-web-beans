@@ -40,11 +40,10 @@ public class TextAreaField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public TextAreaField(String id, IModel model, final ElementMetaData metaData, boolean viewOnly)
+    public TextAreaField(String id, IModel model, final ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
 
         metaData.consumeParameter(ElementMetaData.PARAM_ROWS);
         metaData.consumeParameter(ElementMetaData.PARAM_COLUMNS);
@@ -66,7 +65,7 @@ public class TextAreaField extends AbstractField
         };
         
         setFieldParameters(field);
-        field.setEnabled(!viewOnly);
+        field.setEnabled(true/* TODO !viewOnly handle all of these */ );
 
         add(field);
     }

@@ -45,17 +45,16 @@ public abstract class DropDownChoiceField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      * @param valueModel the Bean List of drop down choices 
      * @param choiceRenderer displays the bean value
      *  produce the value displayed to the user.
      */
-    public DropDownChoiceField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, IModel valueModel, final IChoiceRenderer choiceRenderer)
+    public DropDownChoiceField(String id, IModel model, ElementMetaData metaData, IModel valueModel, final IChoiceRenderer choiceRenderer)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
         Fragment fragment;
-        if (viewOnly) {
+        if (false/*viewOnly*/) {
             fragment = new Fragment("frag", "viewer");
             fragment.add(new LabelWithMinSize("component", model)
             {

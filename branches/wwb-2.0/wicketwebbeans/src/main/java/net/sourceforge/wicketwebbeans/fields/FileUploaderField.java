@@ -45,9 +45,9 @@ public class FileUploaderField extends AbstractField
 
     private InlineFrame uploadIFrame = null;
 
-    public FileUploaderField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public FileUploaderField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
 
         addOnUploadedCallback();
         setOutputMarkupId(true);

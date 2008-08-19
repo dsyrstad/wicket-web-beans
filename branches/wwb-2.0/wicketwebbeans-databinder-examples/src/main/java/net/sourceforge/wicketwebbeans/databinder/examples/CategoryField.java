@@ -10,8 +10,8 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 
 public class CategoryField extends DropDownChoiceField
 {
-    public CategoryField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public CategoryField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly, new HibernateListModel("from Category order by name"), new ChoiceRenderer("name"));
+        super(id, model, metaData, new HibernateListModel("from Category order by name"), new ChoiceRenderer("name"));
     }
 }
