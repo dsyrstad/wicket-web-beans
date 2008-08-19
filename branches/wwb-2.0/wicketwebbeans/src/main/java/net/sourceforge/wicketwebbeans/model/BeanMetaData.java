@@ -60,8 +60,9 @@ import org.apache.wicket.util.string.Strings;
 
 
 /**
- * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
- * by a number of different explicit sources. See the documentation for more information.
+ * Represents the metadata for a bean. 
+ * TODO this is really component configuration. Only some components deal with the bean, others deal with other
+ * components. Maybe beanprops files should become .wwb files.
  * <p/>
  *  
  * @author Dan Syrstad
@@ -71,117 +72,36 @@ public class BeanMetaData extends MetaData implements Serializable
     private static final long serialVersionUID = -4705317346444856939L;
 
     private static Logger logger = Logger.getLogger(BeanMetaData.class.getName());
-
-    private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
     /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Beans. */
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
-    private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
-
-    public static final String PARAM_PROPS = "props";
-    public static final String PARAM_ACTIONS = "actions";
-    public static final String PARAM_LABEL = "label";
-    public static final String PARAM_CONTAINER = "container";
-    public static final String PARAM_CSS = "css";
-    public static final String PARAM_DYNAMIC_CSS = "dynamicCss";
-
-    public static final String ACTION_PROPERTY_PREFIX = "action.";
-    public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
     
-    private Class<?> beanClass;
-    private Class<?> metaDataClass;
-    private Beans beansMetaData;
-    private List<Bean> collectedBeans = new ArrayList<Bean>();
-    private String context;
-    private Component component;
+    private String componentName;
+    private URL url;
     private ComponentRegistry componentRegistry;
 
-    // List of all properties.
-    private List<ElementMetaData> elements = new ArrayList<ElementMetaData>();
-
-    private boolean hasAddPropertyChangeListenerMethod;
-    private boolean hasRemovePropertyChangeListenerMethod;
-
     /**
-     * Construct a BeanMetaData. 
+     * Construct a BeanMetaData. If componentName is null, metadata is derived from a component
+     * named "ROOT". 
      *
-     * @param beanClass the bean's class.
+     * @param componentName the componentName to be used for metadata. May be null.
+     * @param url the URL of the WWB configuration.
      * @param context specifies a context to use when looking up beans in beanprops. May be null to not
      *  use a context.
-     * @param component the component used to get the Localizer.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
+     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null to use the default.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry)
+    public BeanMetaData(String componentName, URL url, ComponentRegistry componentRegistry)
     {
-        this(beanClass, context, null, null, component, componentRegistry);
-    }
+        assert url != null;
 
-    /**
-     * Construct a BeanMetaData. 
-     *
-     * @param beanClass the bean's class.
-     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
-     *  use a context.
-     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link Bean} annotations.
-     *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
-     * @param component the component used to get the Localizer.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     */
-    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry)
-    {
-        this(beanClass, context, null, metaDataClass, component, componentRegistry);
-    }
-
-    /**
-     * Construct a BeanMetaData. 
-     *
-     * @param beanClass the bean's class.
-     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
-     *  use a context.
-     * @param beans an implementation using the Beans annotation to provide meta data. May be null. 
-     * @param component the component used to get the Localizer.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry)
-    {
-        this(beanClass, context, beans, null, component, componentRegistry);
-    }
-
-    /**
-     * Construct a BeanMetaData. 
-     *
-     * @param beanClass the bean's class.
-     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
-     *  use a context.
-     * @param bean an implementation using the Bean annotation to provide meta data. May be null. 
-     * @param component the component used to get the Localizer.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     */
-    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry)
-    {
-        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry);
-    }
-
-    /**
-     * Construct a BeanMetaData. 
-     *
-     * @param beanClass the bean's class.
-     * @param context specifies a context to use when looking up beans in beanprops. May be null to not
-     *  use a context.
-     * @param beans an implementation using the Beans annotation to provide meta data.  May be null. 
-     * @param metaDataClass an optional arbitrary class that has WWB {@link Beans} and/or {@link Bean} annotations.
-     *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
-     * @param component the component used to get the Localizer.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry)
-    {
-        super(component);
+        if (componentName != null) {
+            this.componentName = componentName;
+        }
+        else {
+            this.componentName = "ROOT";
+        }
         
-        this.beanClass = beanClass;
-        this.context = context;
-        this.beansMetaData = beans;
-        this.metaDataClass = metaDataClass;
-        this.component = component;
+        this.url = url;
+        
         if (componentRegistry == null) {
             this.componentRegistry = new ComponentRegistry();
         }
@@ -189,26 +109,19 @@ public class BeanMetaData extends MetaData implements Serializable
             this.componentRegistry = componentRegistry;
         }
         
-        String beanClassName = getBaseClassName(beanClass);
-        String label = getLabelFromLocalizer(beanClassName, beanClassName);
-        if (label == null) {
-            label = createLabel(beanClassName);
-        }
-        setParameter(PARAM_LABEL, label);
-
-        init();
+        collectFromBeanProps();
     }
 
     /**
      * Determines if all parameters specified have been consumed.
      * 
-     * @param unconsumedMsgs messages that report the parameter keys that were specified but not consumed.
+     * @param unconsumedMsgs a set of messages that are returned with the parameter keys that were specified but not consumed.
      * 
      * @return true if all parameters specified have been consumed.
      */
     public boolean areAllParametersConsumed(Set<String> unconsumedMsgs)
     {
-        if (!super.areAllParametersConsumed("Bean " + beanClass.getName(), unconsumedMsgs)) {
+        if (!super.areAllParametersConsumed("Component " + componentName, unconsumedMsgs)) {
             return false;
         }
 
@@ -234,426 +147,16 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
     }
-
-    private Method getAddPropertyChangeListenerMethod()
-    {
-        try {
-            return beanClass.getMethod("addPropertyChangeListener", PROP_CHANGE_LISTENER_ARG);
-        }
-        catch (Exception e) {
-            // Assume we don't have it.
-            return null;
-        }
-    }
-
-    private Method getRemovePropertyChangeListenerMethod()
-    {
-        try {
-            return beanClass.getMethod("removePropertyChangeListener", PROP_CHANGE_LISTENER_ARG);
-        }
-        catch (Exception e) {
-            // Assume we don't have it.
-            return null;
-        }
-    }
-
-    private void init()
-    {
-        // Check if bean supports PropertyChangeListeners.
-        hasAddPropertyChangeListenerMethod = getAddPropertyChangeListenerMethod() != null;
-        hasRemovePropertyChangeListenerMethod = getRemovePropertyChangeListenerMethod() != null;
-        
-        String baseBeanClassName = getBaseClassName(beanClass);
-
-        // Deduce actions from the component.
-        List<Method> actionMethods = getActionMethods(component.getClass());
-        for (Method method : actionMethods) {
-            String name = method.getName();
-            String prefixedName = ACTION_PROPERTY_PREFIX + name;
-            String label = getLabelFromLocalizer(baseBeanClassName, prefixedName);
-            if (label == null) {
-                label = createLabel(name);
-            }
-            
-            ElementMetaData actionMeta = new ElementMetaData(this, prefixedName, label, null);
-            actionMeta.setAction(true);
-            elements.add(actionMeta);
-        }
-        
-        // Create defaults based on the bean itself.
-        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(beanClass);
-        for (PropertyDescriptor descriptor : descriptors) {
-            String name = descriptor.getName();
-            
-            // Skip getClass() and methods that are not readable or hidden.
-            if (name.equals("class") || descriptor.getReadMethod() == null || descriptor.isHidden()) {
-                continue;
-            }
-            
-            String label = getLabelFromLocalizer(baseBeanClassName, name);
-            if (label == null) {
-                label = descriptor.getDisplayName();
-            }
-            
-            if (label.equals(name)) {
-                label = createLabel(name);
-            }
-
-            ElementMetaData propertyMeta = new ElementMetaData(this, name, label, descriptor.getPropertyType());
-            elements.add(propertyMeta);
-
-            deriveElementFromAnnotations(descriptor, propertyMeta);
-        }
-
-        // Collect various sources of metadata for the bean we're interested in. 
-        collectAnnotations();
-        collectFromBeanProps();
-        collectBeansAnnotation(beansMetaData, false);
-        
-        // Process action annotations on component.
-        for (Method method : getActionMethods(component.getClass())) {
-            Action action = method.getAnnotation(Action.class);
-            processActionAnnotation(action, method.getName());
-        }
-
-        // Determine the hierarchy of Bean contexts. I.e., the default Bean is always processed first, followed by those that
-        // extend it, etc. This acts as a stack.
-        List<Bean> beansHier = buildContextStack();
-        
-        // Apply beans in order from highest to lowest. The default context will always be first.
-        boolean foundSpecifiedContext = false;
-        for (Bean bean : beansHier) {
-            if (context != null && context.equals(bean.context())) {
-                foundSpecifiedContext = true;
-            }
-            
-            processBeanAnnotation(bean);
-        }
-
-        // Ensure that if a context was specified, that we found one in the metadata. Otherwise it might have been a typo.
-        if (context != null && !foundSpecifiedContext) {
-            throw new RuntimeException("Could not find specified context '" + context + "' in metadata.");
-        }
-        
-        Collections.sort(elements, new Comparator<ElementMetaData>() {
-            public int compare(ElementMetaData o1, ElementMetaData o2)
-            {
-                return (o1.getOrder() > o2.getOrder() ? 1 : (o1.getOrder() < o2.getOrder() ? -1 : 0));
-            }
-        });
-    }
-
-    /**
-     * Determine the hierarchy of Bean contexts. I.e., the default Bean is always processed first, followed by those that
-     * extend it, etc. This acts as a stack.
-     *
-     * @return see above.
-     */
-    private List<Bean> buildContextStack()
-    {
-        List<Bean> beansHier = new ArrayList<Bean>();
-        String currContext = context;
-        
-        // Note: Limit accidental cyclical specs (e.g., A extends B, B extends A). This also limits the maximum hierarchy depth to the same 
-        // amount, which should be plenty.
-        for (int limit = 0; limit < 20; ++limit) {
-            String extendsContext = null;
-            for (Bean collectedBean : collectedBeans) {
-                String beanContext = collectedBean.context();
-                if (beanContext != null && beanContext.length() == 0) {
-                    beanContext = null;
-                }
-                
-                if (beanContext == currContext || (beanContext != null && beanContext.equals(currContext))) {
-                    // Push it on stack
-                    beansHier.add(0, collectedBean);
-                    
-                    if (extendsContext == null) {
-                        extendsContext = collectedBean.extendsContext();
-                        if (extendsContext != null && extendsContext.length() == 0) {
-                            extendsContext = null;
-                        }
-                    }
-                    else if (!extendsContext.equals(collectedBean.extendsContext())) {
-                        throw new RuntimeException("Inconsistent extends context " + collectedBean.extendsContext() + 
-                                        " is not consistent with first one encountered " + extendsContext);
-                    }
-                }
-            }
-
-            if (currContext == null || currContext.length() == 0) {
-                // Just processed the default context, so stop.
-                break;
-            }
-
-            currContext = extendsContext;
-        }
-        return beansHier;
-    }
-
-    /**
-     * Attempts to get the label for the given action or property name from the Localizer.
-     *
-     * @param baseBeanClassName
-     * @param name
-     * 
-     * @return the label, or null if not defined.
-     */
-    private String getLabelFromLocalizer(String baseBeanClassName, String name)
-    {
-        // Try to retrieve label from properties file in the form of "Bean.{name}.label" or
-        // simply {name}.label.
-        String propLabelKey = name + ".label";
-        String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
-        if (label == DEFAULT_RESOURCE_KEY) {
-            label = component.getLocalizer().getString(propLabelKey, component, DEFAULT_RESOURCE_KEY);
-        }
-        
-        if (label == DEFAULT_RESOURCE_KEY) {
-            label = null;
-        }
-        
-        return label;
-    }
-    
-    /**
-     * Collect any WWB Beans or Bean annotations that may exist on the component, bean, or meta-data class that
-     * apply to the specified bean.
-     * Order of processing is: Bean, Metadata class, then Component. Hence, Component annotations
-     * augment or override those of the Metadata class and the Bean.  
-     */
-    private void collectAnnotations()
-    {
-        // Bean itself
-        collectBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
-        collectBeanAnnotation( beanClass.getAnnotation(Bean.class), true);
-
-        // Metadata class
-        if (metaDataClass != null) {
-            collectBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
-            collectBeanAnnotation( metaDataClass.getAnnotation(Bean.class), false);
-        }
-        
-        // Component
-        Class<? extends Component> componentClass = component.getClass(); 
-        collectBeansAnnotation( componentClass.getAnnotation(Beans.class), false);
-        collectBeanAnnotation( componentClass.getAnnotation(Bean.class), false);
-    }
-    
-    private void collectBeansAnnotation(Beans beans, boolean isBeanAnnotation)
-    {
-        if (beans != null) {
-            for (Bean bean : beans.value()) {
-                collectBeanAnnotation(bean, isBeanAnnotation);
-            }
-        }
-    }
-    
-    private void collectBeanAnnotation(Bean bean, boolean isBeanAnnotation)
-    {
-        if (bean == null) {
-            return;
-        }
-        
-        Class<?> beanType = bean.type();
-        if (beanType == Object.class) {
-            if (!isBeanAnnotation) {
-                throw new RuntimeException("@Bean must include the type attribute when used on non-bean components. Occurred while processing annotations for bean " 
-                                + beanClass.getName());
-            }
-            
-            beanType = beanClass;
-        }
-        
-        if (beanType != beanClass) {
-            return; // Doesn't match what we're interested in.
-        }
-        
-        collectedBeans.add(bean);
-    }
-
-    private void processBeanAnnotation(Bean bean)
-    {
-        setParameter(BeanGridPanel.PARAM_COLS, String.valueOf(bean.columns()));
-        setParameterIfNotEmpty(PARAM_LABEL, bean.label());
-        if (bean.container() != Panel.class) {
-            setParameter(PARAM_CONTAINER, bean.container().getName());
-        }
-        
-        setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
-        
-        setParameter(PARAM_CSS, bean.css());
-        setParameter(PARAM_DYNAMIC_CSS, bean.dynamicCss());
-        
-        setParameterIfNotEmpty(bean.paramName(), bean.paramValue());
-        for (net.sourceforge.wicketwebbeans.annotations.Parameter param : bean.params()) {
-            setParameterIfNotEmpty(param.name(), param.value());
-        }
-        
-        for (String actionName : bean.actionNames()) {
-            if (!handleElementRemove(actionName, true)) {
-                findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
-            }
-        }
-        
-        for (Action action : bean.actions()) {
-            if (!handleElementRemove(action.name(), false)) {
-                processActionAnnotation(action, null);
-            }
-        }
-
-        // Process propertyNames before properties because propertyNames is typically used to define order.
-        int order = 1;
-        for (String propName : bean.propertyNames()) {
-            if (!handleElementRemove(propName, false)) {
-                ElementMetaData element = findElementAddPseudos(propName);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-                
-                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
-                    element.setOrder(order++);
-                }
-            }
-        }
-        
-        order = 1;
-        for (Property property : bean.properties()) {
-            if (!handleElementRemove(property.name(), false)) {
-                ElementMetaData element = processPropertyAnnotation(property, null);
-                if (element.isAction()) {
-                    element.setActionSpecifiedInProps(true);
-                }
-                
-                if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
-                    element.setOrder(order++);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Handle element removal if element name starts with a '-'. 
-     *
-     * @param elementName the element name, possibly starting with '-'.
-     * 
-     * @return true if element was removed, else false.
-     */
-    private boolean handleElementRemove(String elementName, boolean prependActionPrefix)
-    {
-        if (elementName.startsWith("-") && elementName.length() > 1) {
-            elementName = elementName.substring(1);
-            if (prependActionPrefix) {
-                elementName = ACTION_PROPERTY_PREFIX + elementName;
-            }
-            
-            elements.remove( findElementAddPseudos(elementName) );
-            return true;
-        }
-        
-        return false;
-    }
-    
-    private ElementMetaData processPropertyAnnotation(Property property, ElementMetaData element)
-    {
-        if (property == null) {
-            return null;
-        }
-        
-        if (element == null && property.name().length() == 0) {
-            throw new RuntimeException("@Property annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
-        }
-        
-        if (element == null || property.name().length() > 0) {
-            element = findElementAddPseudos(property.name());
-        }
-        
-        if (property.colspan() > 1) {
-            element.setParameter(BeanGridPanel.PARAM_COLSPAN, String.valueOf(property.colspan()));
-        }
-        
-        if (property.rows() > 0) {
-            element.setParameter(ElementMetaData.PARAM_ROWS, String.valueOf(property.rows()));
-        }
-        
-        if (property.columns() > 0) {
-            element.setParameter(ElementMetaData.PARAM_COLUMNS, String.valueOf(property.columns()));
-        }
-        
-        element.setParameterIfNotEmpty(ElementMetaData.PARAM_DEFAULT_VALUE, property.defaultValue());
-        if (property.elementType() != Object.class) {
-            element.setParameter(ElementMetaData.PARAM_ELEMENT_TYPE, property.elementType().getName());
-        }
-        
-        if (property.fieldType() != Field.class) {
-            element.setParameter(ElementMetaData.PARAM_FIELD_TYPE, property.fieldType().getName());
-        }
-        
-        element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, property.label());
-        element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, property.labelImage());
-        element.setParameter(PARAM_CSS, property.css());
-        element.setParameter(PARAM_DYNAMIC_CSS, property.dynamicCss());
-        
-        if (property.maxLength() > 0) {
-            element.setMaxLength(property.maxLength());
-        }
-        
-        element.setRequired(property.required());
-        
-        element.setParameterIfNotEmpty(property.paramName(), property.paramValue());
-        for (net.sourceforge.wicketwebbeans.annotations.Parameter param : property.params()) {
-            element.setParameterIfNotEmpty(param.name(), param.value());
-        }
-        
-        return element;
-    }
-    
-    private ElementMetaData processActionAnnotation(Action action, String methodName)
-    {
-        if (action == null) {
-            return null;
-        }
-        
-        if (methodName == null && action.name().length() == 0) {
-            throw new RuntimeException("@Action annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
-        }
-        
-        if (action.name().length() > 0) {
-            methodName = action.name();
-        }
-        
-        ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + methodName);
-
-        if (action.colspan() > 1) {
-            element.setParameter(BeanGridPanel.PARAM_COLSPAN, String.valueOf(action.colspan()));
-        }
-        
-        element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, action.label());
-        element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, action.labelImage());
-        
-        element.setParameterIfNotEmpty(BeanSubmitButton.PARAM_CONFIRM, action.confirm());
-        element.setParameter(BeanSubmitButton.PARAM_AJAX, String.valueOf(action.ajax()));
-        element.setParameterIfNotEmpty(BeanSubmitButton.PARAM_DEFAULT, String.valueOf(action.isDefault()));
-        
-        element.setParameterIfNotEmpty(action.paramName(), action.paramValue());
-        for (net.sourceforge.wicketwebbeans.annotations.Parameter param : action.params()) {
-            element.setParameterIfNotEmpty(param.name(), param.value());
-        }
-        
-        return element;
-    }
     
     /**
      * Collection Beans from the beanprops file, if any.
      */
     private void collectFromBeanProps()
     {
-        String propFileName = getBaseClassName(component.getClass()) + ".beanprops";
-        URL propFileURL = component.getClass().getResource(propFileName);
         long timestamp = 0;
-        if (propFileURL != null && propFileURL.getProtocol().equals("file")) {
+        if (url.getProtocol().equals("file")) {
             try {
-                timestamp = new File(propFileURL.toURI()).lastModified();
+                timestamp = new File(url.toURI()).lastModified();
             }
             catch (URISyntaxException e) { /* Ignore - treat as zero */ }
         }

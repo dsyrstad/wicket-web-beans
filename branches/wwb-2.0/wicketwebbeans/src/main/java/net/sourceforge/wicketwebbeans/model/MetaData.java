@@ -37,16 +37,12 @@ public class MetaData implements Serializable
 {
     private Map<String, String[]> parameters = new HashMap<String, String[]>();
     private Set<String> consumedParameters = new HashSet<String>();
-    private Component component;
 
     /**
      * Construct a MetaData. 
-     * 
-     * @param component the component to use for macro localization.
      */
-    public MetaData(Component component)
+    public MetaData()
     {
-        this.component = component;
     }
 
     /**
@@ -165,10 +161,11 @@ public class MetaData implements Serializable
      *
      * @param key the parameter key.
      * @param value the parameter value. Macros ("${...}")) in this value will be substituted from the component's localizer.
+     * TODO ${) macros?
      */
     public void setParameter(String key, String value)
     {
-        parameters.put(key, new String[] { WicketUtil.substituteMacros(value, component) });
+        parameters.put(key, new String[] { value });
     }
     
     /**
@@ -177,13 +174,10 @@ public class MetaData implements Serializable
      * @param key the parameter key.
      * 
      * @param values the parameter values. Macros ("${...}")) in these values will be substituted from the component's localizer.
+     * TODO ${) macros?
      */
     public void setParameterValues(String key, String[] values)
     {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = WicketUtil.substituteMacros(values[i], component);
-        }
-        
         parameters.put(key, values);
     }
     
