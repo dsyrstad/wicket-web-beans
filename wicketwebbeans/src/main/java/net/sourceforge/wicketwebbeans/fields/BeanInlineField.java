@@ -39,15 +39,14 @@ public class BeanInlineField extends AbstractField implements UnlabeledField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public BeanInlineField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public BeanInlineField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
-        BeanMetaData beanMetaData = metaData.createBeanMetaData(viewOnly);
+        BeanMetaData beanMetaData = metaData.createBeanMetaData();
         
-        if (!viewOnly && model.getObject() == null) {
+        if (model.getObject() == null) {
             // Create a blank instance for editing.
             model.setObject( metaData.createInstance() );
         }

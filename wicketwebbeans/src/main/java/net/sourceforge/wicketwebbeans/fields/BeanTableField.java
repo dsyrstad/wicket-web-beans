@@ -37,18 +37,17 @@ public class BeanTableField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public BeanTableField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public BeanTableField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
         Class elementType = metaData.getElementType( model.getObject() );
         if (elementType == null) {
             throw new RuntimeException("No elementType defined for property " + metaData.getPropertyName() + " on bean " + metaData.getBeanMetaData().getBeanClass());
         }
         
-        BeanMetaData elementMetaData = metaData.createBeanMetaData(elementType, viewOnly);
+        BeanMetaData elementMetaData = metaData.createBeanMetaData(elementType);
         
         // Get Number of rows from parameters
         int rows = metaData.getIntParameter(ElementMetaData.PARAM_ROWS, 10);

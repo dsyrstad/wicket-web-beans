@@ -20,7 +20,7 @@ public class LoginPage extends WebPage
         JBean jbean = new JBean(LoginBean.class)
             .propertyNames("userName", "password", "action.login");
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

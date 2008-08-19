@@ -52,13 +52,12 @@ abstract public class EnumField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      * @param values a List of values to be selected from. The element's toString() is used to 
      *  produce the value displayed to the user.
      */
-    public EnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, List<?> values)
+    public EnumField(String id, IModel model, ElementMetaData metaData, List<?> values)
     {
-        this(id, model, metaData, viewOnly, new Model((Serializable)values));
+        this(id, model, metaData, new Model((Serializable)values));
     }
     
     /**
@@ -67,13 +66,12 @@ abstract public class EnumField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      * @param valueModel an IModel that returns a List of values to be selected from. The element's toString() is used to 
      *  produce the value displayed to the user.
      */
-    public EnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, IModel valueModel)
+    public EnumField(String id, IModel model, ElementMetaData metaData, IModel valueModel)
     {
-        this(id, model, metaData, viewOnly, valueModel, null);
+        this(id, model, metaData, valueModel, null);
     }
     
     /**
@@ -82,18 +80,17 @@ abstract public class EnumField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      * @param valueModel an IModel that returns a List of values to be selected from. The element's toString() is used to 
      *  produce the value displayed to the user.
      * @param choiceRenderer a renderer that produces the value displayed to the user. May be null to use the default rendering.
      */
-    public EnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, IModel valueModel, final IChoiceRenderer choiceRenderer)
+    public EnumField(String id, IModel model, ElementMetaData metaData, IModel valueModel, final IChoiceRenderer choiceRenderer)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
         this.choiceRenderer = choiceRenderer;
         Fragment fragment;
-        if (viewOnly) {
+        if (false/*viewOnly*/) {
             fragment = new Fragment("frag", "viewer");
             fragment.add(new LabelWithMinSize("component", model) {
                 @Override

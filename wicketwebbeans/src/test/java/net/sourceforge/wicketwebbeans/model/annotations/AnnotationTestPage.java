@@ -40,11 +40,11 @@ import org.apache.wicket.markup.html.form.Form;
             @Property(name = "blockBean", fieldType = BeanGridField.class, colspan = 3),
             @Property(name = "testBean2", colspan = 3),
             @Property(name = "popupBean", colspan = 3),
-            @Property(name = "result", viewOnly = true),
+            @Property(name = "result"),
             @Property(name = "palette", elementType =  AnnotationTestBean.ColorEnum.class),
-            @Property(name = "palette2", elementType =  AnnotationTestBean.ColorEnum.class, viewOnly = true),
+            @Property(name = "palette2", elementType =  AnnotationTestBean.ColorEnum.class),
             @Property(name = "description", fieldType = TextAreaField.class, rows = 5),
-            @Property(name = "beans", viewOnly = true, rows = 20)
+            @Property(name = "beans", rows = 20)
           },
           actions = {
             @Action(name = "save", colspan = 3),
@@ -53,10 +53,10 @@ import org.apache.wicket.markup.html.form.Form;
     ),
      
     @Bean(type = AnnotationTestBean.class, context = "view", 
-          label = "Bean View", viewOnly = true,
+          label = "Bean View",
           properties = {
             @Property(name = "action.save", colspan = 4),
-            @Property(name = "firstName", viewOnly = false)
+            @Property(name = "firstName")
           }
     ),
      
@@ -64,7 +64,7 @@ import org.apache.wicket.markup.html.form.Form;
           properties = {
             @Property(name = "action.deleteRow", labelImage = "remove.gif"),
             @Property(name = "selected", label = "X"),
-            @Property(name = "firstName", viewOnly = false),
+            @Property(name = "firstName"),
             @Property(name = "lastName")         
           }
     )

@@ -34,6 +34,7 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Dan Syrstad
  */
+// TODO Go away - can be supported via dynamic parameter values.
 public class JavaEnumField extends EnumField
 {
     /**
@@ -42,10 +43,9 @@ public class JavaEnumField extends EnumField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public JavaEnumField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public JavaEnumField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly, Arrays.asList(metaData.getPropertyType().getEnumConstants()));
+        super(id, model, metaData, Arrays.asList(metaData.getPropertyType().getEnumConstants()));
     }
 }

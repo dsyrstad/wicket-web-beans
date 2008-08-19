@@ -81,11 +81,10 @@ public class DateTimeField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public DateTimeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public DateTimeField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
         type = metaData.getPropertyType();
         boolean displayTz = false;
@@ -98,7 +97,7 @@ public class DateTimeField extends AbstractField
             fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "date" + FORMAT_SUFFIX, metaDataComponent, DATE_FMT_STR);
         }
         else if (Calendar.class.isAssignableFrom(type)) {
-            fmt = viewOnly ? localizer.getString(DATE_TIME_FIELD_PREFIX + "datetimetz" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_ZONE_FMT_STR) : 
+            fmt = false /*viewOnly*/ ? localizer.getString(DATE_TIME_FIELD_PREFIX + "datetimetz" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_ZONE_FMT_STR) : 
                              localizer.getString(DATE_TIME_FIELD_PREFIX + "datetime" + FORMAT_SUFFIX, metaDataComponent, DATE_TIME_FMT_STR);
             displayTz = true;
         }
@@ -113,7 +112,7 @@ public class DateTimeField extends AbstractField
         
         final InternalDateConverter converter = new InternalDateConverter(); 
         Fragment fragment;
-        if (viewOnly) {
+        if (false/*viewOnly*/) {
             fragment = new Fragment("frag", "viewer");
             Label label = new LabelWithMinSize("date", model) {
                 @Override

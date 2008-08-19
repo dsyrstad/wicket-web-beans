@@ -72,7 +72,7 @@ public abstract class DataBeanListPanel extends Panel
         super(id);
 
         Databinder.getHibernateSession().beginTransaction();
-        metaData = new BeanMetaData(beanClass, null, this, null, true);
+        metaData = new BeanMetaData(beanClass, null, this, null);
         Label label = new Label("label", new Model(metaData.getParameter("label")));
         add(label);
 

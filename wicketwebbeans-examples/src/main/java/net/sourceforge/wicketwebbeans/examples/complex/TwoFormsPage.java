@@ -15,12 +15,12 @@ public class TwoFormsPage extends WebPage
     public TwoFormsPage()
     {
         TwoFormsBean bean1 = new TwoFormsBean();
-        BeanMetaData meta1 = new BeanMetaData(bean1.getClass(), null, this, null, false);
+        BeanMetaData meta1 = new BeanMetaData(bean1.getClass(), null, this, null);
         BeanForm beanForm1 = new BeanForm("beanForm1", bean1, meta1);
         add(beanForm1);
 
         TwoFormsBean bean2 = new TwoFormsBean();
-        BeanMetaData meta2 = new BeanMetaData(bean2.getClass(), null, this, null, false);
+        BeanMetaData meta2 = new BeanMetaData(bean2.getClass(), null, this, null);
         BeanForm beanForm2 = new BeanForm("beanForm2", bean2, meta2);
         add(beanForm2);
     }

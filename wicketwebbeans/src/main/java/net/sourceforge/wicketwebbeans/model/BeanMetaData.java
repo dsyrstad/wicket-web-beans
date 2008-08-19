@@ -77,8 +77,6 @@ public class BeanMetaData extends MetaData implements Serializable
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
     private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
 
-    public static final String PARAM_VIEW_ONLY = "viewOnly";
-    public static final String PARAM_DISPLAYED = "displayed";
     public static final String PARAM_PROPS = "props";
     public static final String PARAM_ACTIONS = "actions";
     public static final String PARAM_LABEL = "label";
@@ -111,13 +109,10 @@ public class BeanMetaData extends MetaData implements Serializable
      *  use a context.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
-     *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Component component, ComponentRegistry componentRegistry)
     {
-        this(beanClass, context, null, null, component, componentRegistry, viewOnly);
+        this(beanClass, context, null, null, component, componentRegistry);
     }
 
     /**
@@ -130,13 +125,10 @@ public class BeanMetaData extends MetaData implements Serializable
      *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
-     *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry)
     {
-        this(beanClass, context, null, metaDataClass, component, componentRegistry, viewOnly);
+        this(beanClass, context, null, metaDataClass, component, componentRegistry);
     }
 
     /**
@@ -148,13 +140,10 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param beans an implementation using the Beans annotation to provide meta data. May be null. 
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
-     *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry)
     {
-        this(beanClass, context, beans, null, component, componentRegistry, viewOnly);
+        this(beanClass, context, beans, null, component, componentRegistry);
     }
 
     /**
@@ -166,13 +155,10 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param bean an implementation using the Bean annotation to provide meta data. May be null. 
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
-     *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry)
     {
-        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly);
+        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry);
     }
 
     /**
@@ -186,11 +172,8 @@ public class BeanMetaData extends MetaData implements Serializable
      *  May be null. This allows bean metadata to be separate from the component and the bean, hence reusable.
      * @param component the component used to get the Localizer.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null.
-     * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
-     *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry)
     {
         super(component);
         
@@ -205,9 +188,6 @@ public class BeanMetaData extends MetaData implements Serializable
         else {
             this.componentRegistry = componentRegistry;
         }
-
-        setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
-        setParameter(PARAM_DISPLAYED, "true");
         
         String beanClassName = getBaseClassName(beanClass);
         String label = getLabelFromLocalizer(beanClassName, beanClassName);
@@ -217,12 +197,6 @@ public class BeanMetaData extends MetaData implements Serializable
         setParameter(PARAM_LABEL, label);
 
         init();
-
-        consumeParameter(PARAM_LABEL);
-        consumeParameter(PARAM_ACTIONS);
-        consumeParameter(PARAM_PROPS);
-        consumeParameter(PARAM_DISPLAYED);
-        consumeParameter(PARAM_VIEW_ONLY);
     }
 
     /**
@@ -326,13 +300,8 @@ public class BeanMetaData extends MetaData implements Serializable
             }
 
             ElementMetaData propertyMeta = new ElementMetaData(this, name, label, descriptor.getPropertyType());
-            propertyMeta.setViewOnly( isViewOnly() );
             elements.add(propertyMeta);
 
-            if (descriptor.getWriteMethod() == null) {
-                propertyMeta.setViewOnly(true);
-            }
-            
             deriveElementFromAnnotations(descriptor, propertyMeta);
         }
 
@@ -366,11 +335,6 @@ public class BeanMetaData extends MetaData implements Serializable
             throw new RuntimeException("Could not find specified context '" + context + "' in metadata.");
         }
         
-        // Post-process Bean-level parameters
-        if (!getBooleanParameter(PARAM_DISPLAYED)) {
-            elements.clear();
-        }
-
         Collections.sort(elements, new Comparator<ElementMetaData>() {
             public int compare(ElementMetaData o1, ElementMetaData o2)
             {
@@ -511,7 +475,6 @@ public class BeanMetaData extends MetaData implements Serializable
     private void processBeanAnnotation(Bean bean)
     {
         setParameter(BeanGridPanel.PARAM_COLS, String.valueOf(bean.columns()));
-        setParameter(PARAM_DISPLAYED, String.valueOf(bean.displayed()));
         setParameterIfNotEmpty(PARAM_LABEL, bean.label());
         if (bean.container() != Panel.class) {
             setParameter(PARAM_CONTAINER, bean.container().getName());
@@ -522,19 +485,9 @@ public class BeanMetaData extends MetaData implements Serializable
         setParameter(PARAM_CSS, bean.css());
         setParameter(PARAM_DYNAMIC_CSS, bean.dynamicCss());
         
-        if (bean.viewOnly().length > 0) {
-            // Only set if explicitly set.
-            boolean viewOnly = bean.viewOnly()[0];
-            setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
-            updateElementsViewOnlyState(viewOnly);
-        }
-
         setParameterIfNotEmpty(bean.paramName(), bean.paramValue());
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : bean.params()) {
             setParameterIfNotEmpty(param.name(), param.value());
-            if (param.name().equals(PARAM_VIEW_ONLY)) {
-                updateElementsViewOnlyState( getBooleanParameter(PARAM_VIEW_ONLY) );
-            }
         }
         
         for (String actionName : bean.actionNames()) {
@@ -576,19 +529,6 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setOrder(order++);
                 }
             }
-        }
-    }
-
-    /**
-     * Set all elements to same viewOnly state. Note that this happens before individual elements are processed so 
-     * that they can override the bean setting if necessary.
-     *
-     * @param viewOnly
-     */
-    private void updateElementsViewOnlyState(boolean viewOnly)
-    {
-        for (ElementMetaData element : elements) {
-            element.setViewOnly(viewOnly);
         }
     }
     
@@ -659,12 +599,6 @@ public class BeanMetaData extends MetaData implements Serializable
         }
         
         element.setRequired(property.required());
-        if (!element.isAction()) {
-            // Only set viewOnly if explicitly set.
-            if (property.viewOnly().length > 0) {
-                element.setViewOnly(property.viewOnly()[0]);
-            }
-        }
         
         element.setParameterIfNotEmpty(property.paramName(), property.paramValue());
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : property.params()) {
@@ -884,7 +818,6 @@ public class BeanMetaData extends MetaData implements Serializable
         if (propertyName.equals("EMPTY")) {
             prop = new ElementMetaData(this, "EMPTY:" + elements.size(), "", Object.class);
             prop.setFieldType(EmptyField.class.getName());
-            prop.setViewOnly(true);
             elements.add(prop);
         }
         else {
@@ -1056,22 +989,6 @@ public class BeanMetaData extends MetaData implements Serializable
     public String getContext()
     {
         return context;
-    }
-
-    /**
-     * @return the viewOnly flag.
-     */
-    public boolean isViewOnly()
-    {
-        return getBooleanParameter(PARAM_VIEW_ONLY);
-    }
-
-    /**
-     * @return the displayed flag.
-     */
-    public boolean isDisplayed()
-    {
-        return getBooleanParameter(PARAM_DISPLAYED);
     }
 
     /**

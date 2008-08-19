@@ -42,13 +42,12 @@ public class BeanWithParentLabelField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public BeanWithParentLabelField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public BeanWithParentLabelField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
         
-        BeanMetaData beanMetaData = metaData.createBeanMetaData(viewOnly);
+        BeanMetaData beanMetaData = metaData.createBeanMetaData();
         // Rename the bean's property labels to this property's label.
         for (ElementMetaData prop : beanMetaData.getDisplayedElements()) {
             if (!prop.isAction()) {
@@ -56,7 +55,7 @@ public class BeanWithParentLabelField extends AbstractField
             }
         }
         
-        if (!viewOnly && model.getObject() == null) {
+        if (model.getObject() == null) {
             // Create a blank instance for editing.
             model.setObject( metaData.createInstance() );
         }

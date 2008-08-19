@@ -65,7 +65,7 @@ public class ComponentRegistry implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class, ElementMetaData.class, Boolean.TYPE };
+    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class, ElementMetaData.class };
     
     // Key is Target Type's class name (e.g., java.util.Date). Value is the
     // Wicket Component (Field) class name. If the mapping contains an element type, the key has a suffix of
@@ -238,7 +238,6 @@ public class ComponentRegistry implements Serializable
      */
     public Component getComponent(Object bean, String wicketId, ElementMetaData propertyMeta)
     {
-        boolean viewOnly = propertyMeta.isViewOnly();
         String componentClassName = propertyMeta.getFieldType();
         if (componentClassName == null) {
             Class<?> type = propertyMeta.getPropertyType();
@@ -265,7 +264,7 @@ public class ComponentRegistry implements Serializable
                 Constructor<?> xtor = componentClass.getConstructor(constructorArgs);
                 
                 IModel model = new BeanPropertyModel(bean, propertyMeta);
-                Component component = (Component)xtor.newInstance( new Object[] { wicketId, model, propertyMeta, viewOnly } );
+                Component component = (Component)xtor.newInstance( new Object[] { wicketId, model, propertyMeta } );
                 associateLabelToFormComponents(propertyMeta, component);
                 return component;
             }

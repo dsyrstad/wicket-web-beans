@@ -40,14 +40,13 @@ public class PasswordField extends AbstractField
      * @param id the Wicket id for the editor.
      * @param model the model.
      * @param metaData the meta data for the property.
-     * @param viewOnly true if the component should be view-only.
      */
-    public PasswordField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public PasswordField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly);
+        super(id, model, metaData);
 
         Fragment fragment;
-        if (viewOnly) {
+        if (false/*viewOnly*/) {
             fragment = new Fragment("frag", "viewer", this);
             fragment.add( new LabelWithMinSize("component", "*****") );
         }

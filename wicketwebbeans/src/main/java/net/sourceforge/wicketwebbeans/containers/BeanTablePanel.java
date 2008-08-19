@@ -69,24 +69,7 @@ public class BeanTablePanel extends Panel
      */
     public BeanTablePanel(String id, IModel model, BeanMetaData metaData, int numRows)
     {
-        this(id, model, metaData, metaData.isViewOnly(), numRows);
-    }
-    
-    /**
-     * Construct a new BeanTablePanel.
-     *
-     * @param id the Wicket id for the editor.
-     * @param model the model, which must return a Collection type for its object.
-     * @param metaData the meta data for the bean/row.
-     * @param numRows the number of rows to be displayed.
-     */
-    public BeanTablePanel(String id, IModel model, BeanMetaData metaData, boolean viewOnly, int numRows)
-    {
-        this(id, 
-             new BeanSortableDataProvider(metaData, model),
-             metaData,
-             viewOnly,
-             numRows);
+        this(id, new BeanSortableDataProvider(metaData, model), metaData, numRows);
     }
     
     /**
@@ -97,9 +80,9 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, ISortableDataProvider dataProvider, BeanMetaData metaData, boolean viewOnly, int numRows)
+    public BeanTablePanel(String id, ISortableDataProvider dataProvider, BeanMetaData metaData, int numRows)
     {
-          this(id, dataProvider, dataProvider, metaData, viewOnly, numRows);
+          this(id, dataProvider, dataProvider, metaData, numRows);
     }
     
     /**
@@ -111,7 +94,7 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator, BeanMetaData metaData, boolean viewOnly, int numRows)
+    public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator, BeanMetaData metaData, int numRows)
     {
         super(id);
 

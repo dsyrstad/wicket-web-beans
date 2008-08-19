@@ -10,7 +10,7 @@ public class NestedBeanPage extends WebPage
     public NestedBeanPage()
     {
         Customer bean = new Customer();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 }

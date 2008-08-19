@@ -7,8 +7,8 @@ import org.apache.wicket.model.IModel;
 
 public class CountryField extends EnumField
 {
-    public CountryField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public CountryField(String id, IModel model, ElementMetaData metaData)
     {
-        super(id, model, metaData, viewOnly, Country.values());
+        super(id, model, metaData, Country.values());
     }
 }

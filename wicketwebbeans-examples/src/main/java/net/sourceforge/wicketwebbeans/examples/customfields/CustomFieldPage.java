@@ -16,7 +16,7 @@ public class CustomFieldPage extends WebPage
         ComponentRegistry registry = new ComponentRegistry();
         registry.register(Country.class, CountryField.class);
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry);
         add( new BeanForm("beanForm", bean, meta) );
     }
 }

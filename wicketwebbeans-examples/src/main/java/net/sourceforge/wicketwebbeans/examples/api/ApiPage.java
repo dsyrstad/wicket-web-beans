@@ -25,7 +25,7 @@ public class ApiPage extends WebPage
                                         new JProperty("lastName").required(true)).actions(
                                         new JAction("save").confirm("Are you sure you want to save?"));
 
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null);
         add(new BeanForm("beanForm", bean, meta));
     }
 

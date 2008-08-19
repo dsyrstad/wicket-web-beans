@@ -70,12 +70,6 @@ public @interface Property {
     /** The number of columns to display for a TextAreaField. */
     int columns() default 0;
 
-    /** Tell WWB whether this element is view-only or editable. This is automatically set to true if you are using JPA and the @Column annotation has 
-     * both insertable and updatable set to false.
-     * Note that this is defined as an array so WWB can tell if the attribute was explicitly set. However, you should just say viewOnly = true/false 
-     * and not use the array syntax. */
-    boolean[] viewOnly() default {};
-
     // --- Common to Action and Property
     /** The label to display for this element. */
     String label() default "";

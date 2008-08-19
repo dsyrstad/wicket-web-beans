@@ -13,7 +13,7 @@ public class ModelBeanPage extends WebPage
     {
         IModel beanModel = new LoadableDetachableObjectModel();
         
-        BeanMetaData meta = new BeanMetaData(beanModel.getObject().getClass(), null, this, null, false);
+        BeanMetaData meta = new BeanMetaData(beanModel.getObject().getClass(), null, this, null);
         add( new BeanForm("beanForm", beanModel, meta) );
     }
 }

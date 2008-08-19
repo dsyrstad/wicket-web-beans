@@ -18,7 +18,7 @@ public class ContextBeanPage extends WebPage
         bean.setOperand1(BigDecimal.valueOf(123.0));
         bean.setOperand2(BigDecimal.valueOf(456.0));
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), "limitedEdit", this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), "limitedEdit", this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 }

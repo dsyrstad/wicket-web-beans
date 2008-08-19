@@ -26,7 +26,7 @@ public class ExpPage2 extends WebPage
         }
         bean.setBeans(beans);
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null);
 
         beanForm = new BeanForm("beanForm", bean, meta);
         add(beanForm);

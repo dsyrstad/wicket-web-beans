@@ -13,7 +13,7 @@ public class AnnotationsOnBeanPage extends WebPage
     public AnnotationsOnBeanPage()
     {
         TestBeanWithAnnotations bean = new TestBeanWithAnnotations();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), "someContext", this, null, false);
+        BeanMetaData meta = new BeanMetaData(bean.getClass(), "someContext", this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 
