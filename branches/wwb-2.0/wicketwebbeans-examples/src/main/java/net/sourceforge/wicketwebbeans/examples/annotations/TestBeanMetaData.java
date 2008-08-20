@@ -22,7 +22,7 @@ import net.sourceforge.wicketwebbeans.annotations.Property;
     // Inherits from default context.
     @Bean(type = TestBean.class, context = "someContext", propertyNames = "-idNumber")
 })
-public interface TestBeanMetaData
+public interface TestComponentConfig
 {
     // This is just an interface to hold the annotations.
 }

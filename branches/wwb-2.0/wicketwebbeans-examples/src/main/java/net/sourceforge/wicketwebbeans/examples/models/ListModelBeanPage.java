@@ -6,7 +6,7 @@ import java.util.List;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.examples.SerializableBean;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
@@ -23,7 +23,7 @@ public class ListModelBeanPage extends WebPage
         
         IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, this, null);
+        ComponentConfig meta = new ComponentConfig(SerializableBean.class, null, this, null);
         add( new BeanForm("beanForm", beanModel, meta) );
     }
 }

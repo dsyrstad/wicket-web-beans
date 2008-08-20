@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-package net.sourceforge.wicketwebbeans.model.beanprops;
+package net.sourceforge.wicketwebbeans.model.config;
 
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -22,25 +22,25 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 
-public class BeanMetaDataTestPage extends WebPage
+public class ComponentConfigTestPage extends WebPage
 {
-    public BeanMetaDataTestPage()
+    public ComponentConfigTestPage()
     {
     }
     
-    public void save(AjaxRequestTarget target, Form form, BeanMetaDataTestBean bean)
+    public void save(AjaxRequestTarget target, Form form, ComponentConfigTestBean bean)
     {
     }
 
-    public void cancel(AjaxRequestTarget target, Form form, BeanMetaDataTestBean bean)
+    public void cancel(AjaxRequestTarget target, Form form, ComponentConfigTestBean bean)
     {
     }
 
-    public void deleteRow(AjaxRequestTarget target, Form form, BeanMetaDataTestBean2 rowBean)
+    public void deleteRow(AjaxRequestTarget target, Form form, ComponentConfigTestBean2 rowBean)
     {
     }
 
-    public void addRow(AjaxRequestTarget target, Form form, BeanMetaDataTestBean rowBean)
+    public void addRow(AjaxRequestTarget target, Form form, ComponentConfigTestBean rowBean)
     {
     }
 

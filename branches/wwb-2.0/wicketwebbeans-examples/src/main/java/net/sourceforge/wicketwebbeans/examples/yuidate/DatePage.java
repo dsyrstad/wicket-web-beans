@@ -7,7 +7,7 @@ import java.util.Date;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.fields.YUIDateField;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ComponentRegistry;
 
 import org.apache.wicket.markup.html.WebPage;
@@ -25,7 +25,7 @@ public class DatePage extends WebPage
         registry.register(Calendar.class, YUIDateField.class);
 
         TestBean bean = new TestBean();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, this, registry);
         add( new BeanForm("beanForm", bean, meta) );
     }
 }

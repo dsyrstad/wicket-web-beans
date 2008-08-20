@@ -20,7 +20,7 @@ import java.util.List;
 
 
 /**
- * Parameter AST for BeanPropsParser. <p>
+ * Parameter AST for ComponentConfigParser. <p>
  * 
  * @author Dan Syrstad 
  */

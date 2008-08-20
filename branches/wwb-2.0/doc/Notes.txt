@@ -23,7 +23,7 @@ would give knowledge of exactly what changed. How do we submit the entire thing 
 - Component Composition
 
 - ComponentRegistry can register one of these pre-configured components.
-- How does initial matching of component name work? Passed to BeanMetaData as option, otherwise based on the 
+- How does initial matching of component name work? Passed to ComponentConfig as option, otherwise based on the 
 bean class? Since implicit nesting of beans is no longer supported, it could just be called out in the constructor or
 default to the "ROOT" component. 
 

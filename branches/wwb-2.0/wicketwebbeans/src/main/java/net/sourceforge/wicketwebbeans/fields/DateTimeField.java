@@ -88,7 +88,7 @@ public class DateTimeField extends AbstractField
         
         type = metaData.getPropertyType();
         boolean displayTz = false;
-        Component metaDataComponent = metaData.getBeanMetaData().getComponent();
+        Component metaDataComponent = metaData.getComponentConfig().getComponent();
         Localizer localizer = metaDataComponent.getLocalizer();
         if (Time.class.isAssignableFrom(type)) {
             fmt = localizer.getString(DATE_TIME_FIELD_PREFIX + "time" + FORMAT_SUFFIX, metaDataComponent, TIME_FMT_STR);

@@ -2,7 +2,7 @@ package net.sourceforge.wicketwebbeans.examples.actions;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.examples.simple.TestBean;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
@@ -13,7 +13,7 @@ public class ActionBeanPage extends WebPage
     public ActionBeanPage()
     {
         TestBean bean = new TestBean();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

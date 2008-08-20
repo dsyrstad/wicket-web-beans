@@ -25,25 +25,19 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.wicketwebbeans.annotations.Action;
-import net.sourceforge.wicketwebbeans.annotations.Property;
-import net.sourceforge.wicketwebbeans.model.api.JAction;
-import net.sourceforge.wicketwebbeans.model.api.JBean;
-import net.sourceforge.wicketwebbeans.model.api.JBeans;
-import net.sourceforge.wicketwebbeans.model.api.JProperty;
-
 
 /**
- * A recursive descent parser to parse a ".beanprops" stream. <p>
+ * A recursive descent parser to parse a WWB component configuration stream. <p>
  * 
  * @author Dan Syrstad 
  */
-public class BeanPropsParser
+public class ComponentConfigParser
 {
+    private static final char QUOTE_CHAR = '"';
+    
     private String streamName;
     private InputStream stream;
     private StreamTokenizer tokenizer;
-    private BeanMetaData beanMetaData;
 
     /**
      * Construct a BeanPropsParser. 
@@ -52,7 +46,7 @@ public class BeanPropsParser
      * @param beanMetaData
      * @param context
      */
-    public BeanPropsParser(String streamName, InputStream stream)
+    public ComponentConfigParser(String streamName, InputStream stream)
     {
         this.streamName = streamName;
         this.stream = stream;
@@ -127,7 +121,7 @@ public class BeanPropsParser
      * 
      * @throws RuntimeException if a parsing error occurs.
      */
-    public List<BeanAST> parse()
+    public List<ComponentConfigAST> parse()
     {
         tokenizer = new StreamTokenizer( new BufferedReader( new InputStreamReader(stream) ) );
         tokenizer.resetSyntax();
@@ -142,9 +136,9 @@ public class BeanPropsParser
         tokenizer.wordChars(128 + 32, 255);
         tokenizer.whitespaceChars(0, ' ');
         tokenizer.commentChar('#');
-        tokenizer.quoteChar('"');
+        tokenizer.quoteChar(QUOTE_CHAR);
         
-        List<BeanAST> beans = new ArrayList<BeanAST>();
+        List<ComponentConfigAST> beans = new ArrayList<ComponentConfigAST>();
         try {
             while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
                 if (tokenizer.ttype == StreamTokenizer.TT_WORD) {
@@ -162,146 +156,10 @@ public class BeanPropsParser
         return beans;
     }
     
-    /**
-     * Parses the stream given on construction.
-     *
-     * @return a JBeans object representing the parsed beans.
-     * 
-     * @throws RuntimeException if a parsing error occurs.
-     */
-    public JBeans parseToJBeans(BeanMetaData beanMetaData)
-    {
-        this.beanMetaData = beanMetaData;
-        return processBeans( parse() );
-    }
-
-    /**
-     * Process bean ASTs that apply to this bean. This does not update the meta data for this object,
-     * it simply creates a JBeans object containing the metadata.
-     *
-     * @param beans the BeanASTs.
-     * 
-     * @return a JBeans object containing the meta data. 
-     */
-    private JBeans processBeans(List<BeanAST> beans)
-    {
-        JBeans jbeans = new JBeans();
-        
-        Class<?> beanClass = beanMetaData.getBeanClass();
-        String fullName = beanClass.getName();
-        String baseName = BeanMetaData.getBaseClassName(beanClass); // Name without pkg but with parent of inner class
-        String shortName = beanClass.getSimpleName(); // Short name without parent of inner class
-
-        for (BeanAST bean : beans) {
-            String beanName = bean.getName();
-            if (shortName.equals(beanName) || baseName.equals(beanName) || fullName.equals(beanName)) {
-                jbeans.add( processBean(bean) );
-            }
-        }
-        
-        return jbeans;
-    }
-
-    /**
-     * Turns a BeanAST into a JBean.
-     *
-     * @param bean
-     */
-    private JBean processBean(BeanAST bean)
-    {
-        JBean jbean = new JBean( beanMetaData.getBeanClass() );
-        jbean.context( bean.getContext() );
-        jbean.extendsContext( bean.getExtendsContext() );
-        
-        for (ParameterAST param : bean.getParameters()) {
-            jbean.add(param.getName(), param.getValuesAsStrings());
-        }
-        
-        // Process actions first.
-        for (ParameterAST param : bean.getParameters()) {
-            String name = param.getName();
-            if (name.equals(BeanMetaData.PARAM_ACTIONS)) {
-                jbean.actions( processActions(param.getValues()) );
-            }
-            else if (name.equals(BeanMetaData.PARAM_PROPS)) {
-                jbean.properties( processProps(param.getValues()) );
-            }
-            else {
-                jbean.add(name, param.getValuesAsStrings());
-            }
-        }
-        
-        return jbean;
-    }
-
-    /**
-     * Turns a BeanAST's "props" into a List of Property.
-     *
-     * @param values
-     * 
-     * @return a List of Property.
-     */
-    List<Property> processProps(List<ParameterValueAST> values)
-    {
-        List<Property> jproperties = new ArrayList<Property>();
-        for (ParameterValueAST value : values) {
-            String elementName = value.getValue();
-            JProperty jproperty = new JProperty(elementName);
-            jproperties.add(jproperty);
-            for (ParameterAST param : value.getParameters()) {
-                jproperty.add(param.getName(), param.getValuesAsStrings());
-            }
-        }
-        
-        return jproperties;
-    }
-
-    /**
-     * Turns a BeanAST's "actions" into a List of Action.
-     *
-     * @param values
-     * 
-     * @return a List of Action.
-     */
-    private List<Action> processActions(List<ParameterValueAST> values)
-    {
-        List<Action> jactions = new ArrayList<Action>();
-        for (ParameterValueAST value : values) {
-            String elementName = value.getValue();
-            JAction jaction = new JAction(elementName);
-            jactions.add(jaction);
-            for (ParameterAST param : value.getParameters()) {
-                jaction.add(param.getName(), param.getValuesAsStrings());
-            }
-        }
-        
-        return jactions;
-    }
-
-    private BeanAST parseBean()
+    private ComponentConfigAST parseBean()
     {
         String beanName = getToken();
 
-        // Context "[context]" or "[context extends context]" specified?
-        String context = null;
-        String extendsContext = null;
-        String nextToken = getNextToken();
-        if (nextToken.equals("[")) {
-            context = getNextToken();
-            nextToken = getNextToken();
-            if (nextToken.equals("extends")) {
-                extendsContext = getNextToken();
-                nextToken = getNextToken();
-            }
-            
-            if (!nextToken.equals("]")) {
-                throw generateExpectedError("extends' or ']");
-            }
-        }
-        else {
-            tokenizer.pushBack();
-        }
-        
         expect("{");
         
         // Allow empty blocks...
@@ -315,7 +173,7 @@ public class BeanPropsParser
             params = new ArrayList<ParameterAST>();
         }
         
-        return new BeanAST(beanName, context, extendsContext, params);
+        return new ComponentConfigAST(beanName, params);
     }
     
     private List<ParameterAST> parseParameters()
@@ -369,14 +227,15 @@ public class BeanPropsParser
     
     private ParameterValueAST parseParameterValue()
     {
-        ParameterValueAST param = new ParameterValueAST(getNextToken());
-        String nextToken = getNextToken();
+        String value = getNextToken();
+        ParameterValueAST param = new ParameterValueAST(value, tokenizer.ttype == QUOTE_CHAR || tokenizer.ttype == StreamTokenizer.TT_NUMBER);
+        String nextToken = value;
         // Start of parameters for value?
         if (nextToken.equals("{")) {
             // Allow empty blocks...
-            if (!getNextToken().equals("}")) {
+            if (!value.equals("}")) {
                 tokenizer.pushBack();
-                param.setParameters( parseParameters() );
+                param.setSubParameters( parseParameters() );
                 expect("}");
             }
         }

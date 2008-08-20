@@ -4,7 +4,7 @@ WWB contexts allow you to develop different use cases for the same form and page
 
 Embed:net.sourceforge.wicketwebbeans.examples.contexts.ContextBeanPage
  
-Note that we pass "view" to the !BeanMetaData constructor. This is the context (or use case) that we want. Of course, you can dynamically come up with this context in the Page constructor depending on parameters passed, etc.
+Note that we pass "view" to the !ComponentConfig constructor. This is the context (or use case) that we want. Of course, you can dynamically come up with this context in the Page constructor depending on parameters passed, etc.
  
 Here's the beanprops file:
 
@@ -29,7 +29,7 @@ If you run this page from the examples, you will see that all fields are view-on
 If you change the following line in !ContextBeanPage, from "view" to "limitedEdit", WWB uses the third definition in the beanprops file:
   
 <verbatim>
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), "limitedEdit", this, null, false);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), "limitedEdit", this, null, false);
 </verbatim>
 
 This cause just the firstName property to become editable.  The "[limitedEdit extends view]" tells WWB to extend the "view" context, which in turn extends the default context. 

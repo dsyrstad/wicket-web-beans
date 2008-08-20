@@ -68,7 +68,7 @@ public class BeanActionButton extends BeanSubmitButton
             bean = ((IModel)bean).getObject();
         }
         
-        Component component = element.getBeanMetaData().getComponent();
+        Component component = element.getComponentConfig().getComponent();
         String methodName = element.getActionMethodName();
         
         try {

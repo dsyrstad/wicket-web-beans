@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
@@ -26,7 +26,7 @@ public class ExpPage2 extends WebPage
         }
         bean.setBeans(beans);
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, this, null);
 
         beanForm = new BeanForm("beanForm", bean, meta);
         add(beanForm);

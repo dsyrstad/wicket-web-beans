@@ -23,7 +23,7 @@ import java.util.List;
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
 import net.sourceforge.wicketwebbeans.fields.LabeledField;
 import net.sourceforge.wicketwebbeans.fields.UnlabeledField;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.AttributeModifier;
@@ -54,7 +54,7 @@ public class BeanGridPanel extends Panel
     public static final String PARAM_COLS = "cols";
 
     private Object bean;
-    private BeanMetaData beanMetaData;
+    private ComponentConfig beanMetaData;
     private boolean showLabels;
     private int columns;
 
@@ -65,7 +65,7 @@ public class BeanGridPanel extends Panel
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
      * @param beanMetaData the meta data for the bean
      */
-    public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData)
+    public BeanGridPanel(String id, final Object bean, final ComponentConfig beanMetaData)
     {
         this(id, bean, beanMetaData, true);
     }
@@ -78,7 +78,7 @@ public class BeanGridPanel extends Panel
      * @param beanMetaData the meta data for the bean.
      * @param showLabels if true, property labels will be displayed, otherwise they won't. 
      */
-    public BeanGridPanel(String id, final Object bean, final BeanMetaData beanMetaData, final boolean showLabels)
+    public BeanGridPanel(String id, final Object bean, final ComponentConfig beanMetaData, final boolean showLabels)
     {
         super(id);
 

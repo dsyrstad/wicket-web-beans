@@ -1,7 +1,7 @@
 package net.sourceforge.wicketwebbeans.examples.css;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 import net.sourceforge.wicketwebbeans.model.api.JBeans;
@@ -31,7 +31,7 @@ public class CssPage extends WebPage
                 .properties( new JProperty("description").dynamicCss("getDescriptionCss") )
         );
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbeans, this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, jbeans, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 
@@ -40,7 +40,7 @@ public class CssPage extends WebPage
         info("Saved");
     }
     
-    public String getRowCss(RowBean bean, BeanMetaData beanMetaData)
+    public String getRowCss(RowBean bean, ComponentConfig beanMetaData)
     {
         if (bean.getAmount() > 0) {
             return "greaterThanZero";

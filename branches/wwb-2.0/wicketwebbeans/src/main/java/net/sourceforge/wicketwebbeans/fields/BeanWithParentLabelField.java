@@ -20,7 +20,7 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.model.IModel;
@@ -47,7 +47,7 @@ public class BeanWithParentLabelField extends AbstractField
     {
         super(id, model, metaData);
         
-        BeanMetaData beanMetaData = metaData.createBeanMetaData();
+        ComponentConfig beanMetaData = metaData.createComponentConfig();
         // Rename the bean's property labels to this property's label.
         for (ElementMetaData prop : beanMetaData.getDisplayedElements()) {
             if (!prop.isAction()) {

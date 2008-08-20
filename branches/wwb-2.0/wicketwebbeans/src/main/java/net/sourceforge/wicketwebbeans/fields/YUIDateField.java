@@ -85,7 +85,7 @@ public class YUIDateField extends AbstractField
         
         type = metaData.getPropertyType();
         boolean displayTz = false;
-        Component metaDataComponent = metaData.getBeanMetaData().getComponent();
+        Component metaDataComponent = metaData.getComponentConfig().getComponent();
         Localizer localizer = metaDataComponent.getLocalizer();
         if (Time.class.isAssignableFrom(type) ||
             java.sql.Date.class.isAssignableFrom(type) ||

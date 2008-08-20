@@ -18,14 +18,14 @@
 package net.sourceforge.wicketwebbeans.model.annotations;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.WicketTester;
 
 /**
- * Tests BeanMetaData, ElementMetaData, and TabMetaData from an annotation perspective. <p>
+ * Tests ComponentConfig, ElementMetaData, and TabMetaData from an annotation perspective. <p>
  * 
  * @author Dan Syrstad
  */
@@ -42,11 +42,11 @@ public class AnnotationTest extends TestCase
         super(name);
     }
 
-    private void assertElement(BeanMetaData beanMetaData, ElementMetaData element, ElementInfo expected)
+    private void assertElement(ComponentConfig beanMetaData, ElementMetaData element, ElementInfo expected)
     {
         assertEquals(expected.propName, expected.propName, element.getPropertyName());
         assertEquals(expected.propName, expected.propName.startsWith("action."), element.isAction());
-        assertSame(beanMetaData, element.getBeanMetaData());
+        assertSame(beanMetaData, element.getComponentConfig());
         if (element.isAction()) {
             assertEquals(expected.propName, expected.propName.substring(expected.propName.indexOf('.') + 1) , element.getActionMethodName());
         }
@@ -70,7 +70,7 @@ public class AnnotationTest extends TestCase
         tester.startPage(AnnotationTestPage.class);
         Page page = tester.getLastRenderedPage();
         
-        BeanMetaData beanMetaData = new BeanMetaData(AnnotationTestBean.class, null, page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(AnnotationTestBean.class, null, page, null);
         // Test that ${} substitution works and that the properties file is referenced.
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
@@ -128,7 +128,7 @@ public class AnnotationTest extends TestCase
         Page page = tester.getLastRenderedPage();
         
         // Use the "view" context
-        BeanMetaData beanMetaData = new BeanMetaData(AnnotationTestBean.class, "view", page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(AnnotationTestBean.class, "view", page, null);
         assertEquals("Bean View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 

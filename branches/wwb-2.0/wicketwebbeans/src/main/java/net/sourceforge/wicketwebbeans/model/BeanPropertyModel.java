@@ -135,7 +135,7 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
             attached = true;
             if (beanForm != null) {
                 // Re-register listener when the bean is being re-attached.
-                elementMetaData.getBeanMetaData().addPropertyChangeListener(this, beanForm.getListener());
+                elementMetaData.getComponentConfig().addPropertyChangeListener(this, beanForm.getListener());
             }
         }
     }

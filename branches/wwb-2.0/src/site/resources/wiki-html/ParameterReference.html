@@ -78,7 +78,7 @@ The target parameter may be null for non-Ajax requests. </p>
 <ul><li><strong>displayed</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether to display the bean. This is only useful on nested beans.</li>
 </ul><p>
      </p>
-<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the BeanMetaData constructor. Individual properties in <strong>props</strong> may override this default.</li>
+<ul><li><strong>viewOnly</strong> - Either &quot;true&quot; or &quot;false&quot; to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the ComponentConfig constructor. Individual properties in <strong>props</strong> may override this default.</li>
 </ul><p>
    </p>
 <ul><li><strong>cols</strong> - Number of columns in the grid. Though not strictly a &quot;standard&quot; parameter, this is a property parameter supported by BeanGridPanel, which is the default layout used by BeanForm. See BeanGridPanel parameters for more details.</li>
@@ -90,14 +90,14 @@ The target parameter may be null for non-Ajax requests. </p>
 <ul><li><strong>css</strong> - CSS class to be used for the bean container.</li>
 </ul><p>
     </p>
-<ul><li><strong>dynamicCss</strong> - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(&lt;BeanClass&gt; bean, BeanMetaData beanMetaData). See <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/css/CssPage.java.html">net.sourceforge.wicketwebbeans.examples.css.CssPage</a> for an example.</li>
+<ul><li><strong>dynamicCss</strong> - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(&lt;BeanClass&gt; bean, ComponentConfig beanMetaData). See <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/css/CssPage.java.html">net.sourceforge.wicketwebbeans.examples.css.CssPage</a> for an example.</li>
 </ul><p>
        </p>
 <ul><li><strong>container</strong> - a container component to use in place of the default BeanGridPanel or BeanTablePanel. This container must be a Panel and implement a constructor of the form:</li>
 </ul><p>
 </p>
 <p>
-public Constructor(String id, final Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData)</p>
+public Constructor(String id, final Object bean, ComponentConfig beanMetaData, TabMetaData tabMetaData)</p>
 <p>
  </p>
 <p>
@@ -105,7 +105,7 @@ where id = Wicket component ID</p>
 <p>
 bean = the bean, or IModel containing the bean</p>
 <p>
-beanMetaData = the BeanMetaData for bean</p>
+beanMetaData = the ComponentConfig for bean</p>
 <p>
 tabMetaData = the tab metadata </p>
 <p>

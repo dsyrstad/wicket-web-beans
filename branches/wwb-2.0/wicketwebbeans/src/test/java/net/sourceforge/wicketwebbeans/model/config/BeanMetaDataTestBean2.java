@@ -15,13 +15,13 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans.model.beanprops;
+package net.sourceforge.wicketwebbeans.model.config;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BeanMetaDataTestBean2 implements Serializable
+public class ComponentConfigTestBean2 implements Serializable
 {
     private static final long serialVersionUID = -8500883418534059147L;
     private enum Gender { Male, Female };
@@ -34,11 +34,11 @@ public class BeanMetaDataTestBean2 implements Serializable
     private Gender gender;
     private Boolean selected;
 
-    public BeanMetaDataTestBean2()
+    public ComponentConfigTestBean2()
     {
     }
 
-    public BeanMetaDataTestBean2(String firstName, String lastName)
+    public ComponentConfigTestBean2(String firstName, String lastName)
     {
         this.firstName = firstName;
         this.lastName = lastName;
