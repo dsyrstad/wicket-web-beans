@@ -94,7 +94,7 @@ abstract public class AbstractField extends Panel implements Field
      */
     public String getFormat()
     {
-        return elementMetaData.getParameter("format");
+        return elementMetaData.getParameterAsString("format");
     }
     
     protected void setFieldParameters(FormComponent field)
@@ -154,16 +154,16 @@ abstract public class AbstractField extends Panel implements Field
      */
     protected ElementMetaData getDependentProperty(ElementMetaData metaData, String parameterName, Class propertyClass) {
         ElementMetaData property = null;
-        String propStr = metaData.getParameter(parameterName);
+        String propStr = metaData.getParameterAsString(parameterName);
         if (propStr != null) {
-            property = metaData.getBeanMetaData().findElement(propStr);
+            property = metaData.getComponentConfig().findElement(propStr);
             if (property == null) {
-                throw new RuntimeException("'" + propStr + "' is not defined on " + metaData.getBeanMetaData().getBeanClass());
+                throw new RuntimeException("'" + propStr + "' is not defined on " + metaData.getComponentConfig().getBeanClass());
             }
 
             if (!propertyClass.isAssignableFrom( property.getPropertyType() )) {
                 throw new RuntimeException(parameterName + "'" + propStr + "' must return a " + propertyClass.getName() + " on "
-                                + metaData.getBeanMetaData().getBeanClass() + ". Instead it returns "
+                                + metaData.getComponentConfig().getBeanClass() + ". Instead it returns "
                                 + property.getPropertyType());
             }
         }

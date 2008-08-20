@@ -22,7 +22,7 @@ The target parameter may be null for non-Ajax requests.
    
    * *displayed* - Either "true" or "false" to tell WWB whether to display the bean. This is only useful on nested beans.
      
-   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !BeanMetaData constructor. Individual properties in *props* may override this default. 
+   * *viewOnly* - Either "true" or "false" to tell WWB whether the bean is view-only or editable by default. This overrides the viewOnly parameter on the !ComponentConfig constructor. Individual properties in *props* may override this default. 
    
    * *cols* - Number of columns in the grid. Though not strictly a "standard" parameter, this is a property parameter supported by !BeanGridPanel, which is the default layout used by !BeanForm. See !BeanGridPanel parameters for more details.
    
@@ -30,15 +30,15 @@ The target parameter may be null for non-Ajax requests.
    
    * *css* - CSS class to be used for the bean container.
     
-   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !BeanMetaData beanMetaData). See net.sourceforge.wicketwebbeans.examples.css.CssPage for an example.
+   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !ComponentConfig beanMetaData). See net.sourceforge.wicketwebbeans.examples.css.CssPage for an example.
        
    * *container* - a container component to use in place of the default !BeanGridPanel or !BeanTablePanel. This container must be a Panel and implement a constructor of the form:
 
-public Constructor(String id, final Object bean, !BeanMetaData beanMetaData, !TabMetaData tabMetaData)
+public Constructor(String id, final Object bean, !ComponentConfig beanMetaData, !TabMetaData tabMetaData)
  
 where id = Wicket component ID
 bean = the bean, or IModel containing the bean
-beanMetaData = the !BeanMetaData for bean
+beanMetaData = the !ComponentConfig for bean
 tabMetaData = the tab metadata 
 
 ---++ Standard Property Parameters

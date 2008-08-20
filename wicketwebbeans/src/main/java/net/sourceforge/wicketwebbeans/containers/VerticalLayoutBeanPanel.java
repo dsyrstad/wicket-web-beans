@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -44,7 +44,7 @@ public class VerticalLayoutBeanPanel extends Panel
     private static final long serialVersionUID = -2149828837634944417L;
 
     private Object bean; 
-    private BeanMetaData beanMetaData;
+    private ComponentConfig beanMetaData;
     private boolean showLabels;
 
     /**
@@ -54,7 +54,7 @@ public class VerticalLayoutBeanPanel extends Panel
      * @param bean the bean to be displayed. This may be an IModel or regular bean object.
      * @param beanMetaData the meta data for the bean
      */
-    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData)
+    public VerticalLayoutBeanPanel(String id, final Object bean, final ComponentConfig beanMetaData)
     {
         this(id, bean, beanMetaData, true);
     }
@@ -67,7 +67,7 @@ public class VerticalLayoutBeanPanel extends Panel
      * @param beanMetaData the meta data for the bean
      * @param showLabels if true, property labels will be displayed, otherwise they won't. 
      */
-    public VerticalLayoutBeanPanel(String id, final Object bean, final BeanMetaData beanMetaData, final boolean showLabels)
+    public VerticalLayoutBeanPanel(String id, final Object bean, final ComponentConfig beanMetaData, final boolean showLabels)
     {
         super(id);
 

@@ -27,7 +27,7 @@ import java.util.Set;
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
 import net.sourceforge.wicketwebbeans.fields.AbstractField;
 import net.sourceforge.wicketwebbeans.fields.Field;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
@@ -62,11 +62,11 @@ import org.apache.wicket.util.string.Strings;
  * <li>rows - if the bean is a List, this is the number of rows to be displayed. Defaults to 10.</li>
  * <li>container - a container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
  *   implement a constructor of the form: <p>
- *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
+ *   <code>public Constructor(String id, final Object bean, ComponentConfig beanMetaData)</code>
  *   <p>
  *   where id = Wicket component ID<br>
  *   bean = the bean, or IModel containing the bean<br>
- *   beanMetaData = the BeanMetaData for bean<br>
+ *   beanMetaData = the ComponentConfig for bean<br>
  *   </li>
  * </ul>
  * 
@@ -82,7 +82,7 @@ public class BeanForm extends Panel
 
     public static final String PARAM_ROWS = "rows";
 
-    private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, BeanMetaData.class };
+    private static Class<?>[] CONTAINER_CONSTRUCTOR_PARAMS = { String.class, Object.class, ComponentConfig.class };
 
     private Form form;
     private FormVisitor formVisitor;
@@ -107,9 +107,9 @@ public class BeanForm extends Panel
      *  The bean may be a List or, if an IModel, a model that returns a List. If so, the bean is display is
      *  displayed using BeanTablePanel. Otherwise BeanGridPanel is used.
      * @param beanMetaData the meta data for the bean. If bean is a List or model of a List, then this must be
-     *  the BeanMetaData for a single element (row) of the List. 
+     *  the ComponentConfig for a single element (row) of the List. 
      */
-    public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData)
+    public BeanForm(String id, final Object bean, final ComponentConfig beanMetaData)
     {
         this(id, bean, beanMetaData, null);
     }
@@ -122,19 +122,19 @@ public class BeanForm extends Panel
      *  The bean may be a List or, if an IModel, a model that returns a List. If so, the bean is display is
      *  displayed using BeanTablePanel. Otherwise BeanGridPanel is used.
      * @param beanMetaData the meta data for the bean. If bean is a List or model of a List, then this must be
-     *  the BeanMetaData for a single element (row) of the List.
+     *  the ComponentConfig for a single element (row) of the List.
      * @param container an optional container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
      *   implement a constructor of the form: <p>
-     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
+     *   <code>public Constructor(String id, final Object bean, ComponentConfig beanMetaData)</code>
      *   <p>
      *   where id = Wicket component ID<br>
      *   bean = the bean, or IModel containing the bean<br>
-     *   beanMetaData = the BeanMetaData for bean<br>
+     *   beanMetaData = the ComponentConfig for bean<br>
      *   <p>
      *   May be null.
      */
     @SuppressWarnings("serial")
-    public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData,
+    public BeanForm(String id, final Object bean, final ComponentConfig beanMetaData,
                     final Class<? extends Panel> container)
     {
         super(id);
@@ -196,12 +196,12 @@ public class BeanForm extends Panel
      *
      * @param panelId the Wicket id for the panel component.
      * @param bean may be a bean or an IModel containing a bean.
-     * @param beanMetaData the BeanMetaData.
+     * @param beanMetaData the ComponentConfig.
      * @param container the container class to use. May be null.
      * 
      * @return a Panel.
      */
-    protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, Class<? extends Panel> containerClass)
+    protected Panel createPanel(String panelId, Object bean, ComponentConfig beanMetaData, Class<? extends Panel> containerClass)
     {
         if (containerClass == null) {
             containerClass = beanMetaData.getContainerClass();
@@ -291,7 +291,7 @@ public class BeanForm extends Panel
             // Listen for PropertyChangeEvents on this bean, if necessary.
             // TODO When do we unregister?? Maybe a WeakRef to ourself in the listener? Then listener unregisters
             // TODO if we don't exist anymore.
-            element.getBeanMetaData().addPropertyChangeListener(beanModel, listener);
+            element.getComponentConfig().addPropertyChangeListener(beanModel, listener);
             beanModel.setBeanForm(this);
         }
 
@@ -657,7 +657,7 @@ public class BeanForm extends Panel
             if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
                 FieldLabel fieldName = new FieldLabel(field.getElementMetaData().getLabel());
                 StringResourceModel labelModel = new StringResourceModel("wicketwebbeans.BeanForm.fieldIsRequired",
-                                field.getElementMetaData().getBeanMetaData().getComponent(), new Model(fieldName),
+                                field.getElementMetaData().getComponentConfig().getComponent(), new Model(fieldName),
                                 "${fieldLabel} is required");
                 BeanForm.this.error(labelModel.getObject().toString());
                 errorsFound = true;

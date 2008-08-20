@@ -36,7 +36,7 @@ package net.sourceforge.wicketwebbeans.containers;
 
 import java.util.List;
 
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
@@ -77,7 +77,7 @@ public class BeanDataTable extends DataTable
 {
     private static final long serialVersionUID = 1L;
 
-    private BeanMetaData beanMetaData;
+    private ComponentConfig beanMetaData;
     
     /**
      * Constructor
@@ -91,7 +91,7 @@ public class BeanDataTable extends DataTable
      * @param rowsPerPage
      *            number of rows per page
      */
-    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage, BeanMetaData metaData)
+    public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage, ComponentConfig metaData)
     {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage, metaData);
     }
@@ -111,7 +111,7 @@ public class BeanDataTable extends DataTable
      *            number of rows per page
      */
     public BeanDataTable(String id, final List<IColumn> columns,
-            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, BeanMetaData metaData)
+            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, ComponentConfig metaData)
     {
         this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage, metaData);
     }
@@ -131,7 +131,7 @@ public class BeanDataTable extends DataTable
      *            number of rows per page
      */
     public BeanDataTable(String id, final IColumn[] columns,
-            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage, BeanMetaData metaData)
+            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage, ComponentConfig metaData)
     {
         super(id, columns, dataProvider, rowsPerPage);
         this.beanMetaData = metaData;

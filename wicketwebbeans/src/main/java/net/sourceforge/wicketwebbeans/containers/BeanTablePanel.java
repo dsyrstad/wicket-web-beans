@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.wicketwebbeans.actions.BeanActionButton;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.Component;
@@ -57,7 +57,7 @@ import org.apache.wicket.model.Model;
 public class BeanTablePanel extends Panel
 {
     private static final long serialVersionUID = -5452855853289381110L;
-    private BeanMetaData metaData;
+    private ComponentConfig metaData;
 
     /**
      * Construct a new BeanTablePanel.
@@ -67,7 +67,7 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, IModel model, BeanMetaData metaData, int numRows)
+    public BeanTablePanel(String id, IModel model, ComponentConfig metaData, int numRows)
     {
         this(id, new BeanSortableDataProvider(metaData, model), metaData, numRows);
     }
@@ -80,7 +80,7 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, ISortableDataProvider dataProvider, BeanMetaData metaData, int numRows)
+    public BeanTablePanel(String id, ISortableDataProvider dataProvider, ComponentConfig metaData, int numRows)
     {
           this(id, dataProvider, dataProvider, metaData, numRows);
     }
@@ -94,7 +94,7 @@ public class BeanTablePanel extends Panel
      * @param metaData the meta data for the bean/row.
      * @param numRows the number of rows to be displayed.
      */
-    public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator, BeanMetaData metaData, int numRows)
+    public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator, ComponentConfig metaData, int numRows)
     {
         super(id);
 
@@ -138,10 +138,10 @@ public class BeanTablePanel extends Panel
         private static final long serialVersionUID = 6712923396580294568L;
 
         private IModel listModel;
-        private BeanMetaData metaData;
+        private ComponentConfig metaData;
         private SortParam lastSortParam = null;
         
-        public BeanSortableDataProvider(BeanMetaData metaData, IModel listModel)
+        public BeanSortableDataProvider(ComponentConfig metaData, IModel listModel)
         {
             this.metaData = metaData;
             this.listModel = listModel;
@@ -243,7 +243,7 @@ public class BeanTablePanel extends Panel
         {
             Object bean = rowModel.getObject();
             Component component;
-            BeanMetaData beanMetaData = element.getBeanMetaData();
+            ComponentConfig beanMetaData = element.getComponentConfig();
             if (element.isAction()) {
                 Form form = (Form)parentComponent.findParent(Form.class);
                 component = new BeanActionButton(componentId, element, form, bean);

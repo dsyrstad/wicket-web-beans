@@ -52,12 +52,12 @@ public class TextAreaField extends AbstractField
             protected void onComponentTag(ComponentTag tag)
             {
                 super.onComponentTag(tag);
-                String rows = metaData.getParameter("rows");
+                String rows = metaData.getParameterAsString("rows");
                 if (rows != null) {
                     tag.put("rows", rows);
                 }
 
-                String cols = metaData.getParameter("cols");
+                String cols = metaData.getParameterAsString("cols");
                 if (cols != null) {
                     tag.put("cols", cols);
                 }

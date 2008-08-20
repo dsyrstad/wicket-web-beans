@@ -26,7 +26,7 @@ import org.apache.wicket.markup.html.form.Form;
 
 import net.databinder.hib.Databinder;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.hibernate.Session;
 
@@ -41,7 +41,7 @@ public abstract class DataBeanEditPanel extends Panel {
 	private Page returnPage;
 	private Component replacementComponent;
 	private BeanForm beanForm;
-	private BeanMetaData metaData;
+	private ComponentConfig metaData;
 
 	/**
 	 * @param id
@@ -72,7 +72,7 @@ public abstract class DataBeanEditPanel extends Panel {
 
 	private DataBeanEditPanel(String id, Object bean) {
 		super(id);
-		metaData = new BeanMetaData(bean.getClass(), null, this, null);
+		metaData = new ComponentConfig(bean.getClass(), null, this, null);
 		beanForm = new BeanForm("beanForm", bean, metaData);
 		add(beanForm);
 	}

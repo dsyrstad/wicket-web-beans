@@ -1,7 +1,7 @@
 package net.sourceforge.wicketwebbeans.examples.login;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -20,7 +20,7 @@ public class LoginPage extends WebPage
         JBean jbean = new JBean(LoginBean.class)
             .propertyNames("userName", "password", "action.login");
         
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, jbean, this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

@@ -70,7 +70,7 @@ If you want to do something more sophisticated, WWB supports Wicket resources in
 
 You can see that you can specify parameters for each bean property. This example gives operand1 a label that is partially derived from the Wicket property "propertyKey". The "${xxx}" macro expression syntax substitutes the properties file value for key "xxx" into the value for the parameter. You can intermix text and multiple macro expressions in a single value. You can use the macro expression in any value, not just labels.
 
-In !CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The "result" property is view-only by default because it has no setter. If you were to pass "viewOnly" = true to the !BeanMetaData constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change !CustomSimpleBeanPage.beanprops as follows:
+In !CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The "result" property is view-only by default because it has no setter. If you were to pass "viewOnly" = true to the !ComponentConfig constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change !CustomSimpleBeanPage.beanprops as follows:
 
 <verbatim>
 	# Customize TestBean.
@@ -162,10 +162,10 @@ You can see that it may be more natural to place the @Property annotations direc
 
 ---++ Annotations on a Special Metadata Class
 
-Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. net.sourceforge.wicketwebbeans.examples.annotations.TestBeanMetaData is an example of this. It has annotations similar to that of net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage, but is reusable. To reuse it, simply pass the class to the !BeanMetaData constructor:
+Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. net.sourceforge.wicketwebbeans.examples.annotations.TestComponentConfig is an example of this. It has annotations similar to that of net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage, but is reusable. To reuse it, simply pass the class to the !ComponentConfig constructor:
 
 <verbatim>
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, TestBeanMetaData.class, this, null, false);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, TestComponentConfig.class, this, null, false);
 </verbatim>
 
 See net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnMetaDataClassPage for the full Page code.

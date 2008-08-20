@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.fields.InputField;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 
 import org.apache.wicket.Component;
@@ -66,7 +66,7 @@ public class ContainerModelTest extends TestCase
         
 
         TestLoadableDetachableObjectModel nestedModel = new TestLoadableDetachableObjectModel();
-        BeanMetaData meta = new BeanMetaData(nestedModel.getObject().getClass(), null, page, null);
+        ComponentConfig meta = new ComponentConfig(nestedModel.getObject().getClass(), null, page, null);
         BeanForm form = new BeanForm("beanForm", nestedModel, meta);
 
         page.add(form);
@@ -175,7 +175,7 @@ public class ContainerModelTest extends TestCase
         
         IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null);
+        ComponentConfig meta = new ComponentConfig(SerializableBean.class, null, page, null);
         BeanForm form = new BeanForm("beanForm", beanModel, meta);
 
         page.add(form);
@@ -207,7 +207,7 @@ public class ContainerModelTest extends TestCase
             beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
         }
         
-        BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null);
+        ComponentConfig meta = new ComponentConfig(SerializableBean.class, null, page, null);
         BeanForm form = new BeanForm("beanForm", Arrays.asList(beans), meta);
 
         page.add(form);

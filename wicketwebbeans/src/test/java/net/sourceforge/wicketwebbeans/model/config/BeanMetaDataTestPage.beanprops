@@ -1,4 +1,4 @@
-BeanMetaDataTestBean {
+ComponentConfigTestBean {
 	label: "My ${TestBean.title} Title";   
 	props: 
 		action.save{colspan: 3},
@@ -25,8 +25,8 @@ BeanMetaDataTestBean {
 				operand1,
 				operand2,
 				result{viewOnly: true},
-				palette{elementType: BeanMetaDataTestBean$ColorEnum},
-				palette2{elementType: BeanMetaDataTestBean$ColorEnum; viewOnly: true},
+				palette{elementType: ComponentConfigTestBean$ColorEnum},
+				palette2{elementType: ComponentConfigTestBean$ColorEnum; viewOnly: true},
 				description{fieldType: TextAreaField; rows: 5};
 		}, 
 		listOfBeans {
@@ -36,7 +36,7 @@ BeanMetaDataTestBean {
 		};
 }
 
-BeanMetaDataTestBean[view] {
+ComponentConfigTestBean[view] {
 	label: "Bean View";
 	viewOnly: true;
 	props:
@@ -48,14 +48,14 @@ BeanMetaDataTestBean[view] {
 	};
 }
 
-BeanMetaDataTestBean[popupView extends view] {
+ComponentConfigTestBean[popupView extends view] {
 	label: "Bean Popup View";
 	props: 
 		-color, 
 		lastName{viewOnly: false};
 }
 
-BeanMetaDataTestBean2 {
+ComponentConfigTestBean2 {
 	actions: -doIt;
 	props: 
 		action.deleteRow{labelImage: "remove.gif"},

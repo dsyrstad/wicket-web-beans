@@ -20,7 +20,7 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.model.IModel;
@@ -44,7 +44,7 @@ public class BeanInlineField extends AbstractField implements UnlabeledField
     {
         super(id, model, metaData);
         
-        BeanMetaData beanMetaData = metaData.createBeanMetaData();
+        ComponentConfig beanMetaData = metaData.createComponentConfig();
         
         if (model.getObject() == null) {
             // Create a blank instance for editing.

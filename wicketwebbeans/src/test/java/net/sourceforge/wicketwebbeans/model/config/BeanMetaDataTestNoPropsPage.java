@@ -14,14 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-package net.sourceforge.wicketwebbeans.model.beanprops;
+package net.sourceforge.wicketwebbeans.model.config;
 
 
 import org.apache.wicket.markup.html.WebPage;
 
-public class BeanMetaDataTestNoPropsPage extends WebPage
+public class ComponentConfigTestNoPropsPage extends WebPage
 {
-    public BeanMetaDataTestNoPropsPage()
+    public ComponentConfigTestNoPropsPage()
     {
     }
 }

@@ -20,22 +20,18 @@ import java.util.List;
 
 
 /**
- * Bean AST for BeanPropsParser. <p>
+ * Component Configuration AST for ComponentConfigParser. <p>
  * 
  * @author Dan Syrstad 
  */
-public class BeanAST
+public class ComponentConfigAST     // TODO Is there really any difference between this and a ParameterAST?
 {
     private String name;
-    private String context;
-    private String extendsContext;
     private List<ParameterAST> parameters;
 
-    public BeanAST(String name, String context, String extendsContext, List<ParameterAST> parameters)
+    public ComponentConfigAST(String name, List<ParameterAST> parameters)
     {
         this.name = name;
-        this.context = context;
-        this.extendsContext = extendsContext;
         this.parameters = parameters;
     }
 
@@ -44,19 +40,8 @@ public class BeanAST
         return name;
     }
 
-    public String getContext()
-    {
-        return context;
-    }
-
-    public String getExtendsContext()
-    {
-        return extendsContext;
-    }
-
     public List<ParameterAST> getParameters()
     {
         return parameters;
     }
-
 }

@@ -148,7 +148,7 @@ abstract public class EnumField extends AbstractField
     {
         // Handle default selection if no model is provided
         if (choice.getModelObject() == null) {
-            String defaultChoice = getElementMetaData().getParameter("default");
+            String defaultChoice = getElementMetaData().getParameterAsString("default");
             if (defaultChoice != null)
                 setupDefault(defaultChoice);
         }

@@ -2,7 +2,7 @@ package net.sourceforge.wicketwebbeans.examples.annotations;
 
 import net.sourceforge.wicketwebbeans.annotations.Action;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
@@ -13,7 +13,7 @@ public class AnnotationsOnBeanPage extends WebPage
     public AnnotationsOnBeanPage()
     {
         TestBeanWithAnnotations bean = new TestBeanWithAnnotations();
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), "someContext", this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), "someContext", this, null);
         add( new BeanForm("beanForm", bean, meta) );
     }
 

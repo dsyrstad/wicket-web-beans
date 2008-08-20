@@ -15,21 +15,21 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans.model.beanprops;
+package net.sourceforge.wicketwebbeans.model.config;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.WicketTester;
 
 /**
- * Tests BeanMetaData, ElementMetaData, TabMetaData, and BeanPropsParser. <p>
+ * Tests ComponentConfig, ElementMetaData, TabMetaData, and BeanPropsParser. <p>
  * 
  * @author Dan Syrstad
  */
-public class BeanMetaDataTest extends TestCase
+public class ComponentConfigTest extends TestCase
 {
     
     /**
@@ -37,16 +37,16 @@ public class BeanMetaDataTest extends TestCase
      *
      * @param name
      */
-    public BeanMetaDataTest(String name)
+    public ComponentConfigTest(String name)
     {
         super(name);
     }
 
-    private void assertElement(BeanMetaData beanMetaData, ElementMetaData element, ElementInfo expected)
+    private void assertElement(ComponentConfig beanMetaData, ElementMetaData element, ElementInfo expected)
     {
         assertEquals(expected.propName, expected.propName, element.getPropertyName());
         assertEquals(expected.propName, expected.propName.startsWith("action."), element.isAction());
-        assertSame(beanMetaData, element.getBeanMetaData());
+        assertSame(beanMetaData, element.getComponentConfig());
         if (element.isAction()) {
             assertEquals(expected.propName, expected.propName.substring(expected.propName.indexOf('.') + 1) , element.getActionMethodName());
         }
@@ -67,10 +67,10 @@ public class BeanMetaDataTest extends TestCase
     public void testBasicParsing()
     {
         WicketTester tester = new WicketTester();
-        tester.startPage(BeanMetaDataTestPage.class);
+        tester.startPage(ComponentConfigTestPage.class);
         Page page = tester.getLastRenderedPage();
         
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(ComponentConfigTestBean.class, null, page, null);
         // Test that ${} substitution works and that the properties file is referenced.
         assertEquals("My Experiment Title", beanMetaData.getLabel() );
         
@@ -124,10 +124,10 @@ public class BeanMetaDataTest extends TestCase
     public void testDefaults()
     {
         WicketTester tester = new WicketTester();
-        tester.startPage(BeanMetaDataTestNoPropsPage.class);
+        tester.startPage(ComponentConfigTestNoPropsPage.class);
         Page page = tester.getLastRenderedPage();
         
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, null, page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(ComponentConfigTestBean.class, null, page, null);
         
         assertEquals("Bean Meta Data Test Bean", beanMetaData.getLabel() );
         
@@ -175,11 +175,11 @@ public class BeanMetaDataTest extends TestCase
     public void testContext()
     {
         WicketTester tester = new WicketTester();
-        tester.startPage(BeanMetaDataTestPage.class);
+        tester.startPage(ComponentConfigTestPage.class);
         Page page = tester.getLastRenderedPage();
         
         // Use the "view" context
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "view", page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(ComponentConfigTestBean.class, "view", page, null);
         // Check parameters, elements, element parameters, tabs, tab elements.
         assertEquals("Bean View", beanMetaData.getLabel() );
         
@@ -233,11 +233,11 @@ public class BeanMetaDataTest extends TestCase
     public void testContextWithExtends()
     {
         WicketTester tester = new WicketTester();
-        tester.startPage(BeanMetaDataTestPage.class);
+        tester.startPage(ComponentConfigTestPage.class);
         Page page = tester.getLastRenderedPage();
         
         // Use the "popupView" context
-        BeanMetaData beanMetaData = new BeanMetaData(BeanMetaDataTestBean.class, "popupView", page, null);
+        ComponentConfig beanMetaData = new ComponentConfig(ComponentConfigTestBean.class, "popupView", page, null);
         assertEquals("Bean Popup View", beanMetaData.getLabel() );
         
         ElementInfo[] expectedProps = { 
@@ -289,11 +289,11 @@ public class BeanMetaDataTest extends TestCase
     public void testMissingContext()
     {
         WicketTester tester = new WicketTester();
-        tester.startPage(BeanMetaDataTestPage.class);
+        tester.startPage(ComponentConfigTestPage.class);
         Page page = tester.getLastRenderedPage();
         
         try {
-            new BeanMetaData(BeanMetaDataTestBean.class, "missingContext", page, null);
+            new ComponentConfig(ComponentConfigTestBean.class, "missingContext", page, null);
             fail("Expected exception on missing context");
         }
         catch (RuntimeException e) {

@@ -15,7 +15,7 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans.model.beanprops;
+package net.sourceforge.wicketwebbeans.model.config;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BeanMetaDataTestBean implements Serializable
+public class ComponentConfigTestBean implements Serializable
 {
     private static final long serialVersionUID = -8500883418534059147L;
 
@@ -65,18 +65,18 @@ public class BeanMetaDataTestBean implements Serializable
     private ColorEnum color;
     private BigDecimal operand1;
     private BigDecimal operand2;
-    private BeanMetaDataTestBean2 testBean2;
-    private BeanMetaDataTestBean2 blockBean;
-    private BeanMetaDataTestBean2 inlineBean;
-    private BeanMetaDataTestBean2 popupBean;
-    private List<BeanMetaDataTestBean2> beans;
+    private ComponentConfigTestBean2 testBean2;
+    private ComponentConfigTestBean2 blockBean;
+    private ComponentConfigTestBean2 inlineBean;
+    private ComponentConfigTestBean2 popupBean;
+    private List<ComponentConfigTestBean2> beans;
     private List<ColorEnum> palette = new ArrayList<ColorEnum>();
     private String description;
     private SubComponent subComponent;
     
     private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 
-    public BeanMetaDataTestBean()
+    public ComponentConfigTestBean()
     {
     }
 
@@ -345,7 +345,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return a List<AnnotationTestBean2>.
      */
-    public List<BeanMetaDataTestBean2> getBeans()
+    public List<ComponentConfigTestBean2> getBeans()
     {
         return beans;
     }
@@ -355,7 +355,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param beans a List<AnnotationTestBean2>.
      */
-    public void setBeans(List<BeanMetaDataTestBean2> beans)
+    public void setBeans(List<ComponentConfigTestBean2> beans)
     {
         this.beans = beans;
     }
@@ -365,7 +365,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return a AnnotationTestBean2.
      */
-    public BeanMetaDataTestBean2 getTestBean2()
+    public ComponentConfigTestBean2 getTestBean2()
     {
         return testBean2;
     }
@@ -375,7 +375,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param testBean2 a AnnotationTestBean2.
      */
-    public void setTestBean2(BeanMetaDataTestBean2 testBean2)
+    public void setTestBean2(ComponentConfigTestBean2 testBean2)
     {
         this.testBean2 = testBean2;
     }
@@ -418,7 +418,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the blockBean.
      */
-    public BeanMetaDataTestBean2 getBlockBean()
+    public ComponentConfigTestBean2 getBlockBean()
     {
         return blockBean;
     }
@@ -429,7 +429,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param blockBean the blockBean to set.
      */
-    public void setBlockBean(BeanMetaDataTestBean2 blockBean)
+    public void setBlockBean(ComponentConfigTestBean2 blockBean)
     {
         this.blockBean = blockBean;
     }
@@ -440,7 +440,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the inlineBean.
      */
-    public BeanMetaDataTestBean2 getInlineBean()
+    public ComponentConfigTestBean2 getInlineBean()
     {
         return inlineBean;
     }
@@ -451,7 +451,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param inlineBean the inlineBean to set.
      */
-    public void setInlineBean(BeanMetaDataTestBean2 inlineBean)
+    public void setInlineBean(ComponentConfigTestBean2 inlineBean)
     {
         this.inlineBean = inlineBean;
     }
@@ -462,7 +462,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @return the popupBean.
      */
-    public BeanMetaDataTestBean2 getPopupBean()
+    public ComponentConfigTestBean2 getPopupBean()
     {
         return popupBean;
     }
@@ -473,7 +473,7 @@ public class BeanMetaDataTestBean implements Serializable
      *
      * @param popupBean the popupBean to set.
      */
-    public void setPopupBean(BeanMetaDataTestBean2 popupBean)
+    public void setPopupBean(ComponentConfigTestBean2 popupBean)
     {
         this.popupBean = popupBean;
     }

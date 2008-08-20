@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.containers.BeanGridPanel;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -69,18 +69,18 @@ public @interface Bean {
     
     /** A container to use in place of the default BeanGridPanel or BeanTablePanel. This container must must be a Panel and
      *   implement a constructor of the form: <p>
-     *   <code>public Constructor(String id, final Object bean, BeanMetaData beanMetaData)</code>
+     *   <code>public Constructor(String id, final Object bean, ComponentConfig beanMetaData)</code>
      *   <p>
      *   where id = Wicket component ID<br>
      *   bean = the bean, or IModel containing the bean<br>
-     *   beanMetaData = the BeanMetaData for bean<br>
+     *   beanMetaData = the ComponentConfig for bean<br>
      */
     Class<? extends Panel> container() default Panel.class;
     
     /** CSS class to be used for the bean. */
     String css() default "";
     
-    /** Dynamic CSS class method name to be used for the bean. This method must have the signature: public String methodName(<BeanClass> bean, BeanMetaData beanMetaData). */
+    /** Dynamic CSS class method name to be used for the bean. This method must have the signature: public String methodName(<BeanClass> bean, ComponentConfig beanMetaData). */
     String dynamicCss() default "";
     
     /** Arbitrary non-standard parameters. These are interpreted by the component. */

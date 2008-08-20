@@ -20,22 +20,21 @@ package net.sourceforge.wicketwebbeans.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.sourceforge.wicketwebbeans.util.WicketUtil;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.util.string.Strings;
 
 /**
  * Common metadata methods. <p>
  * 
  * @author Dan Syrstad
  */
-public class MetaData implements Serializable
+abstract public class MetaData implements Serializable
 {
-    private Map<String, String[]> parameters = new HashMap<String, String[]>();
+    private static final long serialVersionUID = 1L;
+    
+    // Key is parameter name. 
+    private Map<String, List<ParameterValueAST>> parameters = new HashMap<String, List<ParameterValueAST>>();
     private Set<String> consumedParameters = new HashSet<String>();
 
     /**
@@ -48,11 +47,11 @@ public class MetaData implements Serializable
     /**
      * Consumes a parameter.
      *
-     * @param param the parameter to consume.
+     * @param parameterName the parameter name to consume.
      */
-    public void consumeParameter(String param)
+    public void consumeParameter(String parameterName)
     {
-        consumedParameters.add(param);
+        consumedParameters.add(parameterName);
     }
 
     /**
@@ -74,157 +73,37 @@ public class MetaData implements Serializable
     }
 
     /**
-     * Gets the specified parameter. If the parameter has multiple values, the first value is returned.
+     * Gets the specified parameter's value. If the parameter has multiple values, the first value is returned.
      *
-     * @param key the parameter key.
+     * @param parameterName the parameter name.
      * 
      * @return the parameter value, or null if not set.
      */
-    public String getParameter(String key)
+    public ParameterValueAST getParameterValue(String parameterName)
     {
-        consumeParameter(key);
-        String[] values = parameters.get(key);
-        if (values == null || values.length == 0) {
+        List<ParameterValueAST> values = getParameterValues(parameterName);
+        if (values == null || values.isEmpty()) {
             return null;
         }
         
-        return values[0];
+        return values.get(0);
     }
     
     /**
-     * Gets the specified parameter. If the parameter has multiple values, the first value is returned.
+     * Gets the specified parameter's value(s).
      *
-     * @param key the parameter key.
-     * @param defaultValue the default value to be returned if the parameter value is null.
+     * @param parameterName the parameter name.
      * 
-     * @return the parameter value, or defaultValue if not set.
+     * @return the parameter's values, or null if not set.
      */
-    public String getParameter(String key, String defaultValue)
+    public List<ParameterValueAST> getParameterValues(String parameterName)
     {
-        String value = getParameter(key);
-        return value == null ? defaultValue : value;
-    }
-    
-    /**
-     * Gets the specified parameter as a multi-valued array.
-     *
-     * @param key the parameter key.
-     * 
-     * @return the parameter values, or null if not set.
-     */
-    public String[] getParameterValues(String key)
-    {
-        consumeParameter(key);
-        return parameters.get(key);
-    }
-    
-    /**
-     * Gets a boolean parameter.
-     *
-     * @param key the parameter key.
-     * 
-     * @return true or false. False is returned if the parameter is not set.
-     */
-    public boolean getBooleanParameter(String key)
-    {
-        return Boolean.valueOf( getParameter(key, "false") );
-    }
-    
-    /**
-     * Gets an Integer parameter.
-     *
-     * @param key the parameter key.
-     * 
-     * @return the value, or null if not set.
-     */
-    public Integer getIntegerParameter(String key)
-    {
-        String value = getParameter(key);
-        return value == null ? null : Integer.valueOf(value);
-    }
-    
-    /**
-     * Gets an int parameter.
-     *
-     * @param key the parameter key.
-     * 
-     * @return the value, or defaultValue if not set.
-     */
-    public int getIntParameter(String key, int defaultValue)
-    {
-        Integer value = getIntegerParameter(key);
-        return value == null ? defaultValue : value;
-    }
-    
-    /**
-     * Sets a parameter.
-     *
-     * @param key the parameter key.
-     * @param value the parameter value. Macros ("${...}")) in this value will be substituted from the component's localizer.
-     * TODO ${) macros?
-     */
-    public void setParameter(String key, String value)
-    {
-        parameters.put(key, new String[] { value });
-    }
-    
-    /**
-     * Sets a parameter that has multiple values. 
-     *
-     * @param key the parameter key.
-     * 
-     * @param values the parameter values. Macros ("${...}")) in these values will be substituted from the component's localizer.
-     * TODO ${) macros?
-     */
-    public void setParameterValues(String key, String[] values)
-    {
-        parameters.put(key, values);
-    }
-    
-    /**
-     * Sets a parameter if the value is not empty or null.
-     *
-     * @param key the parameter key. If empty or null, the parameter is not set.
-     * @param value the parameter value. If empty or null, the parameter is not set.
-     */
-    public void setParameterIfNotEmpty(String key, String value)
-    {
-        if (!Strings.isEmpty(key) && !Strings.isEmpty(value)) {
-            setParameter(key, value);
-        }
-    }
-    
-    /**
-     * Sets a parameter if the values array is not empty or null.
-     *
-     * @param key the parameter key. If empty or null, the parameter is not set.
-     * @param values the parameter values. If empty or null, the parameter is not set.
-     */
-    public void setParameterIfNotEmpty(String key, String[] values)
-    {
-        if (!Strings.isEmpty(key) && values != null && values.length > 0) {
-            setParameterValues(key, values);
-        }
-    }
-    
-    /**
-     * Gets the parameters.
-     *
-     * @return the parameters.
-     */
-    public Map<String, String[]> getParameters()
-    {
-        return parameters;
-    }
-    
-    /**
-     * Sets the parameters.
-     *
-     * @param parameters the parameters to set.
-     */
-    public void setParameters(Map<String, String[]> parameters)
-    {
-        this.parameters = parameters;
+        consumeParameter(parameterName);
+        return parameters.get(parameterName);
     }
 
+    public void setParameter(String parameterName, List<ParameterValueAST> values)
+    {
+        parameters.put(parameterName, values);
+    }
 }

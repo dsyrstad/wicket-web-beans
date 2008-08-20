@@ -18,7 +18,7 @@
 package net.sourceforge.wicketwebbeans.fields;
 
 import net.sourceforge.wicketwebbeans.containers.BeanTablePanel;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
 import org.apache.wicket.model.IModel;
@@ -44,10 +44,10 @@ public class BeanTableField extends AbstractField
         
         Class elementType = metaData.getElementType( model.getObject() );
         if (elementType == null) {
-            throw new RuntimeException("No elementType defined for property " + metaData.getPropertyName() + " on bean " + metaData.getBeanMetaData().getBeanClass());
+            throw new RuntimeException("No elementType defined for property " + metaData.getPropertyName() + " on bean " + metaData.getComponentConfig().getBeanClass());
         }
         
-        BeanMetaData elementMetaData = metaData.createBeanMetaData(elementType);
+        ComponentConfig elementMetaData = metaData.createComponentConfig(elementType);
         
         // Get Number of rows from parameters
         int rows = metaData.getIntParameter(ElementMetaData.PARAM_ROWS, 10);

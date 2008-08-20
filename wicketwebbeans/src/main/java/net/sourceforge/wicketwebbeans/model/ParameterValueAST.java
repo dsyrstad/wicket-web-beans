@@ -21,35 +21,58 @@ import java.util.List;
 
 
 /**
- * ParameterValue AST for BeanPropsParser. <p>
+ * ParameterValue AST for ComponentConfigParser. <p>
  * 
  * @author Dan Syrstad 
  */
 public class ParameterValueAST
 {
     private String value;
-    private List<ParameterAST> parameters = new ArrayList<ParameterAST>();
+    private List<ParameterAST> subParameters = new ArrayList<ParameterAST>();
+    private boolean literal;
 
-    public ParameterValueAST(String value)
+    public ParameterValueAST(String value, boolean isLiteral)
     {
         this.value = value;
+        this.literal = isLiteral;
     }
 
-    public List<ParameterAST> getParameters()
+    public List<ParameterAST> getSubParameters()
     {
-        return parameters;
+        return subParameters;
     }
 
-    public void setParameters(List<ParameterAST> parameters)
+    public void setSubParameters(List<ParameterAST> parameters)
     {
-        this.parameters = parameters;
+        this.subParameters = parameters;
     }
 
     /**
-     * @return the raw value without substitution of macros.
+     * @return the raw value.
      */
     public String getValue()
     {
         return value;
+    }
+    
+    /**
+     * @return the boolean value, or null if the value is null.
+     */
+    public Boolean getBooleanValue() 
+    {
+        return value == null ? null : Boolean.valueOf(value);
+    }
+
+    /**
+     * @return the Integer value, or null if the value is null.
+     */
+    public Integer getIntegerValue() 
+    {
+        return value == null ? null : Integer.valueOf(value);
+    }
+
+    public boolean isLiteral()
+    {
+        return literal;
     }
 }

@@ -2,7 +2,7 @@ package net.sourceforge.wicketwebbeans.examples.api;
 
 import static net.sourceforge.wicketwebbeans.annotations.Property.EMPTY;
 import net.sourceforge.wicketwebbeans.containers.BeanForm;
-import net.sourceforge.wicketwebbeans.model.BeanMetaData;
+import net.sourceforge.wicketwebbeans.model.ComponentConfig;
 import net.sourceforge.wicketwebbeans.model.api.JAction;
 import net.sourceforge.wicketwebbeans.model.api.JBean;
 import net.sourceforge.wicketwebbeans.model.api.JProperty;
@@ -25,7 +25,7 @@ public class ApiPage extends WebPage
                                         new JProperty("lastName").required(true)).actions(
                                         new JAction("save").confirm("Are you sure you want to save?"));
 
-        BeanMetaData meta = new BeanMetaData(bean.getClass(), null, jbean, this, null);
+        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, jbean, this, null);
         add(new BeanForm("beanForm", bean, meta));
     }
 
