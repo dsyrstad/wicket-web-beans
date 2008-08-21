@@ -24,7 +24,7 @@ import java.util.List;
  * 
  * @author Dan Syrstad 
  */
-public class ComponentConfigAST     // TODO Is there really any difference between this and a ParameterAST?
+public class ComponentConfigAST
 {
     private String name;
     private List<ParameterAST> parameters;
