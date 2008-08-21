@@ -25,6 +25,7 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A recursive descent parser to parse a WWB component configuration stream. <p>
@@ -34,7 +35,7 @@ import java.util.List;
 public class ComponentConfigParser
 {
     private static final char QUOTE_CHAR = '"';
-    
+
     private String streamName;
     private InputStream stream;
     private StreamTokenizer tokenizer;
@@ -51,15 +52,15 @@ public class ComponentConfigParser
         this.streamName = streamName;
         this.stream = stream;
     }
-    
+
     /**
      * Generate a error message via an exception.
      */
-    private RuntimeException generateError(String msg) 
+    private RuntimeException generateError(String msg)
     {
         return new RuntimeException("Error: " + streamName + " at line " + tokenizer.lineno() + ": " + msg);
     }
-    
+
     /**
      * @return the current token from the tokenizer. Note that this returns an empty string rather than null.
      */
@@ -67,12 +68,12 @@ public class ComponentConfigParser
     {
         String value = tokenizer.sval;
         if (value == null && tokenizer.ttype >= 0) {
-            value = String.valueOf((char) tokenizer.ttype);
+            value = String.valueOf((char)tokenizer.ttype);
         }
-        
+
         return value == null ? "" : value;
     }
-    
+
     /**
      * Gets the next token from the tokenizer. Note that this returns an empty string rather than null.
      * This is a combination of tokenizer.nextToken() and getToken(). 
@@ -85,23 +86,23 @@ public class ComponentConfigParser
             if (tokenizer.nextToken() == StreamTokenizer.TT_EOF) {
                 throw new RuntimeException("Unexpected EOF reading from " + streamName);
             }
-            
+
             return getToken();
         }
         catch (IOException e) {
             throw new RuntimeException("Error reading from " + streamName, e);
         }
-        
+
     }
-    
+
     /**
      * Generate an "expected" error message via an exception.
      */
-    private RuntimeException generateExpectedError(String expectedThing) 
+    private RuntimeException generateExpectedError(String expectedThing)
     {
         return generateError("Expected '" + expectedThing + "', but got '" + getToken() + "'");
     }
-    
+
     /**
      * Reads and expects a token.
      *
@@ -113,7 +114,7 @@ public class ComponentConfigParser
             throw generateExpectedError(token);
         }
     }
-    
+
     /**
      * Parses the stream given on construction and returns the BeanASTs.
      *
@@ -123,7 +124,7 @@ public class ComponentConfigParser
      */
     public List<ComponentConfigAST> parse()
     {
-        tokenizer = new StreamTokenizer( new BufferedReader( new InputStreamReader(stream) ) );
+        tokenizer = new StreamTokenizer(new BufferedReader(new InputStreamReader(stream)));
         tokenizer.resetSyntax();
         tokenizer.wordChars('a', 'z');
         tokenizer.wordChars('A', 'Z');
@@ -137,12 +138,12 @@ public class ComponentConfigParser
         tokenizer.whitespaceChars(0, ' ');
         tokenizer.commentChar('#');
         tokenizer.quoteChar(QUOTE_CHAR);
-        
+
         List<ComponentConfigAST> beans = new ArrayList<ComponentConfigAST>();
         try {
             while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
                 if (tokenizer.ttype == StreamTokenizer.TT_WORD) {
-                    beans.add( parseBean() );
+                    beans.add(parseBean());
                 }
                 else {
                     throw generateExpectedError("bean name");
@@ -152,16 +153,16 @@ public class ComponentConfigParser
         catch (IOException e) {
             throw new RuntimeException("Error reading " + streamName, e);
         }
-        
+
         return beans;
     }
-    
+
     private ComponentConfigAST parseBean()
     {
         String beanName = getToken();
 
         expect("{");
-        
+
         // Allow empty blocks...
         List<ParameterAST> params;
         if (!getNextToken().equals("}")) {
@@ -172,32 +173,32 @@ public class ComponentConfigParser
         else {
             params = new ArrayList<ParameterAST>();
         }
-        
+
         return new ComponentConfigAST(beanName, params);
     }
-    
+
     private List<ParameterAST> parseParameters()
     {
         List<ParameterAST> params = new ArrayList<ParameterAST>();
         while (true) {
-            params.add( parseParameter() );
-            
+            params.add(parseParameter());
+
             String nextToken = getNextToken();
             tokenizer.pushBack();
-            
+
             if (nextToken.equals("}")) {
                 break;
             }
         }
-        
+
         return params;
     }
-    
+
     private ParameterAST parseParameter()
     {
         String paramName = getNextToken();
         expect(":");
-        
+
         List<ParameterValueAST> values = parseParameterValues();
 
         String nextToken = getNextToken();
@@ -209,7 +210,7 @@ public class ComponentConfigParser
                 throw generateExpectedError(";' or '}");
             }
         }
-        
+
         return new ParameterAST(paramName, values);
     }
 
@@ -217,23 +218,24 @@ public class ComponentConfigParser
     {
         List<ParameterValueAST> paramValues = new ArrayList<ParameterValueAST>();
         do {
-            paramValues.add( parseParameterValue() );
+            paramValues.add(parseParameterValue());
         }
         while (getNextToken().equals(","));
-     
+
         tokenizer.pushBack();
         return paramValues;
     }
-    
+
     private ParameterValueAST parseParameterValue()
     {
         String value = getNextToken();
-        ParameterValueAST param = new ParameterValueAST(value, tokenizer.ttype == QUOTE_CHAR || tokenizer.ttype == StreamTokenizer.TT_NUMBER);
-        String nextToken = value;
+        boolean isLiteral = (tokenizer.ttype == QUOTE_CHAR || (tokenizer.ttype == StreamTokenizer.TT_WORD && StringUtils.containsOnly(value, "0123456789-.")));
+        ParameterValueAST param = new ParameterValueAST(value, isLiteral);
+        String nextToken = getNextToken();
         // Start of parameters for value?
         if (nextToken.equals("{")) {
             // Allow empty blocks...
-            if (!value.equals("}")) {
+            if (!getNextToken().equals("}")) {
                 tokenizer.pushBack();
                 param.setSubParameters( parseParameters() );
                 expect("}");
@@ -246,4 +248,3 @@ public class ComponentConfigParser
         return param;
     }
 }
-
