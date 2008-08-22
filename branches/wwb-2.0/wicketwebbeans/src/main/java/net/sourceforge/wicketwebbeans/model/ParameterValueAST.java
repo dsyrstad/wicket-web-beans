@@ -71,6 +71,14 @@ public class ParameterValueAST
         return value == null ? null : Integer.valueOf(value);
     }
 
+    /**
+     * @return the Double value, or null if the value is null.
+     */
+    public Double getDoubleValue() 
+    {
+        return value == null ? null : Double.valueOf(value);
+    }
+
     public boolean isLiteral()
     {
         return literal;

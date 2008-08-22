@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model.config;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
@@ -39,19 +40,18 @@ public class ComponentConfigParserTest extends TestCase
         super(name);
     }
 
-    public void testParsing()
+    public void testParseBasic()
     {
-        Reader reader = new StringReader(
+        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(
                         "ROOT {\n" +
                         "    singleValueParam: singleValue;\n" +
                         "    multipleValueParam: value1, value2, value3;\n" +
-                        "    literalValuesParam: \"literal1\", 5, 5.5;\n" +
+                        "    literalValuesParam: \"literal1\", 5, 5.5, true, false;\n" +
                         "}\n" +
                         "# Make sure parser allows empty blocks\n" +
                         "XX { }\n" +
                         "XX2 { x: a{}, b, c; }"
-        );
-        ComponentConfigParser parser = new ComponentConfigParser("test", new ReaderInputStream(reader));
+                        ));
         List<ComponentConfigAST> asts = parser.parse();
         assertEquals(3, asts.size());
         
@@ -85,15 +85,49 @@ public class ComponentConfigParserTest extends TestCase
         parameterAST = rootParams.get(2);
         assertEquals("literalValuesParam", parameterAST.getName());
         values = parameterAST.getValues();
-        assertEquals(3, values.size());
+        assertEquals(5, values.size());
         assertEquals("literal1", values.get(0).getValue());
         assertTrue(values.get(0).isLiteral());
         assertTrue(values.get(0).getSubParameters().isEmpty());
         assertEquals("5", values.get(1).getValue());
+        assertEquals(5, values.get(1).getIntegerValue().intValue());
         assertTrue(values.get(1).isLiteral());
         assertTrue(values.get(1).getSubParameters().isEmpty());
         assertEquals("5.5", values.get(2).getValue());
+        assertEquals(5.5, values.get(2).getDoubleValue().doubleValue());
         assertTrue(values.get(2).isLiteral());
         assertTrue(values.get(2).getSubParameters().isEmpty());
+        assertEquals("true", values.get(3).getValue());
+        assertEquals(true, values.get(3).getBooleanValue().booleanValue());
+        assertTrue(values.get(3).isLiteral());
+        assertTrue(values.get(3).getSubParameters().isEmpty());
+        assertEquals("false", values.get(4).getValue());
+        assertEquals(false, values.get(4).getBooleanValue().booleanValue());
+        assertTrue(values.get(4).isLiteral());
+        assertTrue(values.get(4).getSubParameters().isEmpty());
+    }
+    
+    public void testParseWithSubParameter()
+    {
+        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(
+                        "Component1 {\n" +
+                        "    params: value1, subParams { subParam1: v1; subParam2: v2 }, value3;\n" +
+                        "}\n"
+                        ));
+        List<ComponentConfigAST> asts = parser.parse();
+        assertEquals(1, asts.size());
+        ComponentConfigAST ast = asts.get(0);
+        assertEquals("Component1", ast.getName());
+        
+        assertEquals(1, ast.getParameters().size());
+        ParameterAST param = ast.getParameters().get(0);
+        assertEquals("params", param.getName());
+        assertEquals(3, param.getValues().size());
+        ParameterValueAST paramValue = param.getValues().get(1);
+        assertEquals("subParams", paramValue.getValue());
+    }
+    
+    private InputStream createStream(String configStr) {
+        return new ReaderInputStream(new StringReader(configStr));
     }
 }
