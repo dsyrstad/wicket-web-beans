@@ -229,7 +229,9 @@ public class ComponentConfigParser
     private ParameterValueAST parseParameterValue()
     {
         String value = getNextToken();
-        boolean isLiteral = (tokenizer.ttype == QUOTE_CHAR || (tokenizer.ttype == StreamTokenizer.TT_WORD && StringUtils.containsOnly(value, "0123456789-.")));
+        boolean isLiteral = tokenizer.ttype == QUOTE_CHAR
+                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && StringUtils.containsOnly(value, "0123456789-."))
+                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && (value.equals("true") || value.equals("false")));
         ParameterValueAST param = new ParameterValueAST(value, isLiteral);
         String nextToken = getNextToken();
         // Start of parameters for value?
@@ -237,14 +239,14 @@ public class ComponentConfigParser
             // Allow empty blocks...
             if (!getNextToken().equals("}")) {
                 tokenizer.pushBack();
-                param.setSubParameters( parseParameters() );
+                param.setSubParameters(parseParameters());
                 expect("}");
             }
         }
         else {
             tokenizer.pushBack();
         }
-        
+
         return param;
     }
 }
