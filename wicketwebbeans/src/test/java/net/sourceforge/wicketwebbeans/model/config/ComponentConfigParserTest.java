@@ -18,7 +18,6 @@
 package net.sourceforge.wicketwebbeans.model.config;
 
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
@@ -42,24 +41,18 @@ public class ComponentConfigParserTest extends TestCase
 
     public void testParseBasic()
     {
-        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(
-                        "ROOT {\n" +
-                        "    singleValueParam: singleValue;\n" +
-                        "    multipleValueParam: value1, value2, value3;\n" +
-                        "    literalValuesParam: \"literal1\", 5, 5.5, true, false;\n" +
-                        "}\n" +
-                        "# Make sure parser allows empty blocks\n" +
-                        "XX { }\n" +
-                        "XX2 { x: a{}, b, c; }"
-                        ));
+        ComponentConfigParser parser = new ComponentConfigParser("test", createStream("ROOT {\n"
+                        + "    singleValueParam: singleValue;\n" + "    multipleValueParam: value1, value2, value3;\n"
+                        + "    literalValuesParam: \"literal1\", 5, 5.5, true, false;\n" + "}\n"
+                        + "# Make sure parser allows empty blocks\n" + "XX { }\n" + "XX2 { x: a{}, b, c; }"));
         List<ComponentConfigAST> asts = parser.parse();
         assertEquals(3, asts.size());
-        
+
         ComponentConfigAST rootAst = asts.get(0);
         assertEquals("ROOT", rootAst.getName());
         List<ParameterAST> rootParams = rootAst.getParameters();
         assertEquals(3, rootParams.size());
-        
+
         ParameterAST parameterAST = rootParams.get(0);
         assertEquals("singleValueParam", parameterAST.getName());
         List<ParameterValueAST> values = parameterAST.getValues();
@@ -67,7 +60,7 @@ public class ComponentConfigParserTest extends TestCase
         assertEquals("singleValue", values.get(0).getValue());
         assertFalse(values.get(0).isLiteral());
         assertTrue(values.get(0).getSubParameters().isEmpty());
-        
+
         parameterAST = rootParams.get(1);
         assertEquals("multipleValueParam", parameterAST.getName());
         values = parameterAST.getValues();
@@ -81,7 +74,7 @@ public class ComponentConfigParserTest extends TestCase
         assertEquals("value3", values.get(2).getValue());
         assertFalse(values.get(2).isLiteral());
         assertTrue(values.get(2).getSubParameters().isEmpty());
-        
+
         parameterAST = rootParams.get(2);
         assertEquals("literalValuesParam", parameterAST.getName());
         values = parameterAST.getValues();
@@ -106,28 +99,87 @@ public class ComponentConfigParserTest extends TestCase
         assertTrue(values.get(4).isLiteral());
         assertTrue(values.get(4).getSubParameters().isEmpty());
     }
-    
+
     public void testParseWithSubParameter()
     {
-        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(
-                        "Component1 {\n" +
-                        "    params: value1, subParams { subParam1: v1; subParam2: v2 }, value3;\n" +
-                        "}\n"
-                        ));
+        ComponentConfigParser parser = new ComponentConfigParser("test", createStream("Component1 {\n"
+                        + "    params: value1, subParams { subParam1: v1; subParam2: v2 }, value3;\n" + "}\n"));
         List<ComponentConfigAST> asts = parser.parse();
         assertEquals(1, asts.size());
         ComponentConfigAST ast = asts.get(0);
         assertEquals("Component1", ast.getName());
-        
+
         assertEquals(1, ast.getParameters().size());
         ParameterAST param = ast.getParameters().get(0);
         assertEquals("params", param.getName());
         assertEquals(3, param.getValues().size());
         ParameterValueAST paramValue = param.getValues().get(1);
         assertEquals("subParams", paramValue.getValue());
+        assertEquals(2, paramValue.getSubParameters().size());
+        assertEquals("subParam1", paramValue.getSubParameters().get(0).getName());
+        assertEquals(1, paramValue.getSubParameters().get(0).getValues().size());
+        assertEquals("v1", paramValue.getSubParameters().get(0).getValuesAsStrings()[0]);
+        assertEquals("subParam2", paramValue.getSubParameters().get(1).getName());
+        assertEquals(1, paramValue.getSubParameters().get(1).getValues().size());
+        assertEquals("v2", paramValue.getSubParameters().get(1).getValuesAsStrings()[0]);
     }
-    
-    private InputStream createStream(String configStr) {
+
+    public void testSyntaxErrors()
+    {
+        Test[] tests = new Test[] {
+                        //
+                        new Test("componentName", "Unexpected EOF reading from test"),
+                        new Test("componentName {", "Unexpected EOF reading from test"),
+                        new Test("{", "Error: test at line 1: Expected 'bean name', but got '{'"),
+                        new Test("X { x }", "Error: test at line 1: Expected ':', but got '}'"),
+                        new Test("X { x: }", "Unexpected EOF reading from test"),
+                        new Test("X { x: x;; }", "Error: test at line 1: Expected ':', but got '}'"),
+                        new Test("X { x: x; };", "Error: test at line 1: Expected 'bean name', but got ';'"),
+                        new Test("X { x: x, y,, z }", "Error: test at line 1: Expected ';' or '}', but got 'z'"),
+                        new Test("X { x: x, y, z: x; }", "Error: test at line 1: Expected ';' or '}', but got ':'"),
+                        new Test("X { x: x; } Z", "Unexpected EOF reading from test"),
+                        new Test("X { x: x { }", "Unexpected EOF reading from test"),
+                        new Test("X { x: x { x } }", "Error: test at line 1: Expected ':', but got '}'"),
+                        new Test("X { x: x { x: } }", "Unexpected EOF reading from test"),
+                        new Test("X { x: \"unterminated literal }", "Unexpected EOF reading from test"),
+        //                
+        };
+
+        for (Test test : tests) {
+            assertSyntaxError(test);
+        }
+    }
+
+    private void assertSyntaxError(Test test)
+    {
+        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(test.configString));
+        try {
+            parser.parse();
+            fail("Expected Exception for '" + test.configString + "'");
+        }
+        catch (RuntimeException e) {
+            System.out.println("new Test(\"" + test.configString.replace("\"", "\\\"").replace("\n", "\\n") + "\", \""
+                            + e.getMessage() + "\"),");
+            //assertEquals(test.expectedMsg, e.getMessage());
+        }
+
+    }
+
+    private InputStream createStream(String configStr)
+    {
         return new ReaderInputStream(new StringReader(configStr));
+    }
+
+
+    private static final class Test
+    {
+        String configString;
+        String expectedMsg;
+
+        Test(String configString, String expectedMsg)
+        {
+            this.configString = configString;
+            this.expectedMsg = expectedMsg;
+        }
     }
 }
