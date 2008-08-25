@@ -31,21 +31,23 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
-
 /**
  * Represents the Configuration for a Component. 
  * <p/>
  *  
  * @author Dan Syrstad
  */
-public class ComponentConfig extends MetaData implements Serializable
+public class ComponentConfig implements Serializable
 {
     private static final long serialVersionUID = -4705317346444856939L;
 
     private static Logger logger = Logger.getLogger(ComponentConfig.class.getName());
     /** Cache of pre-parsed component configs. */
     private static final Map<URL, CachedComponentConfigs> cachedComponentConfigs = new HashMap<URL, CachedComponentConfigs>();
-    
+    // Key is parameter name. 
+    private Map<String, List<ParameterValueAST>> parameters = new HashMap<String, List<ParameterValueAST>>();
+    private Set<String> consumedParameters = new HashSet<String>();
+
     private String componentName;
     private URL url;
     private ComponentRegistry componentRegistry;
@@ -68,16 +70,16 @@ public class ComponentConfig extends MetaData implements Serializable
         else {
             this.componentName = componentName;
         }
-        
+
         this.url = url;
-        
+
         if (componentRegistry == null) {
             this.componentRegistry = new ComponentRegistry();
         }
         else {
             this.componentRegistry = componentRegistry;
         }
-        
+
         collectFromComponentConfig();
     }
 
@@ -91,15 +93,16 @@ public class ComponentConfig extends MetaData implements Serializable
             try {
                 timestamp = new File(url.toURI()).lastModified();
             }
-            catch (URISyntaxException e) { /* Ignore - treat as zero */ }
+            catch (URISyntaxException e) { /* Ignore - treat as zero */
+            }
         }
-        
+
         CachedComponentConfigs cachedConfig = cachedComponentConfigs.get(url);
         if (cachedConfig == null || cachedConfig.getModTimestamp() != timestamp) {
             if (cachedConfig != null) {
                 logger.info("Re-reading changed file: " + url);
             }
-            
+
             InputStream inStream = null;
             try {
                 inStream = url.openStream();
@@ -114,7 +117,7 @@ public class ComponentConfig extends MetaData implements Serializable
                 IOUtils.closeQuietly(inStream);
             }
         }
-        
+
         for (ComponentConfigAST componentConfigAst : cachedConfig.getAsts()) {
             if (componentName.equals(componentConfigAst.getName())) {
                 for (ParameterAST paramAST : componentConfigAst.getParameters()) {
@@ -133,7 +136,15 @@ public class ComponentConfig extends MetaData implements Serializable
      */
     public boolean areAllParametersConsumed(Set<String> unconsumedMsgs)
     {
-        return super.areAllParametersConsumed("Component " + componentName, unconsumedMsgs);
+        boolean result = true;
+        for (Object parameter : parameters.keySet()) {
+            if (!consumedParameters.contains(parameter)) {
+                unconsumedMsgs.add("Component " + componentName + ": Parameter " + parameter + " was not consumed");
+                result = false;
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -148,11 +159,57 @@ public class ComponentConfig extends MetaData implements Serializable
             }
         }
     }
-    
+
+    /**
+     * Consumes a parameter.
+     *
+     * @param parameterName the parameter name to consume.
+     */
+    public void consumeParameter(String parameterName)
+    {
+        consumedParameters.add(parameterName);
+    }
+
+    /**
+     * Gets the specified parameter's value. If the parameter has multiple values, the first value is returned.
+     *
+     * @param parameterName the parameter name.
+     * 
+     * @return the parameter value, or null if not set.
+     */
+    public ParameterValueAST getParameterValue(String parameterName)
+    {
+        List<ParameterValueAST> values = getParameterValues(parameterName);
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+
+        return values.get(0);
+    }
+
+    /**
+     * Gets the specified parameter's value(s).
+     *
+     * @param parameterName the parameter name.
+     * 
+     * @return the parameter's values, or null if not set.
+     */
+    public List<ParameterValueAST> getParameterValues(String parameterName)
+    {
+        consumeParameter(parameterName);
+        return parameters.get(parameterName);
+    }
+
+    public void setParameter(String parameterName, List<ParameterValueAST> values)
+    {
+        parameters.put(parameterName, values);
+    }
+
     public ComponentRegistry getComponentRegistry()
     {
         return componentRegistry;
     }
+
 
     /**
      * A Cached Beanprops file.
@@ -162,18 +219,18 @@ public class ComponentConfig extends MetaData implements Serializable
     {
         private List<ComponentConfigAST> asts;
         private long modTimestamp;
-        
+
         CachedComponentConfigs(List<ComponentConfigAST> asts, long modTimestamp)
         {
             this.asts = asts;
             this.modTimestamp = modTimestamp;
         }
-        
+
         List<ComponentConfigAST> getAsts()
         {
             return asts;
         }
-        
+
         long getModTimestamp()
         {
             return modTimestamp;

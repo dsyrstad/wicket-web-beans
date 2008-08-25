@@ -19,6 +19,7 @@ would give knowledge of exactly what changed. How do we submit the entire thing 
 
 - Use new Wicket-stuff data grid (http://wicketstuff.org/grid-examples/data-grid/simple.2)
 - TinyMCE support at wicket-stuff: wicket-contrib-tinymce
+- Wicket ExtJS support (beginnings) at http://www.wickettools.org
 
 - Component Composition
 
