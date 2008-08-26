@@ -12,10 +12,8 @@ v2.0
 - Only generic parameter is "class" or "component". 
 - No automatic nesting of bean forms....
 - How do dynamic values trigger? Do we evaluate each time? 
-- How are beanprops found? Can be optionally explicit (InputStream/Reader or URL). 
+- How is config found? Can be optionally explicit (InputStream/Reader or URL). 
 - parameters are properties on beans?
-- Don't sumbit entire form. Have a form with one hidden field that gets submitted back to Wicket. This 
-would give knowledge of exactly what changed. How do we submit the entire thing on save - or do we?
 
 - Use new Wicket-stuff data grid (http://wicketstuff.org/grid-examples/data-grid/simple.2)
 - TinyMCE support at wicket-stuff: wicket-contrib-tinymce

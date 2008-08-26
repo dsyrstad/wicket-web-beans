@@ -18,7 +18,6 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Time;
@@ -45,17 +44,12 @@ import net.sourceforge.wicketwebbeans.fields.PasswordField;
 import net.sourceforge.wicketwebbeans.fields.TextAreaField;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 /**
  * Registers field and viewer components. 
  * The components must implement the following constructor, at minimum:<p>
- *    XyzComponent(String wicketId, IModel model, PropertyMetaData metaData) 
+ *    XyzComponent(String wicketId, IModel model) 
  *    
  * When registering an array type, use Object[].class as the type, and specify an element type.
  * 
@@ -65,12 +59,12 @@ public class ComponentRegistry implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class, ElementMetaData.class };
-    
+    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class };
+
     // Key is Target Type's class name (e.g., java.util.Date). Value is the
     // Wicket Component (Field) class name. If the mapping contains an element type, the key has a suffix of
     // '[' followed by the element type name.
-    private HashMap<String,String> registry;
+    private HashMap<String, String> registry;
 
     /**
      * Construct a ComponentRegistry with the default component mappings. 
@@ -110,7 +104,7 @@ public class ComponentRegistry implements Serializable
         register(List.class, Enum.class, MultiSelectEnumField.class);
 
         register(Collection.class, BeanTableField.class);
-        
+
         // Register the following so that they're available for findMatchingFieldClass(), but not really available otherwise.
         register(BeanGridField.class, BeanGridField.class);
         register(BeanInCollapsibleField.class, BeanInCollapsibleField.class);
@@ -121,7 +115,7 @@ public class ComponentRegistry implements Serializable
         register(TextAreaField.class, TextAreaField.class);
         register(PasswordField.class, PasswordField.class);
     }
-    
+
     /**
      * Construct a ComponentRegistry from anotherRegistry. The other registry will not be affected. 
      *
@@ -130,9 +124,9 @@ public class ComponentRegistry implements Serializable
     @SuppressWarnings("unchecked")
     public ComponentRegistry(ComponentRegistry anotherRegistry)
     {
-        registry = (HashMap<String,String>)anotherRegistry.registry.clone();
+        registry = (HashMap<String, String>)anotherRegistry.registry.clone();
     }
-    
+
     /**
      * Registers an Field in a type-safe fashion.
      *
@@ -167,10 +161,10 @@ public class ComponentRegistry implements Serializable
         if (elemenTypeName != null) {
             targetTypeClassName += '[' + elemenTypeName;
         }
-        
+
         registry.put(targetTypeClassName, fieldComponentClassName);
     }
-    
+
     /**
      * Given a shortened version of a Field class name (e.g., TextAreaField), try to find a matching full class name in the
      * registry. The first one found is returned.
@@ -187,10 +181,10 @@ public class ComponentRegistry implements Serializable
                 return fieldClassName;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Attempts to find the component class name for a given type and elementType.
      * 
@@ -202,7 +196,7 @@ public class ComponentRegistry implements Serializable
     private String getComponentClassName(Class<?> type, Class<?> elementType)
     {
         String baseKey = type.getName();
-        
+
         for (; elementType != null; elementType = elementType.getSuperclass()) {
             String elementBaseKey = baseKey + '[';
             // Search up class hierarchy for matching type.
@@ -210,7 +204,7 @@ public class ComponentRegistry implements Serializable
             if (componentClassName != null) {
                 return componentClassName;
             }
-            
+
             Class<?>[] intfs = elementType.getInterfaces();
             for (int i = 0; i < intfs.length; i++) {
                 componentClassName = registry.get(elementBaseKey + intfs[i].getName());
@@ -219,12 +213,12 @@ public class ComponentRegistry implements Serializable
                 }
             }
         }
-        
+
         // If we didn't have an elementType or couldn't find a match using elementType, try 
         // without.
         return registry.get(baseKey);
     }
-    
+
     /**
      * Gets the Component for the given type and context. The component is created with a 
      * BeanPropertyModel, reflecting the given property on the bean. BeanPropertyModel allows
@@ -232,12 +226,13 @@ public class ComponentRegistry implements Serializable
      *
      * @param bean the bean, which may or may not implement IModel.
      * @param wicketId the Wicket component id.
-     * @param propertyMeta the PropertyMetaData for the property. 
      * 
      * @return the viewer Component. 
      */
-    public Component getComponent(Object bean, String wicketId, ElementMetaData propertyMeta)
+    public Component getComponent(Object bean, String wicketId, ComponentConfig componentConfig)
     {
+        return null;
+        /*
         String componentClassName = propertyMeta.getFieldType();
         if (componentClassName == null) {
             Class<?> type = propertyMeta.getPropertyType();
@@ -245,9 +240,9 @@ public class ComponentRegistry implements Serializable
             if (type.isArray()) {
                 type = Object[].class;
             }
-            
+
             Class<?> elementType = propertyMeta.getElementType(null);
-            
+
             // Work up class hierarchy until we find a more generalized component. Also check interface types.
             for (; type != null && componentClassName == null; type = type.getSuperclass()) {
                 componentClassName = getComponentClassName(type, elementType);
@@ -257,14 +252,14 @@ public class ComponentRegistry implements Serializable
                 }
             }
         }
-        
+
         if (componentClassName != null) {
             try {
                 Class<?> componentClass = Class.forName(componentClassName);
                 Constructor<?> xtor = componentClass.getConstructor(constructorArgs);
-                
+
                 IModel model = new BeanPropertyModel(bean, propertyMeta);
-                Component component = (Component)xtor.newInstance( new Object[] { wicketId, model, propertyMeta } );
+                Component component = (Component)xtor.newInstance(new Object[] { wicketId, model, propertyMeta });
                 associateLabelToFormComponents(propertyMeta, component);
                 return component;
             }
@@ -272,38 +267,16 @@ public class ComponentRegistry implements Serializable
                 throw new RuntimeException("Component class not found", e);
             }
             catch (NoSuchMethodException e) {
-                throw new RuntimeException("Component class does not implement constructor (String wicketId, IModel model)", e);
+                throw new RuntimeException(
+                                "Component class does not implement constructor (String wicketId, IModel model)", e);
             }
             catch (Exception e) {
                 throw new RuntimeException("Error instantiating component " + componentClassName, e);
             }
         }
-        
+
         // The Object.class registry entry should have caught this, but just in case.
         return new Label(wicketId, "<No Field for " + propertyMeta.getPropertyType().getName() + ">");
-    }
-    
-    
-
-    /**
-     * Associate label with FormComponents that are descendants of component. 
-     *
-     * @param propertyMeta
-     * @param component
-     */
-    private void associateLabelToFormComponents(final ElementMetaData propertyMeta, Component component)
-    {
-        if (component instanceof MarkupContainer) {
-            MarkupContainer container = (MarkupContainer)component;
-            container.visitChildren(FormComponent.class, new IVisitor() {
-                public Object component(Component component) 
-                {
-                    FormComponent formComponent = (FormComponent)component;
-                    formComponent.setLabel( new Model(propertyMeta.getLabel()) );
-                    formComponent.add( new ErrorHighlightingBehavior() );
-                    return IVisitor.CONTINUE_TRAVERSAL;
-                }                
-            });
-        }
+        */
     }
 }
