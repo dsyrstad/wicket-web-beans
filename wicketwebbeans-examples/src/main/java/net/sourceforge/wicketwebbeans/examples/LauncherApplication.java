@@ -1,17 +1,17 @@
 package net.sourceforge.wicketwebbeans.examples;
 
-
-import net.sourceforge.wicketwebbeans.examples.complex.ExpPage2;
-
 import org.apache.wicket.protocol.http.WebApplication;
 
-public class LauncherApplication extends WebApplication {
+public class LauncherApplication extends WebApplication
+{
 
-	public LauncherApplication() {
-	}
+    public LauncherApplication()
+    {
+    }
 
-	@Override
-	public Class getHomePage() {
-		return LauncherPage.class;
-	}
+    @Override
+    public Class getHomePage()
+    {
+        return LauncherPage.class;
+    }
 }
