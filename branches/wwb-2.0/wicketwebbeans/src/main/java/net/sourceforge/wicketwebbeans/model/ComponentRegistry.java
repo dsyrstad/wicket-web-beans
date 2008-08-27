@@ -18,30 +18,7 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-
-import net.sourceforge.wicketwebbeans.fields.BeanGridField;
-import net.sourceforge.wicketwebbeans.fields.BeanInCollapsibleField;
-import net.sourceforge.wicketwebbeans.fields.BeanInlineField;
-import net.sourceforge.wicketwebbeans.fields.BeanTableField;
-import net.sourceforge.wicketwebbeans.fields.BeanWithParentLabelField;
-import net.sourceforge.wicketwebbeans.fields.BooleanField;
-import net.sourceforge.wicketwebbeans.fields.DateTimeField;
-import net.sourceforge.wicketwebbeans.fields.EmptyField;
-import net.sourceforge.wicketwebbeans.fields.Field;
-import net.sourceforge.wicketwebbeans.fields.InputField;
-import net.sourceforge.wicketwebbeans.fields.JavaEnumField;
-import net.sourceforge.wicketwebbeans.fields.MultiSelectEnumField;
-import net.sourceforge.wicketwebbeans.fields.PasswordField;
-import net.sourceforge.wicketwebbeans.fields.TextAreaField;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -73,47 +50,48 @@ public class ComponentRegistry implements Serializable
     public ComponentRegistry()
     {
         registry = new HashMap<String, String>();
+        /*
+                register(Object.class, BeanGridField.class);
+                register(String.class, InputField.class);
+                register(Boolean.class, BooleanField.class);
+                register(Boolean.TYPE, BooleanField.class);
+                register(Character.class, InputField.class);
+                register(Character.TYPE, InputField.class);
+                register(Byte.class, InputField.class);
+                register(Byte.TYPE, InputField.class);
+                register(Short.class, InputField.class);
+                register(Short.TYPE, InputField.class);
+                register(Integer.class, InputField.class);
+                register(Integer.TYPE, InputField.class);
+                register(Long.class, InputField.class);
+                register(Long.TYPE, InputField.class);
+                register(Float.class, InputField.class);
+                register(Float.TYPE, InputField.class);
+                register(Double.class, InputField.class);
+                register(Double.TYPE, InputField.class);
+                register(BigInteger.class, InputField.class);
+                register(BigDecimal.class, InputField.class);
+                register(Date.class, DateTimeField.class);
+                register(java.sql.Date.class, DateTimeField.class);
+                register(Time.class, DateTimeField.class);
+                register(Timestamp.class, DateTimeField.class);
+                register(Calendar.class, DateTimeField.class);
+                register(Enum.class, JavaEnumField.class);
+                register(Object[].class, Enum.class, MultiSelectEnumField.class);
+                register(List.class, Enum.class, MultiSelectEnumField.class);
 
-        register(Object.class, BeanGridField.class);
-        register(String.class, InputField.class);
-        register(Boolean.class, BooleanField.class);
-        register(Boolean.TYPE, BooleanField.class);
-        register(Character.class, InputField.class);
-        register(Character.TYPE, InputField.class);
-        register(Byte.class, InputField.class);
-        register(Byte.TYPE, InputField.class);
-        register(Short.class, InputField.class);
-        register(Short.TYPE, InputField.class);
-        register(Integer.class, InputField.class);
-        register(Integer.TYPE, InputField.class);
-        register(Long.class, InputField.class);
-        register(Long.TYPE, InputField.class);
-        register(Float.class, InputField.class);
-        register(Float.TYPE, InputField.class);
-        register(Double.class, InputField.class);
-        register(Double.TYPE, InputField.class);
-        register(BigInteger.class, InputField.class);
-        register(BigDecimal.class, InputField.class);
-        register(Date.class, DateTimeField.class);
-        register(java.sql.Date.class, DateTimeField.class);
-        register(Time.class, DateTimeField.class);
-        register(Timestamp.class, DateTimeField.class);
-        register(Calendar.class, DateTimeField.class);
-        register(Enum.class, JavaEnumField.class);
-        register(Object[].class, Enum.class, MultiSelectEnumField.class);
-        register(List.class, Enum.class, MultiSelectEnumField.class);
+                register(Collection.class, BeanTableField.class);
 
-        register(Collection.class, BeanTableField.class);
-
-        // Register the following so that they're available for findMatchingFieldClass(), but not really available otherwise.
-        register(BeanGridField.class, BeanGridField.class);
-        register(BeanInCollapsibleField.class, BeanInCollapsibleField.class);
-        register(BeanInlineField.class, BeanInlineField.class);
-        register(BeanTableField.class, BeanTableField.class);
-        register(BeanWithParentLabelField.class, BeanWithParentLabelField.class);
-        register(EmptyField.class, EmptyField.class);
-        register(TextAreaField.class, TextAreaField.class);
-        register(PasswordField.class, PasswordField.class);
+                // Register the following so that they're available for findMatchingFieldClass(), but not really available otherwise.
+                register(BeanGridField.class, BeanGridField.class);
+                register(BeanInCollapsibleField.class, BeanInCollapsibleField.class);
+                register(BeanInlineField.class, BeanInlineField.class);
+                register(BeanTableField.class, BeanTableField.class);
+                register(BeanWithParentLabelField.class, BeanWithParentLabelField.class);
+                register(EmptyField.class, EmptyField.class);
+                register(TextAreaField.class, TextAreaField.class);
+                register(PasswordField.class, PasswordField.class);
+                */
     }
 
     /**
@@ -125,28 +103,6 @@ public class ComponentRegistry implements Serializable
     public ComponentRegistry(ComponentRegistry anotherRegistry)
     {
         registry = (HashMap<String, String>)anotherRegistry.registry.clone();
-    }
-
-    /**
-     * Registers an Field in a type-safe fashion.
-     *
-     * @param targetType
-     * @param fieldComponent
-     */
-    public void register(Class<?> targetType, Class<? extends Field> fieldComponent)
-    {
-        register(targetType.getName(), null, fieldComponent.getName());
-    }
-
-    /**
-     * Registers an Field with an element type in a type-safe fashion.
-     *
-     * @param targetType
-     * @param fieldComponent
-     */
-    public void register(Class<?> targetType, Class<?> elementType, Class<? extends Field> fieldComponent)
-    {
-        register(targetType.getName(), elementType.getName(), fieldComponent.getName());
     }
 
     /**
