@@ -23,10 +23,8 @@ import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
@@ -46,7 +44,6 @@ public class ComponentConfig implements Serializable
     private static final Map<URL, CachedComponentConfigs> cachedComponentConfigs = new HashMap<URL, CachedComponentConfigs>();
     // Key is parameter name. 
     private Map<String, List<ParameterValueAST>> parameters = new HashMap<String, List<ParameterValueAST>>();
-    private Set<String> consumedParameters = new HashSet<String>();
 
     private String componentName;
     private URL url;
@@ -93,7 +90,8 @@ public class ComponentConfig implements Serializable
             try {
                 timestamp = new File(url.toURI()).lastModified();
             }
-            catch (URISyntaxException e) { /* Ignore - treat as zero */
+            catch (URISyntaxException e) {
+                timestamp = -1;
             }
         }
 
@@ -111,63 +109,38 @@ public class ComponentConfig implements Serializable
                 cachedComponentConfigs.put(url, cachedConfig);
             }
             catch (IOException e) {
-                logger.severe("Error reading stream for URL: " + url);
+                throw new RuntimeException("Error reading stream for URL: " + url, e);
             }
             finally {
                 IOUtils.closeQuietly(inStream);
             }
         }
 
+        boolean foundComponent = false;
         for (ComponentConfigAST componentConfigAst : cachedConfig.getAsts()) {
             if (componentName.equals(componentConfigAst.getName())) {
+                foundComponent = true;
                 for (ParameterAST paramAST : componentConfigAst.getParameters()) {
                     setParameter(paramAST.getName(), paramAST.getValues());
                 }
             }
         }
-    }
 
-    /**
-     * Determines if all parameters specified have been consumed.
-     * 
-     * @param unconsumedMsgs a set of messages that are returned with the parameter keys that were specified but not consumed.
-     * 
-     * @return true if all parameters specified have been consumed.
-     */
-    public boolean areAllParametersConsumed(Set<String> unconsumedMsgs)
-    {
-        boolean result = true;
-        for (Object parameter : parameters.keySet()) {
-            if (!consumedParameters.contains(parameter)) {
-                unconsumedMsgs.add("Component " + componentName + ": Parameter " + parameter + " was not consumed");
-                result = false;
-            }
+        if (!foundComponent) {
+            throw new RuntimeException("Could not find component '" + componentName + " in URL " + url);
         }
 
-        return result;
-    }
-
-    /**
-     * Logs a warning if any parameter specified have not been consumed.
-     */
-    public void warnIfAnyParameterNotConsumed()
-    {
-        Set<String> msgs = new HashSet<String>();
-        if (!areAllParametersConsumed(msgs)) {
-            for (String msg : msgs) {
-                logger.warning(msg);
-            }
+        ParameterValueAST classValue = getParameterValue("class");
+        ParameterValueAST extendsValue = getParameterValue("extends");
+        if (classValue == null && extendsValue == null) {
+            throw new RuntimeException("Component " + componentName + " in URL " + url
+                            + " must specify class or extends");
         }
-    }
 
-    /**
-     * Consumes a parameter.
-     *
-     * @param parameterName the parameter name to consume.
-     */
-    public void consumeParameter(String parameterName)
-    {
-        consumedParameters.add(parameterName);
+        if (classValue != null && extendsValue != null) {
+            throw new RuntimeException("Component " + componentName + " in URL " + url
+                            + " cannot specify both class and extends");
+        }
     }
 
     /**
@@ -196,7 +169,6 @@ public class ComponentConfig implements Serializable
      */
     public List<ParameterValueAST> getParameterValues(String parameterName)
     {
-        consumeParameter(parameterName);
         return parameters.get(parameterName);
     }
 
