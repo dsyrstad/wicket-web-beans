@@ -149,7 +149,7 @@ You can see that you can specify parameters for each bean property. This example
 <p>
 </p>
 <p>
-In CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The &quot;result&quot; property is view-only by default because it has no setter. If you were to pass &quot;viewOnly&quot; = true to the ComponentConfig constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change CustomSimpleBeanPage.beanprops as follows:</p>
+In CustomSimpleBeanPage, the bean is editable (i.e., not view-only), hence so are all the fields by default. The &quot;result&quot; property is view-only by default because it has no setter. If you were to pass &quot;viewOnly&quot; = true to the BeanConfig constructor, all properties that were previously editable would be view-only. This is because bean properties inherit the bean's view-only setting. However, you can override this on a per-property basis. Let's say we change CustomSimpleBeanPage.beanprops as follows:</p>
 <p>
 </p>
 <pre>	# Customize TestBean.
@@ -268,10 +268,10 @@ You can see that it may be more natural to place the @Property annotations direc
 <p>
 </p>
 <p>
-Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/TestComponentConfig.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestComponentConfig</a> is an example of this. It has annotations similar to that of <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>, but is reusable. To reuse it, simply pass the class to the ComponentConfig constructor:</p>
+Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/TestBeanConfig.java.html">net.sourceforge.wicketwebbeans.examples.annotations.TestBeanConfig</a> is an example of this. It has annotations similar to that of <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnPage</a>, but is reusable. To reuse it, simply pass the class to the BeanConfig constructor:</p>
 <p>
 </p>
-<pre>        ComponentConfig meta = new ComponentConfig(bean.getClass(), null, TestComponentConfig.class, this, null, false);</pre><p>
+<pre>        BeanConfig meta = new BeanConfig(bean.getClass(), null, TestBeanConfig.class, this, null, false);</pre><p>
 </p>
 <p>
 See <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/annotations/AnnotationsOnMetaDataClassPage.java.html">net.sourceforge.wicketwebbeans.examples.annotations.AnnotationsOnMetaDataClassPage</a> for the full Page code.</p>

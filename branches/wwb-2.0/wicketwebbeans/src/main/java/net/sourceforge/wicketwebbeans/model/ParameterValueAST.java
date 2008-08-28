@@ -19,9 +19,8 @@ package net.sourceforge.wicketwebbeans.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * ParameterValue AST for ComponentConfigParser. <p>
+ * ParameterValue AST for BeanConfigParser. <p>
  * 
  * @author Dan Syrstad 
  */
@@ -54,11 +53,11 @@ public class ParameterValueAST
     {
         return value;
     }
-    
+
     /**
      * @return the boolean value, or null if the value is null.
      */
-    public Boolean getBooleanValue() 
+    public Boolean getBooleanValue()
     {
         return value == null ? null : Boolean.valueOf(value);
     }
@@ -66,15 +65,23 @@ public class ParameterValueAST
     /**
      * @return the Integer value, or null if the value is null.
      */
-    public Integer getIntegerValue() 
+    public Integer getIntegerValue()
     {
         return value == null ? null : Integer.valueOf(value);
     }
 
     /**
+     * @return the Long value, or null if the value is null.
+     */
+    public Long getLongValue()
+    {
+        return value == null ? null : Long.valueOf(value);
+    }
+
+    /**
      * @return the Double value, or null if the value is null.
      */
-    public Double getDoubleValue() 
+    public Double getDoubleValue()
     {
         return value == null ? null : Double.valueOf(value);
     }

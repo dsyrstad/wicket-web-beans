@@ -23,7 +23,7 @@ import net.databinder.models.hib.HibernateProvider;
 import net.databinder.models.hib.CriteriaBuilder;
 import net.databinder.models.hib.CriteriaSorter;
 import net.sourceforge.wicketwebbeans.containers.BeanTablePanel;
-import net.sourceforge.wicketwebbeans.model.ComponentConfig;
+import net.sourceforge.wicketwebbeans.model.BeanConfig;
 
 import org.hibernate.Criteria;
 
@@ -46,7 +46,7 @@ import org.hibernate.classic.Session;
 public abstract class DataBeanListPanel extends Panel
 {
     private BeanTablePanel panel;
-    private ComponentConfig metaData;
+    private BeanConfig metaData;
 
     public DataBeanListPanel(String id, Class<?> beanClass)
     {
@@ -72,7 +72,7 @@ public abstract class DataBeanListPanel extends Panel
         super(id);
 
         Databinder.getHibernateSession().beginTransaction();
-        metaData = new ComponentConfig(beanClass, null, this, null);
+        metaData = new BeanConfig(beanClass, null, this, null);
         Label label = new Label("label", new Model(metaData.getParameter("label")));
         add(label);
 

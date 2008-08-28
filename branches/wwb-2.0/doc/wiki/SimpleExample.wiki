@@ -26,7 +26,7 @@ Before we get too deep, let's take a look at the Wicket page (net.sourceforge.wi
 
 Embed:net.sourceforge.wicketwebbeans.examples.simple.SimpleBeanPage
 
-You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of net.sourceforge.wicketwebbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of net.sourceforge.wicketwebbeans.model.ComponentConfig. !ComponentConfig reflects on the !TestBean class to derive the fields and actions for the form.
+You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of net.sourceforge.wicketwebbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of net.sourceforge.wicketwebbeans.model.BeanConfig. !BeanConfig reflects on the !TestBean class to derive the fields and actions for the form.
 
 Note that you can also pass a Wicket IModel that contains your bean, rather than the bean itself, to !BeanForm. If the bean is a List, or the IModel contains a List, the results will be displayed as a data table.
 
@@ -36,12 +36,12 @@ WWB:/doc/wiki/images/SimpleBeanScreenShot.png
 
 Note that "Result" is not editable because there is no setter method on the bean. Also, if you type numbers into Operand 1 and Operand 2, you'll see that the Result field automatically is calculated and updated. The calculation is done by !TestBean and the !PropertyChangeEvents are notifying WWB to update the result field.
 
-As we mentioned, !ComponentConfig represents the metadata for a bean properties and actions. By default, the metadata originates by convention:
+As we mentioned, !BeanConfig represents the metadata for a bean properties and actions. By default, the metadata originates by convention:
 
    * Label names for properties are derived from the property name. E.g., "customerName" becomes "Customer Name"; "address2" becomes "Address 2" (or from the !JavaBean !BeanInfo "displayName").
    * Field components for the Java primitive/wrapper types, enum types, java.util.Date and java.util.Calendar thier sub-classes, and java.util.Lists are pre-configured.
    * All !JavaBean properties are displayed. Non-!JavaBean methods are not displayed. 
-   * All fields are editable if viewOnly is false (see the !ComponentConfig constructor). Otherwise they are all view-only.
+   * All fields are editable if viewOnly is false (see the !BeanConfig constructor). Otherwise they are all view-only.
    * If a property is not writable, it is displayed view-only.
    * If your beans use JPA or JDO, other property aspects can be controlled by annotations available in these APIs.
    * Actions are derived from action methods defined on the component (e.g., the Page). See Actions below.
