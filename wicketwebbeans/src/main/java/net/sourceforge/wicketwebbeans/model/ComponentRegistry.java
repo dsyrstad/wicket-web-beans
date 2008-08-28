@@ -185,7 +185,7 @@ public class ComponentRegistry implements Serializable
      * 
      * @return the viewer Component. 
      */
-    public Component getComponent(Object bean, String wicketId, ComponentConfig componentConfig)
+    public Component getComponent(Object bean, String wicketId, BeanConfig componentConfig)
     {
         return null;
         /*

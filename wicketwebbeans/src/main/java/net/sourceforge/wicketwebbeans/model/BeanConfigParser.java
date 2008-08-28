@@ -28,11 +28,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * A recursive descent parser to parse a WWB component configuration stream. <p>
+ * A recursive descent parser to parse a WWB bean configuration stream. <p>
  * 
  * @author Dan Syrstad 
  */
-public class ComponentConfigParser
+public class BeanConfigParser
 {
     private static final char QUOTE_CHAR = '"';
 
@@ -47,7 +47,7 @@ public class ComponentConfigParser
      * @param beanMetaData
      * @param context
      */
-    public ComponentConfigParser(String streamName, InputStream stream)
+    public BeanConfigParser(String streamName, InputStream stream)
     {
         this.streamName = streamName;
         this.stream = stream;
@@ -122,7 +122,7 @@ public class ComponentConfigParser
      * 
      * @throws RuntimeException if a parsing error occurs.
      */
-    public List<ComponentConfigAST> parse()
+    public List<BeanConfigAST> parse()
     {
         tokenizer = new StreamTokenizer(new BufferedReader(new InputStreamReader(stream)));
         tokenizer.resetSyntax();
@@ -139,7 +139,7 @@ public class ComponentConfigParser
         tokenizer.commentChar('#');
         tokenizer.quoteChar(QUOTE_CHAR);
 
-        List<ComponentConfigAST> beans = new ArrayList<ComponentConfigAST>();
+        List<BeanConfigAST> beans = new ArrayList<BeanConfigAST>();
         try {
             while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
                 if (tokenizer.ttype == StreamTokenizer.TT_WORD) {
@@ -157,7 +157,7 @@ public class ComponentConfigParser
         return beans;
     }
 
-    private ComponentConfigAST parseBean()
+    private BeanConfigAST parseBean()
     {
         String beanName = getToken();
 
@@ -174,7 +174,7 @@ public class ComponentConfigParser
             params = new ArrayList<ParameterAST>();
         }
 
-        return new ComponentConfigAST(beanName, params);
+        return new BeanConfigAST(beanName, params);
     }
 
     private List<ParameterAST> parseParameters()
@@ -230,8 +230,10 @@ public class ComponentConfigParser
     {
         String value = getNextToken();
         boolean isLiteral = tokenizer.ttype == QUOTE_CHAR
-                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && StringUtils.containsOnly(value, "0123456789-."))
-                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && (value.equals("true") || value.equals("false")));
+                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && StringUtils.containsOnly(value,
+                                        "0123456789-."))
+                        || (tokenizer.ttype == StreamTokenizer.TT_WORD && (value.equals("true") || value
+                                        .equals("false")));
         ParameterValueAST param = new ParameterValueAST(value, isLiteral);
         String nextToken = getNextToken();
         // Start of parameters for value?

@@ -20,27 +20,28 @@ package net.sourceforge.wicketwebbeans.model.config;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.ComponentConfig;
+import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.ComponentRegistry;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.commons.io.FileUtils;
 
 /**
- * Tests ComponentConfig. <p>
+ * Tests BeanConfig. <p>
  * 
  * @author Dan Syrstad
  */
-public class ComponentConfigTest extends TestCase
+public class BeanConfigTest extends TestCase
 {
     static {
-        ComponentConfigTest.class.getClassLoader().setDefaultAssertionStatus(true);
+        BeanConfigTest.class.getClassLoader().setDefaultAssertionStatus(true);
     }
 
-    public ComponentConfigTest(String name)
+    public BeanConfigTest(String name)
     {
         super(name);
     }
@@ -48,12 +49,12 @@ public class ComponentConfigTest extends TestCase
     public void testConstructorWithDefaultComponentName() throws Exception
     {
         URL url = createConfig("ROOT { class: x; param: value } NOTROOT { param: value2 }");
-        ComponentConfig config = new ComponentConfig(null, url, null);
+        BeanConfig config = new BeanConfig(null, url, null);
         assertNotNull(config.getComponentRegistry());
         assertEquals("value", config.getParameterValue("param").getValue());
 
         ComponentRegistry registry = new ComponentRegistry();
-        config = new ComponentConfig(null, url, registry);
+        config = new BeanConfig(null, url, registry);
         assertSame(registry, config.getComponentRegistry());
         assertEquals("value", config.getParameterValue("param").getValue());
     }
@@ -61,12 +62,12 @@ public class ComponentConfigTest extends TestCase
     public void testConstructorWithSpecifiedComponentName() throws Exception
     {
         URL url = createConfig("ROOT { param: value } Component1 { class: x; param2: value2 } Component2 { param3: value3 }");
-        ComponentConfig config = new ComponentConfig("Component1", url, null);
+        BeanConfig config = new BeanConfig("Component1", url, null);
         assertNotNull(config.getComponentRegistry());
         assertEquals("value2", config.getParameterValue("param2").getValue());
 
         ComponentRegistry registry = new ComponentRegistry();
-        config = new ComponentConfig("Component1", url, registry);
+        config = new BeanConfig("Component1", url, registry);
         assertSame(registry, config.getComponentRegistry());
         assertEquals("value2", config.getParameterValue("param2").getValue());
     }
@@ -74,7 +75,7 @@ public class ComponentConfigTest extends TestCase
     public void testGetParameterValues() throws Exception
     {
         URL url = createConfig("ROOT { class: x; firstParam: x; param: value1, value2, value3 }");
-        ComponentConfig config = new ComponentConfig(null, url, null);
+        BeanConfig config = new BeanConfig(null, url, null);
         List<ParameterValueAST> values = config.getParameterValues("param");
         assertEquals(3, values.size());
         assertEquals("value1", values.get(0).getValue());
@@ -86,7 +87,7 @@ public class ComponentConfigTest extends TestCase
     {
         // Null URL
         try {
-            new ComponentConfig(null, null, null);
+            new BeanConfig(null, null, null);
             fail();
         }
         catch (AssertionError e) {
@@ -95,7 +96,7 @@ public class ComponentConfigTest extends TestCase
 
         // File Not Found
         try {
-            new ComponentConfig(null, new URL("file:///xyzzy-not-found"), null);
+            new BeanConfig(null, new URL("file:///xyzzy-not-found"), null);
             fail();
         }
         catch (RuntimeException e) {
@@ -108,7 +109,7 @@ public class ComponentConfigTest extends TestCase
     {
         URL url = createConfig("Component1 { }");
         try {
-            new ComponentConfig("Component2", url, null);
+            new BeanConfig("Component2", url, null);
             fail();
         }
         catch (RuntimeException e) {
@@ -120,7 +121,7 @@ public class ComponentConfigTest extends TestCase
     public void testSetParameter() throws Exception
     {
         URL url = createConfig("ROOT { class: x; param2: x }");
-        ComponentConfig config = new ComponentConfig(null, url, null);
+        BeanConfig config = new BeanConfig(null, url, null);
         assertNull(config.getParameterValue("param1"));
         assertNotNull(config.getParameterValue("param2"));
 
@@ -152,7 +153,7 @@ public class ComponentConfigTest extends TestCase
     {
         URL url = createConfig("ROOT { param2: x }");
         try {
-            new ComponentConfig(null, url, null);
+            new BeanConfig(null, url, null);
             fail();
         }
         catch (RuntimeException e) {
@@ -162,23 +163,86 @@ public class ComponentConfigTest extends TestCase
 
         // Class by itself is OK
         url = createConfig("ROOT { class: x }");
-        ComponentConfig config = new ComponentConfig(null, url, null);
+        BeanConfig config = new BeanConfig(null, url, null);
         assertNotNull(config.getParameterValue("class"));
 
         // Extends by itself is OK
         url = createConfig("ROOT { extends: x }");
-        config = new ComponentConfig(null, url, null);
+        config = new BeanConfig(null, url, null);
         assertNotNull(config.getParameterValue("extends"));
 
         // But not both
         url = createConfig("ROOT { class: y; extends: x }");
         try {
-            new ComponentConfig(null, url, null);
+            new BeanConfig(null, url, null);
             fail();
         }
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getMessage().contains("cannot specify both class and extends"));
+        }
+    }
+
+    public void testGetParameterValueAsString() throws Exception
+    {
+        URL url = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        BeanConfig config = new BeanConfig(null, url, null);
+        assertEquals("xyzzy", config.getParameterValueAsString("param"));
+        assertNull(config.getParameterValueAsString("not-present"));
+    }
+
+    public void testNewInstanceWithNoParameters() throws Exception
+    {
+        URL url = createConfig("Component1 { class: java.util.Date; }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        assertTrue(config.newInstance() instanceof Date);
+    }
+
+    public void testNewInstanceWithParameters() throws Exception
+    {
+        // TODO test null
+        URL url = createConfig("Component1 { " + "class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
+                        + "stringProp: \"stringValue\"; intProp: 5; doubleProp: 3.14; booleanProp: true; "
+                        + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;" + "}");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        TestBean component = (TestBean)config.newInstance();
+        assertTrue(component instanceof TestBean);
+        assertEquals("stringValue", component.getStringProp());
+        assertEquals(5, component.getIntProp());
+        assertEquals(3.14, component.getDoubleProp());
+        assertTrue(component.isBooleanProp());
+        assertEquals(9.5F, component.getFloatProp());
+        assertEquals((short)3, component.getShortProp());
+        assertEquals(123456789012345678L, component.getLongProp());
+    }
+
+    public void testNewInstanceNotFound() throws Exception
+    {
+        URL url = createConfig("Component1 { class: java.util.NotFound; }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().contains("Cannot create instance of component"));
+            assertTrue(e.getMessage().contains("java.util.NotFound"));
+        }
+    }
+
+    public void testNewInstanceNoPublicDefaultConstructor() throws Exception
+    {
+        URL url = createConfig("Component1 { class: java.lang.reflect.AccessibleObject; }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().contains("Cannot create instance of component"));
+            assertTrue(e.getCause() instanceof IllegalAccessException);
         }
     }
 

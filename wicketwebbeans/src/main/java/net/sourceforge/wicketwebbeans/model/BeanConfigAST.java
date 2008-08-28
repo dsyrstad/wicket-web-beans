@@ -20,16 +20,16 @@ import java.util.List;
 
 
 /**
- * Component Configuration AST for ComponentConfigParser. <p>
+ * Component Configuration AST for BeanConfigParser. <p>
  * 
  * @author Dan Syrstad 
  */
-public class ComponentConfigAST
+public class BeanConfigAST
 {
     private String name;
     private List<ParameterAST> parameters;
 
-    public ComponentConfigAST(String name, List<ParameterAST> parameters)
+    public BeanConfigAST(String name, List<ParameterAST> parameters)
     {
         this.name = name;
         this.parameters = parameters;

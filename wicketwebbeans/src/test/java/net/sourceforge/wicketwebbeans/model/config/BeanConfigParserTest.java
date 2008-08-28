@@ -22,33 +22,33 @@ import java.io.StringReader;
 import java.util.List;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.ComponentConfigAST;
-import net.sourceforge.wicketwebbeans.model.ComponentConfigParser;
+import net.sourceforge.wicketwebbeans.model.BeanConfigAST;
+import net.sourceforge.wicketwebbeans.model.BeanConfigParser;
 import net.sourceforge.wicketwebbeans.model.ParameterAST;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 /**
- * Tests ComponentConfigParser. <p>
+ * Tests BeanConfigParser. <p>
  * 
  * @author Dan Syrstad
  */
-public class ComponentConfigParserTest extends TestCase
+public class BeanConfigParserTest extends TestCase
 {
-    public ComponentConfigParserTest(String name)
+    public BeanConfigParserTest(String name)
     {
         super(name);
     }
 
     public void testParseBasic()
     {
-        ComponentConfigParser parser = new ComponentConfigParser("test", createStream("ROOT {\n"
+        BeanConfigParser parser = new BeanConfigParser("test", createStream("ROOT {\n"
                         + "    singleValueParam: singleValue;\n" + "    multipleValueParam: value1, value2, value3;\n"
                         + "    literalValuesParam: \"literal1\", 5, 5.5, true, false;\n" + "}\n"
                         + "# Make sure parser allows empty blocks\n" + "XX { }\n" + "XX2 { x: a{}, b, c; }"));
-        List<ComponentConfigAST> asts = parser.parse();
+        List<BeanConfigAST> asts = parser.parse();
         assertEquals(3, asts.size());
 
-        ComponentConfigAST rootAst = asts.get(0);
+        BeanConfigAST rootAst = asts.get(0);
         assertEquals("ROOT", rootAst.getName());
         List<ParameterAST> rootParams = rootAst.getParameters();
         assertEquals(3, rootParams.size());
@@ -102,11 +102,11 @@ public class ComponentConfigParserTest extends TestCase
 
     public void testParseWithSubParameter()
     {
-        ComponentConfigParser parser = new ComponentConfigParser("test", createStream("Component1 {\n"
+        BeanConfigParser parser = new BeanConfigParser("test", createStream("Component1 {\n"
                         + "    params: value1, subParams { subParam1: v1; subParam2: v2 }, value3;\n" + "}\n"));
-        List<ComponentConfigAST> asts = parser.parse();
+        List<BeanConfigAST> asts = parser.parse();
         assertEquals(1, asts.size());
-        ComponentConfigAST ast = asts.get(0);
+        BeanConfigAST ast = asts.get(0);
         assertEquals("Component1", ast.getName());
 
         assertEquals(1, ast.getParameters().size());
@@ -152,7 +152,7 @@ public class ComponentConfigParserTest extends TestCase
 
     private void assertSyntaxError(Test test)
     {
-        ComponentConfigParser parser = new ComponentConfigParser("test", createStream(test.configString));
+        BeanConfigParser parser = new BeanConfigParser("test", createStream(test.configString));
         try {
             parser.parse();
             fail("Expected Exception for '" + test.configString + "'");
