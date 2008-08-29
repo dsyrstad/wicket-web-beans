@@ -234,6 +234,16 @@ public class BeanConfigParser
                                         "0123456789-."))
                         || (tokenizer.ttype == StreamTokenizer.TT_WORD && (value.equals("true") || value
                                         .equals("false")));
+
+        if (!isLiteral) {
+            if (value.equals(";")) {
+                throw generateError("Value expected, not ';'");
+            }
+            else if (value.equals("null")) {
+                value = null;
+            }
+        }
+
         ParameterValueAST param = new ParameterValueAST(value, isLiteral);
         String nextToken = getNextToken();
         // Start of parameters for value?

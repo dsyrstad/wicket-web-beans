@@ -102,6 +102,7 @@ public class BeanConfigTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getMessage().contains("Error reading stream"));
+            assertNotNull(e.getCause());
         }
     }
 
@@ -200,23 +201,30 @@ public class BeanConfigTest extends TestCase
 
     public void testNewInstanceWithParameters() throws Exception
     {
-        // TODO test null
         URL url = createConfig("Component1 { " + "class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
                         + "stringProp: \"stringValue\"; intProp: 5; doubleProp: 3.14; booleanProp: true; "
-                        + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;" + "}");
+                        + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;"
+                        + " integerObjProp: 3; doubleObjProp: 9.99; floatObjProp: 10.3; shortObjProp: 62;"
+                        + " booleanObjProp: false; longObjProp: 323; }");
         BeanConfig config = new BeanConfig("Component1", url, null);
         TestBean component = (TestBean)config.newInstance();
         assertTrue(component instanceof TestBean);
-        assertEquals("stringValue", component.getStringProp());
         assertEquals(5, component.getIntProp());
         assertEquals(3.14, component.getDoubleProp());
         assertTrue(component.isBooleanProp());
         assertEquals(9.5F, component.getFloatProp());
         assertEquals((short)3, component.getShortProp());
         assertEquals(123456789012345678L, component.getLongProp());
+
+        assertEquals(Integer.valueOf(3), component.getIntegerObjProp());
+        assertEquals(Double.valueOf(9.99), component.getDoubleObjProp());
+        assertEquals(Boolean.FALSE, component.getBooleanObjProp());
+        assertEquals(Float.valueOf(10.3F), component.getFloatObjProp());
+        assertEquals(Short.valueOf((short)62), component.getShortObjProp());
+        assertEquals(Long.valueOf(323L), component.getLongObjProp());
     }
 
-    public void testNewInstanceNotFound() throws Exception
+    public void testNewInstanceClassNotFound() throws Exception
     {
         URL url = createConfig("Component1 { class: java.util.NotFound; }");
         BeanConfig config = new BeanConfig("Component1", url, null);
@@ -228,6 +236,7 @@ public class BeanConfigTest extends TestCase
             // Expected
             assertTrue(e.getMessage().contains("Cannot create instance of component"));
             assertTrue(e.getMessage().contains("java.util.NotFound"));
+            assertNotNull(e.getCause());
         }
     }
 
@@ -242,8 +251,92 @@ public class BeanConfigTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getMessage().contains("Cannot create instance of component"));
+            assertNotNull(e.getCause());
             assertTrue(e.getCause() instanceof IllegalAccessException);
         }
+    }
+
+    public void testNewInstancePropertyNotFound() throws Exception
+    {
+        URL url = createConfig("Component1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notfound: x }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().contains("Cannot find property"));
+            assertTrue(e.getMessage().contains("notfound"));
+        }
+    }
+
+    public void testNewInstancePropertySetterNotExposed() throws Exception
+    {
+        URL url = createConfig("Component1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; setterNotExposed: x }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().matches("Property setterNotExposed .* does not have an exposed setter.*"));
+        }
+    }
+
+    public void testNewInstancePropertyTypeNotSupported() throws Exception
+    {
+        URL url = createConfig("Component1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; typeNotSupported: x }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().matches("Property type .* typeNotSupported .* not supported.*"));
+        }
+    }
+
+    public void testNewInstancePropertyNotExposed() throws Exception
+    {
+        URL url = createConfig("Component1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notExposed: x }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().contains("Cannot find property"));
+            assertTrue(e.getMessage().contains("notExposed"));
+        }
+    }
+
+    public void testNewInstancePropertyThrows() throws Exception
+    {
+        URL url = createConfig("Component1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; throwsException: x }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        try {
+            config.newInstance();
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().contains("Error setting property"));
+            assertTrue(e.getCause().getMessage().equals("Thrown from setter"));
+        }
+    }
+
+    public void testNewInstanceWithNullParameters() throws Exception
+    {
+        URL url = createConfig("Component1 { " + "class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
+                        + "integerObjProp: null; stringProp: \"null\" }");
+        BeanConfig config = new BeanConfig("Component1", url, null);
+        TestBean component = (TestBean)config.newInstance();
+        assertNull(component.getIntegerObjProp());
+        assertEquals("null", component.getStringProp());
     }
 
     private URL createConfig(String configStr) throws Exception

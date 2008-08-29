@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -236,10 +237,15 @@ public class BeanConfig implements Serializable
                                 + "' class: " + componentClassName, e);
             }
 
+            if (propertyDescriptor == null) {
+                throw new RuntimeException("Cannot find property " + parameterName + " for component '" + componentName
+                                + "' class: " + componentClassName);
+            }
+
             Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
                 throw new RuntimeException("Property " + parameterName + " for component '" + componentName
-                                + "' class " + componentClassName + " does not have a exposed setter");
+                                + "' class " + componentClassName + " does not have an exposed setter");
             }
 
             Object value;
@@ -284,8 +290,13 @@ public class BeanConfig implements Serializable
                 writeMethod.invoke(component, value);
             }
             catch (Exception e) {
+                Throwable t = e;
+                if (e instanceof InvocationTargetException) {
+                    t = e.getCause();
+                }
+
                 throw new RuntimeException("Error setting property " + parameterName + " for component '"
-                                + componentName + "' class " + componentClassName, e);
+                                + componentName + "' class " + componentClassName, t);
             }
         }
 
