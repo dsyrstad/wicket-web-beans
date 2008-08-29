@@ -124,6 +124,17 @@ public class BeanConfigParserTest extends TestCase
         assertEquals("v2", paramValue.getSubParameters().get(1).getValuesAsStrings()[0]);
     }
 
+    public void testParseWithNullParameterValue()
+    {
+        BeanConfigParser parser = new BeanConfigParser("test", createStream("Component1 {"
+                        + "    param1: null;  param2: \"null\" }\n"));
+        List<BeanConfigAST> asts = parser.parse();
+        assertEquals(1, asts.size());
+        BeanConfigAST ast = asts.get(0);
+        assertNull(ast.getParameters().get(0).getValues().get(0).getValue());
+        assertEquals("null", ast.getParameters().get(1).getValues().get(0).getValue());
+    }
+
     public void testSyntaxErrors()
     {
         Test[] tests = new Test[] {
@@ -133,6 +144,7 @@ public class BeanConfigParserTest extends TestCase
                         new Test("{", "Error: test at line 1: Expected 'bean name', but got '{'"),
                         new Test("X { x }", "Error: test at line 1: Expected ':', but got '}'"),
                         new Test("X { x: }", "Unexpected EOF reading from test"),
+                        new Test("X { x: ; }", "Error: test at line 1: Value expected, not ';'"),
                         new Test("X { x: x;; }", "Error: test at line 1: Expected ':', but got '}'"),
                         new Test("X { x: x; };", "Error: test at line 1: Expected 'bean name', but got ';'"),
                         new Test("X { x: x, y,, z }", "Error: test at line 1: Expected ';' or '}', but got 'z'"),
@@ -158,9 +170,9 @@ public class BeanConfigParserTest extends TestCase
             fail("Expected Exception for '" + test.configString + "'");
         }
         catch (RuntimeException e) {
-            System.out.println("new Test(\"" + test.configString.replace("\"", "\\\"").replace("\n", "\\n") + "\", \""
-                            + e.getMessage() + "\"),");
-            //assertEquals(test.expectedMsg, e.getMessage());
+            //System.out.println("new Test(\"" + test.configString.replace("\"", "\\\"").replace("\n", "\\n") + "\", \""
+            //                + e.getMessage() + "\"),");
+            assertEquals(test.expectedMsg, e.getMessage());
         }
 
     }
