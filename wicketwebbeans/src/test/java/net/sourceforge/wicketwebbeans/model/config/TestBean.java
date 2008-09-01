@@ -24,6 +24,13 @@ public class TestBean
     {
     }
 
+    public TestBean(String stringProp, int intProp, Integer integerObjProp)
+    {
+        this.stringProp = stringProp;
+        this.intProp = intProp;
+        this.integerObjProp = integerObjProp;
+    }
+
     public String getStringProp()
     {
         return stringProp;
