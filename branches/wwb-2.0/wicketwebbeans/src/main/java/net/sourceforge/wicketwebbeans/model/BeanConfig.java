@@ -31,12 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 
 /**
- * Represents the Configuration for a Component. 
+ * Represents the Configuration for a Bean. 
  * <p/>
  *  
  * @author Dan Syrstad
@@ -50,32 +51,32 @@ public class BeanConfig implements Serializable
     private static final long serialVersionUID = -4705317346444856939L;
 
     private static Logger logger = Logger.getLogger(BeanConfig.class.getName());
-    /** Cache of pre-parsed component configs. */
+    /** Cache of pre-parsed bean configs. */
     private static final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
     // Key is parameter name. 
     private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
 
-    private String componentName;
+    private String beanName;
     private URL url;
     private ComponentRegistry componentRegistry;
 
     /**
-     * Construct a BeanConfig. If componentName is null, metadata is derived from a component
+     * Construct a BeanConfig. If beanName is null, metadata is derived from a bean
      * named "ROOT". 
      *
-     * @param componentName the componentName to be used for metadata. May be null.
+     * @param beanName the beanName to be used for metadata. May be null.
      * @param url the URL of the WWB configuration.
      * @param componentRegistry the ComponentRegistry used to determine visual components. May be null to use the default.
      */
-    public BeanConfig(String componentName, URL url, ComponentRegistry componentRegistry)
+    public BeanConfig(String beanName, URL url, ComponentRegistry componentRegistry)
     {
         assert url != null;
 
-        if (componentName == null) {
-            this.componentName = "ROOT";
+        if (beanName == null) {
+            this.beanName = "ROOT";
         }
         else {
-            this.componentName = componentName;
+            this.beanName = beanName;
         }
 
         this.url = url;
@@ -126,30 +127,28 @@ public class BeanConfig implements Serializable
             }
         }
 
-        boolean foundComponent = false;
-        for (BeanConfigAST componentConfigAst : cachedConfig.getAsts()) {
-            if (componentName.equals(componentConfigAst.getName())) {
-                foundComponent = true;
-                for (ParameterAST paramAST : componentConfigAst.getParameters()) {
+        boolean foundBean = false;
+        for (BeanConfigAST beanConfigAst : cachedConfig.getAsts()) {
+            if (beanName.equals(beanConfigAst.getName())) {
+                foundBean = true;
+                for (ParameterAST paramAST : beanConfigAst.getParameters()) {
                     setParameter(paramAST.getName(), paramAST.getValues());
                 }
             }
         }
 
-        if (!foundComponent) {
-            throw new RuntimeException("Could not find component '" + componentName + " in URL " + url);
+        if (!foundBean) {
+            throw new RuntimeException("Could not find bean '" + beanName + " in URL " + url);
         }
 
         ParameterValueAST classValue = getParameterValue(PARAMETER_NAME_CLASS);
         ParameterValueAST extendsValue = getParameterValue(PARAMETER_NAME_EXTENDS);
         if (classValue == null && extendsValue == null) {
-            throw new RuntimeException("Component " + componentName + " in URL " + url
-                            + " must specify class or extends");
+            throw new RuntimeException("Bean " + beanName + " in URL " + url + " must specify class or extends");
         }
 
         if (classValue != null && extendsValue != null) {
-            throw new RuntimeException("Component " + componentName + " in URL " + url
-                            + " cannot specify both class and extends");
+            throw new RuntimeException("Bean " + beanName + " in URL " + url + " cannot specify both class and extends");
         }
     }
 
@@ -209,17 +208,17 @@ public class BeanConfig implements Serializable
         return componentRegistry;
     }
 
-    public Object newInstance()
+    public Object newInstance(Object... args)
     {
-        String componentClassName = getParameterValueAsString(PARAMETER_NAME_CLASS);
-        Object component;
+        String beanClassName = getParameterValueAsString(PARAMETER_NAME_CLASS);
+        Object bean;
         try {
-            Class<?> componentClass = Class.forName(componentClassName);
-            component = componentClass.newInstance();
+            Class<?> beanClass = Class.forName(beanClassName);
+            // TODO This does not handle null arguments. Need to find matching constructor like EnerJ
+            bean = ConstructorUtils.invokeConstructor(beanClass, args);
         }
         catch (Exception e) {
-            throw new RuntimeException("Cannot create instance of component '" + componentName + "' class: "
-                            + componentClassName, e);
+            throw new RuntimeException("Cannot create instance of bean '" + beanName + "' class: " + beanClassName, e);
         }
 
         for (Map.Entry<String, List<ParameterValueAST>> parameter : parameters.entrySet()) {
@@ -230,22 +229,22 @@ public class BeanConfig implements Serializable
 
             PropertyDescriptor propertyDescriptor;
             try {
-                propertyDescriptor = PropertyUtils.getPropertyDescriptor(component, parameterName);
+                propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
             }
             catch (Exception e) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for component '" + componentName
-                                + "' class: " + componentClassName, e);
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName, e);
             }
 
             if (propertyDescriptor == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for component '" + componentName
-                                + "' class: " + componentClassName);
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName);
             }
 
             Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
-                throw new RuntimeException("Property " + parameterName + " for component '" + componentName
-                                + "' class " + componentClassName + " does not have an exposed setter");
+                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
+                                + beanClassName + " does not have an exposed setter");
             }
 
             Object value;
@@ -281,13 +280,12 @@ public class BeanConfig implements Serializable
                 }
                 else {
                     throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
-                                    + " for component '" + componentName + "' class " + componentClassName
-                                    + " is not supported");
+                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
                 }
             }
 
             try {
-                writeMethod.invoke(component, value);
+                writeMethod.invoke(bean, value);
             }
             catch (Exception e) {
                 Throwable t = e;
@@ -295,12 +293,12 @@ public class BeanConfig implements Serializable
                     t = e.getCause();
                 }
 
-                throw new RuntimeException("Error setting property " + parameterName + " for component '"
-                                + componentName + "' class " + componentClassName, t);
+                throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
+                                + "' class " + beanClassName, t);
             }
         }
 
-        return component;
+        return bean;
     }
 
 

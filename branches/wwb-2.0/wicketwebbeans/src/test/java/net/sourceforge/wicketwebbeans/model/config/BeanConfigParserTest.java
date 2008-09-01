@@ -34,11 +34,6 @@ import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
  */
 public class BeanConfigParserTest extends TestCase
 {
-    public BeanConfigParserTest(String name)
-    {
-        super(name);
-    }
-
     public void testParseBasic()
     {
         BeanConfigParser parser = new BeanConfigParser("test", createStream("ROOT {\n"
