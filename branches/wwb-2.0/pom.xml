@@ -151,8 +151,6 @@
     <modules>
         <module>wicketwebbeans</module>
         <module>wicketwebbeans-examples</module>
-        <module>wicketwebbeans-databinder</module>
-        <module>wicketwebbeans-databinder-examples</module>
     </modules>
     <repositories>
         <repository>
