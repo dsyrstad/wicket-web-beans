@@ -37,294 +37,302 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 
 /**
- * Represents the Configuration for a Bean. 
- * <p/>
- *  
+ * Represents the Configuration for a Bean. <p/>
+ * 
  * @author Dan Syrstad
  */
-public class BeanConfig implements Serializable
-{
-    private static final String PARAMETER_NAME_EXTENDS = "extends";
+public class BeanConfig implements Serializable {
+	private static final String PARAMETER_NAME_EXTENDS = "extends";
 
-    private static final String PARAMETER_NAME_CLASS = "class";
+	private static final String PARAMETER_NAME_CLASS = "class";
 
-    private static final long serialVersionUID = -4705317346444856939L;
+	private static final long serialVersionUID = -4705317346444856939L;
 
-    private static Logger logger = Logger.getLogger(BeanConfig.class.getName());
-    /** Cache of pre-parsed bean configs. */
-    private static final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
-    // Key is parameter name. 
-    private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
+	private static Logger logger = Logger.getLogger(BeanConfig.class.getName());
+	/** Cache of pre-parsed bean configs. */
+	private static final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
+	// Key is parameter name.
+	private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
 
-    private String beanName;
-    private URL url;
-    private ComponentRegistry componentRegistry;
+	private String beanName;
+	private URL url;
+	private ComponentRegistry componentRegistry;
 
-    /**
-     * Construct a BeanConfig. If beanName is null, metadata is derived from a bean
-     * named "ROOT". 
-     *
-     * @param beanName the beanName to be used for metadata. May be null.
-     * @param url the URL of the WWB configuration.
-     * @param componentRegistry the ComponentRegistry used to determine visual components. May be null to use the default.
-     */
-    public BeanConfig(String beanName, URL url, ComponentRegistry componentRegistry)
-    {
-        assert url != null;
+	/**
+	 * Construct a BeanConfig. If beanName is null, metadata is derived from a
+	 * bean named "ROOT".
+	 * 
+	 * @param beanName
+	 *            the beanName to be used for metadata. May be null.
+	 * @param url
+	 *            the URL of the WWB configuration.
+	 * @param componentRegistry
+	 *            the ComponentRegistry used to determine visual components. May
+	 *            be null to use the default.
+	 */
+	public BeanConfig(String beanName, URL url,
+			ComponentRegistry componentRegistry) {
+		assert url != null;
 
-        if (beanName == null) {
-            this.beanName = "ROOT";
-        }
-        else {
-            this.beanName = beanName;
-        }
+		if (beanName == null) {
+			this.beanName = "ROOT";
+		} else {
+			this.beanName = beanName;
+		}
 
-        this.url = url;
+		this.url = url;
 
-        if (componentRegistry == null) {
-            this.componentRegistry = new ComponentRegistry();
-        }
-        else {
-            this.componentRegistry = componentRegistry;
-        }
+		if (componentRegistry == null) {
+			this.componentRegistry = new ComponentRegistry();
+		} else {
+			this.componentRegistry = componentRegistry;
+		}
 
-        collectFromBeanConfig();
-    }
+		collectFromBeanConfig();
+	}
 
-    /**
-     * Collection Beans from the beanprops file, if any.
-     */
-    private void collectFromBeanConfig()
-    {
-        long timestamp = 0;
-        if (url.getProtocol().equals("file")) {
-            try {
-                timestamp = new File(url.toURI()).lastModified();
-            }
-            catch (URISyntaxException e) {
-                timestamp = -1;
-            }
-        }
+	/**
+	 * Collection Beans from the beanprops file, if any.
+	 */
+	private void collectFromBeanConfig() {
+		long timestamp = 0;
+		if (url.getProtocol().equals("file")) {
+			try {
+				timestamp = new File(url.toURI()).lastModified();
+			} catch (URISyntaxException e) {
+				timestamp = -1;
+			}
+		}
 
-        CachedBeanConfigs cachedConfig = cachedBeanConfigs.get(url);
-        if (cachedConfig == null || cachedConfig.getModTimestamp() != timestamp) {
-            if (cachedConfig != null) {
-                logger.info("Re-reading changed file: " + url);
-            }
+		CachedBeanConfigs cachedConfig = cachedBeanConfigs.get(url);
+		if (cachedConfig == null || cachedConfig.getModTimestamp() != timestamp) {
+			if (cachedConfig != null) {
+				logger.info("Re-reading changed file: " + url);
+			}
 
-            InputStream inStream = null;
-            try {
-                inStream = url.openStream();
-                List<BeanConfigAST> asts = new BeanConfigParser(url.toString(), inStream).parse();
-                cachedConfig = new CachedBeanConfigs(asts, timestamp);
-                cachedBeanConfigs.put(url, cachedConfig);
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Error reading stream for URL: " + url, e);
-            }
-            finally {
-                IOUtils.closeQuietly(inStream);
-            }
-        }
+			InputStream inStream = null;
+			try {
+				inStream = url.openStream();
+				List<BeanConfigAST> asts = new BeanConfigParser(url.toString(),
+						inStream).parse();
+				cachedConfig = new CachedBeanConfigs(asts, timestamp);
+				cachedBeanConfigs.put(url, cachedConfig);
+			} catch (IOException e) {
+				throw new RuntimeException("Error reading stream for URL: "
+						+ url, e);
+			} finally {
+				IOUtils.closeQuietly(inStream);
+			}
+		}
 
-        boolean foundBean = false;
-        for (BeanConfigAST beanConfigAst : cachedConfig.getAsts()) {
-            if (beanName.equals(beanConfigAst.getName())) {
-                foundBean = true;
-                for (ParameterAST paramAST : beanConfigAst.getParameters()) {
-                    setParameter(paramAST.getName(), paramAST.getValues());
-                }
-            }
-        }
+		boolean foundBean = false;
+		for (BeanConfigAST beanConfigAst : cachedConfig.getAsts()) {
+			if (beanName.equals(beanConfigAst.getName())) {
+				foundBean = true;
+				for (ParameterAST paramAST : beanConfigAst.getParameters()) {
+					setParameter(paramAST.getName(), paramAST.getValues());
+				}
+			}
+		}
 
-        if (!foundBean) {
-            throw new RuntimeException("Could not find bean '" + beanName + " in URL " + url);
-        }
+		if (!foundBean) {
+			throw new RuntimeException("Could not find bean '" + beanName
+					+ " in URL " + url);
+		}
 
-        ParameterValueAST classValue = getParameterValue(PARAMETER_NAME_CLASS);
-        ParameterValueAST extendsValue = getParameterValue(PARAMETER_NAME_EXTENDS);
-        if (classValue == null && extendsValue == null) {
-            throw new RuntimeException("Bean " + beanName + " in URL " + url + " must specify class or extends");
-        }
+		ParameterValueAST classValue = getParameterValue(PARAMETER_NAME_CLASS);
+		ParameterValueAST extendsValue = getParameterValue(PARAMETER_NAME_EXTENDS);
+		if (classValue == null && extendsValue == null) {
+			throw new RuntimeException("Bean " + beanName + " in URL " + url
+					+ " must specify class or extends");
+		}
 
-        if (classValue != null && extendsValue != null) {
-            throw new RuntimeException("Bean " + beanName + " in URL " + url + " cannot specify both class and extends");
-        }
-    }
+		if (classValue != null && extendsValue != null) {
+			throw new RuntimeException("Bean " + beanName + " in URL " + url
+					+ " cannot specify both class and extends");
+		}
+	}
 
-    /**
-     * Gets the specified parameter's value. If the parameter has multiple values, the first value is returned.
-     *
-     * @param parameterName the parameter name.
-     * 
-     * @return the parameter value, or null if not set.
-     */
-    public ParameterValueAST getParameterValue(String parameterName)
-    {
-        List<ParameterValueAST> values = getParameterValues(parameterName);
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
+	/**
+	 * Gets the specified parameter's value. If the parameter has multiple
+	 * values, the first value is returned.
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter value, or null if not set.
+	 */
+	public ParameterValueAST getParameterValue(String parameterName) {
+		List<ParameterValueAST> values = getParameterValues(parameterName);
+		if (values == null || values.isEmpty()) {
+			return null;
+		}
 
-        return values.get(0);
-    }
+		return values.get(0);
+	}
 
-    /**
-     * Gets the specified parameter's value as a String. If the parameter has multiple values, the first value is returned.
-     *
-     * @param parameterName the parameter name.
-     * 
-     * @return the parameter value, or null if not set.
-     */
-    public String getParameterValueAsString(String parameterName)
-    {
-        ParameterValueAST value = getParameterValue(parameterName);
-        if (value == null) {
-            return null;
-        }
+	/**
+	 * Gets the specified parameter's value as a String. If the parameter has
+	 * multiple values, the first value is returned.
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter value, or null if not set.
+	 */
+	public String getParameterValueAsString(String parameterName) {
+		ParameterValueAST value = getParameterValue(parameterName);
+		if (value == null) {
+			return null;
+		}
 
-        return value.getValue();
-    }
+		return value.getValue();
+	}
 
-    /**
-     * Gets the specified parameter's value(s).
-     *
-     * @param parameterName the parameter name.
-     * 
-     * @return the parameter's values, or null if not set.
-     */
-    public List<ParameterValueAST> getParameterValues(String parameterName)
-    {
-        return parameters.get(parameterName);
-    }
+	// TODO Test
+	public int getIntParameterValue(String parameterName, int defaultValue) {
+		ParameterValueAST parameterValue = getParameterValue(parameterName);
+		Integer value = null;
+		if (parameterValue != null) {
+			value = parameterValue.getIntegerValue();
+		}
 
-    public void setParameter(String parameterName, List<ParameterValueAST> values)
-    {
-        parameters.put(parameterName, values);
-    }
+		return value == null ? defaultValue : value;
+	}
 
-    public ComponentRegistry getComponentRegistry()
-    {
-        return componentRegistry;
-    }
+	/**
+	 * Gets the specified parameter's value(s).
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter's values, or null if not set.
+	 */
+	public List<ParameterValueAST> getParameterValues(String parameterName) {
+		return parameters.get(parameterName);
+	}
 
-    public Object newInstance(Object... args)
-    {
-        String beanClassName = getParameterValueAsString(PARAMETER_NAME_CLASS);
-        Object bean;
-        try {
-            Class<?> beanClass = Class.forName(beanClassName);
-            // TODO This does not handle null arguments. Need to find matching constructor like EnerJ
-            bean = ConstructorUtils.invokeConstructor(beanClass, args);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Cannot create instance of bean '" + beanName + "' class: " + beanClassName, e);
-        }
+	public void setParameter(String parameterName,
+			List<ParameterValueAST> values) {
+		parameters.put(parameterName, values);
+	}
 
-        for (Map.Entry<String, List<ParameterValueAST>> parameter : parameters.entrySet()) {
-            String parameterName = parameter.getKey();
-            if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)) {
-                continue;
-            }
+	public ComponentRegistry getComponentRegistry() {
+		return componentRegistry;
+	}
 
-            PropertyDescriptor propertyDescriptor;
-            try {
-                propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName, e);
-            }
+	public Object newInstance(Object... args) {
+		String beanClassName = getParameterValueAsString(PARAMETER_NAME_CLASS);
+		Object bean;
+		try {
+			Class<?> beanClass = Class.forName(beanClassName);
+			// TODO This does not handle null arguments. Need to find matching
+			// constructor like EnerJ
+			bean = ConstructorUtils.invokeConstructor(beanClass, args);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot create instance of bean '"
+					+ beanName + "' class: " + beanClassName, e);
+		}
 
-            if (propertyDescriptor == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName);
-            }
+		for (Map.Entry<String, List<ParameterValueAST>> parameter : parameters
+				.entrySet()) {
+			String parameterName = parameter.getKey();
+			if (parameterName.equals(PARAMETER_NAME_CLASS)
+					|| parameterName.equals(PARAMETER_NAME_EXTENDS)) {
+				continue;
+			}
 
-            Method writeMethod = propertyDescriptor.getWriteMethod();
-            if (writeMethod == null) {
-                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
-                                + beanClassName + " does not have an exposed setter");
-            }
+			PropertyDescriptor propertyDescriptor;
+			try {
+				propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean,
+						parameterName);
+			} catch (Exception e) {
+				throw new RuntimeException("Cannot find property "
+						+ parameterName + " for bean '" + beanName
+						+ "' class: " + beanClassName, e);
+			}
 
-            Object value;
-            List<ParameterValueAST> values = parameter.getValue();
-            // TODO need a convertTo on ParameterValueAST and test that. 
-            if (values.isEmpty()) {
-                value = null;
-            }
-            else {
-                ParameterValueAST valueAst = values.get(0);
-                Class<?> propertyType = propertyDescriptor.getPropertyType();
-                propertyType = ClassUtils.primitiveToWrapper(propertyType);
-                if (Double.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getDoubleValue();
-                }
-                else if (Float.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getDoubleValue().floatValue();
-                }
-                else if (Long.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getLongValue();
-                }
-                else if (Integer.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getIntegerValue();
-                }
-                else if (Short.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getIntegerValue().shortValue();
-                }
-                else if (Boolean.class.isAssignableFrom(propertyType)) {
-                    value = Boolean.valueOf(valueAst.getBooleanValue());
-                }
-                else if (propertyType.equals(String.class)) {
-                    value = valueAst.getValue();
-                }
-                else {
-                    throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
-                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
-                }
-            }
+			if (propertyDescriptor == null) {
+				throw new RuntimeException("Cannot find property "
+						+ parameterName + " for bean '" + beanName
+						+ "' class: " + beanClassName);
+			}
 
-            try {
-                writeMethod.invoke(bean, value);
-            }
-            catch (Exception e) {
-                Throwable t = e;
-                if (e instanceof InvocationTargetException) {
-                    t = e.getCause();
-                }
+			Method writeMethod = propertyDescriptor.getWriteMethod();
+			if (writeMethod == null) {
+				throw new RuntimeException("Property " + parameterName
+						+ " for bean '" + beanName + "' class " + beanClassName
+						+ " does not have an exposed setter");
+			}
 
-                throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
-                                + "' class " + beanClassName, t);
-            }
-        }
+			Object value;
+			List<ParameterValueAST> values = parameter.getValue();
+			// TODO need a convertTo on ParameterValueAST and test that.
+			if (values.isEmpty()) {
+				value = null;
+			} else {
+				ParameterValueAST valueAst = values.get(0);
+				Class<?> propertyType = propertyDescriptor.getPropertyType();
+				propertyType = ClassUtils.primitiveToWrapper(propertyType);
+				if (Double.class.isAssignableFrom(propertyType)) {
+					value = valueAst.getDoubleValue();
+				} else if (Float.class.isAssignableFrom(propertyType)) {
+					value = valueAst.getDoubleValue().floatValue();
+				} else if (Long.class.isAssignableFrom(propertyType)) {
+					value = valueAst.getLongValue();
+				} else if (Integer.class.isAssignableFrom(propertyType)) {
+					value = valueAst.getIntegerValue();
+				} else if (Short.class.isAssignableFrom(propertyType)) {
+					value = valueAst.getIntegerValue().shortValue();
+				} else if (Boolean.class.isAssignableFrom(propertyType)) {
+					value = Boolean.valueOf(valueAst.getBooleanValue());
+				} else if (propertyType.equals(String.class)) {
+					value = valueAst.getValue();
+				} else {
+					throw new RuntimeException("Property type " + propertyType
+							+ " on property " + parameterName + " for bean '"
+							+ beanName + "' class " + beanClassName
+							+ " is not supported");
+				}
+			}
 
-        return bean;
-    }
+			try {
+				writeMethod.invoke(bean, value);
+			} catch (Exception e) {
+				Throwable t = e;
+				if (e instanceof InvocationTargetException) {
+					t = e.getCause();
+				}
 
+				throw new RuntimeException("Error setting property "
+						+ parameterName + " for bean '" + beanName + "' class "
+						+ beanClassName, t);
+			}
+		}
 
-    /**
-     * A Cached Beanprops file.
-     */
-    @SuppressWarnings("serial")
-    private static final class CachedBeanConfigs implements Serializable
-    {
-        private List<BeanConfigAST> asts;
-        private long modTimestamp;
+		return bean;
+	}
 
-        CachedBeanConfigs(List<BeanConfigAST> asts, long modTimestamp)
-        {
-            this.asts = asts;
-            this.modTimestamp = modTimestamp;
-        }
+	/**
+	 * A Cached Beanprops file.
+	 */
+	@SuppressWarnings("serial")
+	private static final class CachedBeanConfigs implements Serializable {
+		private List<BeanConfigAST> asts;
+		private long modTimestamp;
 
-        List<BeanConfigAST> getAsts()
-        {
-            return asts;
-        }
+		CachedBeanConfigs(List<BeanConfigAST> asts, long modTimestamp) {
+			this.asts = asts;
+			this.modTimestamp = modTimestamp;
+		}
 
-        long getModTimestamp()
-        {
-            return modTimestamp;
-        }
-    }
+		List<BeanConfigAST> getAsts() {
+			return asts;
+		}
+
+		long getModTimestamp() {
+			return modTimestamp;
+		}
+	}
+
 }
