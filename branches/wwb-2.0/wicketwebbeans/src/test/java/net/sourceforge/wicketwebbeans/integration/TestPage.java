@@ -1,14 +1,14 @@
 package net.sourceforge.wicketwebbeans.integration;
 
-import net.sourceforge.wicketwebbeans.model.BeanConfig;
+import net.sourceforge.wicketwebbeans.model.BeanFactory;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebPage;
 
 public class TestPage extends WebPage
 {
-    public TestPage(BeanConfig config)
+    public TestPage(BeanFactory factory)
     {
-        add((Component)config.newInstance("component"));
+        add((Component)factory.newInstance("Field", "component"));
     }
 }
