@@ -18,10 +18,9 @@
 package net.sourceforge.wicketwebbeans.integration;
 
 import java.io.File;
-import java.net.URL;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.BeanConfig;
+import net.sourceforge.wicketwebbeans.model.BeanFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.Page;
@@ -43,25 +42,24 @@ public class TextFieldConfigTest extends TestCase
     @SuppressWarnings("serial")
     public void testCreatePage() throws Exception
     {
-        final BeanConfig config = new BeanConfig("Field",
-                        createConfig("Field { class: org.apache.wicket.markup.html.form.TextField; }"), null);
+        final BeanFactory factory = createFactory("Field { class: org.apache.wicket.markup.html.form.TextField; }");
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
             public Page getTestPage()
             {
-                return new TestPage(config);
+                return new TestPage(factory);
             }
         });
 
         tester.assertComponent("component", TextField.class);
     }
 
-    private URL createConfig(String configStr) throws Exception
+    private BeanFactory createFactory(String configStr) throws Exception
     {
         File tmpFile = File.createTempFile("config", ".wwb");
         tmpFile.deleteOnExit();
         FileUtils.writeStringToFile(tmpFile, configStr);
-        return tmpFile.toURI().toURL();
+        return new BeanFactory().loadBeanConfig(tmpFile.toURI().toURL());
     }
 
 }
