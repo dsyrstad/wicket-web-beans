@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
+import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
@@ -40,132 +41,131 @@ import org.apache.wicket.model.Model;
  * 
  * @author Dan Syrstad
  */
-public class GridLayout extends Panel {
-	private static final long serialVersionUID = -2149828837634944417L;
+public class GridLayout extends Panel implements BeanFactoryConstructable
+{
+    private static final long serialVersionUID = -2149828837634944417L;
 
-	public static final String PARAM_COLSPAN = "colspan";
-	public static final String PARAM_COLS = "columns";
+    private int columns = 3;
+    private Model rowListViewModel = new Model();
+    private BeanFactory beanFactory;
 
-	private static final String PARAM_COMPONENTS = "components";
+    /**
+     * Construct a new BeanGridPanel.
+     * 
+     * @param id
+     *            the Wicket id for the panel.
+     * @param beanFactory
+     *            the {@link BeanFactory} for child components.
+     */
+    public GridLayout(String id, BeanFactory beanFactory)
+    {
+        super(id);
+        this.beanFactory = beanFactory;
+        add(new RowListView("r", rowListViewModel));
+    }
 
-	private Object bean;
-	private int columns;
-	private List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
+    public int getColumns()
+    {
+        return columns;
+    }
 
-	/**
-	 * Construct a new BeanGridPanel.
-	 * 
-	 * @param id
-	 *            the Wicket id for the panel.
-	 * @param bean
-	 *            the bean to be displayed. This may be an IModel or regular
-	 *            bean object.
-	 * @param beanConfig
-	 *            the {@link BeanConfig} for this component.
-	 */
-	public GridLayout(String id, final Object bean, BeanConfig beanConfig) {
-		super(id);
+    public void setColumns(int columns)
+    {
+        this.columns = columns;
+    }
 
-		this.bean = bean;
+    public void setComponents(List<ParameterValueAST> components)
+    {
+        List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
+        if (components != null) {
+            for (ParameterValueAST componentParam : components) {
+                String componentName = componentParam.getValue();
+                BeanConfig componentConfig = beanFactory.getBeanConfig(componentName);
+                gridComponents.add(componentConfig);
+            }
+        }
 
-		// Get Number of rows from config
-		columns = beanConfig.getIntParameterValue(PARAM_COLS, 3);
-		if (columns < 1) {
-			throw new RuntimeException("Invalid columns config value: "
-					+ columns);
-		}
+        // Break out the rows and columns ahead of time.
+        List<List<BeanConfig>> rowsAndCols = new ArrayList<List<BeanConfig>>();
+        int colPos = 0;
+        List<BeanConfig> currRow = null;
+        for (BeanConfig component : gridComponents) {
+            int colspan = 1; // TODO Check component property, was: component.getIntParameterValue(PARAM_COLSPAN, 1);
+            if (colspan < 1 || colspan > columns) {
+                throw new RuntimeException("Invalid colspan parameter value: " + colspan);
+            }
 
-		// TODO get elements. Instantiate fields based on component registry. If
-		// component implements Labeled type, get the label from it.
-		// if no elements but components, get each and do newInstance
-		// should have common super class that handles this for all layouts
-		List<ParameterValueAST> components = beanConfig
-				.getParameterValues(PARAM_COMPONENTS);
-		if (components != null) {
-			for (ParameterValueAST componentParam : components) {
-				String componentName = componentParam.getValue();
-				BeanConfig componentConfig = beanConfig.getBeanFactory()
-						.getBeanConfig(componentName);
-				gridComponents.add(componentConfig);
-			}
-		}
+            // If colspan > number of columns left, start a new row.
+            if ((colPos + colspan) > columns) {
+                colPos = 0;
+            }
 
-		// Break out the rows and columns ahead of time.
-		List<List<BeanConfig>> rowsAndCols = new ArrayList<List<BeanConfig>>();
-		int colPos = 0;
-		List<BeanConfig> currRow = null;
-		for (BeanConfig component : gridComponents) {
-			int colspan = component.getIntParameterValue(PARAM_COLSPAN, 1);
-			if (colspan < 1 || colspan > columns) {
-				throw new RuntimeException("Invalid colspan parameter value: "
-						+ colspan);
-			}
+            if (colPos == 0) {
+                currRow = new ArrayList<BeanConfig>();
+                rowsAndCols.add(currRow);
+            }
 
-			// If colspan > number of columns left, start a new row.
-			if ((colPos + colspan) > columns) {
-				colPos = 0;
-			}
+            currRow.add(component);
+            colPos += colspan;
+            if (colPos >= columns) {
+                colPos = 0;
+            }
+        }
 
-			if (colPos == 0) {
-				currRow = new ArrayList<BeanConfig>();
-				rowsAndCols.add(currRow);
-			}
+        rowListViewModel.setObject((Serializable)rowsAndCols);
+    }
 
-			currRow.add(component);
-			colPos += colspan;
-			if (colPos >= columns) {
-				colPos = 0;
-			}
-		}
 
-		Model propModel = new Model((Serializable) rowsAndCols);
-		add(new RowListView("r", propModel));
-	}
+    private final class RowListView extends ListView
+    {
+        private static final long serialVersionUID = 2709967037379449675L;
 
-	@Override
-	public void detachModels() {
-		super.detachModels();
-		if (bean instanceof IModel) {
-			((IModel) bean).detach();
-		}
-	}
+        RowListView(String id, IModel model)
+        {
+            super(id, model);
+        }
 
-	private final class RowListView extends ListView {
-		private static final long serialVersionUID = 2709967037379449675L;
+        @SuppressWarnings("unchecked")
+        protected void populateItem(ListItem item)
+        {
+            List<BeanConfig> columns = (List<BeanConfig>)item.getModelObject();
+            item.add(new ColListView("c", new Model((Serializable)columns)));
+        }
+    }
 
-		RowListView(String id, IModel model) {
-			super(id, model);
-		}
 
-		@SuppressWarnings("unchecked")
-		protected void populateItem(ListItem item) {
-			List<BeanConfig> columns = (List<BeanConfig>) item.getModelObject();
-			item.add(new ColListView("c", new Model((Serializable) columns)));
-		}
-	}
+    private final class ColListView extends ListView
+    {
+        private static final long serialVersionUID = -1956048113471004675L;
 
-	private final class ColListView extends ListView {
-		private static final long serialVersionUID = -1956048113471004675L;
+        ColListView(String id, IModel model)
+        {
+            super(id, model);
+        }
 
-		ColListView(String id, IModel model) {
-			super(id, model);
-		}
+        protected void populateItem(ListItem item)
+        {
+            BeanConfig config = (BeanConfig)item.getModelObject();
+            int colspan = 1; // TODO check component property - see above, was: config.getIntParameterValue(PARAM_COLSPAN, 1);
 
-		protected void populateItem(ListItem item) {
-			BeanConfig config = (BeanConfig) item.getModelObject();
-			int colspan = config.getIntParameterValue(PARAM_COLSPAN, 1);
+            Object[] args;
+            BeanFactory beanFactory = config.getBeanFactory();
+            Class<?> componentClass = beanFactory.loadClass(config);
+            final String id = "c";
+            // TODO maybe beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
+            if (BeanFactoryConstructable.class.isAssignableFrom(componentClass)) {
+                args = new Object[] { id, beanFactory };
+            }
+            else {
+                args = new Object[] { id };
+            }
 
-			Component component = (Component) config.getBeanFactory()
-					.newInstance(config.getBeanName(), "c");
-			// TODO pass bean and config if component implements a certain
-			// interface
-			item.add(new AttributeModifier(PARAM_COLSPAN, true, new Model(
-					String.valueOf(colspan))));
-			int pct100 = (colspan * 10000) / columns;
-			String width = "width: " + (pct100 / 100) + "." + (pct100 % 100)
-					+ "%;";
-			item.add(new AttributeModifier("style", true, new Model(width)));
-			item.add(component);
-		}
-	}
+            Component component = (Component)beanFactory.newInstance(config.getBeanName(), args);
+            item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
+            int pct100 = (colspan * 10000) / columns;
+            String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
+            item.add(new AttributeModifier("style", true, new Model(width)));
+            item.add(component);
+        }
+    }
 }

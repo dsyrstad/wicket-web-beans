@@ -7,8 +7,8 @@ import org.apache.wicket.markup.html.WebPage;
 
 public class TestPage extends WebPage
 {
-    public TestPage(BeanFactory factory)
+    public TestPage(String componentName, BeanFactory factory)
     {
-        add((Component)factory.newInstance("Field", "component"));
+        add((Component)factory.newInstance(componentName, "component", factory));
     }
 }

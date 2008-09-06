@@ -20,53 +20,43 @@ package net.sourceforge.wicketwebbeans.integration;
 import java.io.File;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.containers.GridLayout;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
 
 /**
- * Tests creating a Page with a TextField from BeanConfig.
+ * Tests creating a Page with a simple configuration.
  * <p>
  * 
  * @author Dan Syrstad
  */
-public class TextFieldConfigTest extends TestCase {
+public class TextFieldConfigTest extends TestCase
+{
     static {
-        TextFieldConfigTest.class.getClassLoader().setDefaultAssertionStatus(
-                true);
+        TextFieldConfigTest.class.getClassLoader().setDefaultAssertionStatus(true);
     }
 
     @SuppressWarnings("serial")
-    public void testSingleField() throws Exception {
-        final BeanFactory factory = createFactory("Field { class: org.apache.wicket.markup.html.form.TextField; }");
-        WicketTester tester = new WicketTester();
-        tester.startPage(new ITestPageSource() {
-            public Page getTestPage() {
-                return new TestPage(factory);
-            }
-        });
-
-        tester.assertComponent("component", TextField.class);
-    }
-
-    @SuppressWarnings("serial")
-    public void testGridLayout() throws Exception {
+    public void testGridLayout() throws Exception
+    {
         final BeanFactory factory = createFactory("Grid { class: GridLayout; components: Field, Field, Field, Field; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
-            public Page getTestPage() {
-                return new TestPage(factory);
+            public Page getTestPage()
+            {
+                return new TestPage("Grid", factory);
             }
         });
 
-        tester.assertComponent("component", TextField.class);
+        tester.assertComponent("component", GridLayout.class);
     }
 
-    private BeanFactory createFactory(String configStr) throws Exception {
+    private BeanFactory createFactory(String configStr) throws Exception
+    {
         File tmpFile = File.createTempFile("config", ".wwb");
         tmpFile.deleteOnExit();
         FileUtils.writeStringToFile(tmpFile, configStr);

@@ -117,6 +117,12 @@ public class BeanFactoryTest extends TestCase
         assertTrue(factory.newInstance("Bean1") instanceof Date);
     }
 
+    public void testNewInstanceUsingImports() throws Exception
+    {
+        BeanFactory factory = createBeanFactory("Bean1 { class: Date; }");
+        assertTrue(factory.newInstance("Bean1") instanceof Date);
+    }
+
     public void testNewInstanceWithParameters() throws Exception
     {
         BeanFactory factory = createBeanFactory("Bean1 { "
@@ -151,7 +157,7 @@ public class BeanFactoryTest extends TestCase
         }
         catch (RuntimeException e) {
             // Expected
-            assertTrue(e.getMessage().contains("Cannot create instance of bean"));
+            assertTrue(e.getMessage().contains("Cannot find class"));
             assertTrue(e.getMessage().contains("java.util.NotFound"));
             assertNotNull(e.getCause());
         }
