@@ -26,8 +26,10 @@ import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -151,6 +153,11 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             Object[] args;
             BeanFactory beanFactory = config.getBeanFactory();
             Class<?> componentClass = beanFactory.loadClass(config);
+            String fragmentId = FormComponent.class.isAssignableFrom(componentClass) ? "inputComponent"
+                            : "spanComponent";
+
+            Fragment fragment = new Fragment("frag", fragmentId, this);
+
             final String id = "c";
             // TODO maybe beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
             if (BeanFactoryConstructable.class.isAssignableFrom(componentClass)) {
@@ -164,8 +171,9 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            item.add(new AttributeModifier("style", true, new Model(width)));
-            item.add(component);
+            fragment.add(new AttributeModifier("style", true, new Model(width)));
+            fragment.add(component);
+            item.add(fragment);
         }
     }
 }

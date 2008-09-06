@@ -25,6 +25,7 @@ import net.sourceforge.wicketwebbeans.model.BeanFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
 
@@ -53,6 +54,10 @@ public class TextFieldConfigTest extends TestCase
         });
 
         tester.assertComponent("component", GridLayout.class);
+        tester.assertComponent("component:r:0:c:0:frag:c", TextField.class);
+        tester.assertComponent("component:r:0:c:1:frag:c", TextField.class);
+        tester.assertComponent("component:r:0:c:2:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:0:frag:c", TextField.class);
     }
 
     private BeanFactory createFactory(String configStr) throws Exception

@@ -6,11 +6,17 @@
 <table class="beanGridTable">
 <tbody>
   <tr wicket:id="r">
-    <td wicket:id="c"><span wicket:id="c"></span></td>
+    <td wicket:id="c"><div wicket:id="frag"></div></td>
   </tr>
 </tbody>
 </table>
 </div>
 </wicket:panel>
+	<wicket:fragment wicket:id="spanComponent">
+	  <span wicket:id="c"></span>
+	</wicket:fragment>
+	<wicket:fragment wicket:id="inputComponent">
+	  <input wicket:id="c" class="inputField" />
+	</wicket:fragment>
 </body>
 </html>
