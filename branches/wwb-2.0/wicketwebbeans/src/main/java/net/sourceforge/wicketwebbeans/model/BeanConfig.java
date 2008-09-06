@@ -26,103 +26,103 @@ import java.util.Map;
  * 
  * @author Dan Syrstad
  */
-public class BeanConfig implements Serializable
-{
-    private static final long serialVersionUID = -4705317346444856939L;
+public class BeanConfig implements Serializable {
+	private static final long serialVersionUID = -4705317346444856939L;
 
-    // Key is parameter name.
-    private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
-    private String beanName;
+	// Key is parameter name.
+	private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
+	private String beanName;
+	private BeanFactory beanFactory;
 
-    /**
-     * Construct a BeanConfig.
-     * 
-     * @param beanConfig
-     *            the configuration for the bean.
-     */
-    public BeanConfig(BeanConfigAST beanConfig)
-    {
-        this.beanName = beanConfig.getName();
-        for (ParameterAST paramAST : beanConfig.getParameters()) {
-            setParameter(paramAST.getName(), paramAST.getValues());
-        }
-    }
+	/**
+	 * Construct a BeanConfig.
+	 * 
+	 * @param beanFactory
+	 *            the factory creating this BeanConfig.
+	 * @param beanConfig
+	 *            the configuration for the bean.
+	 */
+	public BeanConfig(BeanFactory beanFactory, BeanConfigAST beanConfig) {
+		this.beanFactory = beanFactory;
+		this.beanName = beanConfig.getName();
+		for (ParameterAST paramAST : beanConfig.getParameters()) {
+			setParameter(paramAST.getName(), paramAST.getValues());
+		}
+	}
 
-    public String getBeanName()
-    {
-        return beanName;
-    }
+	public String getBeanName() {
+		return beanName;
+	}
 
-    public Map<String, List<ParameterValueAST>> getParameters()
-    {
-        return parameters;
-    }
+	public BeanFactory getBeanFactory() {
+		return beanFactory;
+	}
 
-    /**
-     * Gets the specified parameter's value. If the parameter has multiple
-     * values, the first value is returned.
-     * 
-     * @param parameterName
-     *            the parameter name.
-     * 
-     * @return the parameter value, or null if not set.
-     */
-    public ParameterValueAST getParameterValue(String parameterName)
-    {
-        List<ParameterValueAST> values = getParameterValues(parameterName);
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
+	public Map<String, List<ParameterValueAST>> getParameters() {
+		return parameters;
+	}
 
-        return values.get(0);
-    }
+	/**
+	 * Gets the specified parameter's value. If the parameter has multiple
+	 * values, the first value is returned.
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter value, or null if not set.
+	 */
+	public ParameterValueAST getParameterValue(String parameterName) {
+		List<ParameterValueAST> values = getParameterValues(parameterName);
+		if (values == null || values.isEmpty()) {
+			return null;
+		}
 
-    /**
-     * Gets the specified parameter's value as a String. If the parameter has
-     * multiple values, the first value is returned.
-     * 
-     * @param parameterName
-     *            the parameter name.
-     * 
-     * @return the parameter value, or null if not set.
-     */
-    public String getParameterValueAsString(String parameterName)
-    {
-        ParameterValueAST value = getParameterValue(parameterName);
-        if (value == null) {
-            return null;
-        }
+		return values.get(0);
+	}
 
-        return value.getValue();
-    }
+	/**
+	 * Gets the specified parameter's value as a String. If the parameter has
+	 * multiple values, the first value is returned.
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter value, or null if not set.
+	 */
+	public String getParameterValueAsString(String parameterName) {
+		ParameterValueAST value = getParameterValue(parameterName);
+		if (value == null) {
+			return null;
+		}
 
-    // TODO Test
-    public int getIntParameterValue(String parameterName, int defaultValue)
-    {
-        ParameterValueAST parameterValue = getParameterValue(parameterName);
-        Integer value = null;
-        if (parameterValue != null) {
-            value = parameterValue.getIntegerValue();
-        }
+		return value.getValue();
+	}
 
-        return value == null ? defaultValue : value;
-    }
+	// TODO Test
+	public int getIntParameterValue(String parameterName, int defaultValue) {
+		ParameterValueAST parameterValue = getParameterValue(parameterName);
+		Integer value = null;
+		if (parameterValue != null) {
+			value = parameterValue.getIntegerValue();
+		}
 
-    /**
-     * Gets the specified parameter's value(s).
-     * 
-     * @param parameterName
-     *            the parameter name.
-     * 
-     * @return the parameter's values, or null if not set.
-     */
-    public List<ParameterValueAST> getParameterValues(String parameterName)
-    {
-        return parameters.get(parameterName);
-    }
+		return value == null ? defaultValue : value;
+	}
 
-    public void setParameter(String parameterName, List<ParameterValueAST> values)
-    {
-        parameters.put(parameterName, values);
-    }
+	/**
+	 * Gets the specified parameter's value(s).
+	 * 
+	 * @param parameterName
+	 *            the parameter name.
+	 * 
+	 * @return the parameter's values, or null if not set.
+	 */
+	public List<ParameterValueAST> getParameterValues(String parameterName) {
+		return parameters.get(parameterName);
+	}
+
+	public void setParameter(String parameterName,
+			List<ParameterValueAST> values) {
+		parameters.put(parameterName, values);
+	}
 }

@@ -29,24 +29,23 @@ import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
 
 /**
- * Tests creating a Page with a TextField from BeanConfig. <p>
+ * Tests creating a Page with a TextField from BeanConfig.
+ * <p>
  * 
  * @author Dan Syrstad
  */
-public class TextFieldConfigTest extends TestCase
-{
+public class TextFieldConfigTest extends TestCase {
     static {
-        TextFieldConfigTest.class.getClassLoader().setDefaultAssertionStatus(true);
+        TextFieldConfigTest.class.getClassLoader().setDefaultAssertionStatus(
+                true);
     }
 
     @SuppressWarnings("serial")
-    public void testCreatePage() throws Exception
-    {
+    public void testSingleField() throws Exception {
         final BeanFactory factory = createFactory("Field { class: org.apache.wicket.markup.html.form.TextField; }");
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
-            public Page getTestPage()
-            {
+            public Page getTestPage() {
                 return new TestPage(factory);
             }
         });
@@ -54,8 +53,20 @@ public class TextFieldConfigTest extends TestCase
         tester.assertComponent("component", TextField.class);
     }
 
-    private BeanFactory createFactory(String configStr) throws Exception
-    {
+    @SuppressWarnings("serial")
+    public void testGridLayout() throws Exception {
+        final BeanFactory factory = createFactory("Grid { class: GridLayout; components: Field, Field, Field, Field; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
+        WicketTester tester = new WicketTester();
+        tester.startPage(new ITestPageSource() {
+            public Page getTestPage() {
+                return new TestPage(factory);
+            }
+        });
+
+        tester.assertComponent("component", TextField.class);
+    }
+
+    private BeanFactory createFactory(String configStr) throws Exception {
         File tmpFile = File.createTempFile("config", ".wwb");
         tmpFile.deleteOnExit();
         FileUtils.writeStringToFile(tmpFile, configStr);

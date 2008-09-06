@@ -35,6 +35,8 @@ default to the "ROOT" component.
 Component0 {
 	class: TabbedLayout; # or component: for a pre-defined component - inherits those parameters and extends them.
 	components: Component1 { label: "First Tab" }, Component4 { label: "Second Tab", displayed: someBooleanProp };
+----> Shouldn't you be able to have a combination of properties and components? Properties could be literal strings
+and components values
 }
 
 Component1 {
