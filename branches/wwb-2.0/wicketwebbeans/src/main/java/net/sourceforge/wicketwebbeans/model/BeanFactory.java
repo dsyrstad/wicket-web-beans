@@ -41,7 +41,8 @@ import org.apache.commons.lang.ClassUtils;
  * 
  * @author Dan Syrstad
  */
-public class BeanFactory {
+public class BeanFactory
+{
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
 
@@ -50,16 +51,35 @@ public class BeanFactory {
 
     /** Maps bean name to BeanConfig. */
     private Map<String, BeanConfig> beanConfigMap = new HashMap<String, BeanConfig>();
-    private String[] packageImports = { "", "java.lang", "java.util",
-            "net.sourceforge.wicketwebbeans",
-            "net.sourceforge.wicketwebbeans.model",
-            "net.sourceforge.wicketwebbeans.fields",
-            "net.sourceforge.wicketwebbeans.containers",
-            "net.sourceforge.wicketwebbeans.actions",
-    //
+    private String[] packageImports = {
+        "",
+        "java.lang.",
+        "java.util.",
+        "net.sourceforge.wicketwebbeans.",
+        "net.sourceforge.wicketwebbeans.model.",
+        "net.sourceforge.wicketwebbeans.fields.",
+        "net.sourceforge.wicketwebbeans.containers.",
+        "net.sourceforge.wicketwebbeans.actions.",
+    // 
     };
 
-    public BeanFactory() {
+    public BeanFactory()
+    {
+    }
+
+    public String[] getPackageImports()
+    {
+        return packageImports;
+    }
+
+    /**
+     * Sets the default package imports that make it easier to specify class names in config files.
+     *
+     * @param packageImports an array of package names. If a package name is not blank, it should end in "." - e.g., "java.util.".
+     */
+    public void setPackageImports(String[] packageImports)
+    {
+        this.packageImports = packageImports;
     }
 
     /**
@@ -67,14 +87,16 @@ public class BeanFactory {
      * 
      * @return this instance for method chaining convenience.
      */
-    public BeanFactory loadBeanConfig(URL url) {
+    public BeanFactory loadBeanConfig(URL url)
+    {
         assert url != null;
 
         long timestamp = 0;
         if (url.getProtocol().equals("file")) {
             try {
                 timestamp = new File(url.toURI()).lastModified();
-            } catch (URISyntaxException e) {
+            }
+            catch (URISyntaxException e) {
                 timestamp = -1;
             }
         }
@@ -84,14 +106,14 @@ public class BeanFactory {
             InputStream inStream = null;
             try {
                 inStream = url.openStream();
-                List<BeanConfigAST> asts = new BeanConfigParser(url.toString(),
-                        inStream).parse();
+                List<BeanConfigAST> asts = new BeanConfigParser(url.toString(), inStream).parse();
                 cachedConfig = new CachedBeanConfigs(asts, timestamp);
                 cachedBeanConfigs.put(url, cachedConfig);
-            } catch (IOException e) {
-                throw new RuntimeException("Error reading stream for URL: "
-                        + url, e);
-            } finally {
+            }
+            catch (IOException e) {
+                throw new RuntimeException("Error reading stream for URL: " + url, e);
+            }
+            finally {
                 IOUtils.closeQuietly(inStream);
             }
         }
@@ -103,21 +125,18 @@ public class BeanFactory {
         return this;
     }
 
-    private void processBean(URL url, BeanConfigAST beanConfigAst) {
+    private void processBean(URL url, BeanConfigAST beanConfigAst)
+    {
         BeanConfig beanConfig = new BeanConfig(this, beanConfigAst);
         String beanName = beanConfigAst.getName();
-        ParameterValueAST classValue = beanConfig
-                .getParameterValue(PARAMETER_NAME_CLASS);
-        ParameterValueAST extendsValue = beanConfig
-                .getParameterValue(PARAMETER_NAME_EXTENDS);
+        ParameterValueAST classValue = beanConfig.getParameterValue(PARAMETER_NAME_CLASS);
+        ParameterValueAST extendsValue = beanConfig.getParameterValue(PARAMETER_NAME_EXTENDS);
         if (classValue == null && extendsValue == null) {
-            throw new RuntimeException("Bean " + beanName + " in URL " + url
-                    + " must specify class or extends");
+            throw new RuntimeException("Bean " + beanName + " in URL " + url + " must specify class or extends");
         }
 
         if (classValue != null && extendsValue != null) {
-            throw new RuntimeException("Bean " + beanName + " in URL " + url
-                    + " cannot specify both class and extends");
+            throw new RuntimeException("Bean " + beanName + " in URL " + url + " cannot specify both class and extends");
         }
 
         beanConfigMap.put(beanName, beanConfig);
@@ -133,22 +152,47 @@ public class BeanFactory {
      * 
      * @return the newly created bean.
      */
-    public Object newInstance(String beanName, Object... args) {
+    public Object newInstance(String beanName, Object... args)
+    {
         BeanConfig beanConfig = getBeanConfig(beanName);
         if (beanConfig == null) {
-            throw new RuntimeException("Bean " + beanName
-                    + " not defined in factory");
+            throw new RuntimeException("Bean " + beanName + " not defined in factory");
         }
 
-        String beanClassName = beanConfig
-                .getParameterValueAsString(PARAMETER_NAME_CLASS);
+        Class<?> beanClass = loadClass(beanConfig);
+
+        String beanClassName = beanClass.getName();
+
+        Object bean;
+        try {
+            // TODO This does not handle null arguments. Need to find matching
+            // constructor like EnerJ
+            bean = ConstructorUtils.invokeConstructor(beanClass, args);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Cannot create instance of bean '" + beanName + "' class: " + beanClassName, e);
+        }
+
+        setBeanProperties(beanConfig, bean, beanClassName);
+
+        return bean;
+    }
+
+    /**
+     * Loads the class for the given BeanConfig. Throws a RuntimeException if the class cannot be found.
+     */
+    // TODO Test
+    public Class<?> loadClass(BeanConfig beanConfig)
+    {
+        String beanClassName = beanConfig.getParameterValueAsString(PARAMETER_NAME_CLASS);
         Class<?> beanClass = null;
         Exception firstException = null;
         for (String packageImport : packageImports) {
             try {
-                beanClass = Class.forName(beanClassName);
+                beanClass = Class.forName(packageImport + beanClassName);
                 break;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 if (firstException == null) {
                     firstException = e;
                 }
@@ -156,97 +200,96 @@ public class BeanFactory {
         }
 
         if (beanClass == null) {
-            throw new RuntimeException("Cannot find class " + beanClassName,
-                    firstException);
+            throw new RuntimeException("Cannot find class " + beanClassName, firstException);
         }
 
-        Object bean;
-        try {
-            // TODO This does not handle null arguments. Need to find matching
-            // constructor like EnerJ
-            bean = ConstructorUtils.invokeConstructor(beanClass, args);
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot create instance of bean '"
-                    + beanName + "' class: " + beanClassName, e);
-        }
+        return beanClass;
+    }
 
-        for (Map.Entry<String, List<ParameterValueAST>> parameter : beanConfig
-                .getParameters().entrySet()) {
+    private void setBeanProperties(BeanConfig beanConfig, Object bean, String beanClassName)
+    {
+        String beanName = beanConfig.getBeanName();
+
+        for (Map.Entry<String, List<ParameterValueAST>> parameter : beanConfig.getParameters().entrySet()) {
             String parameterName = parameter.getKey();
-            if (parameterName.equals(PARAMETER_NAME_CLASS)
-                    || parameterName.equals(PARAMETER_NAME_EXTENDS)) {
+            if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)) {
                 continue;
             }
 
             PropertyDescriptor propertyDescriptor;
             try {
-                propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean,
-                        parameterName);
-            } catch (Exception e) {
-                throw new RuntimeException("Cannot find property "
-                        + parameterName + " for bean '" + beanName
-                        + "' class: " + beanClassName, e);
+                propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName, e);
             }
 
             if (propertyDescriptor == null) {
-                throw new RuntimeException("Cannot find property "
-                        + parameterName + " for bean '" + beanName
-                        + "' class: " + beanClassName);
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName);
             }
 
             Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
-                throw new RuntimeException("Property " + parameterName
-                        + " for bean '" + beanName + "' class " + beanClassName
-                        + " does not have an exposed setter");
+                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
+                                + beanClassName + " does not have an exposed setter");
             }
 
-            Object value;
             List<ParameterValueAST> values = parameter.getValue();
             // TODO need a convertTo on ParameterValueAST and test that.
+            Object value;
             if (values.isEmpty()) {
                 value = null;
-            } else {
+            }
+            else {
                 ParameterValueAST valueAst = values.get(0);
                 Class<?> propertyType = propertyDescriptor.getPropertyType();
                 propertyType = ClassUtils.primitiveToWrapper(propertyType);
                 if (Double.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getDoubleValue();
-                } else if (Float.class.isAssignableFrom(propertyType)) {
+                }
+                else if (Float.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getDoubleValue().floatValue();
-                } else if (Long.class.isAssignableFrom(propertyType)) {
+                }
+                else if (Long.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getLongValue();
-                } else if (Integer.class.isAssignableFrom(propertyType)) {
+                }
+                else if (Integer.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getIntegerValue();
-                } else if (Short.class.isAssignableFrom(propertyType)) {
+                }
+                else if (Short.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getIntegerValue().shortValue();
-                } else if (Boolean.class.isAssignableFrom(propertyType)) {
+                }
+                else if (Boolean.class.isAssignableFrom(propertyType)) {
                     value = Boolean.valueOf(valueAst.getBooleanValue());
-                } else if (propertyType.equals(String.class)) {
+                }
+                // TODO Test
+                else if (List.class.isAssignableFrom(propertyType)) {
+                    value = values;
+                }
+                else if (propertyType.equals(String.class)) {
                     value = valueAst.getValue();
-                } else {
-                    throw new RuntimeException("Property type " + propertyType
-                            + " on property " + parameterName + " for bean '"
-                            + beanName + "' class " + beanClassName
-                            + " is not supported");
+                }
+                else {
+                    throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
+                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
                 }
             }
 
             try {
                 writeMethod.invoke(bean, value);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Throwable t = e;
                 if (e instanceof InvocationTargetException) {
                     t = e.getCause();
                 }
 
-                throw new RuntimeException("Error setting property "
-                        + parameterName + " for bean '" + beanName + "' class "
-                        + beanClassName, t);
+                throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
+                                + "' class " + beanClassName, t);
             }
         }
-
-        return bean;
     }
 
     /**
@@ -257,29 +300,35 @@ public class BeanFactory {
      * 
      * @return the BeanConfig for beanName, or null if beanName is not defined.
      */
-    public BeanConfig getBeanConfig(String beanName) {
+    public BeanConfig getBeanConfig(String beanName)
+    {
         BeanConfig beanConfig = beanConfigMap.get(beanName);
         return beanConfig;
     }
+
 
     /**
      * A Cached Bean config file.
      */
     @SuppressWarnings("serial")
-    private static final class CachedBeanConfigs implements Serializable {
+    private static final class CachedBeanConfigs implements Serializable
+    {
         private List<BeanConfigAST> asts;
         private long modTimestamp;
 
-        CachedBeanConfigs(List<BeanConfigAST> asts, long modTimestamp) {
+        CachedBeanConfigs(List<BeanConfigAST> asts, long modTimestamp)
+        {
             this.asts = asts;
             this.modTimestamp = modTimestamp;
         }
 
-        List<BeanConfigAST> getAsts() {
+        List<BeanConfigAST> getAsts()
+        {
             return asts;
         }
 
-        long getModTimestamp() {
+        long getModTimestamp()
+        {
             return modTimestamp;
         }
     }
