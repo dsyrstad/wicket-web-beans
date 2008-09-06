@@ -25,8 +25,6 @@ import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -51,8 +49,8 @@ public class GridLayout extends Panel {
 	private static final String PARAM_COMPONENTS = "components";
 
 	private Object bean;
-	private boolean showLabels;
 	private int columns;
+	private List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
 
 	/**
 	 * Construct a new BeanGridPanel.
@@ -63,9 +61,9 @@ public class GridLayout extends Panel {
 	 *            the bean to be displayed. This may be an IModel or regular
 	 *            bean object.
 	 * @param beanConfig
-	 *            the bean config for this component.
+	 *            the {@link BeanConfig} for this component.
 	 */
-	public GridLayout(String id, final Object bean, final BeanConfig beanConfig) {
+	public GridLayout(String id, final Object bean, BeanConfig beanConfig) {
 		super(id);
 
 		this.bean = bean;
@@ -84,26 +82,20 @@ public class GridLayout extends Panel {
 		List<ParameterValueAST> components = beanConfig
 				.getParameterValues(PARAM_COMPONENTS);
 		if (components != null) {
-			// Bean config must load all bean configs or somehow register them
-			// maybe a separate "mount" or load url that loads them into a
-			// registry of
-			// beanconfigs, then the context/registry only needs to be passed
-			// around. Or i'd be cool if it were discoverable via a custom
-			// RequestCycle handler - e.g., a ThreadLocal is set with it.
-			// or it's session/application assoc. Application has "setMetaData"
-			// So does RequestCycle, but what does that mean? Does it last for the 
-			// request or session?
+			for (ParameterValueAST componentParam : components) {
+				String componentName = componentParam.getValue();
+				BeanConfig componentConfig = beanConfig.getBeanFactory()
+						.getBeanConfig(componentName);
+				gridComponents.add(componentConfig);
+			}
 		}
 
-		getPage().getApplication().setMetaData(key, object);
-		getRequestCycle().setMetaData(key, object)
-
 		// Break out the rows and columns ahead of time.
-		List<List<ElementMetaData>> rowsAndCols = new ArrayList<List<ElementMetaData>>();
+		List<List<BeanConfig>> rowsAndCols = new ArrayList<List<BeanConfig>>();
 		int colPos = 0;
-		List<ElementMetaData> currRow = null;
-		for (ElementMetaData element : displayedProperties) {
-			int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
+		List<BeanConfig> currRow = null;
+		for (BeanConfig component : gridComponents) {
+			int colspan = component.getIntParameterValue(PARAM_COLSPAN, 1);
 			if (colspan < 1 || colspan > columns) {
 				throw new RuntimeException("Invalid colspan parameter value: "
 						+ colspan);
@@ -115,11 +107,11 @@ public class GridLayout extends Panel {
 			}
 
 			if (colPos == 0) {
-				currRow = new ArrayList<ElementMetaData>();
+				currRow = new ArrayList<BeanConfig>();
 				rowsAndCols.add(currRow);
 			}
 
-			currRow.add(element);
+			currRow.add(component);
 			colPos += colspan;
 			if (colPos >= columns) {
 				colPos = 0;
@@ -139,45 +131,34 @@ public class GridLayout extends Panel {
 	}
 
 	private final class RowListView extends ListView {
+		private static final long serialVersionUID = 2709967037379449675L;
 
 		RowListView(String id, IModel model) {
 			super(id, model);
 		}
 
+		@SuppressWarnings("unchecked")
 		protected void populateItem(ListItem item) {
-			List<ElementMetaData> columns = (List<ElementMetaData>) item
-					.getModelObject();
-
+			List<BeanConfig> columns = (List<BeanConfig>) item.getModelObject();
 			item.add(new ColListView("c", new Model((Serializable) columns)));
 		}
 	}
 
 	private final class ColListView extends ListView {
+		private static final long serialVersionUID = -1956048113471004675L;
+
 		ColListView(String id, IModel model) {
 			super(id, model);
 		}
 
 		protected void populateItem(ListItem item) {
-			ElementMetaData element = (ElementMetaData) item.getModelObject();
-			int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
+			BeanConfig config = (BeanConfig) item.getModelObject();
+			int colspan = config.getIntParameterValue(PARAM_COLSPAN, 1);
 
-			Component component;
-			if (element.isAction()) {
-				Form form = (Form) findParent(Form.class);
-				component = new BeanActionButton("c", element, form, bean);
-				item.add(new SimpleAttributeModifier("class",
-						"beanActionButtonCell"));
-			} else {
-				component = beanMetaData.getComponentRegistry().getComponent(
-						bean, "c", element);
-				if (!(component instanceof UnlabeledField) && showLabels) {
-					component = new LabeledField("c", element
-							.getLabelComponent("l"), component);
-				}
-			}
-
-			beanMetaData.applyCss(bean, element, component);
-
+			Component component = (Component) config.getBeanFactory()
+					.newInstance(config.getBeanName(), "c");
+			// TODO pass bean and config if component implements a certain
+			// interface
 			item.add(new AttributeModifier(PARAM_COLSPAN, true, new Model(
 					String.valueOf(colspan))));
 			int pct100 = (colspan * 10000) / columns;
