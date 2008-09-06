@@ -1,0 +1,14 @@
+Root { 
+	class: GridLayout;
+	components: Field, Field, Field, Field, SubGrid;
+}
+
+SubGrid {
+	class: GridLayout;
+	components: Field, Field, Field, Field, Field, Field;
+}
+
+Field {
+	class: org.apache.wicket.markup.html.form.TextField;
+}
+
