@@ -81,8 +81,10 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
         List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
         if (components != null) {
             for (ParameterValueAST componentParam : components) {
+                // TODO should be refactored to common code. This will eventually handle properties/ComponentRegistry
                 String componentName = componentParam.getValue();
                 BeanConfig componentConfig = beanFactory.getBeanConfig(componentName);
+                componentConfig.setParameters(componentParam.getSubParameters());
                 gridComponents.add(componentConfig);
             }
         }
@@ -148,7 +150,7 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
         protected void populateItem(ListItem item)
         {
             BeanConfig config = (BeanConfig)item.getModelObject();
-            int colspan = 1; // TODO check component property - see above, was: config.getIntParameterValue(PARAM_COLSPAN, 1);
+            int colspan = 1; // TODO check config param - see above, was: config.getIntParameterValue(PARAM_COLSPAN, 1);
 
             Object[] args;
             BeanFactory beanFactory = config.getBeanFactory();
@@ -160,8 +162,6 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
 
             final String id = "c";
             // TODO beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
-            // TODO handle wicket setters that don't return void. Handle IModel parameter type and construct a model for literal values
-            // TODO and a BeanPropertyModel for properties.
             if (BeanFactoryConstructable.class.isAssignableFrom(componentClass)) {
                 args = new Object[] { id, beanFactory };
             }
@@ -169,11 +169,11 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
                 args = new Object[] { id };
             }
 
-            Component component = (Component)beanFactory.newInstance(config.getBeanName(), args);
+            Component component = (Component)beanFactory.newInstance(config, args);
             item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            fragment.add(new AttributeModifier("style", true, new Model(width)));
+            // TODO Don't do this here. fragment.add(new AttributeModifier("style", true, new Model(width)));
             fragment.add(component);
             item.add(fragment);
         }

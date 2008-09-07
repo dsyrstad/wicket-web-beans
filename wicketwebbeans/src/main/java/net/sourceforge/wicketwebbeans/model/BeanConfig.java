@@ -17,6 +17,7 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,103 +27,134 @@ import java.util.Map;
  * 
  * @author Dan Syrstad
  */
-public class BeanConfig implements Serializable {
-	private static final long serialVersionUID = -4705317346444856939L;
+public class BeanConfig implements Serializable, Cloneable
+{
+    private static final long serialVersionUID = -4705317346444856939L;
 
-	// Key is parameter name.
-	private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
-	private String beanName;
-	private BeanFactory beanFactory;
+    // Key is parameter name.
+    private Map<String, List<ParameterValueAST>> parameters = new LinkedHashMap<String, List<ParameterValueAST>>();
+    private String beanName;
+    private BeanFactory beanFactory;
 
-	/**
-	 * Construct a BeanConfig.
-	 * 
-	 * @param beanFactory
-	 *            the factory creating this BeanConfig.
-	 * @param beanConfig
-	 *            the configuration for the bean.
-	 */
-	public BeanConfig(BeanFactory beanFactory, BeanConfigAST beanConfig) {
-		this.beanFactory = beanFactory;
-		this.beanName = beanConfig.getName();
-		for (ParameterAST paramAST : beanConfig.getParameters()) {
-			setParameter(paramAST.getName(), paramAST.getValues());
-		}
-	}
+    /**
+     * Construct a BeanConfig.
+     * 
+     * @param beanFactory
+     *            the factory creating this BeanConfig.
+     * @param beanConfig
+     *            the configuration for the bean.
+     */
+    public BeanConfig(BeanFactory beanFactory, BeanConfigAST beanConfig)
+    {
+        this.beanFactory = beanFactory;
+        this.beanName = beanConfig.getName();
+        setParameters(beanConfig.getParameters());
+    }
 
-	public String getBeanName() {
-		return beanName;
-	}
+    public String getBeanName()
+    {
+        return beanName;
+    }
 
-	public BeanFactory getBeanFactory() {
-		return beanFactory;
-	}
+    public BeanFactory getBeanFactory()
+    {
+        return beanFactory;
+    }
 
-	public Map<String, List<ParameterValueAST>> getParameters() {
-		return parameters;
-	}
+    public Map<String, List<ParameterValueAST>> getParameters()
+    {
+        return parameters;
+    }
 
-	/**
-	 * Gets the specified parameter's value. If the parameter has multiple
-	 * values, the first value is returned.
-	 * 
-	 * @param parameterName
-	 *            the parameter name.
-	 * 
-	 * @return the parameter value, or null if not set.
-	 */
-	public ParameterValueAST getParameterValue(String parameterName) {
-		List<ParameterValueAST> values = getParameterValues(parameterName);
-		if (values == null || values.isEmpty()) {
-			return null;
-		}
+    /**
+     * Gets the specified parameter's value. If the parameter has multiple
+     * values, the first value is returned.
+     * 
+     * @param parameterName
+     *            the parameter name.
+     * 
+     * @return the parameter value, or null if not set.
+     */
+    public ParameterValueAST getParameterValue(String parameterName)
+    {
+        List<ParameterValueAST> values = getParameterValues(parameterName);
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
 
-		return values.get(0);
-	}
+        return values.get(0);
+    }
 
-	/**
-	 * Gets the specified parameter's value as a String. If the parameter has
-	 * multiple values, the first value is returned.
-	 * 
-	 * @param parameterName
-	 *            the parameter name.
-	 * 
-	 * @return the parameter value, or null if not set.
-	 */
-	public String getParameterValueAsString(String parameterName) {
-		ParameterValueAST value = getParameterValue(parameterName);
-		if (value == null) {
-			return null;
-		}
+    /**
+     * Gets the specified parameter's value as a String. If the parameter has
+     * multiple values, the first value is returned.
+     * 
+     * @param parameterName
+     *            the parameter name.
+     * 
+     * @return the parameter value, or null if not set.
+     */
+    public String getParameterValueAsString(String parameterName)
+    {
+        ParameterValueAST value = getParameterValue(parameterName);
+        if (value == null) {
+            return null;
+        }
 
-		return value.getValue();
-	}
+        return value.getValue();
+    }
 
-	// TODO Test
-	public int getIntParameterValue(String parameterName, int defaultValue) {
-		ParameterValueAST parameterValue = getParameterValue(parameterName);
-		Integer value = null;
-		if (parameterValue != null) {
-			value = parameterValue.getIntegerValue();
-		}
+    // TODO Test
+    public int getIntParameterValue(String parameterName, int defaultValue)
+    {
+        ParameterValueAST parameterValue = getParameterValue(parameterName);
+        Integer value = null;
+        if (parameterValue != null) {
+            value = parameterValue.getIntegerValue();
+        }
 
-		return value == null ? defaultValue : value;
-	}
+        return value == null ? defaultValue : value;
+    }
 
-	/**
-	 * Gets the specified parameter's value(s).
-	 * 
-	 * @param parameterName
-	 *            the parameter name.
-	 * 
-	 * @return the parameter's values, or null if not set.
-	 */
-	public List<ParameterValueAST> getParameterValues(String parameterName) {
-		return parameters.get(parameterName);
-	}
+    /**
+     * Gets the specified parameter's value(s).
+     * 
+     * @param parameterName
+     *            the parameter name.
+     * 
+     * @return the parameter's values, or null if not set.
+     */
+    public List<ParameterValueAST> getParameterValues(String parameterName)
+    {
+        return parameters.get(parameterName);
+    }
 
-	public void setParameter(String parameterName,
-			List<ParameterValueAST> values) {
-		parameters.put(parameterName, values);
-	}
+    public void setParameter(String parameterName, List<ParameterValueAST> values)
+    {
+        parameters.put(parameterName, values);
+    }
+
+    // TODO Test
+    public void setParameters(Collection<ParameterAST> parameters)
+    {
+        for (ParameterAST parameter : parameters) {
+            setParameter(parameter.getName(), parameter.getValues());
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public BeanConfig clone()
+    {
+        try {
+            BeanConfig clone = (BeanConfig)super.clone();
+            clone.parameters = (Map<String, List<ParameterValueAST>>)((LinkedHashMap<String, List<ParameterValueAST>>)parameters)
+                            .clone();
+            return clone;
+        }
+        catch (CloneNotSupportedException e) {
+            // Should never happen
+            throw new IllegalStateException(e);
+        }
+    }
 }

@@ -86,7 +86,7 @@
 	font-weight: bold;
 }
 
-.beanGridPanel { /* For Top-most bean panels */
+.wwbGridLayout { /* For Top-most bean panels */
 	clear: both;
 	padding: 5px 5px 5px 5px;
 	border: 1px solid #a3bed8;
@@ -94,7 +94,7 @@
 	overflow: auto;
 }
 
-.beanGridTable {
+.wwbGridLayoutTable {
 	width: 100%;
 }
 

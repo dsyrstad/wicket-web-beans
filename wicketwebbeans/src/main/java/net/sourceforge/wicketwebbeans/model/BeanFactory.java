@@ -34,6 +34,8 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 /**
  * Loads bean config files and creates new instances of named beans.
@@ -159,8 +161,23 @@ public class BeanFactory
             throw new RuntimeException("Bean " + beanName + " not defined in factory");
         }
 
-        Class<?> beanClass = loadClass(beanConfig);
+        return newInstance(beanConfig, args);
+    }
 
+    /**
+     * Creates a new instance of the specified bean.
+     * 
+     * @param beanConfig
+     *            the bean's config.
+     * @param args
+     *            optional arguments for the constructor.
+     * 
+     * @return the newly created bean.
+     * TODO Test
+     */
+    public Object newInstance(BeanConfig beanConfig, Object... args)
+    {
+        Class<?> beanClass = loadClass(beanConfig);
         String beanClassName = beanClass.getName();
 
         Object bean;
@@ -170,10 +187,11 @@ public class BeanFactory
             bean = ConstructorUtils.invokeConstructor(beanClass, args);
         }
         catch (Exception e) {
-            throw new RuntimeException("Cannot create instance of bean '" + beanName + "' class: " + beanClassName, e);
+            throw new RuntimeException("Cannot create instance of bean '" + beanConfig.getBeanName() + "' class: "
+                            + beanClassName, e);
         }
 
-        setBeanProperties(beanConfig, bean, beanClassName);
+        setBeanProperties(beanConfig, bean, beanClass);
 
         return bean;
     }
@@ -206,9 +224,10 @@ public class BeanFactory
         return beanClass;
     }
 
-    private void setBeanProperties(BeanConfig beanConfig, Object bean, String beanClassName)
+    private void setBeanProperties(BeanConfig beanConfig, Object bean, Class<?> beanClass)
     {
         String beanName = beanConfig.getBeanName();
+        String beanClassName = beanClass.getName();
 
         for (Map.Entry<String, List<ParameterValueAST>> parameter : beanConfig.getParameters().entrySet()) {
             String parameterName = parameter.getKey();
@@ -230,10 +249,25 @@ public class BeanFactory
                                 + "' class: " + beanClassName);
             }
 
+            Class<?> propertyType = propertyDescriptor.getPropertyType();
             Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
-                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
-                                + beanClassName + " does not have an exposed setter");
+                // Try to find a setter with a return value. This is common in Wicket for builder patterns.
+                // TODO Test
+                String setterName = "set"
+                                + (parameterName.length() > 1 ? Character.toUpperCase(parameterName.charAt(0))
+                                                + parameterName.substring(1) : parameterName.toUpperCase());
+                try {
+                    writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
+                }
+                catch (NoSuchMethodException e) {
+                    // Handled below.
+                }
+
+                if (writeMethod == null) {
+                    throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
+                                    + beanClassName + " does not have an exposed setter");
+                }
             }
 
             List<ParameterValueAST> values = parameter.getValue();
@@ -244,7 +278,6 @@ public class BeanFactory
             }
             else {
                 ParameterValueAST valueAst = values.get(0);
-                Class<?> propertyType = propertyDescriptor.getPropertyType();
                 propertyType = ClassUtils.primitiveToWrapper(propertyType);
                 if (Double.class.isAssignableFrom(propertyType)) {
                     value = valueAst.getDoubleValue();
@@ -267,6 +300,11 @@ public class BeanFactory
                 // TODO Test
                 else if (List.class.isAssignableFrom(propertyType)) {
                     value = values;
+                }
+                // TODO Test
+                else if (IModel.class.isAssignableFrom(propertyType)) {
+                    // TODO Check if this is a property.
+                    value = new Model(values.get(0).getValue());
                 }
                 else if (propertyType.equals(String.class)) {
                     value = valueAst.getValue();
@@ -298,12 +336,12 @@ public class BeanFactory
      * @param beanName
      *            the bean's name as defined in the bean configuration.
      * 
-     * @return the BeanConfig for beanName, or null if beanName is not defined.
+     * @return the BeanConfig for beanName, or null if beanName is not defined. The returned BeanConfig is a new cloned instance so it
+     *  may be modified if desired.
      */
     public BeanConfig getBeanConfig(String beanName)
     {
-        BeanConfig beanConfig = beanConfigMap.get(beanName);
-        return beanConfig;
+        return beanConfigMap.get(beanName).clone();
     }
 
 
