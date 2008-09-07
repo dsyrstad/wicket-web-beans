@@ -1,6 +1,6 @@
 Root { 
 	class: GridLayout;
-	components: Field, Field, Field, Field, SubGrid;
+	components: Field, Field, Field { model: "text" }, Field, SubGrid, Label, Label { model: "A Label" }, Label { model: "Another Label" };
 }
 
 SubGrid {
@@ -12,3 +12,7 @@ Field {
 	class: org.apache.wicket.markup.html.form.TextField;
 }
 
+
+Label {
+	class: org.apache.wicket.markup.html.basic.Label;
+}
