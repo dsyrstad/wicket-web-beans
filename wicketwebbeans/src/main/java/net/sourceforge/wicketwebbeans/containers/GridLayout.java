@@ -159,7 +159,9 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             Fragment fragment = new Fragment("frag", fragmentId, this);
 
             final String id = "c";
-            // TODO maybe beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
+            // TODO beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
+            // TODO handle wicket setters that don't return void. Handle IModel parameter type and construct a model for literal values
+            // TODO and a BeanPropertyModel for properties.
             if (BeanFactoryConstructable.class.isAssignableFrom(componentClass)) {
                 args = new Object[] { id, beanFactory };
             }
