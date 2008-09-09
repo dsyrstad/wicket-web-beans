@@ -1,6 +1,7 @@
 Root { 
 	class: GridLayout;
-	components: Field, Field, Field { model: "text" }, Field, SubGrid, Label, Label { model: "A Label" }, Label { model: "Another Label" };
+	components: Field, Field, Field { model: "text" }, Field, SubGrid, Label, 
+	Label { model: "A Label" }, Label { model: "Another Label" }, Label { model: DateBean };
 }
 
 SubGrid {
@@ -16,3 +17,5 @@ Field {
 Label {
 	class: org.apache.wicket.markup.html.basic.Label;
 }
+
+DateBean { class: Date; }

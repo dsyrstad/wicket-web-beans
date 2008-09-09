@@ -83,8 +83,12 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             for (ParameterValueAST componentParam : components) {
                 // TODO should be refactored to common code. This will eventually handle properties/ComponentRegistry
                 String componentName = componentParam.getValue();
-                BeanConfig componentConfig = beanFactory.getBeanConfig(componentName);
-                componentConfig.setParameters(componentParam.getSubParameters());
+                BeanConfig componentConfig = beanFactory
+                                .getBeanConfig(componentName, componentParam.getSubParameters());
+                if (componentConfig == null) {
+                    throw new RuntimeException("Cannot find bean named " + componentName);
+                }
+
                 gridComponents.add(componentConfig);
             }
         }

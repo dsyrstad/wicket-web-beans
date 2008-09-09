@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,7 +305,25 @@ public class BeanFactory
                 // TODO Test
                 else if (IModel.class.isAssignableFrom(propertyType)) {
                     // TODO Check if this is a property.
-                    value = new Model(values.get(0).getValue());
+                    if (valueAst.isLiteral()) {
+                        value = new Model(valueAst.getValue());
+                    }
+                    else {
+                        String name = valueAst.getValue();
+                        if (name.startsWith("$")) {
+                            // TODO Property
+                            value = "TODO";
+                        }
+                        else {
+                            // Component name
+                            BeanConfig subBean = getBeanConfig(name, valueAst.getSubParameters());
+                            if (subBean == null) {
+                                throw new RuntimeException("Cannot find bean named " + name);
+                            }
+
+                            value = new Model((Serializable)newInstance(subBean));
+                        }
+                    }
                 }
                 else if (propertyType.equals(String.class)) {
                     value = valueAst.getValue();
@@ -342,6 +361,24 @@ public class BeanFactory
     public BeanConfig getBeanConfig(String beanName)
     {
         return beanConfigMap.get(beanName).clone();
+    }
+
+    /**
+     * Gets the BeanConfig for the specified bean name and overrides it withj the specified parameters.
+     * 
+     * @param beanName
+     *            the bean's name as defined in the bean configuration.
+     * @param overrideParameters some parameters to override the bean configuration.
+     * 
+     * @return the BeanConfig for beanName, or null if beanName is not defined. The returned BeanConfig is a new cloned instance so it
+     *  may be modified if desired.
+     *  TODO test
+     */
+    public BeanConfig getBeanConfig(String beanName, Collection<ParameterAST> overrideParameters)
+    {
+        BeanConfig config = beanConfigMap.get(beanName).clone();
+        config.setParameters(overrideParameters);
+        return config;
     }
 
 
