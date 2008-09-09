@@ -18,7 +18,6 @@ package net.sourceforge.wicketwebbeans.model;
 
 import java.util.List;
 
-
 /**
  * Parameter AST for BeanConfigParser. <p>
  * 
@@ -29,7 +28,7 @@ public class ParameterAST
     private String name;
     private List<ParameterValueAST> values;
 
-    ParameterAST(String name, List<ParameterValueAST> values)
+    public ParameterAST(String name, List<ParameterValueAST> values)
     {
         this.name = name;
         this.values = values;
@@ -51,7 +50,7 @@ public class ParameterAST
         for (int i = 0; i < stringValues.length; i++) {
             stringValues[i] = values.get(i).getValue();
         }
-        
+
         return stringValues;
     }
 }
