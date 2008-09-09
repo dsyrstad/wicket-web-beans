@@ -174,7 +174,6 @@ public class BeanFactory
      *            optional arguments for the constructor.
      * 
      * @return the newly created bean.
-     * TODO Test
      */
     public Object newInstance(BeanConfig beanConfig, Object... args)
     {
@@ -200,7 +199,6 @@ public class BeanFactory
     /**
      * Loads the class for the given BeanConfig. Throws a RuntimeException if the class cannot be found.
      */
-    // TODO Test
     public Class<?> loadClass(BeanConfig beanConfig)
     {
         String beanClassName = beanConfig.getParameterValueAsString(PARAMETER_NAME_CLASS);
@@ -272,7 +270,6 @@ public class BeanFactory
             }
 
             List<ParameterValueAST> values = parameter.getValue();
-            // TODO need a convertTo on ParameterValueAST and test that.
             Object value;
             if (values.isEmpty()) {
                 value = null;
@@ -304,7 +301,6 @@ public class BeanFactory
                 }
                 // TODO Test
                 else if (IModel.class.isAssignableFrom(propertyType)) {
-                    // TODO Check if this is a property.
                     if (valueAst.isLiteral()) {
                         value = new Model(valueAst.getValue());
                     }
@@ -360,11 +356,12 @@ public class BeanFactory
      */
     public BeanConfig getBeanConfig(String beanName)
     {
-        return beanConfigMap.get(beanName).clone();
+        BeanConfig config = beanConfigMap.get(beanName);
+        return config == null ? null : config.clone();
     }
 
     /**
-     * Gets the BeanConfig for the specified bean name and overrides it withj the specified parameters.
+     * Gets the BeanConfig for the specified bean name and overrides it with the specified parameters.
      * 
      * @param beanName
      *            the bean's name as defined in the bean configuration.
@@ -372,12 +369,15 @@ public class BeanFactory
      * 
      * @return the BeanConfig for beanName, or null if beanName is not defined. The returned BeanConfig is a new cloned instance so it
      *  may be modified if desired.
-     *  TODO test
      */
     public BeanConfig getBeanConfig(String beanName, Collection<ParameterAST> overrideParameters)
     {
-        BeanConfig config = beanConfigMap.get(beanName).clone();
-        config.setParameters(overrideParameters);
+        BeanConfig config = beanConfigMap.get(beanName);
+        if (config != null) {
+            config = config.clone();
+            config.setParameters(overrideParameters);
+        }
+
         return config;
     }
 

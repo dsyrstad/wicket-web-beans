@@ -19,10 +19,16 @@ package net.sourceforge.wicketwebbeans.model.config;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
+import net.sourceforge.wicketwebbeans.model.ParameterAST;
+import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.commons.io.FileUtils;
 
@@ -45,6 +51,33 @@ public class BeanFactoryTest extends TestCase
         assertNull(factory.getBeanConfig("X"));
     }
 
+    public void testGetBeanConfigWithParameters() throws Exception
+    {
+        BeanFactory factory = createBeanFactory("Bean1 { class: y; }");
+        Collection<ParameterAST> parameters = new ArrayList<ParameterAST>();
+
+        // Test empty parameters
+        BeanConfig config1 = factory.getBeanConfig("Bean1", parameters);
+        assertNotNull(config1);
+        assertEquals("Bean1", config1.getBeanName());
+        assertSame(factory, config1.getBeanFactory());
+
+        // Should return new instances for same bean name
+        BeanConfig config2 = factory.getBeanConfig("Bean1");
+        assertNotSame(config1, config2);
+
+        // Test multiple parameters
+        parameters.add(new ParameterAST("param1", Collections.singletonList(new ParameterValueAST("value1", true))));
+        parameters.add(new ParameterAST("param2", Collections.singletonList(new ParameterValueAST("value2", true))));
+        BeanConfig config3 = factory.getBeanConfig("Bean1", parameters);
+        assertEquals("y", config3.getParameterValueAsString("class"));
+        assertEquals("value1", config3.getParameterValueAsString("param1"));
+        assertEquals("value2", config3.getParameterValueAsString("param2"));
+
+        // Test not found
+        assertNull(factory.getBeanConfig("notfound", parameters));
+    }
+
     public void testLoadingBadUrl() throws Exception
     {
         // Null URL
@@ -65,6 +98,19 @@ public class BeanFactoryTest extends TestCase
             // Expected
             assertTrue(e.getMessage().contains("Error reading stream"));
             assertNotNull(e.getCause());
+        }
+    }
+
+    public void testLoadClass() throws Exception
+    {
+        BeanFactory factory = createBeanFactory("PintoBean { class: java.util.Date } Another { class: x; }");
+        assertSame(Date.class, factory.loadClass(factory.getBeanConfig("PintoBean")));
+        try {
+            factory.loadClass(factory.getBeanConfig("Another"));
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getCause() instanceof ClassNotFoundException);
         }
     }
 

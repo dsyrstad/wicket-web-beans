@@ -19,11 +19,13 @@ package net.sourceforge.wicketwebbeans.model.config;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
+import net.sourceforge.wicketwebbeans.model.ParameterAST;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.commons.io.FileUtils;
@@ -77,6 +79,22 @@ public class BeanConfigTest extends TestCase
         assertEquals(2, param2Values.size());
         assertEquals("value2", param2Values.get(0).getValue());
         assertEquals("value3", param2Values.get(1).getValue());
+    }
+
+    public void testSetParameters() throws Exception
+    {
+        BeanConfig config = createConfig("ROOT { class: x; param3: overrideme }");
+        Collection<ParameterAST> parameters = new ArrayList<ParameterAST>();
+        for (int i = 0; i < 5; ++i) {
+            List<ParameterValueAST> values = new ArrayList<ParameterValueAST>();
+            values.add(new ParameterValueAST("value" + i, false));
+            parameters.add(new ParameterAST("param" + i, values));
+        }
+
+        config.setParameters(parameters);
+        for (int i = 0; i < 5; i++) {
+            assertEquals("value" + i, config.getParameterValueAsString("param" + i));
+        }
     }
 
     public void testGetParameterValueAsString() throws Exception
