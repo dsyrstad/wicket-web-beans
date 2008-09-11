@@ -20,6 +20,7 @@ package net.sourceforge.wicketwebbeans.model.config;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -102,6 +103,31 @@ public class BeanConfigTest extends TestCase
         BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
         assertEquals("xyzzy", config.getParameterValueAsString("param"));
         assertNull(config.getParameterValueAsString("not-present"));
+    }
+
+    public void testGetParameterValueAsInt() throws Exception
+    {
+        BeanConfig config = createConfig("ROOT { class: x; param: 55 }");
+        assertEquals(55, config.getParameterValueAsInt("param", 12));
+        assertEquals(12, config.getParameterValueAsInt("param2", 12));
+    }
+
+    public void testClone() throws Exception
+    {
+        BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        BeanConfig clone = config.clone();
+        // Setting parameter on clone should affect the original
+        clone.setParameter("param2", Collections.singletonList(new ParameterValueAST("value2", true)));
+        assertNotNull(clone.getParameterValue("param2"));
+        assertNull(config.getParameterValue("param2"));
+    }
+
+    public void testRemoveParameter() throws Exception
+    {
+        BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        assertNotNull(config.getParameterValue("param"));
+        config.removeParameter("param");
+        assertNull(config.getParameterValue("param"));
     }
 
     private BeanConfig createConfig(String configStr) throws Exception

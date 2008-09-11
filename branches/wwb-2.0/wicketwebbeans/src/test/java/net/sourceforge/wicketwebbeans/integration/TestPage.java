@@ -9,6 +9,6 @@ public class TestPage extends WebPage
 {
     public TestPage(String componentName, BeanFactory factory)
     {
-        add((Component)factory.newInstance(componentName, "component", factory));
+        add((Component)factory.newInstance(componentName, "component"));
     }
 }

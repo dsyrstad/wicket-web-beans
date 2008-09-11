@@ -104,6 +104,17 @@ public class BeanConfig implements Serializable, Cloneable
         return value.getValue();
     }
 
+    public int getParameterValueAsInt(String parameterName, int defaultValue)
+    {
+        ParameterValueAST parameterValue = getParameterValue(parameterName);
+        Integer value = null;
+        if (parameterValue != null) {
+            value = parameterValue.getIntegerValue();
+        }
+
+        return value == null ? defaultValue : value;
+    }
+
     /**
      * Gets the specified parameter's value(s).
      * 
@@ -127,6 +138,11 @@ public class BeanConfig implements Serializable, Cloneable
         for (ParameterAST parameter : parameters) {
             setParameter(parameter.getName(), parameter.getValues());
         }
+    }
+
+    public void removeParameter(String parameterName)
+    {
+        parameters.remove(parameterName);
     }
 
     @Override

@@ -47,6 +47,8 @@ public class GridLayout extends Panel
 {
     private static final long serialVersionUID = -2149828837634944417L;
 
+    public static final String SPECIAL_PARAM_COLSPAN = "_colspan";
+
     private int columns = 3;
     private Model rowListViewModel = new Model();
     private BeanFactory beanFactory;
@@ -95,7 +97,7 @@ public class GridLayout extends Panel
         int colPos = 0;
         List<BeanConfig> currRow = null;
         for (BeanConfig component : gridComponents) {
-            int colspan = 1; // TODO Check component property, was: component.getIntParameterValue(PARAM_COLSPAN, 1);
+            int colspan = component.getParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
             if (colspan < 1 || colspan > columns) {
                 throw new RuntimeException("Invalid colspan parameter value: " + colspan);
             }
@@ -162,7 +164,8 @@ public class GridLayout extends Panel
         protected void populateItem(ListItem item)
         {
             BeanConfig config = (BeanConfig)item.getModelObject();
-            int colspan = 1; // TODO check config param - see above, was: config.getIntParameterValue(PARAM_COLSPAN, 1);
+            int colspan = config.getParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
+            config.removeParameter(SPECIAL_PARAM_COLSPAN);
 
             BeanFactory beanFactory = config.getBeanFactory();
             Class<?> componentClass = beanFactory.loadClass(config);
