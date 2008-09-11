@@ -69,3 +69,24 @@ Component4 {
 	elements: 
 		"prop1/prop2" { params }; 
 }
+
+
+----------------------------------
+Database-driven Forms
+----------------------------------
+By using a different PropertyResolver, we could support CRUD via config files and a standard app.
+
+Form { class: ...;
+	jdbcInfo: jdbcInfoBean;
+	components: table1.column1, table2.column2, ...;
+}
+
+jdbcInfoBean {
+	class: JdbcInfoBean;
+	jdbcDriver: ....;
+	jdbcUrl: ...;
+	jdbcUserName: ...;
+	jdbcPassword: ....;
+}
+
+PropertyResolver would track which columns and tables are updated.
