@@ -1,6 +1,12 @@
 package net.sourceforge.wicketwebbeans.model.config;
 
 import java.util.Date;
+import java.util.List;
+
+import net.sourceforge.wicketwebbeans.model.BeanFactory;
+import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
+
+import org.apache.wicket.model.IModel;
 
 public class TestBean
 {
@@ -17,6 +23,11 @@ public class TestBean
     private Short shortObjProp;
     private Boolean booleanObjProp;
     private Long longObjProp;
+    private String setterWithReturn;
+    private List<ParameterValueAST> parameterValues;
+    private IModel model;
+    private IModel modelOfSubBean;
+    private BeanFactory beanFactory;
 
     // TODO arrays, collections, maps
 
@@ -38,6 +49,7 @@ public class TestBean
 
     public void setStringProp(String stringProp)
     {
+        assert beanFactory != null : "BeanFactory must be set first";
         this.stringProp = stringProp;
     }
 
@@ -94,6 +106,17 @@ public class TestBean
     public long getLongProp()
     {
         return longProp;
+    }
+
+    public String getSetterWithReturnValue()
+    {
+        return this.setterWithReturn;
+    }
+
+    public TestBean setSetterWithReturnValue(String setterWithReturn)
+    {
+        this.setterWithReturn = setterWithReturn;
+        return this;
     }
 
     public void setLongProp(long longProp)
@@ -193,4 +216,43 @@ public class TestBean
         throw new RuntimeException("Thrown from setter");
     }
 
+    public List<ParameterValueAST> getParameterValues()
+    {
+        return parameterValues;
+    }
+
+    public void setParameterValues(List<ParameterValueAST> parameterValues)
+    {
+        this.parameterValues = parameterValues;
+    }
+
+    public IModel getModel()
+    {
+        return model;
+    }
+
+    public void setModel(IModel model)
+    {
+        this.model = model;
+    }
+
+    public IModel getModelOfSubBean()
+    {
+        return modelOfSubBean;
+    }
+
+    public void setModelOfSubBean(IModel modelOfSubBean)
+    {
+        this.modelOfSubBean = modelOfSubBean;
+    }
+
+    public BeanFactory getBeanFactory()
+    {
+        return beanFactory;
+    }
+
+    public void setBeanFactory(BeanFactory beanFactory)
+    {
+        this.beanFactory = beanFactory;
+    }
 }

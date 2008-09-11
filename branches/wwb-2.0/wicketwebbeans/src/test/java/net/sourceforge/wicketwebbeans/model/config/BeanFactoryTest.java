@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
@@ -176,7 +177,9 @@ public class BeanFactoryTest extends TestCase
                         + "stringProp: \"stringValue\"; intProp: 5; doubleProp: 3.14; booleanProp: true; "
                         + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;"
                         + " integerObjProp: 3; doubleObjProp: 9.99; floatObjProp: 10.3; shortObjProp: 62;"
-                        + " booleanObjProp: false; longObjProp: 323; }");
+                        + " booleanObjProp: false; longObjProp: 323; setterWithReturnValue:  swrv;"
+                        + " parameterValues: 1, \"2\", 3.1, true, symbol; model: \"modelString\"; "
+                        + " modelOfSubBean: SubBean; }" + " SubBean { class: java.util.Date; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1");
         assertTrue(bean instanceof TestBean);
         assertEquals(5, bean.getIntProp());
@@ -192,6 +195,19 @@ public class BeanFactoryTest extends TestCase
         assertEquals(Float.valueOf(10.3F), bean.getFloatObjProp());
         assertEquals(Short.valueOf((short)62), bean.getShortObjProp());
         assertEquals(Long.valueOf(323L), bean.getLongObjProp());
+        assertEquals("swrv", bean.getSetterWithReturnValue());
+
+        List<ParameterValueAST> values = bean.getParameterValues();
+        assertEquals(5, values.size());
+        assertEquals(Integer.valueOf(1), values.get(0).getIntegerValue());
+        assertEquals("2", values.get(1).getValue());
+        assertEquals(Double.valueOf(3.1), values.get(2).getDoubleValue());
+        assertEquals(Boolean.valueOf(true), values.get(3).getBooleanValue());
+        assertEquals("symbol", values.get(4).getValue());
+
+        assertEquals("modelString", bean.getModel().getObject());
+        assertTrue(bean.getModelOfSubBean().getObject() instanceof Date);
+        assertSame(factory, bean.getBeanFactory());
     }
 
     public void testNewInstanceClassNotFound() throws Exception
