@@ -43,7 +43,7 @@ import org.apache.wicket.model.Model;
  * 
  * @author Dan Syrstad
  */
-public class GridLayout extends Panel implements BeanFactoryConstructable
+public class GridLayout extends Panel
 {
     private static final long serialVersionUID = -2149828837634944417L;
 
@@ -56,13 +56,10 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
      * 
      * @param id
      *            the Wicket id for the panel.
-     * @param beanFactory
-     *            the {@link BeanFactory} for child components.
      */
-    public GridLayout(String id, BeanFactory beanFactory)
+    public GridLayout(String id)
     {
         super(id);
-        this.beanFactory = beanFactory;
         add(new RowListView("r", rowListViewModel));
     }
 
@@ -83,8 +80,8 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             for (ParameterValueAST componentParam : components) {
                 // TODO should be refactored to common code. This will eventually handle properties/ComponentRegistry
                 String componentName = componentParam.getValue();
-                BeanConfig componentConfig = beanFactory
-                                .getBeanConfig(componentName, componentParam.getSubParameters());
+                BeanConfig componentConfig = getBeanFactory().getBeanConfig(componentName,
+                                componentParam.getSubParameters());
                 if (componentConfig == null) {
                     throw new RuntimeException("Cannot find bean named " + componentName);
                 }
@@ -123,6 +120,17 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
         rowListViewModel.setObject((Serializable)rowsAndCols);
     }
 
+    public BeanFactory getBeanFactory()
+    {
+        return beanFactory;
+    }
+
+    /** Called by BeanFactory.newInstance(). */
+    public void setBeanFactory(BeanFactory beanFactory)
+    {
+        this.beanFactory = beanFactory;
+    }
+
 
     private final class RowListView extends ListView
     {
@@ -156,29 +164,25 @@ public class GridLayout extends Panel implements BeanFactoryConstructable
             BeanConfig config = (BeanConfig)item.getModelObject();
             int colspan = 1; // TODO check config param - see above, was: config.getIntParameterValue(PARAM_COLSPAN, 1);
 
-            Object[] args;
             BeanFactory beanFactory = config.getBeanFactory();
             Class<?> componentClass = beanFactory.loadClass(config);
             String fragmentId = FormComponent.class.isAssignableFrom(componentClass) ? "inputComponent"
                             : "spanComponent";
 
             Fragment fragment = new Fragment("frag", fragmentId, this);
+            fragment.setRenderBodyOnly(true);
 
             final String id = "c";
-            // TODO beanFactory should be a property. If class has the property BeanFactory.newInstance can set it.
-            if (BeanFactoryConstructable.class.isAssignableFrom(componentClass)) {
-                args = new Object[] { id, beanFactory };
-            }
-            else {
-                args = new Object[] { id };
-            }
+            Component component = (Component)beanFactory.newInstance(config, id);
+            fragment.add(component);
 
-            Component component = (Component)beanFactory.newInstance(config, args);
-            item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            // TODO Don't do this here. fragment.add(new AttributeModifier("style", true, new Model(width)));
-            fragment.add(component);
+            item.add(new AttributeModifier("style", true, new Model(width)));
+            if (colspan != 1) {
+                item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
+            }
+
             item.add(fragment);
         }
     }

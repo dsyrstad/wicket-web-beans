@@ -191,8 +191,8 @@ public class BeanFactory
                             + beanClassName, e);
         }
 
+        setBeanFactory(bean);
         setBeanProperties(beanConfig, bean, beanClass);
-
         return bean;
     }
 
@@ -252,7 +252,6 @@ public class BeanFactory
             Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
                 // Try to find a setter with a return value. This is common in Wicket for builder patterns.
-                // TODO Test
                 String setterName = "set"
                                 + (parameterName.length() > 1 ? Character.toUpperCase(parameterName.charAt(0))
                                                 + parameterName.substring(1) : parameterName.toUpperCase());
@@ -295,11 +294,9 @@ public class BeanFactory
                 else if (Boolean.class.isAssignableFrom(propertyType)) {
                     value = Boolean.valueOf(valueAst.getBooleanValue());
                 }
-                // TODO Test
                 else if (List.class.isAssignableFrom(propertyType)) {
                     value = values;
                 }
-                // TODO Test
                 else if (IModel.class.isAssignableFrom(propertyType)) {
                     if (valueAst.isLiteral()) {
                         value = new Model(valueAst.getValue());
@@ -342,6 +339,28 @@ public class BeanFactory
                 throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
                                 + "' class " + beanClassName, t);
             }
+        }
+    }
+
+    /** 
+     * If bean has a public setBeanFactory(BeanFactory) method, call it with this BeanFactory.
+     */
+    private void setBeanFactory(Object bean)
+    {
+        Method setBeanFactoryMethod;
+        try {
+            setBeanFactoryMethod = bean.getClass().getMethod("setBeanFactory", BeanFactory.class);
+        }
+        catch (Exception e) {
+            // No method...
+            return;
+        }
+
+        try {
+            setBeanFactoryMethod.invoke(bean, this);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Exception calling setBeanFactory", e);
         }
     }
 

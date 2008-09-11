@@ -10,7 +10,7 @@ public class ExperimentalPage extends WebPage
     public ExperimentalPage()
     {
         BeanFactory factory = new BeanFactory().loadBeanConfig(getClass().getResource("ExperimentConfig.wwb"));
-        Component root = (Component)factory.newInstance("Root", "component", factory);
+        Component root = (Component)factory.newInstance("Root", "component");
         add(root);
     }
 }
