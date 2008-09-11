@@ -1,5 +1,7 @@
 v2.0
 ----
+- Special "control" params like colspan that are not properties of the bean
+  should be indicated with _ - just by convention.
 - System config that is loaded first with BeanFactory - common defs
 - Elements are explicitly called out - no auto-derivation of elements from bean. However, can auto-derive label.
 - If we want pre-built components, then where do actions reside? ThreadLocal context that has component, AjaxRequestTarget, bean. 

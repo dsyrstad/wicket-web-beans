@@ -1,6 +1,6 @@
 Root { 
 	class: GridLayout;
-	components: Field, Field, Field { model: "text" }, Field, SubGrid, Label, 
+	components: Field, Field, Field { model: "text" }, Field, SubGrid { _colspan: 2 }, Label, 
 	Label { model: "A Label" }, Label { model: "Another Label" }, Label { model: DateBean };
 }
 
