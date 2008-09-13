@@ -31,7 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.ConstructorUtils;
+import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
@@ -182,9 +183,7 @@ public class BeanFactory
 
         Object bean;
         try {
-            // TODO This does not handle null arguments. Need to find matching
-            // constructor like EnerJ
-            bean = ConstructorUtils.invokeConstructor(beanClass, args);
+            bean = WwbClassUtils.invokeMostSpecificConstructor(beanClass, args);
         }
         catch (Exception e) {
             throw new RuntimeException("Cannot create instance of bean '" + beanConfig.getBeanName() + "' class: "

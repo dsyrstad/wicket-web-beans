@@ -234,8 +234,7 @@ public class BeanFactoryTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getMessage().contains("Cannot create instance of bean"));
-            assertNotNull(e.getCause());
-            assertTrue(e.getCause() instanceof NoSuchMethodException);
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
     }
 
@@ -332,8 +331,7 @@ public class BeanFactoryTest extends TestCase
         assertEquals(Integer.valueOf(64), bean.getIntegerObjProp());
     }
 
-    // TODO Broke because nulls not handled right now
-    public void xtestNewInstanceWithNullArgs() throws Exception
+    public void testNewInstanceWithNullArgs() throws Exception
     {
         BeanFactory factory = TestUtils
                         .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
@@ -354,8 +352,7 @@ public class BeanFactoryTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getMessage().contains("Cannot create instance of bean"));
-            assertNotNull(e.getCause());
-            assertTrue(e.getCause() instanceof NoSuchMethodException);
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
     }
 }
