@@ -71,6 +71,10 @@ public class GridLayout extends Panel
 
     public void setColumns(int columns)
     {
+        if (columns < 1) {
+            throw new RuntimeException("Invalid columns parameter value: " + columns);
+        }
+
         this.columns = columns;
     }
 
