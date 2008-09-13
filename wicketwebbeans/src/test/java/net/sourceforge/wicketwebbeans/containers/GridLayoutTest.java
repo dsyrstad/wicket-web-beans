@@ -72,13 +72,58 @@ public class GridLayoutTest extends TestCase
         tester.assertComponent("component:r:1:c:1:frag:c", TextField.class);
         tester.assertComponent("component:r:1:c:2:frag:c", TextField.class);
 
-        TagTester overriddenTag = tester.getTagById("component:r:1:c:0:frag:c");
-        // These are on td
-        assertEquals("2", overriddenTag.getAttribute("colspan"));
-        assertEquals("width: 50.0%", overriddenTag.getAttribute("style"));
+        TagTester overriddenTag = tester.getTagByWicketId("component");
+        assertEquals("<div wicket:id=\"component\"><wicket:panel>\n" + "<div class=\"wwbGridLayout\">\n"
+                        + "<table class=\"wwbGridLayoutTable\">\n" + "<tbody>\n" + "  <tr wicket:id=\"r\">\n"
+                        + "    <td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:0:c:0:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:0:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:0:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:0:c:3:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td>\n" + "  </tr><tr wicket:id=\"r\">\n"
+                        + "    <td colspan=\"2\" style=\"width: 50.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:1:c:0:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:1:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "      <input name=\"component:r:1:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "    </td>\n" + "  </tr>\n" + "</tbody>\n" + "</table>\n" + "</div>\n"
+                        + "</wicket:panel></div>", overriddenTag.getMarkup().replaceAll("\t", "    "));
     }
 
-    // TODO bad columns, bad colspan
+    public void testInvalidColumnsParameter() throws Exception
+    {
+        final BeanFactory factory = TestUtils
+                        .createBeanFactory("Grid { class: GridLayout; columns: 0; components: Field; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
+        try {
+            factory.newInstance("Grid", "id");
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().startsWith("Error setting property columns"));
+        }
+
+    }
+
+    public void testInvalidColspanParameter() throws Exception
+    {
+        final BeanFactory factory = TestUtils
+                        .createBeanFactory("Grid { class: GridLayout; components: Field { _colspan: 0 }; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
+        try {
+            factory.newInstance("Grid", "id");
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertTrue(e.getMessage().startsWith("Error setting property components"));
+            assertTrue(e.getCause().getMessage().startsWith("Invalid colspan parameter value"));
+        }
+
+    }
 
     @SuppressWarnings("serial")
     private void renderPage(final BeanFactory factory)
