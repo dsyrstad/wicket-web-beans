@@ -1,4 +1,4 @@
-package net.sourceforge.wicketwebbeans.integration;
+package net.sourceforge.wicketwebbeans.test;
 
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
 

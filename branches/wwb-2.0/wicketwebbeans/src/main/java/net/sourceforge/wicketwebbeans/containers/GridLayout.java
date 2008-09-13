@@ -35,11 +35,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 /**
- * A panel for generically displaying Java Beans in a grid-style layout. The
- * Bean config may specify the number of columns as "cols". The default is 3.
- * Elements within the grid may specify a config parameter of "colspan" which
- * indicates the number of columns to span in the grid. These parameters, along
- * with EMPTY fields, allow for flexible layout.
+ * A panel for generically displaying Components in a grid-style layout. The
+ * Bean config may specify the number of columns as "columns". The default is 3.
+ * Elements within the grid may specify a config parameter of "_colspan" which
+ * indicates the number of columns to span in the grid.
  * 
  * @author Dan Syrstad
  */

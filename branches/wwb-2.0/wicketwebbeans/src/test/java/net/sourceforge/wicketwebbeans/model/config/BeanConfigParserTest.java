@@ -26,6 +26,7 @@ import net.sourceforge.wicketwebbeans.model.BeanConfigAST;
 import net.sourceforge.wicketwebbeans.model.BeanConfigParser;
 import net.sourceforge.wicketwebbeans.model.ParameterAST;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
+import net.sourceforge.wicketwebbeans.test.ReaderInputStream;
 
 /**
  * Tests BeanConfigParser. <p>

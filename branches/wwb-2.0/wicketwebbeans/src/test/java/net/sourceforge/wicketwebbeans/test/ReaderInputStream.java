@@ -1,4 +1,4 @@
-package net.sourceforge.wicketwebbeans.model.config;
+package net.sourceforge.wicketwebbeans.test;
 
 import java.io.IOException;
 import java.io.InputStream;

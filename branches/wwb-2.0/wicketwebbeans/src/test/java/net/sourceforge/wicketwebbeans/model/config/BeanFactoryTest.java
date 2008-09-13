@@ -17,7 +17,6 @@
 
 package net.sourceforge.wicketwebbeans.model.config;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +29,7 @@ import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterAST;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
-
-import org.apache.commons.io.FileUtils;
+import net.sourceforge.wicketwebbeans.test.TestUtils;
 
 /**
  * Tests BeanFactory. <p>
@@ -46,7 +44,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testSuccessfulLoadAndGetBeanConfig() throws Exception
     {
-        BeanFactory factory = createBeanFactory("PintoBean { class: x; param: value } Another { class: x; param: value2 }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("PintoBean { class: x; param: value } Another { class: x; param: value2 }");
         assertNotNull(factory.getBeanConfig("PintoBean"));
         assertNotNull(factory.getBeanConfig("Another"));
         assertNull(factory.getBeanConfig("X"));
@@ -54,7 +53,7 @@ public class BeanFactoryTest extends TestCase
 
     public void testGetBeanConfigWithParameters() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: y; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: y; }");
         Collection<ParameterAST> parameters = new ArrayList<ParameterAST>();
 
         // Test empty parameters
@@ -104,7 +103,7 @@ public class BeanFactoryTest extends TestCase
 
     public void testLoadClass() throws Exception
     {
-        BeanFactory factory = createBeanFactory("PintoBean { class: java.util.Date } Another { class: x; }");
+        BeanFactory factory = TestUtils.createBeanFactory("PintoBean { class: java.util.Date } Another { class: x; }");
         assertSame(Date.class, factory.loadClass(factory.getBeanConfig("PintoBean")));
         try {
             factory.loadClass(factory.getBeanConfig("Another"));
@@ -117,7 +116,7 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceBeanNotFound() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: y; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: y; }");
         try {
             factory.newInstance("Bean2");
             fail();
@@ -131,7 +130,7 @@ public class BeanFactoryTest extends TestCase
     public void testClassAndExtendsParameter() throws Exception
     {
         try {
-            createBeanFactory("PintoBean { param2: x }");
+            TestUtils.createBeanFactory("PintoBean { param2: x }");
             fail();
         }
         catch (RuntimeException e) {
@@ -140,16 +139,16 @@ public class BeanFactoryTest extends TestCase
         }
 
         // Class by itself is OK
-        BeanFactory factory = createBeanFactory("PintoBean { class: x }");
+        BeanFactory factory = TestUtils.createBeanFactory("PintoBean { class: x }");
         assertNotNull(factory.getBeanConfig("PintoBean").getParameterValue("class"));
 
         // Extends by itself is OK
-        factory = createBeanFactory("PintoBean { extends: x }");
+        factory = TestUtils.createBeanFactory("PintoBean { extends: x }");
         assertNotNull(factory.getBeanConfig("PintoBean").getParameterValue("extends"));
 
         // But not both at same time
         try {
-            createBeanFactory("PintoBean { class: y; extends: x }");
+            TestUtils.createBeanFactory("PintoBean { class: y; extends: x }");
             fail();
         }
         catch (RuntimeException e) {
@@ -160,19 +159,19 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceWithNoParameters() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: java.util.Date; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: java.util.Date; }");
         assertTrue(factory.newInstance("Bean1") instanceof Date);
     }
 
     public void testNewInstanceUsingImports() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: Date; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: Date; }");
         assertTrue(factory.newInstance("Bean1") instanceof Date);
     }
 
     public void testNewInstanceWithParameters() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { "
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { "
                         + "class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
                         + "stringProp: \"stringValue\"; intProp: 5; doubleProp: 3.14; booleanProp: true; "
                         + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;"
@@ -212,7 +211,7 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceClassNotFound() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: java.util.NotFound; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: java.util.NotFound; }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -227,7 +226,7 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceNoPublicDefaultConstructor() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: java.lang.reflect.AccessibleObject; }");
+        BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: java.lang.reflect.AccessibleObject; }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -242,7 +241,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstancePropertyNotFound() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notfound: x }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notfound: x }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -256,7 +256,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstancePropertySetterNotExposed() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; setterNotExposed: x }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; setterNotExposed: x }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -269,7 +270,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstancePropertyTypeNotSupported() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; typeNotSupported: x }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; typeNotSupported: x }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -282,7 +284,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstancePropertyNotExposed() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notExposed: x }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; notExposed: x }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -296,7 +299,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstancePropertyThrows() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; throwsException: x }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; throwsException: x }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -310,8 +314,9 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceWithNullParameters() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
-                        + "integerObjProp: null; stringProp: \"null\" }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean;"
+                                        + "integerObjProp: null; stringProp: \"null\" }");
         TestBean bean = (TestBean)factory.newInstance("Bean1");
         assertNull(bean.getIntegerObjProp());
         assertEquals("null", bean.getStringProp());
@@ -319,7 +324,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceWithArgs() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1", "string", 32, 64);
         assertEquals("string", bean.getStringProp());
         assertEquals(32, bean.getIntProp());
@@ -329,7 +335,8 @@ public class BeanFactoryTest extends TestCase
     // TODO Broke because nulls not handled right now
     public void xtestNewInstanceWithNullArgs() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1", null, 3, null);
         assertNull(bean.getStringProp());
         assertEquals(3, bean.getIntProp());
@@ -338,7 +345,8 @@ public class BeanFactoryTest extends TestCase
 
     public void testNewInstanceWithUnmatchedArgs() throws Exception
     {
-        BeanFactory factory = createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.config.TestBean; }");
         try {
             factory.newInstance("Bean1", "1", 2);
             fail();
@@ -350,18 +358,4 @@ public class BeanFactoryTest extends TestCase
             assertTrue(e.getCause() instanceof NoSuchMethodException);
         }
     }
-
-    private BeanFactory createBeanFactory(String configStr) throws Exception
-    {
-        return new BeanFactory().loadBeanConfig(createURL(configStr));
-    }
-
-    private URL createURL(String configStr) throws Exception
-    {
-        File tmpFile = File.createTempFile("config", ".wwb");
-        tmpFile.deleteOnExit();
-        FileUtils.writeStringToFile(tmpFile, configStr);
-        return tmpFile.toURI().toURL();
-    }
-
 }
