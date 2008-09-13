@@ -14,39 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-// Derived from Ener-J
-//
-// Portions of this code were derived from OGNL:
-//	Copyright (c) 1998-2004, Drew Davidson and Luke Blanshard
-//  All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without
-//  modification, are permitted provided that the following conditions are
-//  met:
-//
-//  Redistributions of source code must retain the above copyright notice,
-//  this list of conditions and the following disclaimer.
-//  Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the
-//  documentation and/or other materials provided with the distribution.
-//  Neither the name of the Drew Davidson nor the names of its contributors
-//  may be used to endorse or promote products derived from this software
-//  without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-//  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-//  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-//  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-//  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-//  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-//  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-//  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
-//  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-//  DAMAGE.
 package net.sourceforge.wicketwebbeans.util;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -84,18 +54,41 @@ public class WwbClassUtils
      */
     public static Method findMostSpecificMethod(Class<?> aClass, String aMethodName, Class<?>... someArgTypes)
     {
-        Method result = null;
-        Class<?>[] resultParameterTypes = null;
-        Method[] methods = aClass.getMethods();
+        return (Method)findMostSpecificMethodOrConstructor(aClass.getMethods(), aClass, aMethodName, someArgTypes);
+    }
 
-        for (Method method : methods) {
-            if (method.getName().equals(aMethodName)) {
-                Class<?>[] methodParamTypes = method.getParameterTypes();
+    /**
+     * Gets the most specific method or constructor to be called for the given class, method name and arguments types.
+     * It attempts to find the method with the most "specific" argument type match (in JLS terms). 
+     * If successful this method will return the Method that can be called, otherwise null.
+     * 
+     * @param methodName if non-null the name of the method to find. Otherwise a constructor is assumed.
+     */
+    private static AccessibleObject findMostSpecificMethodOrConstructor(AccessibleObject[] someAccessibleObjects,
+                    Class<?> aClass, String aMethodName, Class<?>... someArgTypes)
+    {
+        AccessibleObject result = null;
+        int resultDistance = 10000;
 
-                if (areArgsCompatible(someArgTypes, methodParamTypes)
-                                && ((result == null) || isMoreSpecific(methodParamTypes, resultParameterTypes))) {
-                    result = method;
-                    resultParameterTypes = methodParamTypes;
+        for (AccessibleObject accessibleObject : someAccessibleObjects) {
+            Class<?>[] paramTypes;
+            if (aMethodName == null) {
+                paramTypes = ((Constructor<?>)accessibleObject).getParameterTypes();
+            }
+            else {
+                Method method = (Method)accessibleObject;
+                if (!method.getName().equals(aMethodName)) {
+                    continue;
+                }
+
+                paramTypes = method.getParameterTypes();
+            }
+
+            if (areArgsCompatible(someArgTypes, paramTypes)) {
+                int distance = computeDistance(someArgTypes, paramTypes);
+                if (distance < resultDistance) {
+                    result = accessibleObject;
+                    resultDistance = distance;
                 }
             }
         }
@@ -151,21 +144,7 @@ public class WwbClassUtils
      */
     public static Constructor<?> findMostSpecificConstructor(Class<?> aClass, Class<?>... someArgTypes)
     {
-        Constructor<?> result = null;
-        Class<?>[] resultParameterTypes = null;
-        Constructor<?>[] xtors = aClass.getConstructors();
-
-        for (Constructor<?> xtor : xtors) {
-            Class<?>[] xtorParamTypes = xtor.getParameterTypes();
-
-            if (areArgsCompatible(someArgTypes, xtorParamTypes)
-                            && ((result == null) || isMoreSpecific(xtorParamTypes, resultParameterTypes))) {
-                result = xtor;
-                resultParameterTypes = xtorParamTypes;
-            }
-        }
-
-        return result;
+        return (Constructor<?>)findMostSpecificMethodOrConstructor(aClass.getConstructors(), aClass, null, someArgTypes);
     }
 
     /**
@@ -173,7 +152,7 @@ public class WwbClassUtils
      * target types -- that is, whether the given array of objects can be passed as arguments
      * to a method or constructor whose parameter types are the given array of classes.
      */
-    public static final boolean areArgsCompatible(Class<?>[] someArgTypes, Class<?>[] targetArgTypes)
+    private static final boolean areArgsCompatible(Class<?>[] someArgTypes, Class<?>[] targetArgTypes)
     {
         if (someArgTypes.length != targetArgTypes.length) {
             return false;
@@ -194,46 +173,69 @@ public class WwbClassUtils
      * to a method or constructor whose parameter type is the given class.
      * If object is null this will return true because null is compatible
      * with any type.
+     * 
+     * @param aType the type being sent to aTargetType. May be null.
+     * @param aTargetType the desired type. Must not be null.
      */
-    public static final boolean isTypeCompatible(Class<?> aType, Class<?> aTargetType)
+    private static final boolean isTypeCompatible(Class<?> aType, Class<?> aTargetType)
     {
-        if (aType != null) {
-            if (aTargetType.isPrimitive()) {
-                if (ClassUtils.wrapperToPrimitive(aType) != aTargetType) {
-                    return false;
-                }
-            }
-            else if (!aTargetType.isAssignableFrom(aType)) {
-                return false;
-            }
+        // aType -> aTargetType
+        // - int -> Integer
+        // - long -> long
+        // - Integer -> int (because Integer implies that the argument is not null)
+        // - Object -> Object
+        // - SomeObject -> Object
+        // - null -> Object
+        // - null -! int
+
+        if (aType == null) {
+            // nulls can be set on non-primitive types.
+            return !aTargetType.isPrimitive();
         }
 
-        return true;
+        if (aType == aTargetType) {
+            return true;
+        }
+
+        if (aType.isPrimitive()) {
+            return ClassUtils.wrapperToPrimitive(aTargetType) == aType;
+        }
+
+        if (aTargetType.isPrimitive()) {
+            return ClassUtils.wrapperToPrimitive(aType) == aTargetType;
+        }
+
+        return aTargetType.isAssignableFrom(aType);
     }
 
     /**
-     * Tells whether the first array of classes is more specific than the second.
-     * Assumes that the two arrays are of the same length.
+     * Determines the "distance" of someArgs from someTargetArgs. The two arrays must be the same length
+     * and it is assumed that they are already "compatible".
+     * 
+     * @param someArgs potential arg types. Some elements may be null.
+     * @param someTargetArgs target method arg types. No elements will be null.. 
      */
-    public static final boolean isMoreSpecific(Class<?>[] classes1, Class<?>[] classes2)
+    private static final int computeDistance(Class<?>[] someArgs, Class<?>[] someTargetArgs)
     {
-        for (int index = 0, count = classes1.length; index < count; ++index) {
-            Class<?> c1 = classes1[index], c2 = classes2[index];
-            if (c1 == c2) {
-                continue;
+        assert someArgs.length == someTargetArgs.length;
+
+        int distance = 0;
+        for (int i = 0; i < someArgs.length; ++i) {
+            Class<?> argType = someArgs[i];
+            Class<?> targetType = someTargetArgs[i];
+
+            if (argType == null) {
+                distance++;
             }
-            else if (c1.isPrimitive()) {
-                return true;
+            else if (argType == targetType) {
+                // Same - no distance added.
             }
-            else if (c1.isAssignableFrom(c2)) {
-                return false;
-            }
-            else if (c2.isAssignableFrom(c1)) {
-                return true;
+            else {
+                // Not exactly the same (one is primitive and other is not or one is assignable from the other).
+                distance += 2;
             }
         }
 
-        // They are the same!  So the first is not more specific than the second.
-        return false;
+        return distance;
     }
 }
