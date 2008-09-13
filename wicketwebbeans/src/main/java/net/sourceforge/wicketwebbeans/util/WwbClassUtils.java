@@ -26,8 +26,6 @@ import org.apache.commons.lang.ClassUtils;
 /**
  * Static Class utilities. 
  * 
- * TODO This whole class needs tests. Some is indirectly tested via BeanFactoryTest.
- * 
  * @author Dan Syrstad
  */
 public class WwbClassUtils
