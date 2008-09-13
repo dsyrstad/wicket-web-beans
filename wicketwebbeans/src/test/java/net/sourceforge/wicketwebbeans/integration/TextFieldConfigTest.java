@@ -17,13 +17,12 @@
 
 package net.sourceforge.wicketwebbeans.integration;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.containers.GridLayout;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
+import net.sourceforge.wicketwebbeans.test.TestPage;
+import net.sourceforge.wicketwebbeans.test.TestUtils;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.ITestPageSource;
@@ -44,7 +43,8 @@ public class TextFieldConfigTest extends TestCase
     @SuppressWarnings("serial")
     public void testGridLayout() throws Exception
     {
-        final BeanFactory factory = createFactory("Grid { class: GridLayout; components: Field, Field, Field, Field; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
+        final BeanFactory factory = TestUtils
+                        .createBeanFactory("Grid { class: GridLayout; components: Field, Field, Field, Field; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
             public Page getTestPage()
@@ -59,13 +59,4 @@ public class TextFieldConfigTest extends TestCase
         tester.assertComponent("component:r:0:c:2:frag:c", TextField.class);
         tester.assertComponent("component:r:1:c:0:frag:c", TextField.class);
     }
-
-    private BeanFactory createFactory(String configStr) throws Exception
-    {
-        File tmpFile = File.createTempFile("config", ".wwb");
-        tmpFile.deleteOnExit();
-        FileUtils.writeStringToFile(tmpFile, configStr);
-        return new BeanFactory().loadBeanConfig(tmpFile.toURI().toURL());
-    }
-
 }

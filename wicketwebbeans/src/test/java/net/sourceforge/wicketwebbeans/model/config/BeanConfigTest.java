@@ -17,7 +17,6 @@
 
 package net.sourceforge.wicketwebbeans.model.config;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,11 +24,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
-import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterAST;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
-
-import org.apache.commons.io.FileUtils;
+import net.sourceforge.wicketwebbeans.test.TestUtils;
 
 /**
  * Tests BeanConfig. <p>
@@ -44,7 +41,7 @@ public class BeanConfigTest extends TestCase
 
     public void testGetParameterValues() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; firstParam: x; param: value1, value2, value3 }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; firstParam: x; param: value1, value2, value3 }");
         List<ParameterValueAST> values = config.getParameterValues("param");
         assertEquals(3, values.size());
         assertEquals("value1", values.get(0).getValue());
@@ -54,7 +51,7 @@ public class BeanConfigTest extends TestCase
 
     public void testSetParameter() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param2: x }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param2: x }");
         assertNull(config.getParameterValue("param1"));
         assertNotNull(config.getParameterValue("param2"));
 
@@ -84,7 +81,7 @@ public class BeanConfigTest extends TestCase
 
     public void testSetParameters() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param3: overrideme }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param3: overrideme }");
         Collection<ParameterAST> parameters = new ArrayList<ParameterAST>();
         for (int i = 0; i < 5; ++i) {
             List<ParameterValueAST> values = new ArrayList<ParameterValueAST>();
@@ -100,21 +97,21 @@ public class BeanConfigTest extends TestCase
 
     public void testGetParameterValueAsString() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param: \"xyzzy\" }");
         assertEquals("xyzzy", config.getParameterValueAsString("param"));
         assertNull(config.getParameterValueAsString("not-present"));
     }
 
     public void testGetParameterValueAsInt() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param: 55 }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param: 55 }");
         assertEquals(55, config.getParameterValueAsInt("param", 12));
         assertEquals(12, config.getParameterValueAsInt("param2", 12));
     }
 
     public void testClone() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param: \"xyzzy\" }");
         BeanConfig clone = config.clone();
         // Setting parameter on clone should affect the original
         clone.setParameter("param2", Collections.singletonList(new ParameterValueAST("value2", true)));
@@ -124,17 +121,14 @@ public class BeanConfigTest extends TestCase
 
     public void testRemoveParameter() throws Exception
     {
-        BeanConfig config = createConfig("ROOT { class: x; param: \"xyzzy\" }");
+        BeanConfig config = createBeanConfig("ROOT { class: x; param: \"xyzzy\" }");
         assertNotNull(config.getParameterValue("param"));
         config.removeParameter("param");
         assertNull(config.getParameterValue("param"));
     }
 
-    private BeanConfig createConfig(String configStr) throws Exception
+    public static BeanConfig createBeanConfig(String configStr) throws Exception
     {
-        File tmpFile = File.createTempFile("config", ".wwb");
-        tmpFile.deleteOnExit();
-        FileUtils.writeStringToFile(tmpFile, configStr);
-        return new BeanFactory().loadBeanConfig(tmpFile.toURI().toURL()).getBeanConfig("ROOT");
+        return TestUtils.createBeanFactory(configStr).getBeanConfig("ROOT");
     }
 }
