@@ -29,7 +29,7 @@ public class TestBean
     private IModel modelOfSubBean;
     private BeanFactory beanFactory;
 
-    // TODO arrays, collections, maps
+    // TODO LATER: arrays, collections, maps
 
     public TestBean()
     {
