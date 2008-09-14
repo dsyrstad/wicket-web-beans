@@ -83,7 +83,7 @@ public class GridLayout extends Panel
         List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
         if (components != null) {
             for (ParameterValueAST componentParam : components) {
-                // TODO should be refactored to common code. This will eventually handle properties/ComponentRegistry
+                // TODO should be refactored to common code. This will eventually handle a property/ComponentRegistry
                 String componentName = componentParam.getValue();
                 BeanConfig componentConfig = getBeanFactory().getBeanConfig(componentName,
                                 componentParam.getSubParameters());
