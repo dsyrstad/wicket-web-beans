@@ -15,11 +15,10 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans.model;
+package net.sourceforge.wicketwebbeans.model.jxpath;
 
-import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.jxpath.JXPathContextFactory;
-import org.apache.wicket.model.IModel;
+import net.sourceforge.wicketwebbeans.model.PropertyProxy;
+import net.sourceforge.wicketwebbeans.model.PropertyResolver;
 
 /**
  * PropertyResolver that uses Apache Commons JXPath. <p>
@@ -30,21 +29,12 @@ public class JXPathPropertyResolver implements PropertyResolver
 {
     private static final long serialVersionUID = -8758061340668585471L;
 
-    private JXPathContextFactory jxpathContextFactory = JXPathContextFactory.newInstance();
-
     /** 
      * {@inheritDoc}
-     * @see net.sourceforge.wicketwebbeans.model.PropertyResolver#resolveProperty(org.apache.wicket.model.IModel, java.lang.String)
+     * @see net.sourceforge.wicketwebbeans.model.PropertyResolver#createPropertyProxy(java.lang.String)
      */
-    public Object resolveProperty(IModel model, String propertySpec)
+    public PropertyProxy createPropertyProxy(String propertySpec)
     {
-        assert model != null;
-        Object bean = model.getObject();
-        if (bean == null) {
-            return bean;
-        }
-
-        JXPathContext context = jxpathContextFactory.newContext(null, bean);
-        return context.getValue(propertySpec);
+        return new JXPathPropertyProxy(propertySpec);
     }
 }

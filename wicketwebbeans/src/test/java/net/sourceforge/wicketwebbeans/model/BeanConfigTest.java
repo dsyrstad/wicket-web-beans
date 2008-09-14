@@ -15,7 +15,7 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans.model.config;
+package net.sourceforge.wicketwebbeans.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -19,8 +19,6 @@ package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
 
-import org.apache.wicket.model.IModel;
-
 /**
  * Resolves BeanConfig property specifications. <p>
  * 
@@ -29,12 +27,11 @@ import org.apache.wicket.model.IModel;
 public interface PropertyResolver extends Serializable
 {
     /**
-     * Resolves a property specification. 
+     * Creates PropertyProxy for a property specification. 
      *
-     * @param model the IModel containing the bean from which the property will be derived.
      * @param propertySpec an implementation-specific property specification.
      * 
-     * @return the object corresponding to the property or null.
+     * @return a PropertyProxy.
      */
-    Object resolveProperty(IModel model, String propertySpec);
+    PropertyProxy createPropertyProxy(String propertySpec);
 }
