@@ -303,7 +303,9 @@ public class BeanFactory
                     else {
                         String name = valueAst.getValue();
                         if (name.startsWith("$")) {
-                            // TODO Property
+                            // TODO Property - really need to create a model here that can can accept
+                            // getting AND setting the value. Then PropertyResolver should be returned
+                            // by a property resolver factory
                             value = "TODO";
                         }
                         else {
