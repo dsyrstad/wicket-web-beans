@@ -1,4 +1,4 @@
-package net.sourceforge.wicketwebbeans.model.config;
+package net.sourceforge.wicketwebbeans.model;
 
 import java.util.Date;
 import java.util.List;
