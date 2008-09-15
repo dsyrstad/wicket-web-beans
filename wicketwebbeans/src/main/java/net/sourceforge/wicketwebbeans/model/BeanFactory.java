@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -49,6 +50,8 @@ public class BeanFactory
 {
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
+
+    private PropertyResolver propertyResolver = new JXPathPropertyResolver();
 
     /** Cache of pre-parsed bean configs. */
     private final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
@@ -69,6 +72,16 @@ public class BeanFactory
 
     public BeanFactory()
     {
+    }
+
+    public PropertyResolver getPropertyResolver()
+    {
+        return propertyResolver;
+    }
+
+    public void setPropertyResolver(PropertyResolver propertyResolver)
+    {
+        this.propertyResolver = propertyResolver;
     }
 
     public String[] getPackageImports()
@@ -303,10 +316,9 @@ public class BeanFactory
                     else {
                         String name = valueAst.getValue();
                         if (name.startsWith("$")) {
-                            // TODO Property - really need to create a model here that can can accept
-                            // getting AND setting the value. Then PropertyResolver should be returned
-                            // by a property resolver factory
-                            value = "TODO";
+                            // TODO Test
+                            PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(name.substring(1));
+                            value = new PropertyProxyModel(propertyProxy);
                         }
                         else {
                             // Component name

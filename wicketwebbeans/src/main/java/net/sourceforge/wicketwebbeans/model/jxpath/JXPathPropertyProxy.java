@@ -21,7 +21,6 @@ import net.sourceforge.wicketwebbeans.model.PropertyProxy;
 
 import org.apache.commons.jxpath.CompiledExpression;
 import org.apache.commons.jxpath.JXPathContext;
-import org.apache.wicket.model.IModel;
 
 /**
  * A PropertyProxy for Apache Commons JXPath. Created by JXPathPropertyResolver. <p>
@@ -43,16 +42,14 @@ public class JXPathPropertyProxy implements PropertyProxy
      * {@inheritDoc}
      * @see net.sourceforge.wicketwebbeans.model.PropertyProxy#getValue(org.apache.wicket.model.IModel)
      */
-    public Object getValue(IModel model)
+    public Object getValue(Object bean)
     {
-        assert model != null;
-        Object bean = model.getObject();
         if (bean == null) {
             return bean;
         }
 
         JXPathContext context = JXPathContext.newContext(bean);
-        // TODO - Unfortunately syntax errors are not caught by this.
+        // LATER - Unfortunately unrecognized properties are not caught by this.
         context.setLenient(true);
         return compiledExpression.getValue(context);
     }
