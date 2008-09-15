@@ -19,8 +19,6 @@ package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
 
-import org.apache.wicket.model.IModel;
-
 /**
  * Proxies access to a property. This is created by a PropertyResolver. <p>
  * 
@@ -31,11 +29,11 @@ public interface PropertyProxy extends Serializable
     /**
      * Resolves the property's specification. 
      *
-     * @param model the IModel containing the bean from which the property will be derived.
+     * @param bean the bean from which the property will be derived.
      * 
      * @return the object corresponding to the property or null.
      */
-    Object getValue(IModel model);
+    Object getValue(Object bean);
 
-    //void setValue(IModel model, Object value);
+    //void setValue(Object bean, Object value);
 }

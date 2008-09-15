@@ -6,46 +6,33 @@ import java.math.BigDecimal;
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
 
-import org.apache.commons.jxpath.JXPathException;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-// TODO This should be an interface abstract test that calls getPropertyResolver 
 public class JXPropertyResolverTest extends TestCase
 {
     private PropertyResolver resolver = new JXPathPropertyResolver();
     private Employee testEmployee = new Employee("Dan Syrstad", new Address("Minneapolis", "MN", "55306",
                     "123 Any Way", "P.O. Box 9112"), BigDecimal.valueOf(2500000));
-    private IModel testEmployeeModel = new Model(testEmployee);
 
     public void testGetValue()
     {
-        assertSame(testEmployee, resolver.createPropertyProxy(".").getValue(testEmployeeModel));
-        assertSame(testEmployee.getAddress(), resolver.createPropertyProxy("address").getValue(testEmployeeModel));
+        assertSame(testEmployee, resolver.createPropertyProxy(".").getValue(testEmployee));
+        assertSame(testEmployee.getAddress(), resolver.createPropertyProxy("address").getValue(testEmployee));
         assertSame(testEmployee.getAddress().getCity(), resolver.createPropertyProxy("address/city").getValue(
-                        testEmployeeModel));
+                        testEmployee));
         assertSame(testEmployee.getAddress().getAddressLines(), resolver.createPropertyProxy("address/addressLines")
-                        .getValue(testEmployeeModel));
+                        .getValue(testEmployee));
         assertSame(testEmployee.getAddress().getAddressLines()[1], resolver.createPropertyProxy(
-                        "address/addressLines[2]").getValue(testEmployeeModel));
+                        "address/addressLines[2]").getValue(testEmployee));
     }
 
     public void testGetValueWithIntermediateNulls()
     {
         Employee employee = new Employee("Dan Syrstad", null, BigDecimal.valueOf(2500000));
-        IModel employeeModel = new Model(employee);
-        assertNull(resolver.createPropertyProxy("address/city").getValue(employeeModel));
+        assertNull(resolver.createPropertyProxy("address/city").getValue(employee));
     }
 
     public void testGetValueWithBadExpression()
     {
-        try {
-            resolver.createPropertyProxy("xyz").getValue(testEmployeeModel);
-            fail("Expected exception");
-        }
-        catch (JXPathException e) {
-            // Expected
-        }
+        assertNull(resolver.createPropertyProxy("xyz").getValue(testEmployee));
     }
 
 
