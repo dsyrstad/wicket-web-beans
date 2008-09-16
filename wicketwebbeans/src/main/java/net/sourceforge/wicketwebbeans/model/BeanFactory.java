@@ -335,25 +335,23 @@ public class BeanFactory
                     value = values;
                 }
                 else if (IModel.class.isAssignableFrom(propertyType)) {
-                    if (valueAst.isLiteral()) {
+                    String valueString = valueAst.getValue();
+                    if (valueString.startsWith("$")) {
+                        // TODO Test
+                        PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(valueString.substring(1));
+                        value = new PropertyProxyModel(propertyProxy, beanModel);
+                    }
+                    else if (valueAst.isLiteral()) {
                         value = new Model(valueAst.getValue());
                     }
                     else {
-                        String name = valueAst.getValue();
-                        if (name.startsWith("$")) {
-                            // TODO Test
-                            PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(name.substring(1));
-                            value = new PropertyProxyModel(propertyProxy, beanModel);
+                        // Component name
+                        BeanConfig subBean = getBeanConfig(valueString, valueAst.getSubParameters());
+                        if (subBean == null) {
+                            throw new RuntimeException("Cannot find bean named " + valueString);
                         }
-                        else {
-                            // Component name
-                            BeanConfig subBean = getBeanConfig(name, valueAst.getSubParameters());
-                            if (subBean == null) {
-                                throw new RuntimeException("Cannot find bean named " + name);
-                            }
 
-                            value = new Model((Serializable)newInstance(subBean));
-                        }
+                        value = new Model((Serializable)newInstance(subBean));
                     }
                 }
                 else if (propertyType.equals(String.class)) {

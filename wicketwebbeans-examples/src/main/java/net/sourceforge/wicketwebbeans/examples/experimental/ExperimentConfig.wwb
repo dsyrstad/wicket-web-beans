@@ -1,6 +1,6 @@
 Root { 
 	class: GridLayout;
-	components: Field, Field, Field { model: "text" }, Field, SubGrid { _colspan: 2 }, Label, 
+	components: Field { model: $name }, Field { model: "$serialNumber/../name" }, Field { model: "text" }, Field, SubGrid { _colspan: 2 }, Label, 
 	Label { model: "A Label" }, Label { model: "Another Label" }, Label { model: DateBean };
 }
 
