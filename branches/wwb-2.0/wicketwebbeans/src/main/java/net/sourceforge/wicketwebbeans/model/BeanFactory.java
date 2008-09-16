@@ -53,7 +53,7 @@ public class BeanFactory
 
     private PropertyResolver propertyResolver = new JXPathPropertyResolver();
 
-    /** Cache of pre-parsed bean configs. */
+    /** Cache of pre-parsed bean configs. TODO This cache should be static and be a LRU Cache.*/
     private final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
 
     /** Maps bean name to BeanConfig. */
@@ -69,9 +69,34 @@ public class BeanFactory
         "net.sourceforge.wicketwebbeans.actions.",
     // 
     };
+    private IModel beanModel;
 
+    /**
+     * Construct a BeanFactory with no bean model. 
+     */
     public BeanFactory()
     {
+        this(new Model());
+    }
+
+    /**
+     * Construct a BeanFactory with a Serializable bean. 
+     *
+     * @param bean the bean.
+     */
+    public BeanFactory(Serializable bean)
+    {
+        this(new Model(bean));
+    }
+
+    /**
+     * Construct a BeanFactory with a IModel representing the bean. 
+     *
+     * @param beanModel the bean's model.
+     */
+    public BeanFactory(IModel beanModel)
+    {
+        this.beanModel = beanModel;
     }
 
     public PropertyResolver getPropertyResolver()
@@ -318,7 +343,7 @@ public class BeanFactory
                         if (name.startsWith("$")) {
                             // TODO Test
                             PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(name.substring(1));
-                            value = new PropertyProxyModel(propertyProxy);
+                            value = new PropertyProxyModel(propertyProxy, beanModel);
                         }
                         else {
                             // Component name
