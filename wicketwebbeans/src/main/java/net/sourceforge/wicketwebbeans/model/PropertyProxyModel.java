@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -24,7 +25,7 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Dan Syrstad
  */
-public class PropertyProxyModel implements IModel
+public class PropertyProxyModel implements IChainingModel
 {
     private static final long serialVersionUID = -5278835598135566134L;
 
@@ -50,5 +51,15 @@ public class PropertyProxyModel implements IModel
     public void detach()
     {
         beanModel.detach();
+    }
+
+    public IModel getChainedModel()
+    {
+        return beanModel;
+    }
+
+    public void setChainedModel(IModel model)
+    {
+        beanModel = model;
     }
 }
