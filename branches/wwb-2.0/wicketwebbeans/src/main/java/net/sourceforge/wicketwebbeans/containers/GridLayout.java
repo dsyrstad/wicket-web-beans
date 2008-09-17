@@ -82,7 +82,7 @@ public class GridLayout extends Panel
 
     public void setComponents(List<ParameterValueAST> components)
     {
-        // TODO move down and use frags for tr and td
+        // TODO move down and use frags for tr and td and use just one listview
         List<ComponentFactory> gridComponents = new ArrayList<ComponentFactory>();
         if (components != null) {
             for (ParameterValueAST componentParam : components) {
