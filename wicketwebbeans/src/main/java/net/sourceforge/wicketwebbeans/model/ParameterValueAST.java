@@ -47,6 +47,24 @@ public class ParameterValueAST
     }
 
     /**
+     * Gets a sub-parameter by name.
+     *
+     * @param parameterName the name of the parameter.
+     * 
+     * @return the ParameterAST, or null if not found.
+     */
+    public ParameterAST getSubParameter(String parameterName)
+    {
+        for (ParameterAST param : subParameters) {
+            if (param.getName().equals(parameterName)) {
+                return param;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return the raw value.
      */
     public String getValue()

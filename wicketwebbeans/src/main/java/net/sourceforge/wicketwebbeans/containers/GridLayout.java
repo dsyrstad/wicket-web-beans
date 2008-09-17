@@ -22,7 +22,6 @@ import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
-import net.sourceforge.wicketwebbeans.model.ComponentFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
@@ -34,6 +33,8 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
+import sun.awt.ComponentFactory;
 
 /**
  * A panel for generically displaying Components in a grid-style layout. The
@@ -81,6 +82,7 @@ public class GridLayout extends Panel
 
     public void setComponents(List<ParameterValueAST> components)
     {
+        // TODO move down and use frags for tr and td
         List<ComponentFactory> gridComponents = new ArrayList<ComponentFactory>();
         if (components != null) {
             for (ParameterValueAST componentParam : components) {
@@ -116,7 +118,7 @@ public class GridLayout extends Panel
             }
         }
 
-        rowListViewModel.setObject((Serializable)rowsAndCols);
+        rowListViewModel.setObject((Serializable)components);
     }
 
     public BeanFactory getBeanFactory()

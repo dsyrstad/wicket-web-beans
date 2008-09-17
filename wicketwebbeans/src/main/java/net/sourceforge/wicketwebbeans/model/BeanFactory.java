@@ -37,6 +37,7 @@ import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
@@ -48,10 +49,13 @@ import org.apache.wicket.model.Model;
  */
 public class BeanFactory
 {
+    private static final String SPECIAL_PARAM_COMPONENT = "_component";
+    private static final String SPECIAL_PARAM_TYPE = "_type";
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
 
     private PropertyResolver propertyResolver = new JXPathPropertyResolver();
+    private ComponentRegistry componentRegistry = new ComponentRegistry();
 
     /** Cache of pre-parsed bean configs. TODO This cache should be static and be a LRU Cache.*/
     private final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
@@ -107,6 +111,17 @@ public class BeanFactory
     public void setPropertyResolver(PropertyResolver propertyResolver)
     {
         this.propertyResolver = propertyResolver;
+    }
+
+    // TODO test constructor to see that this is set by default
+    public ComponentRegistry getComponentRegistry()
+    {
+        return componentRegistry;
+    }
+
+    public void setComponentRegistry(ComponentRegistry componentRegistry)
+    {
+        this.componentRegistry = componentRegistry;
     }
 
     public String[] getPackageImports()
@@ -239,6 +254,14 @@ public class BeanFactory
     public Class<?> loadClass(BeanConfig beanConfig)
     {
         String beanClassName = beanConfig.getParameterValueAsString(PARAMETER_NAME_CLASS);
+        return loadClass(beanClassName);
+    }
+
+    /**
+     * Loads the class for the given name, using imports to resolve the name. Throws a RuntimeException if the class cannot be found.
+     */
+    private Class<?> loadClass(String beanClassName)
+    {
         Class<?> beanClass = null;
         Exception firstException = null;
         for (String packageImport : packageImports) {
@@ -256,7 +279,6 @@ public class BeanFactory
         if (beanClass == null) {
             throw new RuntimeException("Cannot find class " + beanClassName, firstException);
         }
-
         return beanClass;
     }
 
@@ -396,6 +418,91 @@ public class BeanFactory
         // TODO Test
         PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(propertySpec.substring(1));
         return new PropertyProxyModel(propertyProxy, beanModel);
+    }
+
+    /**
+     * Resolves a Wicket Component from a ParameterValueAST. The value of the parameter is either
+     * a Bean name or a property specification starting with '$'. A Bean parameterValue can have sub-parameters
+     * that are used to configure the component. <p/>
+     * 
+     * Property spec parameterValues can also have sub-parameters, one
+     * of which can be "_type: classname" which indicates the class of the property. It can also have "_component: classname"
+     * which indicates the component class to use, rather than using ComponentRegistry. The component's model becomes the
+     * a PropertyProxyModel representing the property.
+     *
+     * @param wicketId the Wicket id for the component.
+     * @param parameterValue
+     * 
+     * @return a Component.
+     */
+    @SuppressWarnings("unchecked")
+    public Component resolveComponent(String wicketId, ParameterValueAST parameterValue)
+    {
+        // TODO Test
+        String valueString = parameterValue.getValue();
+        if (valueString.startsWith("$")) {
+            PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);
+            // If we have _component, we don't need the property's type.
+            Class<? extends Component> componentClass = null;
+            Class<?> propertyType = null;
+            ParameterAST componentClassParam = parameterValue.getSubParameter(SPECIAL_PARAM_COMPONENT);
+            if (componentClassParam != null) {
+                // TODO Test imports
+                componentClass = (Class<? extends Component>)loadClass(componentClassParam.getValuesAsStrings()[0]);
+            }
+            else {
+                // If we have _type, we don't have to try to get it from the model.
+                ParameterAST propertyTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_TYPE);
+                if (propertyTypeParam != null) {
+                    // TODO Test imports
+                    propertyType = (Class<?>)loadClass(propertyTypeParam.getValuesAsStrings()[0]);
+                }
+            }
+
+            if (componentClass == null) {
+                if (propertyType == null) {
+                    // Get property type from model.
+                    Object propertyValue = propertyProxyModel.getObject();
+                    if (propertyValue == null) {
+                        throw new RuntimeException("Cannot determine property type because the expression '"
+                                        + valueString + "' evaluates to null. Specify either "
+                                        + SPECIAL_PARAM_COMPONENT + " or " + SPECIAL_PARAM_TYPE
+                                        + " as a sub-parameter to the property.");
+                    }
+
+                    propertyType = propertyValue.getClass();
+                }
+
+                // Get component class from ComponentRegistry
+                // TODO Handle elementType as special param.
+                componentClass = getComponentRegistry().getComponentClass(propertyType, null);
+                if (componentClass == null) {
+                    throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
+                                    + valueString + "' and type of " + propertyType + ". Specify either "
+                                    + SPECIAL_PARAM_COMPONENT + " or " + SPECIAL_PARAM_TYPE
+                                    + " as a sub-parameter to the property.");
+                }
+            }
+
+            // Create component
+            Component component;
+            try {
+                component = (Component)WwbClassUtils.invokeMostSpecificConstructor(componentClass, wicketId);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(
+                                "Cannot create component of "
+                                                + componentClass
+                                                + ". Component must have a public single-argument constructor whose parameter is a Wicket id");
+            }
+
+            // TODO set bean properties on component.
+            return component;
+        }
+        else {
+            BeanConfig beanConfig = getBeanConfig(valueString, parameterValue.getSubParameters());
+            return (Component)newInstance(beanConfig, wicketId);
+        }
     }
 
     /** 
