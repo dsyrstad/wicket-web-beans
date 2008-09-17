@@ -335,24 +335,7 @@ public class BeanFactory
                     value = values;
                 }
                 else if (IModel.class.isAssignableFrom(propertyType)) {
-                    String valueString = valueAst.getValue();
-                    if (valueString.startsWith("$")) {
-                        // TODO Test
-                        PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(valueString.substring(1));
-                        value = new PropertyProxyModel(propertyProxy, beanModel);
-                    }
-                    else if (valueAst.isLiteral()) {
-                        value = new Model(valueAst.getValue());
-                    }
-                    else {
-                        // Component name
-                        BeanConfig subBean = getBeanConfig(valueString, valueAst.getSubParameters());
-                        if (subBean == null) {
-                            throw new RuntimeException("Cannot find bean named " + valueString);
-                        }
-
-                        value = new Model((Serializable)newInstance(subBean));
-                    }
+                    value = convertToModel(valueAst);
                 }
                 else if (propertyType.equals(String.class)) {
                     value = valueAst.getValue();
@@ -376,6 +359,43 @@ public class BeanFactory
                                 + "' class " + beanClassName, t);
             }
         }
+    }
+
+    private IModel convertToModel(ParameterValueAST valueAst)
+    {
+        IModel value;
+        String valueString = valueAst.getValue();
+        // TODO Test
+        if (valueString.startsWith("$")) {
+            value = resolvePropertyProxyModel(valueString);
+        }
+        else if (valueAst.isLiteral()) {
+            value = new Model(valueAst.getValue());
+        }
+        else {
+            // Component name
+            BeanConfig subBean = getBeanConfig(valueString, valueAst.getSubParameters());
+            if (subBean == null) {
+                throw new RuntimeException("Cannot find bean named " + valueString);
+            }
+
+            value = new Model((Serializable)newInstance(subBean));
+        }
+
+        return value;
+    }
+
+    /**
+     * Resolves a property specification string to a PropertyProxyModel
+     *
+     * @param propertySpec the specification string with leading '$'.
+     * @return a PropertyProxyModel.
+     */
+    public PropertyProxyModel resolvePropertyProxyModel(String propertySpec)
+    {
+        // TODO Test
+        PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(propertySpec.substring(1));
+        return new PropertyProxyModel(propertyProxy, beanModel);
     }
 
     /** 

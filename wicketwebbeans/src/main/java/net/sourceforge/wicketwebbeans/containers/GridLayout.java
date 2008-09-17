@@ -22,6 +22,7 @@ import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
+import net.sourceforge.wicketwebbeans.model.ComponentFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
@@ -80,26 +81,19 @@ public class GridLayout extends Panel
 
     public void setComponents(List<ParameterValueAST> components)
     {
-        List<BeanConfig> gridComponents = new ArrayList<BeanConfig>();
+        List<ComponentFactory> gridComponents = new ArrayList<ComponentFactory>();
         if (components != null) {
             for (ParameterValueAST componentParam : components) {
                 // TODO should be refactored to common code. This will eventually handle a property/ComponentRegistry
-                String componentName = componentParam.getValue();
-                BeanConfig componentConfig = getBeanFactory().getBeanConfig(componentName,
-                                componentParam.getSubParameters());
-                if (componentConfig == null) {
-                    throw new RuntimeException("Cannot find bean named " + componentName);
-                }
-
-                gridComponents.add(componentConfig);
+                gridComponents.add(new ComponentFactory(getBeanFactory(), componentParam));
             }
         }
 
         // Break out the rows and columns ahead of time.
-        List<List<BeanConfig>> rowsAndCols = new ArrayList<List<BeanConfig>>();
+        List<List<ComponentFactory>> rowsAndCols = new ArrayList<List<ComponentFactory>>();
         int colPos = 0;
-        List<BeanConfig> currRow = null;
-        for (BeanConfig component : gridComponents) {
+        List<ComponentFactory> currRow = null;
+        for (ComponentFactory component : gridComponents) {
             int colspan = component.getParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
             if (colspan < 1 || colspan > columns) {
                 throw new RuntimeException("Invalid colspan parameter value: " + colspan);
@@ -111,7 +105,7 @@ public class GridLayout extends Panel
             }
 
             if (colPos == 0) {
-                currRow = new ArrayList<BeanConfig>();
+                currRow = new ArrayList<ComponentFactory>();
                 rowsAndCols.add(currRow);
             }
 
