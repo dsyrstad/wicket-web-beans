@@ -21,12 +21,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.markup.html.form.TextField;
 
 /**
- * Registers field and viewer components. 
+ * Registers components for corresponding types. 
  * The components must implement the following constructor, at minimum:<p>
- *    XyzComponent(String wicketId, IModel model) 
+ *    XyzComponent(String wicketId) 
  *    
  * When registering an array type, use Object[].class as the type, and specify an element type.
  * 
@@ -36,8 +36,6 @@ public class ComponentRegistry implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Class<?>[] constructorArgs = new Class<?>[] { String.class, IModel.class };
-
     // Key is Target Type's class name (e.g., java.util.Date). Value is the
     // Wicket Component (Field) class name. If the mapping contains an element type, the key has a suffix of
     // '[' followed by the element type name.
@@ -45,11 +43,11 @@ public class ComponentRegistry implements Serializable
 
     /**
      * Construct a ComponentRegistry with the default component mappings. 
-     *
      */
     public ComponentRegistry()
     {
         registry = new HashMap<String, String>();
+        register(String.class, TextField.class);
         /*
                 register(Object.class, BeanGridField.class);
                 register(String.class, InputField.class);
@@ -106,133 +104,73 @@ public class ComponentRegistry implements Serializable
     }
 
     /**
-     * Registers an field in a non-type-safe fashion.
+     * Registers an component in a non-type-safe fashion.
      *
      * @param targetTypeClassName
      * @param elemenTypeName the element type name. May be null.
-     * @param fieldComponentClassName
+     * @param componentClassName
      */
-    public void register(String targetTypeClassName, String elemenTypeName, String fieldComponentClassName)
+    public void register(String targetTypeClassName, String elemenTypeName, String componentClassName)
     {
         if (elemenTypeName != null) {
             targetTypeClassName += '[' + elemenTypeName;
         }
 
-        registry.put(targetTypeClassName, fieldComponentClassName);
+        registry.put(targetTypeClassName, componentClassName);
     }
 
-    /**
-     * Given a shortened version of a Field class name (e.g., TextAreaField), try to find a matching full class name in the
-     * registry. The first one found is returned.
-     *
-     * @param shortName the short class name.
-     * 
-     * @return the full class name, or null if not found.
-     */
-    public String findMatchingFieldClass(String shortName)
+    public void register(Class<?> targetType, Class<? extends Component> componentClass)
     {
-        String matchStr = '.' + shortName;
-        for (String fieldClassName : registry.values()) {
-            if (fieldClassName.endsWith(matchStr)) {
-                return fieldClassName;
-            }
-        }
-
-        return null;
+        registry.put(targetType.getClass().getName(), componentClass.getClass().getName());
     }
 
     /**
      * Attempts to find the component class name for a given type and elementType.
      * 
      * @param type
-     * @param elementType the element type, which may be null.
+     * @param elementType the element type (e.g., for an array or collection), which may be null.
      * 
-     * @return the class name, or null if not found.
+     * @return the class, or null if not found.
      */
-    private String getComponentClassName(Class<?> type, Class<?> elementType)
+    // TODO Test. Entire Class.
+    @SuppressWarnings("unchecked")
+    public Class<? extends Component> getComponentClass(Class<?> type, Class<?> elementType)
     {
         String baseKey = type.getName();
 
-        for (; elementType != null; elementType = elementType.getSuperclass()) {
+        String className = null;
+        for (; elementType != null && className == null; elementType = elementType.getSuperclass()) {
             String elementBaseKey = baseKey + '[';
             // Search up class hierarchy for matching type.
             String componentClassName = registry.get(elementBaseKey + elementType.getName());
             if (componentClassName != null) {
-                return componentClassName;
+                className = componentClassName;
+                break;
             }
 
             Class<?>[] intfs = elementType.getInterfaces();
             for (int i = 0; i < intfs.length; i++) {
                 componentClassName = registry.get(elementBaseKey + intfs[i].getName());
                 if (componentClassName != null) {
-                    return componentClassName;
+                    className = componentClassName;
+                    break;
                 }
             }
         }
 
-        // If we didn't have an elementType or couldn't find a match using elementType, try 
-        // without.
-        return registry.get(baseKey);
-    }
-
-    /**
-     * Gets the Component for the given type and context. The component is created with a 
-     * BeanPropertyModel, reflecting the given property on the bean. BeanPropertyModel allows
-     * access to the underlying bean.
-     *
-     * @param bean the bean, which may or may not implement IModel.
-     * @param wicketId the Wicket component id.
-     * 
-     * @return the viewer Component. 
-     */
-    public Component getComponent(Object bean, String wicketId, BeanConfig componentConfig)
-    {
-        return null;
-        /*
-        String componentClassName = propertyMeta.getFieldType();
-        if (componentClassName == null) {
-            Class<?> type = propertyMeta.getPropertyType();
-            // For arrays, treat type as Object[]
-            if (type.isArray()) {
-                type = Object[].class;
-            }
-
-            Class<?> elementType = propertyMeta.getElementType(null);
-
-            // Work up class hierarchy until we find a more generalized component. Also check interface types.
-            for (; type != null && componentClassName == null; type = type.getSuperclass()) {
-                componentClassName = getComponentClassName(type, elementType);
-                Class<?>[] intfs = type.getInterfaces();
-                for (int i = 0; componentClassName == null && i < intfs.length; i++) {
-                    componentClassName = getComponentClassName(intfs[i], elementType);
-                }
-            }
+        if (className == null) {
+            className = registry.get(baseKey);
         }
 
-        if (componentClassName != null) {
+        if (className != null) {
             try {
-                Class<?> componentClass = Class.forName(componentClassName);
-                Constructor<?> xtor = componentClass.getConstructor(constructorArgs);
-
-                IModel model = new BeanPropertyModel(bean, propertyMeta);
-                Component component = (Component)xtor.newInstance(new Object[] { wicketId, model, propertyMeta });
-                associateLabelToFormComponents(propertyMeta, component);
-                return component;
+                return (Class<? extends Component>)Class.forName(className);
             }
             catch (ClassNotFoundException e) {
-                throw new RuntimeException("Component class not found", e);
-            }
-            catch (NoSuchMethodException e) {
-                throw new RuntimeException(
-                                "Component class does not implement constructor (String wicketId, IModel model)", e);
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Error instantiating component " + componentClassName, e);
+                throw new RuntimeException(e);
             }
         }
 
-        // The Object.class registry entry should have caught this, but just in case.
-        return new Label(wicketId, "<No Field for " + propertyMeta.getPropertyType().getName() + ">");
-        */
+        return null;
     }
 }
