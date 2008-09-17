@@ -64,6 +64,18 @@ public class ParameterValueAST
         return null;
     }
 
+    // TODO Test
+    public int getSubParameterValueAsInt(String parameterName, int defaultValue)
+    {
+        ParameterAST parameter = getSubParameter(parameterName);
+        if (parameter == null) {
+            return defaultValue;
+        }
+
+        Integer value = parameter.getValues().get(0).getIntegerValue();
+        return value == null ? defaultValue : value;
+    }
+
     /**
      * @return the raw value.
      */

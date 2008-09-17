@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.wicketwebbeans.model.BeanConfig;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
@@ -63,7 +62,7 @@ public class GridLayout extends Panel
     public GridLayout(String id)
     {
         super(id);
-        add(new RowListView("r", rowListViewModel));
+        add(new GridListView("r", rowListViewModel));
     }
 
     public int getColumns()
@@ -82,42 +81,6 @@ public class GridLayout extends Panel
 
     public void setComponents(List<ParameterValueAST> components)
     {
-        // TODO move down and use frags for tr and td and use just one listview
-        List<ComponentFactory> gridComponents = new ArrayList<ComponentFactory>();
-        if (components != null) {
-            for (ParameterValueAST componentParam : components) {
-                // TODO should be refactored to common code. This will eventually handle a property/ComponentRegistry
-                gridComponents.add(new ComponentFactory(getBeanFactory(), componentParam));
-            }
-        }
-
-        // Break out the rows and columns ahead of time.
-        List<List<ComponentFactory>> rowsAndCols = new ArrayList<List<ComponentFactory>>();
-        int colPos = 0;
-        List<ComponentFactory> currRow = null;
-        for (ComponentFactory component : gridComponents) {
-            int colspan = component.getParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
-            if (colspan < 1 || colspan > columns) {
-                throw new RuntimeException("Invalid colspan parameter value: " + colspan);
-            }
-
-            // If colspan > number of columns left, start a new row.
-            if ((colPos + colspan) > columns) {
-                colPos = 0;
-            }
-
-            if (colPos == 0) {
-                currRow = new ArrayList<ComponentFactory>();
-                rowsAndCols.add(currRow);
-            }
-
-            currRow.add(component);
-            colPos += colspan;
-            if (colPos >= columns) {
-                colPos = 0;
-            }
-        }
-
         rowListViewModel.setObject((Serializable)components);
     }
 
@@ -133,50 +96,40 @@ public class GridLayout extends Panel
     }
 
 
-    private final class RowListView extends ListView
-    {
-        private static final long serialVersionUID = 2709967037379449675L;
-
-        RowListView(String id, IModel model)
-        {
-            super(id, model);
-        }
-
-        @SuppressWarnings("unchecked")
-        protected void populateItem(ListItem item)
-        {
-            List<BeanConfig> columns = (List<BeanConfig>)item.getModelObject();
-            item.add(new ColListView("c", new Model((Serializable)columns)));
-        }
-    }
-
-
-    private final class ColListView extends ListView
+    private final class GridListView extends ListView
     {
         private static final long serialVersionUID = -1956048113471004675L;
+        private int columnIndex;
 
-        ColListView(String id, IModel model)
+        GridListView(String id, IModel model)
         {
             super(id, model);
         }
 
         protected void populateItem(ListItem item)
         {
-            BeanConfig config = (BeanConfig)item.getModelObject();
-            int colspan = config.getParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
-            config.removeParameter(SPECIAL_PARAM_COLSPAN);
+            int itemIndex = item.getIndex();
+            if (itemIndex == 0 || columnIndex >= columns) {
+                columnIndex = 0;
+            }
+            
+            if (columnIndex == 0) {
+                close last row if itemIndex != 0
+                start new row
+            }
+            
+            ParameterValueAST parameterValue = (ParameterValueAST)item.getModelObject();
+            int colspan = parameterValue.getSubParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
+            if (colspan < 1 || colspan > columns) {
+                throw new RuntimeException("Invalid colspan parameter value: " + colspan);
+            }
 
-            BeanFactory beanFactory = config.getBeanFactory();
-            Class<?> componentClass = beanFactory.loadClass(config);
-            String fragmentId = FormComponent.class.isAssignableFrom(componentClass) ? "inputComponent"
-                            : "spanComponent";
+            Component component = getBeanFactory().resolveComponent("c", parameterValue);
+            String fragmentId = component instanceof FormComponent ? "inputComponent" : "spanComponent";
 
-            Fragment fragment = new Fragment("frag", fragmentId, this);
-            fragment.setRenderBodyOnly(true);
-
-            final String id = "c";
-            Component component = (Component)beanFactory.newInstance(config, id);
-            fragment.add(component);
+            Fragment componentFragment = new Fragment("frag", fragmentId, this);
+            componentFragment.setRenderBodyOnly(true);
+            componentFragment.add(component);
 
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
@@ -185,7 +138,7 @@ public class GridLayout extends Panel
                 item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
             }
 
-            item.add(fragment);
+            item.add(componentFragment);
         }
     }
 }
