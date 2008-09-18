@@ -16,8 +16,6 @@
 ---*/
 package net.sourceforge.wicketwebbeans.containers;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
@@ -25,15 +23,12 @@ import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
-
-import sun.awt.ComponentFactory;
 
 /**
  * A panel for generically displaying Components in a grid-style layout. The
@@ -50,7 +45,7 @@ public class GridLayout extends Panel
     public static final String SPECIAL_PARAM_COLSPAN = "_colspan";
 
     private int columns = 3;
-    private Model rowListViewModel = new Model();
+    private List<ParameterValueAST> components;
     private BeanFactory beanFactory;
 
     /**
@@ -62,7 +57,7 @@ public class GridLayout extends Panel
     public GridLayout(String id)
     {
         super(id);
-        add(new GridListView("r", rowListViewModel));
+        add(new LayoutView("r"));
     }
 
     public int getColumns()
@@ -81,7 +76,7 @@ public class GridLayout extends Panel
 
     public void setComponents(List<ParameterValueAST> components)
     {
-        rowListViewModel.setObject((Serializable)components);
+        this.components = components;
     }
 
     public BeanFactory getBeanFactory()
@@ -96,49 +91,88 @@ public class GridLayout extends Panel
     }
 
 
-    private final class GridListView extends ListView
+    private final class LayoutView extends RepeatingView
     {
         private static final long serialVersionUID = -1956048113471004675L;
-        private int columnIndex;
 
-        GridListView(String id, IModel model)
+        LayoutView(String id)
         {
-            super(id, model);
+            super(id);
         }
 
-        protected void populateItem(ListItem item)
+        @Override
+        protected void onPopulate()
         {
-            int itemIndex = item.getIndex();
-            if (itemIndex == 0 || columnIndex >= columns) {
-                columnIndex = 0;
-            }
-            
-            if (columnIndex == 0) {
-                close last row if itemIndex != 0
-                start new row
-            }
-            
-            ParameterValueAST parameterValue = (ParameterValueAST)item.getModelObject();
-            int colspan = parameterValue.getSubParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
-            if (colspan < 1 || colspan > columns) {
-                throw new RuntimeException("Invalid colspan parameter value: " + colspan);
-            }
+            //removeAll();
 
-            Component component = getBeanFactory().resolveComponent("c", parameterValue);
-            String fragmentId = component instanceof FormComponent ? "inputComponent" : "spanComponent";
+            int columnIndex = 0;
+            int rowStartIndex = 0;
+            int componentIndex = 0;
+            for (ParameterValueAST componentParameterValue : components) {
+                if (columnIndex >= columns) {
+                    columnIndex = 0;
+                    WebMarkupContainer container = new WebMarkupContainer(newChildId());
+                    add(container);
+                    container.add(new ColumnView("c", rowStartIndex, componentIndex));
+                    rowStartIndex = componentIndex;
+                }
 
-            Fragment componentFragment = new Fragment("frag", fragmentId, this);
-            componentFragment.setRenderBodyOnly(true);
-            componentFragment.add(component);
+                int colspan = componentParameterValue.getSubParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
+                if (colspan < 1 || colspan > columns) {
+                    throw new RuntimeException("Invalid colspan parameter value: " + colspan);
+                }
 
-            int pct100 = (colspan * 10000) / columns;
-            String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            item.add(new AttributeModifier("style", true, new Model(width)));
-            if (colspan != 1) {
-                item.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
+                columnIndex += colspan;
+                ++componentIndex;
             }
 
-            item.add(componentFragment);
+            if (rowStartIndex < componentIndex) {
+                WebMarkupContainer container = new WebMarkupContainer(newChildId());
+                add(container);
+                container.add(new ColumnView("c", rowStartIndex, componentIndex));
+            }
+        }
+    }
+
+
+    private final class ColumnView extends RepeatingView
+    {
+        private static final long serialVersionUID = -1956048113471004675L;
+        private int startIndex;
+        private int endIndex;
+
+        ColumnView(String id, int startIndex, int endIndex)
+        {
+            super(id);
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+        }
+
+        @Override
+        protected void onPopulate()
+        {
+            for (int i = startIndex; i < endIndex; i++) {
+                ParameterValueAST componentParameterValue = components.get(i);
+
+                Component component = getBeanFactory().resolveComponent("c", componentParameterValue);
+
+                WebMarkupContainer container = new WebMarkupContainer(newChildId());
+                add(container);
+
+                String fragmentId = component instanceof FormComponent ? "ci" : "c";
+                Fragment componentFragment = new Fragment("frag", fragmentId, this);
+                componentFragment.setRenderBodyOnly(true);
+                componentFragment.add(component);
+                container.add(componentFragment);
+
+                int colspan = componentParameterValue.getSubParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
+                int pct100 = (colspan * 10000) / columns;
+                String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
+                container.add(new AttributeModifier("style", true, new Model(width)));
+                if (colspan != 1) {
+                    container.add(new AttributeModifier("colspan", true, new Model(String.valueOf(colspan))));
+                }
+            }
         }
     }
 }
