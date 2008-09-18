@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.model.BeanConfig;
-import net.sourceforge.wicketwebbeans.model.ParameterAST;
-import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 
 /**
@@ -117,14 +114,6 @@ public class BeanConfigTest extends TestCase
         clone.setParameter("param2", Collections.singletonList(new ParameterValueAST("value2", true)));
         assertNotNull(clone.getParameterValue("param2"));
         assertNull(config.getParameterValue("param2"));
-    }
-
-    public void testRemoveParameter() throws Exception
-    {
-        BeanConfig config = createBeanConfig("ROOT { class: x; param: \"xyzzy\" }");
-        assertNotNull(config.getParameterValue("param"));
-        config.removeParameter("param");
-        assertNull(config.getParameterValue("param"));
     }
 
     public static BeanConfig createBeanConfig(String configStr) throws Exception

@@ -289,7 +289,8 @@ public class BeanFactory
 
         for (Map.Entry<String, List<ParameterValueAST>> parameter : beanConfig.getParameters().entrySet()) {
             String parameterName = parameter.getKey();
-            if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)) {
+            if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)
+                            || parameterName.charAt(0) == '_') {
                 continue;
             }
 

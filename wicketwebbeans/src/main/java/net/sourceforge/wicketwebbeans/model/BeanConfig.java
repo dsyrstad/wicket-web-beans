@@ -140,11 +140,6 @@ public class BeanConfig implements Serializable, Cloneable
         }
     }
 
-    public void removeParameter(String parameterName)
-    {
-        parameters.remove(parameterName);
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public BeanConfig clone()

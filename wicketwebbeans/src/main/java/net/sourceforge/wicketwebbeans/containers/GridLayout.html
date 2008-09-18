@@ -5,27 +5,17 @@
 <div class="wwbGridLayout">
 <table class="wwbGridLayoutTable">
 <tbody>
-  <div wicket:id="tableFrag"></div>
-  </tr>
+  <tr wicket:id="r"><td wicket:id="c"><div wicket:id="frag"></div></td></tr>
 </tbody>
 </table>
 </div>
 </wicket:panel>
 
-<wicket:fragment wicket:id="tr">
-  <tr wicket:id="r">
+<wicket:fragment wicket:id="c">
+  <div wicket:id="c"></div>
 </wicket:fragment>
 
-<wicket:fragment wicket:id="tr">
-  <tr wicket:id="r">
-</wicket:fragment>
-
-<div wicket:id="frag"></div>
-
-<wicket:fragment wicket:id="spanComponent">
-  <span wicket:id="c"></span>
-</wicket:fragment>
-<wicket:fragment wicket:id="inputComponent">
+<wicket:fragment wicket:id="ci">
   <input wicket:id="c" />
 </wicket:fragment>
 
