@@ -18,7 +18,7 @@
 package net.sourceforge.wicketwebbeans.examples;
 
 import java.io.Serializable;
-
+import java.util.Date;
 
 /**
  * A test bean that is Serializable. <p>
@@ -36,5 +36,10 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
     public SerializableBean(String name, String serialNumber)
     {
         super(name, serialNumber);
+    }
+
+    public Date getStamp()
+    {
+        return new Date();
     }
 }

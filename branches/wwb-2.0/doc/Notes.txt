@@ -1,5 +1,10 @@
 v2.0
 ----
+- PropertyProxyModels can be a listener and mark itself as dirty. Then any higher
+level component can traverse the component model see if any model is dirty.
+However, this doesn't help having properties that are values to component
+properties. The component would need to register itself as a listener.
+
 - Special "control" params like colspan that are not properties of the bean
   should be indicated with _ - just by convention.
 - System config that is loaded first with BeanFactory - common defs
