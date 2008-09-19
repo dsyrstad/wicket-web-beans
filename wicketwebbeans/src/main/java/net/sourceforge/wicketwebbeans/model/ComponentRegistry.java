@@ -18,6 +18,7 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.wicket.Component;
@@ -48,6 +49,7 @@ public class ComponentRegistry implements Serializable
     {
         registry = new HashMap<String, String>();
         register(String.class, TextField.class);
+        register(Date.class, TextField.class);
         /*
                 register(Object.class, BeanGridField.class);
                 register(String.class, InputField.class);
@@ -121,7 +123,7 @@ public class ComponentRegistry implements Serializable
 
     public void register(Class<?> targetType, Class<? extends Component> componentClass)
     {
-        registry.put(targetType.getClass().getName(), componentClass.getClass().getName());
+        registry.put(targetType.getName(), componentClass.getName());
     }
 
     /**

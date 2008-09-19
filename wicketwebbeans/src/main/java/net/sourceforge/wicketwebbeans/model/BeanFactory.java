@@ -285,103 +285,109 @@ public class BeanFactory
     private void setBeanProperties(BeanConfig beanConfig, Object bean, Class<?> beanClass)
     {
         String beanName = beanConfig.getBeanName();
-        String beanClassName = beanClass.getName();
-
-        for (Map.Entry<String, List<ParameterValueAST>> parameter : beanConfig.getParameters().entrySet()) {
+        Map<String, List<ParameterValueAST>> parameters = beanConfig.getParameters();
+        for (Map.Entry<String, List<ParameterValueAST>> parameter : parameters.entrySet()) {
             String parameterName = parameter.getKey();
-            if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)
-                            || parameterName.charAt(0) == '_') {
-                continue;
-            }
+            setBeanProperty(beanName, bean, parameterName, parameter.getValue());
+        }
+    }
 
-            PropertyDescriptor propertyDescriptor;
+    private void setBeanProperty(String beanName, Object bean, String parameterName, List<ParameterValueAST> values)
+    {
+        Class<?> beanClass = bean.getClass();
+        String beanClassName = beanClass.getName();
+        if (parameterName.equals(PARAMETER_NAME_CLASS) || parameterName.equals(PARAMETER_NAME_EXTENDS)
+                        || parameterName.charAt(0) == '_') {
+            return;
+        }
+
+        PropertyDescriptor propertyDescriptor;
+        try {
+            propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName + "' class: "
+                            + beanClassName, e);
+        }
+
+        if (propertyDescriptor == null) {
+            throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName + "' class: "
+                            + beanClassName);
+        }
+
+        Class<?> propertyType = propertyDescriptor.getPropertyType();
+        Method writeMethod = propertyDescriptor.getWriteMethod();
+        if (writeMethod == null) {
+            // Try to find a setter with a return value. This is common in Wicket for builder patterns.
+            String setterName = "set"
+                            + (parameterName.length() > 1 ? Character.toUpperCase(parameterName.charAt(0))
+                                            + parameterName.substring(1) : parameterName.toUpperCase());
             try {
-                propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
+                writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
             }
-            catch (Exception e) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName, e);
-            }
-
-            if (propertyDescriptor == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName);
+            catch (NoSuchMethodException e) {
+                // Handled below.
             }
 
-            Class<?> propertyType = propertyDescriptor.getPropertyType();
-            Method writeMethod = propertyDescriptor.getWriteMethod();
             if (writeMethod == null) {
-                // Try to find a setter with a return value. This is common in Wicket for builder patterns.
-                String setterName = "set"
-                                + (parameterName.length() > 1 ? Character.toUpperCase(parameterName.charAt(0))
-                                                + parameterName.substring(1) : parameterName.toUpperCase());
-                try {
-                    writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
-                }
-                catch (NoSuchMethodException e) {
-                    // Handled below.
-                }
-
-                if (writeMethod == null) {
-                    throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
-                                    + beanClassName + " does not have an exposed setter");
-                }
-            }
-
-            List<ParameterValueAST> values = parameter.getValue();
-            Object value;
-            if (values.isEmpty()) {
-                value = null;
-            }
-            else {
-                ParameterValueAST valueAst = values.get(0);
-                propertyType = ClassUtils.primitiveToWrapper(propertyType);
-                if (Double.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getDoubleValue();
-                }
-                else if (Float.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getDoubleValue().floatValue();
-                }
-                else if (Long.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getLongValue();
-                }
-                else if (Integer.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getIntegerValue();
-                }
-                else if (Short.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getIntegerValue().shortValue();
-                }
-                else if (Boolean.class.isAssignableFrom(propertyType)) {
-                    value = Boolean.valueOf(valueAst.getBooleanValue());
-                }
-                else if (List.class.isAssignableFrom(propertyType)) {
-                    value = values;
-                }
-                else if (IModel.class.isAssignableFrom(propertyType)) {
-                    value = convertToModel(valueAst);
-                }
-                else if (propertyType.equals(String.class)) {
-                    value = valueAst.getValue();
-                }
-                else {
-                    throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
-                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
-                }
-            }
-
-            try {
-                writeMethod.invoke(bean, value);
-            }
-            catch (Exception e) {
-                Throwable t = e;
-                if (e instanceof InvocationTargetException) {
-                    t = e.getCause();
-                }
-
-                throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
-                                + "' class " + beanClassName, t);
+                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
+                                + beanClassName + " does not have an exposed setter");
             }
         }
+
+        Object value;
+        if (values.isEmpty()) {
+            value = null;
+        }
+        else {
+            ParameterValueAST valueAst = values.get(0);
+            propertyType = ClassUtils.primitiveToWrapper(propertyType);
+            if (Double.class.isAssignableFrom(propertyType)) {
+                value = valueAst.getDoubleValue();
+            }
+            else if (Float.class.isAssignableFrom(propertyType)) {
+                value = valueAst.getDoubleValue().floatValue();
+            }
+            else if (Long.class.isAssignableFrom(propertyType)) {
+                value = valueAst.getLongValue();
+            }
+            else if (Integer.class.isAssignableFrom(propertyType)) {
+                value = valueAst.getIntegerValue();
+            }
+            else if (Short.class.isAssignableFrom(propertyType)) {
+                value = valueAst.getIntegerValue().shortValue();
+            }
+            else if (Boolean.class.isAssignableFrom(propertyType)) {
+                value = Boolean.valueOf(valueAst.getBooleanValue());
+            }
+            else if (List.class.isAssignableFrom(propertyType)) {
+                value = values;
+            }
+            else if (IModel.class.isAssignableFrom(propertyType)) {
+                value = convertToModel(valueAst);
+            }
+            else if (propertyType.equals(String.class)) {
+                value = valueAst.getValue();
+            }
+            else {
+                throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
+                                + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
+            }
+        }
+
+        try {
+            writeMethod.invoke(bean, value);
+        }
+        catch (Exception e) {
+            Throwable t = e;
+            if (e instanceof InvocationTargetException) {
+                t = e.getCause();
+            }
+
+            throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
+                            + "' class " + beanClassName, t);
+        }
+
     }
 
     private IModel convertToModel(ParameterValueAST valueAst)
@@ -475,7 +481,7 @@ public class BeanFactory
                 }
 
                 // Get component class from ComponentRegistry
-                // TODO Handle elementType as special param.
+                // TODO Handle elementType as special param and pass to component registry.
                 componentClass = getComponentRegistry().getComponentClass(propertyType, null);
                 if (componentClass == null) {
                     throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
@@ -497,7 +503,12 @@ public class BeanFactory
                                                 + ". Component must have a public single-argument constructor whose parameter is a Wicket id");
             }
 
-            // TODO set bean properties on component.
+            component.setModel(propertyProxyModel);
+
+            for (ParameterAST parameter : parameterValue.getSubParameters()) {
+                setBeanProperty(component.getClass().getName(), component, parameter.getName(), parameter.getValues());
+            }
+
             return component;
         }
         else {
