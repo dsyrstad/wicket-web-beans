@@ -19,7 +19,6 @@ package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.converters.AbstractConverter;
 import org.apache.wicket.model.Model;
 
@@ -28,7 +27,6 @@ import org.apache.wicket.model.Model;
  * 
  * @author Dan Syrstad
  */
-// TODO Test
 public class IModelConverter extends AbstractConverter
 {
     public IModelConverter()
@@ -47,9 +45,11 @@ public class IModelConverter extends AbstractConverter
         if (value instanceof Serializable) {
             return new Model((Serializable)value);
         }
-
-        throw new ConversionException("Cannot convert a value of " + value.getClass() + " to " + type
-                        + ". The object must be Serailizable.");
+        else {
+            // Note: Throwing a ConversionException would get eaten, so return a model with the message in it.
+            return new Model("Cannot convert a value of " + value.getClass() + " to " + type
+                            + ". The object must be Serailizable.");
+        }
     }
 
     @Override

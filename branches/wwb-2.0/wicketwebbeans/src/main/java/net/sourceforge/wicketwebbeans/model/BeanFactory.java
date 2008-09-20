@@ -419,7 +419,6 @@ public class BeanFactory
      */
     public Component resolveComponent(String wicketId, ParameterValueAST parameterValue)
     {
-        // TODO Test
         String valueString = parameterValue.getValue();
         if (valueString.charAt(0) == '$') {
             PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);

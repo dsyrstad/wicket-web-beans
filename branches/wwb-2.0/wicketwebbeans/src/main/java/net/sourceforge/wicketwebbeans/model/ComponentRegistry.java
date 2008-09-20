@@ -50,6 +50,7 @@ public class ComponentRegistry implements Serializable
         registry = new HashMap<String, String>();
         register(String.class, TextField.class);
         register(Date.class, TextField.class);
+        register(Integer.class, TextField.class);
         /*
                 register(Object.class, BeanGridField.class);
                 register(String.class, InputField.class);
