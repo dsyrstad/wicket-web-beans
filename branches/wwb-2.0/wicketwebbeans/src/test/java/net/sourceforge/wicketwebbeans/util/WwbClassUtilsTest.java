@@ -72,6 +72,7 @@ public class WwbClassUtilsTest extends TestCase
         method = WwbClassUtils.findMostSpecificMethod(TestClass.class, "methodWith3Args", String.class, null, null);
         assertEquals("methodWith3Args", method.getName());
         assertEquals(String.class, method.getParameterTypes()[0]);
+        // TODO This is order dependent depending on machine. Method should sort methods or score for consistency.
         assertEquals(Integer.class, method.getParameterTypes()[1]);
         assertEquals(Object.class, method.getParameterTypes()[2]);
 

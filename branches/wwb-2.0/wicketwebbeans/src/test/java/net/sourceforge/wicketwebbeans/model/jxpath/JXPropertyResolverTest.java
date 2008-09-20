@@ -6,6 +6,11 @@ import java.math.BigDecimal;
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
 
+/**
+ * Tests JXPropertyResolver and JXPropertyProxy. <p>
+ * 
+ * @author Dan Syrstad
+ */
 public class JXPropertyResolverTest extends TestCase
 {
     private PropertyResolver resolver = new JXPathPropertyResolver();

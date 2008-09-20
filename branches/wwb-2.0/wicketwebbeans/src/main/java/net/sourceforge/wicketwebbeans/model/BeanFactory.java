@@ -113,7 +113,6 @@ public class BeanFactory
         this.propertyResolver = propertyResolver;
     }
 
-    // TODO test constructor to see that this is set by default
     public ComponentRegistry getComponentRegistry()
     {
         return componentRegistry;
@@ -341,37 +340,46 @@ public class BeanFactory
         }
         else {
             ParameterValueAST valueAst = values.get(0);
-            propertyType = ClassUtils.primitiveToWrapper(propertyType);
-            if (Double.class.isAssignableFrom(propertyType)) {
-                value = valueAst.getDoubleValue();
-            }
-            else if (Float.class.isAssignableFrom(propertyType)) {
-                value = valueAst.getDoubleValue().floatValue();
-            }
-            else if (Long.class.isAssignableFrom(propertyType)) {
-                value = valueAst.getLongValue();
-            }
-            else if (Integer.class.isAssignableFrom(propertyType)) {
-                value = valueAst.getIntegerValue();
-            }
-            else if (Short.class.isAssignableFrom(propertyType)) {
-                value = valueAst.getIntegerValue().shortValue();
-            }
-            else if (Boolean.class.isAssignableFrom(propertyType)) {
-                value = Boolean.valueOf(valueAst.getBooleanValue());
-            }
-            else if (List.class.isAssignableFrom(propertyType)) {
-                value = values;
-            }
-            else if (IModel.class.isAssignableFrom(propertyType)) {
-                value = convertToModel(valueAst);
-            }
-            else if (propertyType.equals(String.class)) {
-                value = valueAst.getValue();
+            String stringValue = valueAst.getValue();
+            boolean hasPropertyValue = stringValue != null && stringValue.charAt(0) == '$';
+            if (hasPropertyValue) {
+                value = resolvePropertyProxyModel(stringValue).getObject();
             }
             else {
-                throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
-                                + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
+                propertyType = ClassUtils.primitiveToWrapper(propertyType);
+                if (Double.class.isAssignableFrom(propertyType)) {
+                    value = valueAst.getDoubleValue();
+                }
+                else if (Float.class.isAssignableFrom(propertyType)) {
+                    Double doubleValue = valueAst.getDoubleValue();
+                    value = doubleValue == null ? null : doubleValue.floatValue();
+                }
+                else if (Long.class.isAssignableFrom(propertyType)) {
+                    value = valueAst.getLongValue();
+                }
+                else if (Integer.class.isAssignableFrom(propertyType)) {
+                    value = valueAst.getIntegerValue();
+                }
+                else if (Short.class.isAssignableFrom(propertyType)) {
+                    Integer integerValue = valueAst.getIntegerValue();
+                    value = integerValue == null ? null : integerValue.shortValue();
+                }
+                else if (Boolean.class.isAssignableFrom(propertyType)) {
+                    value = Boolean.valueOf(valueAst.getBooleanValue());
+                }
+                else if (List.class.isAssignableFrom(propertyType)) {
+                    value = values;
+                }
+                else if (IModel.class.isAssignableFrom(propertyType)) {
+                    value = convertToModel(valueAst);
+                }
+                else if (propertyType.equals(String.class)) {
+                    value = stringValue;
+                }
+                else {
+                    throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
+                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
+                }
             }
         }
 
@@ -387,14 +395,12 @@ public class BeanFactory
             throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
                             + "' class " + beanClassName, t);
         }
-
     }
 
     private IModel convertToModel(ParameterValueAST valueAst)
     {
         IModel value;
         String valueString = valueAst.getValue();
-        // TODO Test
         if (valueString.startsWith("$")) {
             value = resolvePropertyProxyModel(valueString);
         }
@@ -422,7 +428,6 @@ public class BeanFactory
      */
     public PropertyProxyModel resolvePropertyProxyModel(String propertySpec)
     {
-        // TODO Test
         PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(propertySpec.substring(1));
         return new PropertyProxyModel(propertyProxy, beanModel);
     }
@@ -447,7 +452,7 @@ public class BeanFactory
     {
         // TODO Test
         String valueString = parameterValue.getValue();
-        if (valueString.startsWith("$")) {
+        if (valueString.charAt(0) == '$') {
             PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);
             // If we have _component, we don't need the property's type.
             Class<? extends Component> componentClass = null;
