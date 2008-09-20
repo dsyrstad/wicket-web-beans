@@ -220,6 +220,17 @@ public class BeanFactoryTest extends TestCase
         assertEquals("hello", bean.getStringProp());
     }
 
+    public void testNewInstanceWithNonModelParameterOnModelProperty() throws Exception
+    {
+        TestBean origBean = new TestBean();
+        origBean.setSomeOtherString("hello");
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(origBean), "Bean1 { "
+                        + " class: net.sourceforge.wicketwebbeans.model.TestBean;" + //
+                        " model: $someOtherString; }");
+        TestBean bean = (TestBean)factory.newInstance("Bean1");
+        assertEquals("hello", bean.getModel().getObject());
+    }
+
     public void testNewInstanceWithMisMatchedPropertyParameter() throws Exception
     {
         TestBean origBean = new TestBean();
