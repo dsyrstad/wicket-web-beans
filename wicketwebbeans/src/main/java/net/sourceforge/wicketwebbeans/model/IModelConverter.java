@@ -40,6 +40,10 @@ public class IModelConverter extends AbstractConverter
     @Override
     protected Object convertToType(Class type, Object value)
     {
+        if (type.isAssignableFrom(value.getClass())) {
+            return value;
+        }
+
         if (value instanceof Serializable) {
             return new Model((Serializable)value);
         }

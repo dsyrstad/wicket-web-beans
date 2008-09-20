@@ -3,9 +3,9 @@ Root {
 	components: 
 		$serialNumber,
 		$stamp {  model: "override" },
-		#Field { model: $name }, 
-		#Field { model: "$serialNumber/../name" }, 
-		#Field { model: "$stamp"  }, 
+		Field { model: $name }, 
+		Field { model: "$serialNumber/../name" }, 
+		Field { model: "$stamp"  }, 
 		Field, SubGrid { _colspan: 2 }, 
 		Label, 
 		Label { model: "A Label" }, 

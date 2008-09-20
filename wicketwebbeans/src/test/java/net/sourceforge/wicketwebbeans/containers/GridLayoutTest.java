@@ -50,10 +50,10 @@ public class GridLayoutTest extends TestCase
         renderPage(factory);
 
         tester.assertComponent("component", GridLayout.class);
-        tester.assertComponent("component:r:0:c:0:frag:c", TextField.class);
-        tester.assertComponent("component:r:0:c:1:frag:c", TextField.class);
-        tester.assertComponent("component:r:0:c:2:frag:c", TextField.class);
-        tester.assertComponent("component:r:1:c:0:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:1:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:2:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:3:frag:c", TextField.class);
+        tester.assertComponent("component:r:2:c:1:frag:c", TextField.class);
     }
 
     public void testRenderingWithDefaultOverrides() throws Exception
@@ -64,34 +64,33 @@ public class GridLayoutTest extends TestCase
         renderPage(factory);
 
         tester.assertComponent("component", GridLayout.class);
-        tester.assertComponent("component:r:0:c:0:frag:c", TextField.class);
-        tester.assertComponent("component:r:0:c:1:frag:c", TextField.class);
-        tester.assertComponent("component:r:0:c:2:frag:c", TextField.class);
-        tester.assertComponent("component:r:0:c:3:frag:c", TextField.class);
-        tester.assertComponent("component:r:1:c:0:frag:c", TextField.class);
         tester.assertComponent("component:r:1:c:1:frag:c", TextField.class);
         tester.assertComponent("component:r:1:c:2:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:3:frag:c", TextField.class);
+        tester.assertComponent("component:r:1:c:4:frag:c", TextField.class);
+        tester.assertComponent("component:r:2:c:1:frag:c", TextField.class);
+        tester.assertComponent("component:r:2:c:2:frag:c", TextField.class);
+        tester.assertComponent("component:r:2:c:3:frag:c", TextField.class);
 
         TagTester overriddenTag = tester.getTagByWicketId("component");
         assertEquals("<div wicket:id=\"component\"><wicket:panel>\n" + "<div class=\"wwbGridLayout\">\n"
-                        + "<table class=\"wwbGridLayoutTable\">\n" + "<tbody>\n" + "  <tr wicket:id=\"r\">\n"
-                        + "    <td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:0:c:0:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:0:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:0:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:0:c:3:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td>\n" + "  </tr><tr wicket:id=\"r\">\n"
-                        + "    <td colspan=\"2\" style=\"width: 50.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:1:c:0:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:1:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
-                        + "      <input name=\"component:r:1:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
-                        + "    </td>\n" + "  </tr>\n" + "</tbody>\n" + "</table>\n" + "</div>\n"
-                        + "</wicket:panel></div>", overriddenTag.getMarkup().replaceAll("\t", "    "));
+                        + "<table class=\"wwbGridLayoutTable\">\n" + "<tbody>\n"
+                        + "  <tr wicket:id=\"r\"><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:1:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:1:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:1:c:3:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:1:c:4:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td></tr><tr wicket:id=\"r\"><td colspan=\"2\" style=\"width: 50.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:2:c:1:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:2:c:2:frag:c\" value=\"\" wicket:id=\"c\"/>\n"
+                        + "</td><td style=\"width: 25.0%;\" wicket:id=\"c\">\n"
+                        + "  <input name=\"component:r:2:c:3:frag:c\" value=\"\" wicket:id=\"c\"/>\n" + "</td></tr>\n"
+                        + "</tbody>\n" + "</table>\n" + "</div>\n" + "</wicket:panel></div>", overriddenTag.getMarkup()
+                        .replaceAll("\t", "    "));
     }
 
     public void testInvalidColumnsParameter() throws Exception
@@ -104,7 +103,7 @@ public class GridLayoutTest extends TestCase
         }
         catch (RuntimeException e) {
             // Expected
-            assertTrue(e.getMessage().startsWith("Error setting property columns"));
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Error setting property 'columns'"));
         }
 
     }
@@ -114,12 +113,11 @@ public class GridLayoutTest extends TestCase
         final BeanFactory factory = TestUtils
                         .createBeanFactory("Grid { class: GridLayout; components: Field { _colspan: 0 }; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
         try {
-            factory.newInstance("Grid", "id");
+            renderPage(factory);
             fail();
         }
         catch (RuntimeException e) {
             // Expected
-            assertTrue(e.getMessage().startsWith("Error setting property components"));
             assertTrue(e.getCause().getMessage().startsWith("Invalid colspan parameter value"));
         }
 
