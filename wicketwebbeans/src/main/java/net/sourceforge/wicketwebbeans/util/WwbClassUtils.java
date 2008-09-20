@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.ClassUtils;
 
 /**
@@ -222,18 +223,48 @@ public class WwbClassUtils
             Class<?> argType = someArgs[i];
             Class<?> targetType = someTargetArgs[i];
 
-            if (argType == null) {
-                distance++;
-            }
-            else if (argType == targetType) {
-                // Same - no distance added.
-            }
-            else {
-                // Not exactly the same (one is primitive and other is not or one is assignable from the other).
-                distance += 2;
-            }
+            distance += getTransformationCost(argType, targetType);
         }
 
         return distance;
     }
+
+    /**
+     * Gets the number of steps required needed to turn the source class into the 
+     * destination class. This represents the number of steps in the object hierarchy 
+     * graph.<p/>
+     * Derived from Apache Commons BeanUtils {@link MethodUtils#getObjectTransformationCost}.
+     * 
+     * @param srcClass The source class
+     * @param destClass The destination class
+     * @return The cost of transforming an object
+     */
+    private static int getTransformationCost(Class<?> srcClass, Class<?> destClass)
+    {
+        int cost = 0;
+        while (destClass != null && !destClass.equals(srcClass)) {
+            if (destClass.isInterface()) {
+                // slight penalty for interface match. 
+                // we still want an exact match to override an interface match, but  
+                // an interface match should override anything where we have to get a 
+                // superclass.
+                ++cost;
+                break;
+            }
+
+            cost += 4;
+            destClass = destClass.getSuperclass();
+        }
+
+        /*
+         * If the destination class is null, we've traveled all the way up to 
+         * an Object match. We'll penalize this by adding 6 to the cost.
+         */
+        if (destClass == null) {
+            cost += 6;
+        }
+
+        return cost;
+    }
+
 }

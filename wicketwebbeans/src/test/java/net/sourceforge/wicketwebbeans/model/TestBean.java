@@ -28,6 +28,7 @@ public class TestBean implements Serializable
     private IModel modelOfSubBean;
     private BeanFactory beanFactory;
     private String someOtherString;
+    private TestBean nestedBean;
 
     // TODO LATER: arrays, collections, maps
 
@@ -264,5 +265,15 @@ public class TestBean implements Serializable
     public String getSomeOtherString()
     {
         return someOtherString;
+    }
+
+    public void setNestedBean(TestBean nestedBean)
+    {
+        this.nestedBean = nestedBean;
+    }
+
+    public TestBean getNestedBean()
+    {
+        return nestedBean;
     }
 }
