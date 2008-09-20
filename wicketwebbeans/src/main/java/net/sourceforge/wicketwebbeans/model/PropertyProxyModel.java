@@ -25,11 +25,11 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Dan Syrstad
  */
+// TODO Test
 public class PropertyProxyModel implements IChainingModel
 {
     private static final long serialVersionUID = -5278835598135566134L;
 
-    // TODO Should this be BeanFactory and then reference model from it?
     private IModel beanModel;
     private PropertyProxy proxy;
 

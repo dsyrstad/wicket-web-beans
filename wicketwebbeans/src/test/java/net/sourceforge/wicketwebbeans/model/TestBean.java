@@ -1,14 +1,13 @@
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import net.sourceforge.wicketwebbeans.model.BeanFactory;
-import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
-
 import org.apache.wicket.model.IModel;
 
-public class TestBean
+@SuppressWarnings("serial")
+public class TestBean implements Serializable
 {
     private String stringProp;
     private int intProp;
@@ -28,6 +27,7 @@ public class TestBean
     private IModel model;
     private IModel modelOfSubBean;
     private BeanFactory beanFactory;
+    private String someOtherString;
 
     // TODO LATER: arrays, collections, maps
 
@@ -254,5 +254,15 @@ public class TestBean
     public void setBeanFactory(BeanFactory beanFactory)
     {
         this.beanFactory = beanFactory;
+    }
+
+    public void setSomeOtherString(String someOtherString)
+    {
+        this.someOtherString = someOtherString;
+    }
+
+    public String getSomeOtherString()
+    {
+        return someOtherString;
     }
 }

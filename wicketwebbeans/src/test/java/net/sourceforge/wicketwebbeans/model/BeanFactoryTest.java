@@ -27,6 +27,9 @@ import java.util.List;
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
 /**
  * Tests BeanFactory. <p>
  * 
@@ -45,6 +48,8 @@ public class BeanFactoryTest extends TestCase
         assertNotNull(factory.getBeanConfig("PintoBean"));
         assertNotNull(factory.getBeanConfig("Another"));
         assertNull(factory.getBeanConfig("X"));
+        assertNotNull(factory.getComponentRegistry());
+        assertNotNull(factory.getPropertyResolver());
     }
 
     public void testGetBeanConfigWithParameters() throws Exception
@@ -176,7 +181,6 @@ public class BeanFactoryTest extends TestCase
                         + " parameterValues: 1, \"2\", 3.1, true, symbol; model: \"modelString\"; "
                         + " modelOfSubBean: SubBean; }" + " SubBean { class: java.util.Date; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1");
-        assertTrue(bean instanceof TestBean);
         assertEquals(5, bean.getIntProp());
         assertEquals(3.14, bean.getDoubleProp());
         assertTrue(bean.isBooleanProp());
@@ -203,6 +207,36 @@ public class BeanFactoryTest extends TestCase
         assertEquals("modelString", bean.getModel().getObject());
         assertTrue(bean.getModelOfSubBean().getObject() instanceof Date);
         assertSame(factory, bean.getBeanFactory());
+    }
+
+    public void testNewInstanceWithPropertyParameter() throws Exception
+    {
+        TestBean origBean = new TestBean();
+        origBean.setSomeOtherString("hello");
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(origBean), "Bean1 { "
+                        + " class: net.sourceforge.wicketwebbeans.model.TestBean;" + //
+                        " stringProp: $someOtherString; }");
+        TestBean bean = (TestBean)factory.newInstance("Bean1");
+        assertEquals("hello", bean.getStringProp());
+    }
+
+    public void testNewInstanceWithMisMatchedPropertyParameter() throws Exception
+    {
+        TestBean origBean = new TestBean();
+        origBean.setSomeOtherString("hello");
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(origBean), "Bean1 { "
+                        + " class: net.sourceforge.wicketwebbeans.model.TestBean;" + //
+                        " intProp: $someOtherString; }");
+        try {
+            factory.newInstance("Bean1");
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertEquals(
+                            "Error setting property intProp for bean 'Bean1' class net.sourceforge.wicketwebbeans.model.TestBean",
+                            e.getMessage());
+        }
     }
 
     public void testNewInstanceClassNotFound() throws Exception
@@ -349,6 +383,29 @@ public class BeanFactoryTest extends TestCase
             // Expected
             assertTrue(e.getMessage().contains("Cannot create instance of bean"));
             assertTrue(e.getCause() instanceof IllegalArgumentException);
+        }
+    }
+
+    public void testResolvePropertyProxyModel() throws Exception
+    {
+        TestBean bean = new TestBean();
+        bean.setIntProp(55);
+        IModel model = new Model(bean);
+        BeanFactory factory = new BeanFactory(model);
+        PropertyProxyModel proxyModel = factory.resolvePropertyProxyModel("$intProp");
+        assertEquals(Integer.valueOf(55), proxyModel.getObject());
+        assertSame(model, proxyModel.getChainedModel());
+    }
+
+    public void testResolvePropertyProxyModelWithInvalidSpec() throws Exception
+    {
+        BeanFactory factory = new BeanFactory(new Model());
+        try {
+            factory.resolvePropertyProxyModel("$!!intProp");
+            fail();
+        }
+        catch (Exception e) {
+            // Excpected
         }
     }
 }
