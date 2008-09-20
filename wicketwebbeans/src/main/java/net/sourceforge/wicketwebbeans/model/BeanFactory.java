@@ -34,6 +34,7 @@ import java.util.Map;
 import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 
+import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
@@ -49,7 +50,6 @@ import org.apache.wicket.model.Model;
  */
 public class BeanFactory
 {
-    private static final String SPECIAL_PARAM_COMPONENT = "_component";
     private static final String SPECIAL_PARAM_TYPE = "_type";
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
@@ -73,7 +73,13 @@ public class BeanFactory
         "net.sourceforge.wicketwebbeans.actions.",
     // 
     };
+
     private IModel beanModel;
+    private ConvertUtilsBean convertUtilsBean = new ConvertUtilsBean();
+    {
+        convertUtilsBean.register(new IModelConverter(), IModel.class);
+        convertUtilsBean.register(false, true, -1);
+    }
 
     /**
      * Construct a BeanFactory with no bean model. 
@@ -334,55 +340,42 @@ public class BeanFactory
             }
         }
 
+        propertyType = ClassUtils.primitiveToWrapper(propertyType);
         Object value;
         if (values.isEmpty()) {
             value = null;
+        }
+        else if (List.class.isAssignableFrom(propertyType)) {
+            value = values;
         }
         else {
             ParameterValueAST valueAst = values.get(0);
             String stringValue = valueAst.getValue();
             boolean hasPropertyValue = stringValue != null && stringValue.charAt(0) == '$';
             if (hasPropertyValue) {
-                value = resolvePropertyProxyModel(stringValue).getObject();
-            }
-            else {
-                propertyType = ClassUtils.primitiveToWrapper(propertyType);
-                if (Double.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getDoubleValue();
-                }
-                else if (Float.class.isAssignableFrom(propertyType)) {
-                    Double doubleValue = valueAst.getDoubleValue();
-                    value = doubleValue == null ? null : doubleValue.floatValue();
-                }
-                else if (Long.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getLongValue();
-                }
-                else if (Integer.class.isAssignableFrom(propertyType)) {
-                    value = valueAst.getIntegerValue();
-                }
-                else if (Short.class.isAssignableFrom(propertyType)) {
-                    Integer integerValue = valueAst.getIntegerValue();
-                    value = integerValue == null ? null : integerValue.shortValue();
-                }
-                else if (Boolean.class.isAssignableFrom(propertyType)) {
-                    value = Boolean.valueOf(valueAst.getBooleanValue());
-                }
-                else if (List.class.isAssignableFrom(propertyType)) {
-                    value = values;
-                }
-                else if (IModel.class.isAssignableFrom(propertyType)) {
-                    value = convertToModel(valueAst);
-                }
-                else if (propertyType.equals(String.class)) {
-                    value = stringValue;
+                PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(stringValue);
+                if (IModel.class.isAssignableFrom(propertyType)) {
+                    value = propertyProxyModel;
                 }
                 else {
-                    throw new RuntimeException("Property type " + propertyType + " on property " + parameterName
-                                    + " for bean '" + beanName + "' class " + beanClassName + " is not supported");
+                    value = propertyProxyModel.getObject();
                 }
+            }
+            else if (valueAst.isLiteral() || stringValue == null) {
+                value = stringValue;
+            }
+            else {
+                // Component name
+                BeanConfig subBean = getBeanConfig(stringValue, valueAst.getSubParameters());
+                if (subBean == null) {
+                    throw new RuntimeException("Cannot find bean named: " + stringValue);
+                }
+
+                value = newInstance(subBean);
             }
         }
 
+        value = convertUtilsBean.convert(value, propertyType);
         try {
             writeMethod.invoke(bean, value);
         }
@@ -392,32 +385,9 @@ public class BeanFactory
                 t = e.getCause();
             }
 
-            throw new RuntimeException("Error setting property " + parameterName + " for bean '" + beanName
+            throw new RuntimeException("Error setting property '" + parameterName + "' for bean '" + beanName
                             + "' class " + beanClassName, t);
         }
-    }
-
-    private IModel convertToModel(ParameterValueAST valueAst)
-    {
-        IModel value;
-        String valueString = valueAst.getValue();
-        if (valueString.startsWith("$")) {
-            value = resolvePropertyProxyModel(valueString);
-        }
-        else if (valueAst.isLiteral()) {
-            value = new Model(valueAst.getValue());
-        }
-        else {
-            // Component name
-            BeanConfig subBean = getBeanConfig(valueString, valueAst.getSubParameters());
-            if (subBean == null) {
-                throw new RuntimeException("Cannot find bean named " + valueString);
-            }
-
-            value = new Model((Serializable)newInstance(subBean));
-        }
-
-        return value;
     }
 
     /**
@@ -447,53 +417,39 @@ public class BeanFactory
      * 
      * @return a Component.
      */
-    @SuppressWarnings("unchecked")
     public Component resolveComponent(String wicketId, ParameterValueAST parameterValue)
     {
         // TODO Test
         String valueString = parameterValue.getValue();
         if (valueString.charAt(0) == '$') {
             PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);
-            // If we have _component, we don't need the property's type.
-            Class<? extends Component> componentClass = null;
             Class<?> propertyType = null;
-            ParameterAST componentClassParam = parameterValue.getSubParameter(SPECIAL_PARAM_COMPONENT);
-            if (componentClassParam != null) {
+            // If we have _type, we don't have to try to get it from the model.
+            ParameterAST propertyTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_TYPE);
+            if (propertyTypeParam != null) {
                 // TODO Test imports
-                componentClass = (Class<? extends Component>)loadClass(componentClassParam.getValuesAsStrings()[0]);
-            }
-            else {
-                // If we have _type, we don't have to try to get it from the model.
-                ParameterAST propertyTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_TYPE);
-                if (propertyTypeParam != null) {
-                    // TODO Test imports
-                    propertyType = (Class<?>)loadClass(propertyTypeParam.getValuesAsStrings()[0]);
-                }
+                propertyType = (Class<?>)loadClass(propertyTypeParam.getValuesAsStrings()[0]);
             }
 
+            if (propertyType == null) {
+                // Get property type from model.
+                Object propertyValue = propertyProxyModel.getObject();
+                if (propertyValue == null) {
+                    throw new RuntimeException("Cannot determine property type because the expression '" + valueString
+                                    + "' evaluates to null. Specify " + SPECIAL_PARAM_TYPE
+                                    + " as a sub-parameter to the property or use a Bean declaration.");
+                }
+
+                propertyType = propertyValue.getClass();
+            }
+
+            // Get component class from ComponentRegistry
+            // TODO Handle elementType as special param and pass to component registry.
+            Class<? extends Component> componentClass = getComponentRegistry().getComponentClass(propertyType, null);
             if (componentClass == null) {
-                if (propertyType == null) {
-                    // Get property type from model.
-                    Object propertyValue = propertyProxyModel.getObject();
-                    if (propertyValue == null) {
-                        throw new RuntimeException("Cannot determine property type because the expression '"
-                                        + valueString + "' evaluates to null. Specify either "
-                                        + SPECIAL_PARAM_COMPONENT + " or " + SPECIAL_PARAM_TYPE
-                                        + " as a sub-parameter to the property.");
-                    }
-
-                    propertyType = propertyValue.getClass();
-                }
-
-                // Get component class from ComponentRegistry
-                // TODO Handle elementType as special param and pass to component registry.
-                componentClass = getComponentRegistry().getComponentClass(propertyType, null);
-                if (componentClass == null) {
-                    throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
-                                    + valueString + "' and type of " + propertyType + ". Specify either "
-                                    + SPECIAL_PARAM_COMPONENT + " or " + SPECIAL_PARAM_TYPE
-                                    + " as a sub-parameter to the property.");
-                }
+                throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
+                                + valueString + "' and type of " + propertyType + ". Specify " + SPECIAL_PARAM_TYPE
+                                + " as a sub-parameter to the property or use a Bean declaration.");
             }
 
             // Create component

@@ -103,8 +103,6 @@ public class GridLayout extends Panel
         @Override
         protected void onPopulate()
         {
-            //removeAll();
-
             int columnIndex = 0;
             int rowStartIndex = 0;
             int componentIndex = 0;
