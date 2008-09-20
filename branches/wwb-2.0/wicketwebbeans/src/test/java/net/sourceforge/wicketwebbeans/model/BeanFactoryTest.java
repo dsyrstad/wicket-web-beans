@@ -177,7 +177,7 @@ public class BeanFactoryTest extends TestCase
                         + "stringProp: \"stringValue\"; intProp: 5; doubleProp: 3.14; booleanProp: true; "
                         + " floatProp: 9.5; shortProp: 3; longProp: 123456789012345678;"
                         + " integerObjProp: 3; doubleObjProp: 9.99; floatObjProp: 10.3; shortObjProp: 62;"
-                        + " booleanObjProp: false; longObjProp: 323; setterWithReturnValue:  swrv;"
+                        + " booleanObjProp: false; longObjProp: 323; setterWithReturnValue:  \"swrv\";"
                         + " parameterValues: 1, \"2\", 3.1, true, symbol; model: \"modelString\"; "
                         + " modelOfSubBean: SubBean; }" + " SubBean { class: java.util.Date; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1");
@@ -234,7 +234,7 @@ public class BeanFactoryTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertEquals(
-                            "Error setting property intProp for bean 'Bean1' class net.sourceforge.wicketwebbeans.model.TestBean",
+                            "Error setting property 'intProp' for bean 'Bean1' class net.sourceforge.wicketwebbeans.model.TestBean",
                             e.getMessage());
         }
     }
@@ -300,21 +300,16 @@ public class BeanFactoryTest extends TestCase
     public void testNewInstancePropertyTypeNotSupported() throws Exception
     {
         BeanFactory factory = TestUtils
-                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; typeNotSupported: x }");
-        try {
-            factory.newInstance("Bean1");
-            fail();
-        }
-        catch (RuntimeException e) {
-            // Expected
-            assertTrue(e.getMessage().matches("Property type .* typeNotSupported .* not supported.*"));
-        }
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; typeNotSupported: \"x\" }");
+
+        TestBean bean = (TestBean)factory.newInstance("Bean1");
+        assertNull(bean.getTypeNotSupported());
     }
 
     public void testNewInstancePropertyNotExposed() throws Exception
     {
         BeanFactory factory = TestUtils
-                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; notExposed: x }");
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; notExposed: \"x\" }");
         try {
             factory.newInstance("Bean1");
             fail();
@@ -329,7 +324,7 @@ public class BeanFactoryTest extends TestCase
     public void testNewInstancePropertyThrows() throws Exception
     {
         BeanFactory factory = TestUtils
-                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; throwsException: x }");
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean; throwsException: \"x\" }");
         try {
             factory.newInstance("Bean1");
             fail();
