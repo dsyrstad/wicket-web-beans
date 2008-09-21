@@ -16,6 +16,7 @@
 ---*/
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,8 +24,10 @@ import java.util.List;
  * 
  * @author Dan Syrstad 
  */
-public class ParameterAST
+public class ParameterAST implements Serializable
 {
+    private static final long serialVersionUID = -8120852918760858492L;
+
     private String name;
     private List<ParameterValueAST> values;
 

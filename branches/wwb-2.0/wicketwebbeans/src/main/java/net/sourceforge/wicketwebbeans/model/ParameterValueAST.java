@@ -16,6 +16,7 @@
 ---*/
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +25,10 @@ import java.util.List;
  * 
  * @author Dan Syrstad 
  */
-public class ParameterValueAST
+public class ParameterValueAST implements Serializable
 {
+    private static final long serialVersionUID = 2281212367978129177L;
+
     private String value;
     private List<ParameterAST> subParameters = new ArrayList<ParameterAST>();
     private boolean literal;
@@ -64,7 +67,14 @@ public class ParameterValueAST
         return null;
     }
 
-    // TODO Test
+    /**
+     * Gets a sub-parameter's value by name as an int.
+     *
+     * @param parameterName the name of the parameter.
+     * @param defaultValue the default value if the parameter cannot be found.
+     * 
+     * @return the value or the default.
+     */
     public int getSubParameterValueAsInt(String parameterName, int defaultValue)
     {
         ParameterAST parameter = getSubParameter(parameterName);
