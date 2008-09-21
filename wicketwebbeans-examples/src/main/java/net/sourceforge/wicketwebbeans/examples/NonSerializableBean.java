@@ -17,7 +17,6 @@
 
 package net.sourceforge.wicketwebbeans.examples;
 
-
 /**
  * A test bean that is not Serializable. <p>
  * 
@@ -27,7 +26,7 @@ public class NonSerializableBean
 {
     private String name;
     private String serialNumber;
-    
+
     /**
      * Construct a NonSerializableBean. 
      *
@@ -36,8 +35,8 @@ public class NonSerializableBean
      */
     public NonSerializableBean(String name, String serialNumber)
     {
-        this.name = name;
-        this.serialNumber = serialNumber;
+        setName(name);
+        setSerialNumber(serialNumber);
     }
 
     public String getName()
@@ -57,6 +56,6 @@ public class NonSerializableBean
 
     public void setSerialNumber(String serialNumber)
     {
-        this.serialNumber = serialNumber;
+        this.serialNumber = serialNumber == null ? null : serialNumber.toUpperCase();
     }
 }

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.wicket.Component;
@@ -48,18 +50,21 @@ import org.apache.wicket.model.Model;
  * 
  * @author Dan Syrstad
  */
-public class BeanFactory
+public class BeanFactory implements Serializable
 {
+    private static final long serialVersionUID = -7702601385663822267L;
+
     private static final String SPECIAL_PARAM_TYPE = "_type";
+    private static final String SPECIAL_PARAM_ELEMENT_TYPE = "_elementType";
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
 
+    /** LRU Cache of pre-parsed bean configs. */
+    @SuppressWarnings("unchecked")
+    private static final Map<URL, CachedBeanConfigs> cachedBeanConfigs = Collections.synchronizedMap(new LRUMap(10));
+
     private PropertyResolver propertyResolver = new JXPathPropertyResolver();
     private ComponentRegistry componentRegistry = new ComponentRegistry();
-
-    /** Cache of pre-parsed bean configs. TODO This cache should be static and be a LRU Cache.*/
-    private final Map<URL, CachedBeanConfigs> cachedBeanConfigs = new HashMap<URL, CachedBeanConfigs>();
-
     /** Maps bean name to BeanConfig. */
     private Map<String, BeanConfig> beanConfigMap = new HashMap<String, BeanConfig>();
     private String[] packageImports = {
@@ -75,11 +80,7 @@ public class BeanFactory
     };
 
     private IModel beanModel;
-    private ConvertUtilsBean convertUtilsBean = new ConvertUtilsBean();
-    {
-        convertUtilsBean.register(new IModelConverter(), IModel.class);
-        convertUtilsBean.register(false, true, -1);
-    }
+    transient private ConvertUtilsBean convertUtilsBean;
 
     /**
      * Construct a BeanFactory with no bean model. 
@@ -192,6 +193,7 @@ public class BeanFactory
         BeanConfig beanConfig = new BeanConfig(this, beanConfigAst);
         String beanName = beanConfigAst.getName();
         ParameterValueAST classValue = beanConfig.getParameterValue(PARAMETER_NAME_CLASS);
+        // TODO Implement extends and test
         ParameterValueAST extendsValue = beanConfig.getParameterValue(PARAMETER_NAME_EXTENDS);
         if (classValue == null && extendsValue == null) {
             throw new RuntimeException("Bean " + beanName + " in URL " + url + " must specify class or extends");
@@ -348,6 +350,10 @@ public class BeanFactory
         else if (List.class.isAssignableFrom(propertyType)) {
             value = values;
         }
+        else if (propertyType == ParameterValueAST.class) {
+            // TODO Test
+            value = values.get(0);
+        }
         else {
             ParameterValueAST valueAst = values.get(0);
             String stringValue = valueAst.getValue();
@@ -375,7 +381,7 @@ public class BeanFactory
             }
         }
 
-        value = convertUtilsBean.convert(value, propertyType);
+        value = getConvertUtilsBean().convert(value, propertyType);
         try {
             writeMethod.invoke(bean, value);
         }
@@ -388,6 +394,17 @@ public class BeanFactory
             throw new RuntimeException("Error setting property '" + parameterName + "' for bean '" + beanName
                             + "' class " + beanClassName, t);
         }
+    }
+
+    private ConvertUtilsBean getConvertUtilsBean()
+    {
+        if (convertUtilsBean == null) {
+            convertUtilsBean = new ConvertUtilsBean();
+            convertUtilsBean.register(new IModelConverter(), IModel.class);
+            convertUtilsBean.register(false, true, -1);
+        }
+
+        return convertUtilsBean;
     }
 
     /**
@@ -426,8 +443,13 @@ public class BeanFactory
             // If we have _type, we don't have to try to get it from the model.
             ParameterAST propertyTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_TYPE);
             if (propertyTypeParam != null) {
-                // TODO Test imports
                 propertyType = (Class<?>)loadClass(propertyTypeParam.getValuesAsStrings()[0]);
+            }
+
+            Class<?> elementType = null;
+            ParameterAST elementTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_ELEMENT_TYPE);
+            if (elementTypeParam != null) {
+                elementType = (Class<?>)loadClass(elementTypeParam.getValuesAsStrings()[0]);
             }
 
             if (propertyType == null) {
@@ -443,8 +465,8 @@ public class BeanFactory
             }
 
             // Get component class from ComponentRegistry
-            // TODO Handle elementType as special param and pass to component registry.
-            Class<? extends Component> componentClass = getComponentRegistry().getComponentClass(propertyType, null);
+            Class<? extends Component> componentClass = getComponentRegistry().getComponentClass(propertyType,
+                            elementType);
             if (componentClass == null) {
                 throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
                                 + valueString + "' and type of " + propertyType + ". Specify " + SPECIAL_PARAM_TYPE

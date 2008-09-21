@@ -35,5 +35,5 @@ public interface PropertyProxy extends Serializable
      */
     Object getValue(Object bean);
 
-    //void setValue(Object bean, Object value);
+    void setValue(Object bean, Object value);
 }

@@ -1,11 +1,16 @@
-Root { 
+Root {
+	class: AjaxForm;
+	component: Grid;
+}
+
+Grid { 
 	class: GridLayout;
 	components: 
 		$serialNumber,
 		$stamp {  model: "override" },
 		Field { model: $name }, 
 		Field { model: "$serialNumber/../name" }, 
-		Field { model: "$stamp"  }, 
+		Field { model: "$stamp"; label: "Yuck"; enabled: false; }, 
 		Field, SubGrid { _colspan: 2 }, 
 		Label, 
 		Label { model: "A Label" }, 

@@ -27,15 +27,17 @@ import org.apache.commons.jxpath.JXPathContext;
  * 
  * @author Dan Syrstad
  */
+// TODO Can we determine if a path is writable or not ahead of time? Then this should have a method to detect it so the component can be read-only
 public class JXPathPropertyProxy implements PropertyProxy
 {
     private static final long serialVersionUID = -504835121389856794L;
 
-    private CompiledExpression compiledExpression;
+    private String propertyExpression;
+    transient private CompiledExpression compiledExpression;
 
     JXPathPropertyProxy(String propertyExpression)
     {
-        compiledExpression = JXPathContext.compile(propertyExpression);
+        this.propertyExpression = propertyExpression;
     }
 
     /** 
@@ -51,6 +53,22 @@ public class JXPathPropertyProxy implements PropertyProxy
         JXPathContext context = JXPathContext.newContext(bean);
         // LATER - Unfortunately unrecognized properties are not caught by this.
         context.setLenient(true);
-        return compiledExpression.getValue(context);
+        return getCompiledExpression().getValue(context);
+    }
+
+    // TODO Test
+    public void setValue(Object bean, Object value)
+    {
+        JXPathContext context = JXPathContext.newContext(bean);
+        getCompiledExpression().createPathAndSetValue(context, value);
+    }
+
+    private CompiledExpression getCompiledExpression()
+    {
+        if (compiledExpression == null) {
+            compiledExpression = JXPathContext.compile(propertyExpression);
+        }
+
+        return compiledExpression;
     }
 }

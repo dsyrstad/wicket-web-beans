@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,8 @@ import net.sourceforge.wicketwebbeans.test.TestUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.markup.html.form.AbstractTextComponent;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -433,6 +436,20 @@ public class BeanFactoryTest extends TestCase
         assertEquals("test", component.getModelObject());
     }
 
+    public void testResolveComponentWithBeanWithImports() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester(); // Need for application context
+        BeanFactory factory = TestUtils.createBeanFactory("Field { class: TextField; model: \"test\" }");
+        factory.setPackageImports(new String[] { "org.apache.wicket.markup.html.form." });
+
+        ParameterValueAST valueAST = new ParameterValueAST("Field", false);
+        Component component = factory.resolveComponent("id", valueAST);
+        assertTrue(component instanceof TextField);
+        assertEquals("id", component.getId());
+        assertEquals("test", component.getModelObject());
+    }
+
     public void testResolveComponentWithProperty() throws Exception
     {
         @SuppressWarnings("unused")
@@ -442,7 +459,7 @@ public class BeanFactoryTest extends TestCase
         subBean.setIntegerObjProp(Integer.valueOf(55));
         testBean.setNestedBean(subBean);
 
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(testBean), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(testBean));
 
         ParameterValueAST valueAST = new ParameterValueAST("$nestedBean/integerObjProp", false);
         Component component = factory.resolveComponent("id", valueAST);
@@ -457,7 +474,7 @@ public class BeanFactoryTest extends TestCase
         TestBean testBean = new TestBean();
         testBean.setIntegerObjProp(Integer.valueOf(55));
 
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(testBean), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(testBean));
         factory.getComponentRegistry().register(Integer.class, TextField.class);
 
         ParameterValueAST valueAST = new ParameterValueAST("$integerObjProp", false);
@@ -480,7 +497,7 @@ public class BeanFactoryTest extends TestCase
         TestBean subBean = new TestBean();
         testBean.setNestedBean(subBean);
 
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(testBean), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(testBean));
 
         ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
         try {
@@ -502,7 +519,7 @@ public class BeanFactoryTest extends TestCase
         TestBean subBean = new TestBean();
         testBean.setNestedBean(subBean);
 
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(testBean), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(testBean));
 
         ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
         List<ParameterAST> parameters = new ArrayList<ParameterAST>();
@@ -515,13 +532,45 @@ public class BeanFactoryTest extends TestCase
         assertSame(subBean, component.getModelObject());
     }
 
+    public void testResolveComponentWithPropertyAndElementTypeParameter() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester(); // Need for application context
+        List<Date> testBean = new ArrayList<Date>();
+
+        BeanFactory factory = new BeanFactory(new Model((Serializable)testBean));
+        factory.getComponentRegistry().register(List.class, null, DropDownChoice.class);
+        factory.getComponentRegistry().register(List.class, Date.class, CheckBox.class);
+
+        ParameterValueAST valueAST = new ParameterValueAST("$.", false); // Bean itself
+        List<ParameterAST> parameters = new ArrayList<ParameterAST>();
+        parameters
+                        .add(new ParameterAST("_elementType", Collections.singletonList(new ParameterValueAST("Date",
+                                        true))));
+        valueAST.setSubParameters(parameters);
+
+        Component component = factory.resolveComponent("id", valueAST);
+        assertEquals("id", component.getId());
+        assertTrue(component instanceof CheckBox);
+
+        // Test non-matching element type.
+        parameters.clear();
+        parameters.add(new ParameterAST("_elementType", Collections
+                        .singletonList(new ParameterValueAST("String", true))));
+        valueAST.setSubParameters(parameters);
+
+        component = factory.resolveComponent("id", valueAST);
+        assertEquals("id", component.getId());
+        assertTrue(component instanceof DropDownChoice);
+    }
+
     public void testResolveComponentWithPropertyAndInvalidComponentConstructor() throws Exception
     {
         @SuppressWarnings("unused")
         WicketTester tester = new WicketTester(); // Need for application context
         TestBean testBean = new TestBean();
         testBean.setNestedBean(new TestBean());
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(testBean), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(testBean));
         factory.getComponentRegistry().register(TestBean.class, DataTable.class);
 
         ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
@@ -540,7 +589,7 @@ public class BeanFactoryTest extends TestCase
     {
         @SuppressWarnings("unused")
         WicketTester tester = new WicketTester(); // Need for application context
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(new TestBean()), "NotUsed { class: x; }");
+        BeanFactory factory = new BeanFactory(new Model(new TestBean()));
 
         ParameterValueAST valueAST = new ParameterValueAST("$integerObjProp", false);
         try {

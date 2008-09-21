@@ -20,7 +20,9 @@ package net.sourceforge.wicketwebbeans.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 
@@ -122,49 +124,41 @@ public class ComponentRegistry implements Serializable
         registry.put(targetTypeClassName, componentClassName);
     }
 
+    /**
+     * Registers an component in a type-safe fashion.
+     *
+     * @param targetType the type to match to.
+     * @param componentClass the Component class to return on a match.
+     */
     public void register(Class<?> targetType, Class<? extends Component> componentClass)
     {
-        registry.put(targetType.getName(), componentClass.getName());
+        register(targetType, null, componentClass);
+    }
+
+    /**
+     * Registers an component in a type-safe fashion.
+     *
+     * @param targetType the type to match to.
+     * @param elemenType the element type to match (i.e. targetType<elementType>). May be null.
+     * @param componentClass the Component class to return on a match.
+     */
+    public void register(Class<?> targetType, Class<?> elementType, Class<? extends Component> componentClass)
+    {
+        register(targetType.getName(), elementType == null ? null : elementType.getName(), componentClass.getName());
     }
 
     /**
      * Attempts to find the component class name for a given type and elementType.
      * 
-     * @param type
-     * @param elementType the element type (e.g., for an array or collection), which may be null.
+     * @param type the type to match against.
+     * @param elementType the element type (e.g., for an array or collection). May be null.
      * 
-     * @return the class, or null if not found.
+     * @return the Component class, or null if not found.
      */
-    // TODO Test. Entire Class.
     @SuppressWarnings("unchecked")
     public Class<? extends Component> getComponentClass(Class<?> type, Class<?> elementType)
     {
-        String baseKey = type.getName();
-
-        String className = null;
-        for (; elementType != null && className == null; elementType = elementType.getSuperclass()) {
-            String elementBaseKey = baseKey + '[';
-            // Search up class hierarchy for matching type.
-            String componentClassName = registry.get(elementBaseKey + elementType.getName());
-            if (componentClassName != null) {
-                className = componentClassName;
-                break;
-            }
-
-            Class<?>[] intfs = elementType.getInterfaces();
-            for (int i = 0; i < intfs.length; i++) {
-                componentClassName = registry.get(elementBaseKey + intfs[i].getName());
-                if (componentClassName != null) {
-                    className = componentClassName;
-                    break;
-                }
-            }
-        }
-
-        if (className == null) {
-            className = registry.get(baseKey);
-        }
-
+        String className = findMatchingTypeAndElementType(type, elementType);
         if (className != null) {
             try {
                 return (Class<? extends Component>)Class.forName(className);
@@ -175,5 +169,47 @@ public class ComponentRegistry implements Serializable
         }
 
         return null;
+    }
+
+    private String findMatchingTypeAndElementType(Class<?> type, Class<?> elementType)
+    {
+        List<Class<?>> superTypesOfType = getTypeAndSuperTypes(type);
+        List<Class<?>> superTypesOfElementType = elementType == null ? null : getTypeAndSuperTypes(elementType);
+
+        for (Class<?> testType : superTypesOfType) {
+            if (testType.isAssignableFrom(type)) {
+                String key = testType.getName();
+                if (elementType != null) {
+                    for (Class<?> testElementType : superTypesOfElementType) {
+                        if (testElementType.isAssignableFrom(elementType)) {
+                            String elementKey = key + '[' + testElementType.getName();
+                            String component = registry.get(elementKey);
+                            if (component != null) {
+                                return component;
+                            }
+                        }
+                    }
+                }
+
+                // Type-only match (no elementType-specific match).
+                String component = registry.get(key);
+                if (component != null) {
+                    return component;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Class<?>> getTypeAndSuperTypes(Class<?> type)
+    {
+        List<Class<?>> types = ClassUtils.getAllSuperclasses(type);
+        // Add this type as first one.
+        types.add(0, type);
+        // Check interfaces after super-classes.
+        types.addAll(ClassUtils.getAllInterfaces(type));
+        return types;
     }
 }

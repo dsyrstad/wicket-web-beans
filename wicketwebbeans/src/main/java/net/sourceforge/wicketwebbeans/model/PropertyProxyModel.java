@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
  * 
  * @author Dan Syrstad
  */
-// TODO Test
 public class PropertyProxyModel implements IChainingModel
 {
     private static final long serialVersionUID = -5278835598135566134L;
@@ -44,9 +43,10 @@ public class PropertyProxyModel implements IChainingModel
         return proxy.getValue(beanModel.getObject());
     }
 
+    // TODO Test
     public void setObject(Object object)
     {
-        // TODO Later
+        proxy.setValue(beanModel.getObject(), object);
     }
 
     public void detach()
