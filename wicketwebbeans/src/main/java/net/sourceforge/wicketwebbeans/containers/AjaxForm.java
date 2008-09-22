@@ -30,7 +30,6 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.RepeatingView;
 
 /**
  * Implements a non-HTML form that submits input elements as they are changed. <p>
@@ -43,26 +42,16 @@ public class AjaxForm extends Panel
 
     private ParameterValueAST componentParameterValue;
     private BeanFactory beanFactory;
+    private WebMarkupContainer container;
 
     public AjaxForm(String wickedId)
     {
         super(wickedId);
         setRenderBodyOnly(true);
-        Component component = new RepeatingView("component") {
-            private static final long serialVersionUID = -2469623015411250708L;
 
-            @Override
-            protected void onPopulate()
-            {
-                WebMarkupContainer container = new WebMarkupContainer(newChildId());
-                add(container);
-                Component component = getBeanFactory().resolveComponent("c", componentParameterValue);
-                container.add(component);
-            }
-        };
-
-        component.setRenderBodyOnly(true);
-        add(component);
+        container = new WebMarkupContainer("component");
+        container.setRenderBodyOnly(true);
+        add(container);
     }
 
     public void setComponent(ParameterValueAST componentParameterValue)
@@ -84,7 +73,11 @@ public class AjaxForm extends Panel
     @Override
     protected void onBeforeRender()
     {
+        Component component = getBeanFactory().resolveComponent("c", componentParameterValue);
+        container.add(component);
+
         super.onBeforeRender();
+
         visitChildren(new FormComponentVisitor());
     }
 

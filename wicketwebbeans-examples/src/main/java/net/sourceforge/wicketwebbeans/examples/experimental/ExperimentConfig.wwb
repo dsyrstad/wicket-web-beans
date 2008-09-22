@@ -10,7 +10,7 @@ Grid {
 		$stamp {  model: "override" },
 		Field { model: $name }, 
 		Field { model: "$serialNumber/../name" }, 
-		Field { model: "$stamp"; label: "Yuck"; enabled: false; }, 
+		Field { model: "$stamp"; label: "Yuck"; enabled: false; visible: true; }, 
 		Field, SubGrid { _colspan: 2 }, 
 		Label, 
 		Label { model: "A Label" }, 
