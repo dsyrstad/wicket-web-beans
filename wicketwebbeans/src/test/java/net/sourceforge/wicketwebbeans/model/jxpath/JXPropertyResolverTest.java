@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.model.JavaBeansPropertyPathBeanCreator;
+import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
 
 /**
@@ -13,31 +15,46 @@ import net.sourceforge.wicketwebbeans.model.PropertyResolver;
  */
 public class JXPropertyResolverTest extends TestCase
 {
+    private PropertyPathBeanCreator beanCreator = new JavaBeansPropertyPathBeanCreator();
     private PropertyResolver resolver = new JXPathPropertyResolver();
     private Employee testEmployee = new Employee("Dan Syrstad", new Address("Minneapolis", "MN", "55306",
                     "123 Any Way", "P.O. Box 9112"), BigDecimal.valueOf(2500000));
 
     public void testGetValue()
     {
-        assertSame(testEmployee, resolver.createPropertyProxy(".").getValue(testEmployee));
-        assertSame(testEmployee.getAddress(), resolver.createPropertyProxy("address").getValue(testEmployee));
-        assertSame(testEmployee.getAddress().getCity(), resolver.createPropertyProxy("address/city").getValue(
+        assertSame(testEmployee, resolver.createPropertyProxy(beanCreator, ".").getValue(testEmployee));
+        assertSame(testEmployee.getAddress(), resolver.createPropertyProxy(beanCreator, "address").getValue(
                         testEmployee));
-        assertSame(testEmployee.getAddress().getAddressLines(), resolver.createPropertyProxy("address/addressLines")
+        assertSame(testEmployee.getAddress().getCity(), resolver.createPropertyProxy(beanCreator, "address/city")
                         .getValue(testEmployee));
-        assertSame(testEmployee.getAddress().getAddressLines()[1], resolver.createPropertyProxy(
+        assertSame(testEmployee.getAddress().getAddressLines(), resolver.createPropertyProxy(beanCreator,
+                        "address/addressLines").getValue(testEmployee));
+        assertSame(testEmployee.getAddress().getAddressLines()[1], resolver.createPropertyProxy(beanCreator,
                         "address/addressLines[2]").getValue(testEmployee));
     }
 
     public void testGetValueWithIntermediateNulls()
     {
         Employee employee = new Employee("Dan Syrstad", null, BigDecimal.valueOf(2500000));
-        assertNull(resolver.createPropertyProxy("address/city").getValue(employee));
+        assertNull(resolver.createPropertyProxy(beanCreator, "address/city").getValue(employee));
     }
 
     public void testGetValueWithBadExpression()
     {
-        assertNull(resolver.createPropertyProxy("xyz").getValue(testEmployee));
+        assertNull(resolver.createPropertyProxy(beanCreator, "xyz").getValue(testEmployee));
+    }
+
+    public void testSetValue()
+    {
+        resolver.createPropertyProxy(beanCreator, "name").setValue(testEmployee, "New Name");
+        assertEquals("New Name", testEmployee.getName());
+    }
+
+    public void testSetValueWithIntermediateNulls()
+    {
+        testEmployee.setAddress(null);
+        resolver.createPropertyProxy(beanCreator, "address/city").setValue(testEmployee, "New City");
+        assertEquals("New City", testEmployee.getAddress().getCity());
     }
 
 

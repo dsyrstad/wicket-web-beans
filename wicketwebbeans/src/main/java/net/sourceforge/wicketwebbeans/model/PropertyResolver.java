@@ -29,9 +29,10 @@ public interface PropertyResolver extends Serializable
     /**
      * Creates PropertyProxy for a property specification. 
      *
+     * @param beanCreator a PropertyPathBeanCreator.
      * @param propertySpec an implementation-specific property specification.
      * 
      * @return a PropertyProxy.
      */
-    PropertyProxy createPropertyProxy(String propertySpec);
+    PropertyProxy createPropertyProxy(PropertyPathBeanCreator beanCreator, String propertySpec);
 }

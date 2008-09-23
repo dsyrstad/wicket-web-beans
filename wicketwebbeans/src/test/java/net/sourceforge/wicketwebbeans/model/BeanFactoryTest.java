@@ -413,9 +413,10 @@ public class BeanFactoryTest extends TestCase
 
     public void testResolvePropertyProxyModelWithInvalidSpec() throws Exception
     {
-        BeanFactory factory = new BeanFactory(new Model());
+        BeanFactory factory = new BeanFactory(new Model("test"));
+        PropertyProxyModel model = factory.resolvePropertyProxyModel("$!!intProp");
         try {
-            factory.resolvePropertyProxyModel("$!!intProp");
+            model.getObject();
             fail();
         }
         catch (Exception e) {
