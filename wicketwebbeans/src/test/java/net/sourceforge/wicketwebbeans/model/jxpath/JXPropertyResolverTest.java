@@ -112,6 +112,10 @@ public class JXPropertyResolverTest extends TestCase
         private String state;
         private String postalCode;
 
+        public Address()
+        {
+        }
+
         Address(String city, String postalCode, String state, String... addressLines)
         {
             this.city = city;
