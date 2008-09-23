@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
+import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyProxy;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
 
@@ -33,8 +34,8 @@ public class JXPathPropertyResolver implements PropertyResolver
      * {@inheritDoc}
      * @see net.sourceforge.wicketwebbeans.model.PropertyResolver#createPropertyProxy(java.lang.String)
      */
-    public PropertyProxy createPropertyProxy(String propertySpec)
+    public PropertyProxy createPropertyProxy(PropertyPathBeanCreator beanCreator, String propertySpec)
     {
-        return new JXPathPropertyProxy(propertySpec);
+        return new JXPathPropertyProxy(beanCreator, propertySpec);
     }
 }

@@ -65,6 +65,8 @@ public class BeanFactory implements Serializable
 
     private PropertyResolver propertyResolver = new JXPathPropertyResolver();
     private ComponentRegistry componentRegistry = new ComponentRegistry();
+    private PropertyPathBeanCreator beanCreator = new JavaBeansPropertyPathBeanCreator();
+
     /** Maps bean name to BeanConfig. */
     private Map<String, BeanConfig> beanConfigMap = new HashMap<String, BeanConfig>();
     private String[] packageImports = {
@@ -128,6 +130,16 @@ public class BeanFactory implements Serializable
     public void setComponentRegistry(ComponentRegistry componentRegistry)
     {
         this.componentRegistry = componentRegistry;
+    }
+
+    public void setBeanCreator(PropertyPathBeanCreator beanCreator)
+    {
+        this.beanCreator = beanCreator;
+    }
+
+    public PropertyPathBeanCreator getBeanCreator()
+    {
+        return beanCreator;
     }
 
     public String[] getPackageImports()
@@ -415,7 +427,7 @@ public class BeanFactory implements Serializable
      */
     public PropertyProxyModel resolvePropertyProxyModel(String propertySpec)
     {
-        PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(propertySpec.substring(1));
+        PropertyProxy propertyProxy = propertyResolver.createPropertyProxy(beanCreator, propertySpec.substring(1));
         return new PropertyProxyModel(propertyProxy, beanModel);
     }
 

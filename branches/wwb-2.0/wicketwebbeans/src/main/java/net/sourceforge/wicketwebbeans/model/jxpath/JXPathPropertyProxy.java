@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
+import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyProxy;
 
 import org.apache.commons.jxpath.CompiledExpression;
@@ -33,10 +34,12 @@ public class JXPathPropertyProxy implements PropertyProxy
     private static final long serialVersionUID = -504835121389856794L;
 
     private String propertyExpression;
+    private JXPathObjectFactory objectFactory;
     transient private CompiledExpression compiledExpression;
 
-    JXPathPropertyProxy(String propertyExpression)
+    JXPathPropertyProxy(PropertyPathBeanCreator beanCreator, String propertyExpression)
     {
+        this.objectFactory = new JXPathObjectFactory(beanCreator);
         this.propertyExpression = propertyExpression;
     }
 
@@ -60,6 +63,7 @@ public class JXPathPropertyProxy implements PropertyProxy
     public void setValue(Object bean, Object value)
     {
         JXPathContext context = JXPathContext.newContext(bean);
+        context.setFactory(objectFactory);
         getCompiledExpression().createPathAndSetValue(context, value);
     }
 
