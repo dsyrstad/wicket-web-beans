@@ -29,7 +29,6 @@ import org.apache.commons.jxpath.Pointer;
  * 
  * @author Dan Syrstad
  */
-// TODO Test
 public class JXPathObjectFactory extends AbstractFactory
 {
     private PropertyPathBeanCreator beanCreator;

@@ -363,7 +363,6 @@ public class BeanFactory implements Serializable
             value = values;
         }
         else if (propertyType == ParameterValueAST.class) {
-            // TODO Test
             value = values.get(0);
         }
         else {

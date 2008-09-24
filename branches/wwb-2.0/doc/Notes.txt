@@ -4,7 +4,14 @@ v2.0
 level component can traverse the component model see if any model is dirty.
 However, this doesn't help having properties that are values to component
 properties. The component would need to register itself as a listener.
-
+ - PPModel registers itself as a listener. The creator of the PPM will determine if
+ it is being attached to a component. If it is, the component is attached to model.
+ when a change occurs, the component is added to the AjaxTarget (found via RequestCycle).
+ - Components/Beans that are set from a property: PropertyProxyModel/PropertyProxy
+ could take a property name to set (another PropertyProxy?), like bean factory is doing. Then the PPModel
+ would just hang around as a listener and propagator of the change.
+ - The Component binding to PPModel (and bean PCListener) should be weak so they can be collected.
+ 
 - Special "control" params like colspan that are not properties of the bean
   should be indicated with _ - just by convention.
 - System config that is loaded first with BeanFactory - common defs
