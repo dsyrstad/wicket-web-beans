@@ -20,11 +20,11 @@ package net.sourceforge.wicketwebbeans.model;
 import junit.framework.TestCase;
 
 /**
- * Tests JavaBeansPropertyPathCreator. <p>
+ * Tests JavaBeansPropertyPathBeanCreator. <p>
  * 
  * @author Dan Syrstad
  */
-public class JavaBeansPropetyPathTest extends TestCase
+public class JavaBeansPropertyPathBeanCreatorTest extends TestCase
 {
     public void testCreateObject()
     {
