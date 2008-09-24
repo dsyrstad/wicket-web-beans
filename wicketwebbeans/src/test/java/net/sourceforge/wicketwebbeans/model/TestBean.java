@@ -24,6 +24,7 @@ public class TestBean implements Serializable
     private Long longObjProp;
     private String setterWithReturn;
     private List<ParameterValueAST> parameterValues;
+    private ParameterValueAST parameterValue;
     private IModel model;
     private IModel modelOfSubBean;
     private BeanFactory beanFactory;
@@ -225,6 +226,16 @@ public class TestBean implements Serializable
     public void setParameterValues(List<ParameterValueAST> parameterValues)
     {
         this.parameterValues = parameterValues;
+    }
+
+    public void setParameterValue(ParameterValueAST parameterValue)
+    {
+        this.parameterValue = parameterValue;
+    }
+
+    public ParameterValueAST getParameterValue()
+    {
+        return parameterValue;
     }
 
     public IModel getModel()

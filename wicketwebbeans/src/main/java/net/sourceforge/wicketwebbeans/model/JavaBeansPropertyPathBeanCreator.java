@@ -25,7 +25,6 @@ import org.apache.commons.beanutils.ConstructorUtils;
  * 
  * @author Dan Syrstad
  */
-// TODO Test
 public class JavaBeansPropertyPathBeanCreator implements PropertyPathBeanCreator
 {
     private static final Object[] NO_ARGS = new Object[0];

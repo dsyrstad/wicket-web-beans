@@ -43,7 +43,6 @@ public class PropertyProxyModel implements IChainingModel
         return proxy.getValue(beanModel.getObject());
     }
 
-    // TODO Test
     public void setObject(Object object)
     {
         proxy.setValue(beanModel.getObject(), object);

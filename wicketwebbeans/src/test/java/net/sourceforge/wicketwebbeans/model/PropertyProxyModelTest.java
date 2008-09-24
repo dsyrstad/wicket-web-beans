@@ -40,7 +40,7 @@ public class PropertyProxyModelTest extends TestCase
 
         public void setValue(Object bean, Object value)
         {
-
+            ((TestBean)bean).setSomeOtherString(value.toString());
         }
     };
 
@@ -56,5 +56,13 @@ public class PropertyProxyModelTest extends TestCase
         IModel chainedModel = new Model("test");
         PropertyProxyModel model = new PropertyProxyModel(proxy, chainedModel);
         assertSame(chainedModel, model.getChainedModel());
+    }
+
+    public void testSetValue()
+    {
+        TestBean bean = new TestBean();
+        PropertyProxyModel model = new PropertyProxyModel(proxy, new Model(bean));
+        model.setObject("test");
+        assertEquals("test", bean.getSomeOtherString());
     }
 }

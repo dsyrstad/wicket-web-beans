@@ -187,7 +187,8 @@ public class BeanFactoryTest extends TestCase
                         + " integerObjProp: 3; doubleObjProp: 9.99; floatObjProp: 10.3; shortObjProp: 62;"
                         + " booleanObjProp: false; longObjProp: 323; setterWithReturnValue:  \"swrv\";"
                         + " parameterValues: 1, \"2\", 3.1, true, symbol; model: \"modelString\"; "
-                        + " modelOfSubBean: SubBean; }" + " SubBean { class: java.util.Date; }");
+                        + " parameterValue: \"single\";" + " modelOfSubBean: SubBean; }"
+                        + " SubBean { class: java.util.Date; }");
         TestBean bean = (TestBean)factory.newInstance("Bean1");
         assertEquals(5, bean.getIntProp());
         assertEquals(3.14, bean.getDoubleProp());
@@ -212,6 +213,7 @@ public class BeanFactoryTest extends TestCase
         assertEquals(Boolean.valueOf(true), values.get(3).getBooleanValue());
         assertEquals("symbol", values.get(4).getValue());
 
+        assertEquals("single", bean.getParameterValue().getValue());
         assertEquals("modelString", bean.getModel().getObject());
         assertTrue(bean.getModelOfSubBean().getObject() instanceof Date);
         assertSame(factory, bean.getBeanFactory());
