@@ -113,12 +113,12 @@ public class AjaxForm extends Panel
     // NOTE: OnChangeAjaxBehavior would be useful for auto-complete...
     private static final class AjaxComponentChangeBehavior extends AjaxFormComponentUpdatingBehavior
     {
+        private static final long serialVersionUID = 3061887481515194883L;
+
         public AjaxComponentChangeBehavior()
         {
             super("onchange");
         }
-
-        private static final long serialVersionUID = 3061887481515194883L;
 
         @Override
         protected void onUpdate(AjaxRequestTarget target)
