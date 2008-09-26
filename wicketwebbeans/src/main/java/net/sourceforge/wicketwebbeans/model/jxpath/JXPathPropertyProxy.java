@@ -17,11 +17,16 @@
 
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
+import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyProxy;
 
 import org.apache.commons.jxpath.CompiledExpression;
 import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.ri.model.NodePointer;
 
 /**
  * A PropertyProxy for Apache Commons JXPath. Created by JXPathPropertyResolver. <p>
@@ -54,17 +59,23 @@ public class JXPathPropertyProxy implements PropertyProxy
             return bean;
         }
 
+        JXPathContext context = getContext(bean);
+        return getCompiledExpression().getValue(context);
+    }
+
+    private JXPathContext getContext(Object bean)
+    {
+        // TODO use a pre-configured super-context without a bean to create these contexts. 
         JXPathContext context = JXPathContext.newContext(bean);
         // LATER - Unfortunately unrecognized properties are not caught by this.
         context.setLenient(true);
-        return getCompiledExpression().getValue(context);
+        context.setFactory(objectFactory);
+        return context;
     }
 
     public void setValue(Object bean, Object value)
     {
-        JXPathContext context = JXPathContext.newContext(bean);
-        context.setFactory(objectFactory);
-        getCompiledExpression().createPathAndSetValue(context, value);
+        getCompiledExpression().createPathAndSetValue(getContext(bean), value);
     }
 
     private CompiledExpression getCompiledExpression()
@@ -74,5 +85,21 @@ public class JXPathPropertyProxy implements PropertyProxy
         }
 
         return compiledExpression;
+    }
+
+    public boolean matches(Object rootBean, PropertyChangeEvent event)
+    {
+        JXPathContext context = getContext(rootBean);
+        // Gather pointers to each component in the path.
+        List<NodePointer> pathComponents = new ArrayList<NodePointer>();
+
+        for (NodePointer pointer = (NodePointer)context.getPointer(propertyExpression); pointer != null; pointer = pointer
+                        .getParent()) {
+            pathComponents.add(pointer);
+            System.out.println("pointer=" + pointer);
+            System.out.println("n=" + pointer.getValue());
+        }
+
+        return false;
     }
 }
