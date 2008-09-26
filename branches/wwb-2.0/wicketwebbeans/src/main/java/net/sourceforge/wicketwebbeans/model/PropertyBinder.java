@@ -19,6 +19,7 @@ package net.sourceforge.wicketwebbeans.model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
@@ -35,8 +36,10 @@ import java.lang.reflect.Method;
  * 
  * @author Dan Syrstad
  */
-public class PropertyBinder implements PropertyChangeListener
+public class PropertyBinder implements PropertyChangeListener, Serializable
 {
+    private static final long serialVersionUID = -440788310859881508L;
+
     private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
 
     private WeakReference<Object> listenBeanRef;

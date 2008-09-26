@@ -28,6 +28,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class AjaxPropertyBinder extends PropertyBinder
 {
+    private static final long serialVersionUID = -501006803343888338L;
 
     /**
      * Construct a AjaxPropertyBinder.
