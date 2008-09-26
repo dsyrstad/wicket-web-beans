@@ -57,6 +57,15 @@ public class JXPropertyResolverTest extends TestCase
         assertEquals("New City", testEmployee.getAddress().getCity());
     }
 
+    public void testMatches()
+    {
+        testEmployee.setAddress(null);
+        JXPathPropertyProxy proxy = (JXPathPropertyProxy)resolver.createPropertyProxy(beanCreator,
+                        "address/relatedAddress/addressLines[1]");
+        proxy.matches(testEmployee, null);
+
+    }
+
 
     @SuppressWarnings("serial")
     public static final class Employee implements Serializable
@@ -111,6 +120,7 @@ public class JXPropertyResolverTest extends TestCase
         private String city;
         private String state;
         private String postalCode;
+        private Address relatedAddress;
 
         public Address()
         {
@@ -162,6 +172,16 @@ public class JXPropertyResolverTest extends TestCase
         public void setPostalCode(String postalCode)
         {
             this.postalCode = postalCode;
+        }
+
+        public void setRelatedAddress(Address relatedAddress)
+        {
+            this.relatedAddress = relatedAddress;
+        }
+
+        public Address getRelatedAddress()
+        {
+            return relatedAddress;
         }
     }
 }
