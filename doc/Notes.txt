@@ -11,6 +11,19 @@ properties. The component would need to register itself as a listener.
  could take a property name to set (another PropertyProxy?), like bean factory is doing. Then the PPModel
  would just hang around as a listener and propagator of the change.
  - The Component binding to PPModel (and bean PCListener) should be weak so they can be collected.
+
+- Problem: A multi-component property spec may have intermediate property changes (including
+  collection changes) that would change which bean is being listened to.
+  - Possible solution: create a session/thread local-based PropertyChangeDispatcher
+    that will catch all bean changes. This would match against PropertyBinders that
+    eventually point to the changed object property. This way we don't need to register
+    listeners on each bean. 
+    - Matching could be time consuming but binders should go away when components do.
+    - See notebook SwiXML which is doing something similar with OGNL. Nice diagram
+      of mapping of components to beans.
+    - Check bean binding JSR
+
+- OGNL (defunct?) and BeanUtils are other possible property mappers. 
  
 - Special "control" params like colspan that are not properties of the bean
   should be indicated with _ - just by convention.
