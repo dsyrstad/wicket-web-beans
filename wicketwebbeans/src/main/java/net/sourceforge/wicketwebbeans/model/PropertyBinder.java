@@ -18,13 +18,15 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 
+import org.apache.wicket.model.IModel;
+
 /**
  * Binds a property on one bean to a property on another bean. If the first bean's 
- * property changes, the second bean's property is updated. <p>
+ * property changes, the second bean's property is updated. Either bean may be wrapped
+ * by IModels.<p>
  * 
  * A weak reference is made to both beans so that they can be collected independent
  * of this object. If either bean is collected, this object becomes inactive and
@@ -45,9 +47,8 @@ public class PropertyBinder implements Serializable
     /**
      * Construct a PropertyBinder. 
      *
-     * @param listenBean the bean to listen to. For successful construction this bean must
-     *  support {@link PropertyChangeListener}s via the JavaBeans addPropertyChangeListener(). 
-     * @param updateBean the bean to be updated when listenBean's listenProperty changes.
+     * @param listenBean the bean to listen to. This may be an {@link IModel}. 
+     * @param updateBean the bean to be updated when listenBean's listenProperty changes. This may be an {@link IModel}.
      * @param listenProperty the property on listenBean to listen to.
      * @param updateProperty the property on updateBean to update.
      */
@@ -66,7 +67,12 @@ public class PropertyBinder implements Serializable
     private Object getListenBean()
     {
         checkReferences();
-        return listenBeanRef.get();
+        Object listenBean = listenBeanRef.get();
+        if (listenBean instanceof IModel) {
+            listenBean = ((IModel)listenBean).getObject();
+        }
+
+        return listenBean;
     }
 
     /**
@@ -75,7 +81,12 @@ public class PropertyBinder implements Serializable
     private Object getUpdateBean()
     {
         checkReferences();
-        return updateBeanRef.get();
+        Object updateBean = updateBeanRef.get();
+        if (updateBean instanceof IModel) {
+            updateBean = ((IModel)updateBean).getObject();
+        }
+
+        return updateBean;
     }
 
     public boolean isActive()
