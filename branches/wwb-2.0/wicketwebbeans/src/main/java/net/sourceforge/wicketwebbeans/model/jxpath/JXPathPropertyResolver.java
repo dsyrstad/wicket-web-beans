@@ -1,5 +1,5 @@
 /*---
-   Copyright 2007 Visual Systems Corporation.
+   Copyright 2008 Visual Systems Corporation.
    http://www.vscorp.com
 
    Licensed under the Apache License, Version 2.0 (the "License");

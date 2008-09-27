@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import java.beans.PropertyChangeEvent;
 import java.util.Date;
 
 import junit.framework.TestCase;
@@ -41,6 +42,11 @@ public class PropertyProxyModelTest extends TestCase
         public void setValue(Object bean, Object value)
         {
             ((TestBean)bean).setSomeOtherString(value.toString());
+        }
+
+        public boolean matches(Object rootBean, PropertyChangeEvent event)
+        {
+            return false;
         }
     };
 

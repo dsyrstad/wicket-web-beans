@@ -1,5 +1,5 @@
 /*---
-   Copyright 2007 Visual Systems Corporation.
+   Copyright 2008 Visual Systems Corporation.
    http://www.vscorp.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,14 +18,14 @@
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyProxy;
 
 import org.apache.commons.jxpath.CompiledExpression;
 import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.QName;
 import org.apache.commons.jxpath.ri.model.NodePointer;
 
 /**
@@ -75,6 +75,9 @@ public class JXPathPropertyProxy implements PropertyProxy
 
     public void setValue(Object bean, Object value)
     {
+        // TODO JXPath supports conversion of the value to the proper type. Maybe we should use it.
+        // TODO create the path, determine the property type (see JXPathObjectFactory), then set the value.  Test conversion
+        // Do we need a thread local PropertyContext that contains the bean creator and Converters?
         getCompiledExpression().createPathAndSetValue(getContext(bean), value);
     }
 
@@ -89,15 +92,26 @@ public class JXPathPropertyProxy implements PropertyProxy
 
     public boolean matches(Object rootBean, PropertyChangeEvent event)
     {
-        JXPathContext context = getContext(rootBean);
-        // Gather pointers to each component in the path.
-        List<NodePointer> pathComponents = new ArrayList<NodePointer>();
+        Object eventSource = event.getSource();
+        // This may be null which means match any property.
+        String eventPropertyName = event.getPropertyName();
 
+        JXPathContext context = getContext(rootBean);
+        String previousPropertyName = null;
+        Pointer previousPointer = null;
         for (NodePointer pointer = (NodePointer)context.getPointer(propertyExpression); pointer != null; pointer = pointer
                         .getParent()) {
-            pathComponents.add(pointer);
-            System.out.println("pointer=" + pointer);
-            System.out.println("n=" + pointer.getValue());
+
+            if (previousPointer != null && pointer.getValue() == eventSource
+                            && (eventPropertyName == null || eventPropertyName.equals(previousPropertyName))) {
+                return true;
+            }
+
+            previousPointer = pointer;
+            QName propertyQName = pointer.getName();
+            if (propertyQName != null) {
+                previousPropertyName = propertyQName.getName();
+            }
         }
 
         return false;

@@ -1,5 +1,5 @@
 /*---
-   Copyright 2007 Visual Systems Corporation.
+   Copyright 2008 Visual Systems Corporation.
    http://www.vscorp.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.Pointer;
 
 /**
- * . <p>
+ * A JXPath AbstractFactory to create objects for a path. <p>
  * 
  * @author Dan Syrstad
  */

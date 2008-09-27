@@ -17,6 +17,7 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import java.beans.PropertyChangeEvent;
 import java.io.Serializable;
 
 /**
@@ -35,5 +36,22 @@ public interface PropertyProxy extends Serializable
      */
     Object getValue(Object bean);
 
+    /**
+     * Sets the specified value on the bean.
+     *
+     * @param bean
+     * @param value
+     */
     void setValue(Object bean, Object value);
+
+    /**
+     * Determines if this proxy, as applied to rootBean, matches the given PropertyChangeEvent. 
+     *
+     * @param rootBean the root bean that the PropertyProxy will be evaluated against.
+     * @param event the {@link PropertyChangeEvent}. If the property name of the event is null and
+     *  the source object matches any element in the property path, true will be returned. 
+     * 
+     * @return true if this proxy and rootBean matches the PropertyChangeEvent, otherwise false.
+     */
+    boolean matches(Object rootBean, PropertyChangeEvent event);
 }
