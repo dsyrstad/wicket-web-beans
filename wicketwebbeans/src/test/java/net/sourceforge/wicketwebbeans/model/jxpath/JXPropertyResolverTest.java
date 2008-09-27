@@ -1,9 +1,11 @@
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
-import java.io.Serializable;
+import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.Address;
+import net.sourceforge.wicketwebbeans.Employee;
 import net.sourceforge.wicketwebbeans.model.JavaBeansPropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
@@ -62,126 +64,42 @@ public class JXPropertyResolverTest extends TestCase
         testEmployee.setAddress(null);
         JXPathPropertyProxy proxy = (JXPathPropertyProxy)resolver.createPropertyProxy(beanCreator,
                         "address/relatedAddress/addressLines[1]");
-        proxy.matches(testEmployee, null);
 
+        assertTrue(proxy.matches(testEmployee, new PropertyChangeEvent(testEmployee, "address", null, null)));
+        // Existing property on same object, but doesn't match.
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(testEmployee, "name", null, null)));
+        // Shouldn't match some random object with correct property name.
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(new Object(), "address", null, null)));
+        // Shouldn't match correct object with incorrect property name
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(testEmployee, "x", null, null)));
+        // If property name is null it means "match any property".
+        assertTrue(proxy.matches(testEmployee, new PropertyChangeEvent(testEmployee, null, null, null)));
     }
 
-
-    @SuppressWarnings("serial")
-    public static final class Employee implements Serializable
+    public void testMatchesOnIntermediatePathProperty()
     {
-        private String name;
-        private BigDecimal salary;
-        private Address address;
+        JXPathPropertyProxy proxy = (JXPathPropertyProxy)resolver.createPropertyProxy(beanCreator,
+                        "address/relatedAddress/addressLines[1]");
 
-        Employee(String name, Address address, BigDecimal salary)
-        {
-            this.address = address;
-            this.name = name;
-            this.salary = salary;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-
-        public void setName(String name)
-        {
-            this.name = name;
-        }
-
-        public BigDecimal getSalary()
-        {
-            return salary;
-        }
-
-        public void setSalary(BigDecimal salary)
-        {
-            this.salary = salary;
-        }
-
-        public Address getAddress()
-        {
-            return address;
-        }
-
-        public void setAddress(Address address)
-        {
-            this.address = address;
-        }
+        Address address = testEmployee.getAddress();
+        assertTrue(proxy.matches(testEmployee, new PropertyChangeEvent(address, "relatedAddress", null, null)));
+        // Right object, wrong property.
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(address, "city", null, null)));
     }
 
-
-    @SuppressWarnings("serial")
-    public static final class Address implements Serializable
+    public void testMatchesOnLastPathProperty()
     {
-        private String[] addressLines;
-        private String city;
-        private String state;
-        private String postalCode;
-        private Address relatedAddress;
+        JXPathPropertyProxy proxy = (JXPathPropertyProxy)resolver.createPropertyProxy(beanCreator,
+                        "address/relatedAddress/addressLines[1]");
 
-        public Address()
-        {
-        }
+        Address relatedAddress = new Address("city", "55128", "MN", "addr1", "addr2", "addr3");
+        Address address = testEmployee.getAddress();
+        address.setRelatedAddress(relatedAddress);
 
-        Address(String city, String postalCode, String state, String... addressLines)
-        {
-            this.city = city;
-            this.postalCode = postalCode;
-            this.state = state;
-            this.addressLines = addressLines;
-        }
-
-        public String[] getAddressLines()
-        {
-            return addressLines;
-        }
-
-        public void setAddressLines(String[] addressLine)
-        {
-            this.addressLines = addressLine;
-        }
-
-        public String getCity()
-        {
-            return city;
-        }
-
-        public void setCity(String city)
-        {
-            this.city = city;
-        }
-
-        public String getState()
-        {
-            return state;
-        }
-
-        public void setState(String state)
-        {
-            this.state = state;
-        }
-
-        public String getPostalCode()
-        {
-            return postalCode;
-        }
-
-        public void setPostalCode(String postalCode)
-        {
-            this.postalCode = postalCode;
-        }
-
-        public void setRelatedAddress(Address relatedAddress)
-        {
-            this.relatedAddress = relatedAddress;
-        }
-
-        public Address getRelatedAddress()
-        {
-            return relatedAddress;
-        }
+        assertTrue(proxy.matches(testEmployee, new PropertyChangeEvent(relatedAddress, "addressLines", null, null)));
+        // Right object, wrong property.
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(relatedAddress, "city", null, null)));
+        // A different Address object
+        assertFalse(proxy.matches(testEmployee, new PropertyChangeEvent(address, "addressLines", null, null)));
     }
 }

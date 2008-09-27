@@ -21,32 +21,26 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 
 /**
  * Binds a property on one bean to a property on another bean. If the first bean's 
- * property changes, the second bean's property is updated. 
- * The first bean must support ProperyChangeListeners as specified by the JavaBeans
- * spec in order for the updating to work.<p>
+ * property changes, the second bean's property is updated. <p>
  * 
  * A weak reference is made to both beans so that they can be collected independent
- * of this object. If either bean is collected, this object is essentially dead.
- * If the second bean is collected first, this object will remove itself as a
- * listener to the first bean.<p>
+ * of this object. If either bean is collected, this object becomes inactive and
+ * isActive() will return false. This binding can then be removed from any container
+ * that it is contained in.<p>
  * 
  * @author Dan Syrstad
  */
-public class PropertyBinder implements PropertyChangeListener, Serializable
+public class PropertyBinder implements Serializable
 {
     private static final long serialVersionUID = -440788310859881508L;
-
-    private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
 
     private WeakReference<Object> listenBeanRef;
     private WeakReference<Object> updateBeanRef;
     private PropertyProxy listenProperty;
     private PropertyProxy updateProperty;
-    private String eventPropertyName;
 
     /**
      * Construct a PropertyBinder. 
@@ -56,38 +50,20 @@ public class PropertyBinder implements PropertyChangeListener, Serializable
      * @param updateBean the bean to be updated when listenBean's listenProperty changes.
      * @param listenProperty the property on listenBean to listen to.
      * @param updateProperty the property on updateBean to update.
-     * @param eventPropertyName the property's name. PropertyChangeEvents are filtered
-     *  based on this name.
      */
     public PropertyBinder(Object listenBean, Object updateBean, PropertyProxy listenProperty,
-                    PropertyProxy updateProperty, String eventPropertyName)
+                    PropertyProxy updateProperty)
     {
-
-        // TODO WAIT! This must be the parent object of the nested property -- See Pointer. if null, how do we monitor?????
-        // TODO If dependent property in path changes, how do we monitor?
-        Method addPropertyChangeListener = getAddPropertyChangeListenerMethod(listenBean.getClass());
-        if (addPropertyChangeListener == null) {
-            return;
-        }
-
-        try {
-            addPropertyChangeListener.invoke(listenBean, this);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Could not add PropertyChangeListener to " + listenBean.getClass());
-        }
-
         this.listenBeanRef = new WeakReference<Object>(listenBean);
         this.updateBeanRef = new WeakReference<Object>(updateBean);
         this.listenProperty = listenProperty;
         this.updateProperty = updateProperty;
-        this.eventPropertyName = eventPropertyName;
     }
 
     /**
      * @return the bean being listened to. May be null if the bean has been collected.
      */
-    public Object getListenBean()
+    private Object getListenBean()
     {
         checkReferences();
         return listenBeanRef.get();
@@ -96,92 +72,58 @@ public class PropertyBinder implements PropertyChangeListener, Serializable
     /**
      * @return the bean being updated. May be null if the bean has been collected.
      */
-    public Object getUpdateBean()
+    private Object getUpdateBean()
     {
         checkReferences();
         return updateBeanRef.get();
     }
 
-    private void checkReferences()
+    public boolean isActive()
     {
-        Object listenBean = listenBeanRef.get();
-        if (listenBean == null) {
-            // No reason to keep this around.
-            updateBeanRef.clear();
+        return checkReferences();
+    }
+
+    /**
+     * Checks if the listen bean matches the {@link PropertyChangeEvent}.
+     *
+     * @param event the {@link PropertyChangeEvent}. If the property name of the event is null and
+     *  the source object matches any element in the property path, true will be returned. 
+     *  
+     * @return true if the listen bean matches the event, otherwise false.
+     */
+    public boolean matchesListenBean(PropertyChangeEvent event)
+    {
+        Object listenBean = getListenBean();
+        return listenBean == null ? false : listenProperty.matches(listenBean, event);
+    }
+
+    /**
+     * Set the update bean's property to be set from the listen bean's property.
+     * If either bean has been collected, nothing happens.
+     */
+    public void updateProperty()
+    {
+        Object listenBean = getListenBean();
+        Object updateBean = getUpdateBean();
+        if (listenBean == null || updateBean == null) {
+            return;
         }
 
-        if (updateBeanRef.get() == null) {
-            if (listenBean != null) {
-                Method removePropertyChangeListener = getRemovePropertyChangeListenerMethod(listenBean.getClass());
-                if (removePropertyChangeListener != null) {
-                    try {
-                        removePropertyChangeListener.invoke(listenBean, this);
-                    }
-                    catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+        updateProperty.setValue(updateBean, listenProperty.getValue(listenBean));
+    }
 
-            // No reason to keep this around.
+    /**
+     * @return true if both references are set.
+     */
+    private boolean checkReferences()
+    {
+        boolean bothSet = listenBeanRef.get() != null && updateBeanRef.get() != null;
+        if (!bothSet) {
+            // No reason to keep either of these around if one is gone.
+            updateBeanRef.clear();
             listenBeanRef.clear();
         }
-    }
 
-    public PropertyProxy getListenProperty()
-    {
-        return listenProperty;
-    }
-
-    public PropertyProxy getUpdateProperty()
-    {
-        return updateProperty;
-    }
-
-    public String getEventPropertyName()
-    {
-        return eventPropertyName;
-    }
-
-    private static Method getAddPropertyChangeListenerMethod(Class<?> listenBeanClass)
-    {
-        try {
-            return listenBeanClass.getMethod("addPropertyChangeListener", PROP_CHANGE_LISTENER_ARG);
-        }
-        catch (Exception e) {
-            // Assume we don't have it.
-            return null;
-        }
-    }
-
-    private static Method getRemovePropertyChangeListenerMethod(Class<?> listenBeanClass)
-    {
-        try {
-            return listenBeanClass.getMethod("removePropertyChangeListener", PROP_CHANGE_LISTENER_ARG);
-        }
-        catch (Exception e) {
-            // Assume we don't have it.
-            return null;
-        }
-    }
-
-    /** 
-     * {@inheritDoc}
-     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event)
-    {
-        // According to the spec a null property name means multiple properties may have changed. Assume the one we're interested in did
-        // as well.
-        Object updateBean = getUpdateBean();
-        Object listenBean = getListenBean();
-        String propertyName = event.getPropertyName();
-        if (updateBean != null && listenBean != null
-                        && (propertyName == null || eventPropertyName.equals(propertyName))) {
-            Object value = listenProperty.getValue(listenBean);
-            // TODO Need a ConvertUtils reference.
-            updateProperty.setValue(updateBeanRef, value);
-        }
-
+        return bothSet;
     }
 }

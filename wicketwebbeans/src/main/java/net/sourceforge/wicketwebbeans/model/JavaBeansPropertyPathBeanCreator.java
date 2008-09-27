@@ -20,8 +20,8 @@ package net.sourceforge.wicketwebbeans.model;
 import org.apache.commons.beanutils.ConstructorUtils;
 
 /**
- * A simple BeanCreator that assumes that the bean to be created is a JavaBean
- * and has a public no-arg constructor. <p>
+ * A simple BeanCreator that assumes that the bean to create is a JavaBean, hence
+ * it has a public no-arg constructor. <p>
  * 
  * @author Dan Syrstad
  */
