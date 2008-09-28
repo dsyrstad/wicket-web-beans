@@ -23,6 +23,8 @@ import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.test.Employee;
 
+import org.apache.wicket.util.tester.WicketTester;
+
 /**
  * Tests {@link PropertyChanger}. <p>
  * 
@@ -30,14 +32,10 @@ import net.sourceforge.wicketwebbeans.test.Employee;
  */
 public class PropertyChangerTest extends TestCase
 {
-    @Override
-    public void setUp()
-    {
-        PropertyChanger.setCurrent(null);
-    }
-
     public void testGetCurrentCreatesDispatcherAndSetCurrentChangesIt()
     {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
         PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
         assertNotNull(dispatcher);
         assertEquals(0, dispatcher.getPropertyBinders().size());
@@ -52,6 +50,8 @@ public class PropertyChangerTest extends TestCase
 
     public void testDispatch()
     {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
         PropertyPathBeanCreator beanCreator = new JavaBeansPropertyPathBeanCreator();
         Employee listenBean = new Employee("Dan", null, BigDecimal.valueOf(101.01));
         Employee updateBean = new Employee();
@@ -63,5 +63,17 @@ public class PropertyChangerTest extends TestCase
         assertNull(updateBean.getSalary());
         PropertyChanger.dispatch(listenBean, "salary");
         assertNotNull(updateBean.getSalary());
+    }
+
+    public void testCallingPropertyChangerWithoutRequestCycle()
+    {
+        PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
+        assertNotNull(dispatcher);
+
+        // Now we'll have a session
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
+        PropertyChangeDispatcher dispatcher2 = PropertyChanger.getCurrent();
+        assertNotSame(dispatcher, dispatcher2);
     }
 }

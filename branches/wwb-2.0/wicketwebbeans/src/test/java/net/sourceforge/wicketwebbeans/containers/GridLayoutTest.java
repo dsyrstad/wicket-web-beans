@@ -103,7 +103,7 @@ public class GridLayoutTest extends TestCase
         }
         catch (RuntimeException e) {
             // Expected
-            assertTrue(e.getMessage(), e.getMessage().startsWith("Error setting property 'columns'"));
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Unable to invoke setter 'setColumns'"));
         }
 
     }

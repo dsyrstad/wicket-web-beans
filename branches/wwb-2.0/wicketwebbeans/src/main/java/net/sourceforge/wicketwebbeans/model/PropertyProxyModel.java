@@ -62,4 +62,14 @@ public class PropertyProxyModel implements IChainingModel
     {
         beanModel = model;
     }
+
+    public IModel getBeanModel()
+    {
+        return beanModel;
+    }
+
+    public PropertyProxy getProxy()
+    {
+        return proxy;
+    }
 }

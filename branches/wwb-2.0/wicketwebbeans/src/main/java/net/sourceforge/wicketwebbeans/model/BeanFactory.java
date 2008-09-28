@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -35,7 +34,6 @@ import java.util.Map;
 import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 
-import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.io.IOUtils;
@@ -82,7 +80,6 @@ public class BeanFactory implements Serializable
     };
 
     private IModel beanModel;
-    transient private ConvertUtilsBean convertUtilsBean;
 
     /**
      * Construct a BeanFactory with no bean model. 
@@ -354,6 +351,7 @@ public class BeanFactory implements Serializable
             }
         }
 
+        WriteOnlyPropertyProxy updateProxy = new WriteOnlyPropertyProxy(writeMethod);
         propertyType = ClassUtils.primitiveToWrapper(propertyType);
         Object value;
         if (values.isEmpty()) {
@@ -370,7 +368,19 @@ public class BeanFactory implements Serializable
             String stringValue = valueAst.getValue();
             boolean hasPropertyValue = stringValue != null && stringValue.charAt(0) == '$';
             if (hasPropertyValue) {
+                // Bound property - create a binder to make it dynamic
                 PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(stringValue);
+                PropertyBinder binder;
+                if (bean instanceof Component) {
+                    binder = new AjaxPropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), updateProxy);
+                }
+                else {
+                    binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), updateProxy);
+                }
+
+                // TODO Test
+                PropertyChanger.getCurrent().add(binder);
+
                 if (IModel.class.isAssignableFrom(propertyType)) {
                     value = propertyProxyModel;
                 }
@@ -392,30 +402,7 @@ public class BeanFactory implements Serializable
             }
         }
 
-        value = getConvertUtilsBean().convert(value, propertyType);
-        try {
-            writeMethod.invoke(bean, value);
-        }
-        catch (Exception e) {
-            Throwable t = e;
-            if (e instanceof InvocationTargetException) {
-                t = e.getCause();
-            }
-
-            throw new RuntimeException("Error setting property '" + parameterName + "' for bean '" + beanName
-                            + "' class " + beanClassName, t);
-        }
-    }
-
-    private ConvertUtilsBean getConvertUtilsBean()
-    {
-        if (convertUtilsBean == null) {
-            convertUtilsBean = new ConvertUtilsBean();
-            convertUtilsBean.register(new IModelConverter(), IModel.class);
-            convertUtilsBean.register(false, true, -1);
-        }
-
-        return convertUtilsBean;
+        updateProxy.setValue(bean, value);
     }
 
     /**
@@ -449,6 +436,8 @@ public class BeanFactory implements Serializable
     {
         String valueString = parameterValue.getValue();
         if (valueString.charAt(0) == '$') {
+            // TODO Bound value.... bound to components "model" property. I'm wondering if we should even support this 
+            // TODO because it can be done more explicitly and can be more customized via the component form.
             PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);
             Class<?> propertyType = null;
             // If we have _type, we don't have to try to get it from the model.
