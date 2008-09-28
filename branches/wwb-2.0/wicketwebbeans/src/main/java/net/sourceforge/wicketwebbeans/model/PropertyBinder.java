@@ -64,7 +64,7 @@ public class PropertyBinder implements Serializable
     /**
      * @return the bean being listened to. May be null if the bean has been collected.
      */
-    private Object getListenBean()
+    protected Object getListenBean()
     {
         checkReferences();
         Object listenBean = listenBeanRef.get();
@@ -78,7 +78,7 @@ public class PropertyBinder implements Serializable
     /**
      * @return the bean being updated. May be null if the bean has been collected.
      */
-    private Object getUpdateBean()
+    protected Object getUpdateBean()
     {
         checkReferences();
         Object updateBean = updateBeanRef.get();
