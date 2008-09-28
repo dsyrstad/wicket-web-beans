@@ -30,6 +30,7 @@ and components values
 
 Component1 {
 	class: BeanForm;
+	
 	layout: BeanGridPanel;
 	elements: 
 		"prop1/prop2" { params }, 

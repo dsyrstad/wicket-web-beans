@@ -77,7 +77,7 @@ public class JXPathPropertyProxy implements PropertyProxy
     {
         // TODO JXPath supports conversion of the value to the proper type. Maybe we should use it.
         // TODO create the path, determine the property type (see JXPathObjectFactory), then set the value.  Test conversion
-        // Do we need a thread local PropertyContext that contains the bean creator and Converters?
+        //        value = SessionConvertUtils.getCurrent().convert(value, parameterType);
         getCompiledExpression().createPathAndSetValue(getContext(bean), value);
     }
 

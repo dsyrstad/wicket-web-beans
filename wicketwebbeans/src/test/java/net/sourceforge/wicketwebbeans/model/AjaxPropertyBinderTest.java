@@ -22,8 +22,11 @@ import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.test.AjaxTestPage;
 import net.sourceforge.wicketwebbeans.test.Employee;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
 
@@ -35,44 +38,67 @@ import org.apache.wicket.util.tester.WicketTester;
 public class AjaxPropertyBinderTest extends TestCase
 {
     private WicketTester tester = new WicketTester();
-    private AjaxTestPage page = new AjaxTestPage();
     private PropertyPathBeanCreator beanCreator = new JavaBeansPropertyPathBeanCreator();
     private Employee listenBean = new Employee("test", null, null);
-    private AjaxLink updateBean = page.ajaxLink;
     private PropertyProxy listenProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "name");
     private PropertyProxy updateProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "markupId");
-    private PropertyBinder binder = new AjaxPropertyBinder(listenBean, updateBean, listenProxy, updateProxy);
+    private PropertyBinder binder;
+    @SuppressWarnings("serial")
+    private AjaxLink link = new AjaxLink("link") {
+        @Override
+        public void onClick(AjaxRequestTarget target)
+        {
+            binder.updateProperty();
+        }
+    };
 
     public void testUpdatePropertyUpdatesWhenNoAjaxTarget()
     {
+        Component updateBean = new Label("id");
+        binder = new AjaxPropertyBinder(listenBean, updateBean, listenProxy, updateProxy);
+
         assertFalse("test".equals(updateBean.getMarkupId()));
         binder.updateProperty();
         assertEquals("test", updateBean.getMarkupId());
-        assertTrue(tester.isComponentOnAjaxResponse(updateBean).wasFailed());
+        assertComponentNotOnAjaxResponse(updateBean);
     }
 
     public void testUpdatePropertyUpdatesAjaxTarget()
     {
-        setupAjaxRequestCycle();
+        binder = new AjaxPropertyBinder(listenBean, link, listenProxy, updateProxy);
+        performAjaxRequestCycle(link);
 
-        binder.updateProperty();
-        tester.assertComponentOnAjaxResponse(updateBean);
+        tester.assertComponentOnAjaxResponse(link);
+        assertEquals("test", link.getMarkupId());
     }
 
     public void testUpdatePropertyUpdatesWhenUpdateBeanNotAComponent()
     {
-        fail();
+        Employee updateBean = new Employee();
+        updateProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "name");
+        binder = new AjaxPropertyBinder(listenBean, updateBean, listenProxy, updateProxy);
+        performAjaxRequestCycle(link);
+
+        assertComponentNotOnAjaxResponse(link);
+        assertFalse("test".equals(link.getMarkupId()));
+        assertEquals("test", updateBean.getName());
     }
 
     @SuppressWarnings("serial")
-    private void setupAjaxRequestCycle()
+    private void performAjaxRequestCycle(AjaxLink link)
     {
+        AjaxTestPage.ajaxLink = link;
         tester.startPage(new ITestPageSource() {
             public Page getTestPage()
             {
-                return page;
+                return new AjaxTestPage();
             }
         });
         tester.clickLink("link", true);
+    }
+
+    private void assertComponentNotOnAjaxResponse(Component component)
+    {
+        assertTrue(tester.isComponentOnAjaxResponse(component).wasFailed());
     }
 }

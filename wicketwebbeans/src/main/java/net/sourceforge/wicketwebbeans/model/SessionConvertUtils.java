@@ -17,58 +17,59 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
+
+import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 
 /**
- * Static methods that delegate to a {@link PropertyChangeDispatcher} for the current Wicket Session, if any.
- * The dispatcher is created if one does not exist. 
- * A transient {@link PropertyChangeDispatcher} is returned if a session/request cycle does not exist.
- * The dispatcher can be set via {@link #setCurrent(PropertyChangeDispatcher)}. <p>
+ * Gets a {@link ConvertUtilsBean} that is associated with the current RequestCycle Session. If no
+ * request cycle is active, a default {@link ConvertUtilsBean} is returned. <p>
  * 
  * @author Dan Syrstad
  */
-public class PropertyChanger
+public class SessionConvertUtils extends ConvertUtilsBean implements Serializable
 {
-    private static final MetaDataKey DISPATCHER_KEY = new MetaDataKey(PropertyChangeDispatcher.class) {
-        private static final long serialVersionUID = 5330887235643461508L;
+    private static final long serialVersionUID = 9016863280786431161L;
+
+    private static final MetaDataKey SESSION_KEY = new MetaDataKey(ConvertUtilsBean.class) {
+        private static final long serialVersionUID = -7109763335881231272L;
     };
 
-    private PropertyChanger()
+    public SessionConvertUtils()
     {
+        register(new IModelConverter(), IModel.class);
+        register(false, true, -1);
     }
 
-    public static PropertyChangeDispatcher getCurrent()
+    public static SessionConvertUtils getCurrent()
     {
-        PropertyChangeDispatcher dispatcher = null;
+        SessionConvertUtils convertUtilsBean = null;
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
             Session session = requestCycle.getSession();
-            dispatcher = (PropertyChangeDispatcher)session.getMetaData(DISPATCHER_KEY);
+            convertUtilsBean = (SessionConvertUtils)session.getMetaData(SESSION_KEY);
         }
 
-        if (dispatcher == null) {
-            dispatcher = new PropertyChangeDispatcher();
-            setCurrent(dispatcher);
+        if (convertUtilsBean == null) {
+            convertUtilsBean = new SessionConvertUtils();
+            setCurrent(convertUtilsBean);
         }
 
-        return dispatcher;
+        return convertUtilsBean;
     }
 
-    public static void setCurrent(PropertyChangeDispatcher dispatcher)
+    public static void setCurrent(SessionConvertUtils convertUtilsBean)
     {
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
             Session session = requestCycle.getSession();
-            session.setMetaData(DISPATCHER_KEY, dispatcher);
+            session.setMetaData(SESSION_KEY, convertUtilsBean);
             session.dirty();
         }
-    }
-
-    public static void dispatch(Object source, String propertyName)
-    {
-        getCurrent().dispatch(source, propertyName);
     }
 
 }

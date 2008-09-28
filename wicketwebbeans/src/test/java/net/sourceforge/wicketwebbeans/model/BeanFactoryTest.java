@@ -18,6 +18,7 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -241,25 +242,6 @@ public class BeanFactoryTest extends TestCase
         assertEquals("hello", bean.getModel().getObject());
     }
 
-    public void testNewInstanceWithMisMatchedPropertyParameter() throws Exception
-    {
-        TestBean origBean = new TestBean();
-        origBean.setSomeOtherString("hello");
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(origBean), "Bean1 { "
-                        + " class: net.sourceforge.wicketwebbeans.model.TestBean;" + //
-                        " intProp: $someOtherString; }");
-        try {
-            factory.newInstance("Bean1");
-            fail();
-        }
-        catch (RuntimeException e) {
-            // Expected
-            assertEquals(
-                            "Error setting property 'intProp' for bean 'Bean1' class net.sourceforge.wicketwebbeans.model.TestBean",
-                            e.getMessage());
-        }
-    }
-
     public void testNewInstanceClassNotFound() throws Exception
     {
         BeanFactory factory = TestUtils.createBeanFactory("Bean1 { class: java.util.NotFound; }");
@@ -352,8 +334,8 @@ public class BeanFactoryTest extends TestCase
         }
         catch (RuntimeException e) {
             // Expected
-            assertTrue(e.getMessage().contains("Error setting property"));
-            assertTrue(e.getCause().getMessage().equals("Thrown from setter"));
+            assertTrue(e.getMessage(), e.getMessage().contains("Unable to invoke setter"));
+            assertTrue(e.getCause() instanceof InvocationTargetException);
         }
     }
 
