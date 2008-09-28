@@ -4,11 +4,11 @@ import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.Address;
-import net.sourceforge.wicketwebbeans.Employee;
 import net.sourceforge.wicketwebbeans.model.JavaBeansPropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 import net.sourceforge.wicketwebbeans.model.PropertyResolver;
+import net.sourceforge.wicketwebbeans.test.Address;
+import net.sourceforge.wicketwebbeans.test.Employee;
 
 /**
  * Tests JXPropertyResolver and JXPropertyProxy. <p>

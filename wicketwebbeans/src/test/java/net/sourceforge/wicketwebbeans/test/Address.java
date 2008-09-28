@@ -15,7 +15,7 @@
    limitations under the License.
 ---*/
 
-package net.sourceforge.wicketwebbeans;
+package net.sourceforge.wicketwebbeans.test;
 
 import java.io.Serializable;
 

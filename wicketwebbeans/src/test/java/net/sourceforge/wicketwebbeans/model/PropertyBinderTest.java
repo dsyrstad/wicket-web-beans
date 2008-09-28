@@ -21,9 +21,9 @@ import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 
 import junit.framework.TestCase;
-import net.sourceforge.wicketwebbeans.Address;
-import net.sourceforge.wicketwebbeans.Employee;
 import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
+import net.sourceforge.wicketwebbeans.test.Address;
+import net.sourceforge.wicketwebbeans.test.Employee;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
