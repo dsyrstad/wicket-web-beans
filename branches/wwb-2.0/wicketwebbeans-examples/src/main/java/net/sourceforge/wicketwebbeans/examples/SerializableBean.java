@@ -27,6 +27,8 @@ import java.util.Date;
  */
 public class SerializableBean extends NonSerializableBean implements Serializable
 {
+    private static final long serialVersionUID = -4561485257546568056L;
+
     /**
      * Construct a SerializableBean. 
      *

@@ -17,6 +17,10 @@
 
 package net.sourceforge.wicketwebbeans.examples;
 
+import java.math.BigDecimal;
+
+import net.sourceforge.wicketwebbeans.model.PropertyChanger;
+
 /**
  * A test bean that is not Serializable. <p>
  * 
@@ -26,6 +30,9 @@ public class NonSerializableBean
 {
     private String name;
     private String serialNumber;
+    private BigDecimal operand1;
+    private BigDecimal operand2;
+    private BigDecimal result;
 
     /**
      * Construct a NonSerializableBean. 
@@ -58,4 +65,45 @@ public class NonSerializableBean
     {
         this.serialNumber = serialNumber == null ? null : serialNumber.toUpperCase();
     }
+
+    public BigDecimal getOperand1()
+    {
+        return operand1;
+    }
+
+    public void setOperand1(BigDecimal operand1)
+    {
+        this.operand1 = operand1;
+        recalc();
+    }
+
+    public BigDecimal getOperand2()
+    {
+        return operand2;
+    }
+
+    public void setOperand2(BigDecimal operand2)
+    {
+        this.operand2 = operand2;
+        recalc();
+    }
+
+    private void recalc()
+    {
+        if (operand1 != null && operand2 != null) {
+            result = operand1.add(operand2);
+            PropertyChanger.dispatch(this, "result");
+        }
+    }
+
+    public BigDecimal getResult()
+    {
+        return result;
+    }
+
+    public void setResult(BigDecimal result)
+    {
+        this.result = result;
+    }
+
 }

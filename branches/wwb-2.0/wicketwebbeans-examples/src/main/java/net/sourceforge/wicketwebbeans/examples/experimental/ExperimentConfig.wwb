@@ -15,7 +15,10 @@ Grid {
 		Label, 
 		Label { model: "A Label" }, 
 		Label { model: "Another Label" }, 
-		Label { model: DateBean };
+		Label { model: DateBean },
+		Field { model: $operand1 },
+		Field { model: $operand2 },
+		Label { model: $result; outputMarkupId: true };
 }
 
 SubGrid {
