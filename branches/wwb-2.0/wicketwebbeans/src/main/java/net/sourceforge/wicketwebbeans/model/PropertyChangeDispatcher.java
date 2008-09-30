@@ -64,6 +64,8 @@ public class PropertyChangeDispatcher implements Serializable
 
     public void dispatch(PropertyChangeEvent event)
     {
+        // TODO Prevent cyclical dispatches. Maybe tracking called binders with a set
+        // but we should allow the same property to be changed some number of levels deep.
         for (Iterator<PropertyBinder> iter = binders.iterator(); iter.hasNext();) {
             PropertyBinder binder = iter.next();
             if (!binder.isActive()) {

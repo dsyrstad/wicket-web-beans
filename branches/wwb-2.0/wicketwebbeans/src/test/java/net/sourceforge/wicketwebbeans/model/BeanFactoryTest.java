@@ -17,7 +17,6 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,10 +29,6 @@ import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -57,7 +52,6 @@ public class BeanFactoryTest extends TestCase
         assertNotNull(factory.getBeanConfig("PintoBean"));
         assertNotNull(factory.getBeanConfig("Another"));
         assertNull(factory.getBeanConfig("X"));
-        assertNotNull(factory.getComponentRegistry());
         assertNotNull(factory.getPropertyResolver());
     }
 
@@ -433,158 +427,5 @@ public class BeanFactoryTest extends TestCase
         assertTrue(component instanceof TextField);
         assertEquals("id", component.getId());
         assertEquals("test", component.getModelObject());
-    }
-
-    public void testResolveComponentWithProperty() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        TestBean testBean = new TestBean();
-        TestBean subBean = new TestBean();
-        subBean.setIntegerObjProp(Integer.valueOf(55));
-        testBean.setNestedBean(subBean);
-
-        BeanFactory factory = new BeanFactory(new Model(testBean));
-
-        ParameterValueAST valueAST = new ParameterValueAST("$nestedBean/integerObjProp", false);
-        Component component = factory.resolveComponent("id", valueAST);
-        assertEquals("id", component.getId());
-        assertEquals(Integer.valueOf(55), component.getModelObject());
-    }
-
-    public void testResolveComponentWithPropertyAndSubParameters() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        TestBean testBean = new TestBean();
-        testBean.setIntegerObjProp(Integer.valueOf(55));
-
-        BeanFactory factory = new BeanFactory(new Model(testBean));
-        factory.getComponentRegistry().register(Integer.class, TextField.class);
-
-        ParameterValueAST valueAST = new ParameterValueAST("$integerObjProp", false);
-        List<ParameterAST> parameters = new ArrayList<ParameterAST>();
-        parameters.add(new ParameterAST("convertEmptyInputStringToNull", Collections
-                        .singletonList(new ParameterValueAST("true", true))));
-        valueAST.setSubParameters(parameters);
-
-        Component component = factory.resolveComponent("id", valueAST);
-        assertEquals("id", component.getId());
-        assertEquals(Integer.valueOf(55), component.getModelObject());
-        assertTrue(((AbstractTextComponent)component).getConvertEmptyInputStringToNull());
-    }
-
-    public void testResolveComponentWithUnresolvableProperty() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        TestBean testBean = new TestBean();
-        TestBean subBean = new TestBean();
-        testBean.setNestedBean(subBean);
-
-        BeanFactory factory = new BeanFactory(new Model(testBean));
-
-        ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
-        try {
-            factory.resolveComponent("id", valueAST);
-            fail();
-        }
-        catch (RuntimeException e) {
-            assertEquals(
-                            "Cannot find component in the ComponentRegistry for the expression '$nestedBean' and type of class net.sourceforge.wicketwebbeans.model.TestBean. Specify _type as a sub-parameter to the property or use a Bean declaration.",
-                            e.getMessage());
-        }
-    }
-
-    public void testResolveComponentWithUnresolvablePropertyAndTypeParameter() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        TestBean testBean = new TestBean();
-        TestBean subBean = new TestBean();
-        testBean.setNestedBean(subBean);
-
-        BeanFactory factory = new BeanFactory(new Model(testBean));
-
-        ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
-        List<ParameterAST> parameters = new ArrayList<ParameterAST>();
-        parameters.add(new ParameterAST("_type", Collections.singletonList(new ParameterValueAST("java.lang.String",
-                        true))));
-        valueAST.setSubParameters(parameters);
-
-        Component component = factory.resolveComponent("id", valueAST);
-        assertEquals("id", component.getId());
-        assertSame(subBean, component.getModelObject());
-    }
-
-    public void testResolveComponentWithPropertyAndElementTypeParameter() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        List<Date> testBean = new ArrayList<Date>();
-
-        BeanFactory factory = new BeanFactory(new Model((Serializable)testBean));
-        factory.getComponentRegistry().register(List.class, null, DropDownChoice.class);
-        factory.getComponentRegistry().register(List.class, Date.class, CheckBox.class);
-
-        ParameterValueAST valueAST = new ParameterValueAST("$.", false); // Bean itself
-        List<ParameterAST> parameters = new ArrayList<ParameterAST>();
-        parameters
-                        .add(new ParameterAST("_elementType", Collections.singletonList(new ParameterValueAST("Date",
-                                        true))));
-        valueAST.setSubParameters(parameters);
-
-        Component component = factory.resolveComponent("id", valueAST);
-        assertEquals("id", component.getId());
-        assertTrue(component instanceof CheckBox);
-
-        // Test non-matching element type.
-        parameters.clear();
-        parameters.add(new ParameterAST("_elementType", Collections
-                        .singletonList(new ParameterValueAST("String", true))));
-        valueAST.setSubParameters(parameters);
-
-        component = factory.resolveComponent("id", valueAST);
-        assertEquals("id", component.getId());
-        assertTrue(component instanceof DropDownChoice);
-    }
-
-    public void testResolveComponentWithPropertyAndInvalidComponentConstructor() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        TestBean testBean = new TestBean();
-        testBean.setNestedBean(new TestBean());
-        BeanFactory factory = new BeanFactory(new Model(testBean));
-        factory.getComponentRegistry().register(TestBean.class, DataTable.class);
-
-        ParameterValueAST valueAST = new ParameterValueAST("$nestedBean", false);
-        try {
-            factory.resolveComponent("id", valueAST);
-            fail();
-        }
-        catch (RuntimeException e) {
-            assertEquals(
-                            "Cannot create component of class org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable. Component must have a public single-argument constructor whose parameter is a Wicket id",
-                            e.getMessage());
-        }
-    }
-
-    public void testResolveComponentWithNullProperty() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester(); // Need for application context
-        BeanFactory factory = new BeanFactory(new Model(new TestBean()));
-
-        ParameterValueAST valueAST = new ParameterValueAST("$integerObjProp", false);
-        try {
-            factory.resolveComponent("id", valueAST);
-            fail();
-        }
-        catch (RuntimeException e) {
-            assertEquals(
-                            "Cannot determine property type because the expression '$integerObjProp' evaluates to null. Specify _type as a sub-parameter to the property or use a Bean declaration.",
-                            e.getMessage());
-        }
     }
 }
