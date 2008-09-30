@@ -6,8 +6,8 @@ Root {
 Grid { 
 	class: GridLayout;
 	components: 
-		$serialNumber,
-		$stamp {  model: "override" },
+		Field { model: "$serialNumber" },
+		Field { model: "override" },
 		Field { model: $name }, 
 		Field { model: "$serialNumber/../name" }, 
 		Field { model: "$stamp"; label: "Yuck"; enabled: false; visible: true; }, 

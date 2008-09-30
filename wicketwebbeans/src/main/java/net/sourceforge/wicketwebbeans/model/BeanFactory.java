@@ -52,8 +52,6 @@ public class BeanFactory implements Serializable
 {
     private static final long serialVersionUID = -7702601385663822267L;
 
-    private static final String SPECIAL_PARAM_TYPE = "_type";
-    private static final String SPECIAL_PARAM_ELEMENT_TYPE = "_elementType";
     private static final String PARAMETER_NAME_EXTENDS = "extends";
     private static final String PARAMETER_NAME_CLASS = "class";
 
@@ -62,7 +60,6 @@ public class BeanFactory implements Serializable
     private static final Map<URL, CachedBeanConfigs> cachedBeanConfigs = Collections.synchronizedMap(new LRUMap(10));
 
     private PropertyResolver propertyResolver = new JXPathPropertyResolver();
-    private ComponentRegistry componentRegistry = new ComponentRegistry();
     private PropertyPathBeanCreator beanCreator = new JavaBeansPropertyPathBeanCreator();
 
     /** Maps bean name to BeanConfig. */
@@ -117,16 +114,6 @@ public class BeanFactory implements Serializable
     public void setPropertyResolver(PropertyResolver propertyResolver)
     {
         this.propertyResolver = propertyResolver;
-    }
-
-    public ComponentRegistry getComponentRegistry()
-    {
-        return componentRegistry;
-    }
-
-    public void setComponentRegistry(ComponentRegistry componentRegistry)
-    {
-        this.componentRegistry = componentRegistry;
     }
 
     public void setBeanCreator(PropertyPathBeanCreator beanCreator)
@@ -418,15 +405,10 @@ public class BeanFactory implements Serializable
     }
 
     /**
-     * Resolves a Wicket Component from a ParameterValueAST. The value of the parameter is either
-     * a Bean name or a property specification starting with '$'. A Bean parameterValue can have sub-parameters
+     * Resolves a Wicket Component from a ParameterValueAST. The value of the parameter is 
+     * a Bean name that represents a Wicket Component. A Bean parameterValue can have sub-parameters
      * that are used to configure the component. <p/>
      * 
-     * Property spec parameterValues can also have sub-parameters, one
-     * of which can be "_type: classname" which indicates the class of the property. It can also have "_component: classname"
-     * which indicates the component class to use, rather than using ComponentRegistry. The component's model becomes the
-     * a PropertyProxyModel representing the property.
-     *
      * @param wicketId the Wicket id for the component.
      * @param parameterValue
      * 
@@ -434,69 +416,8 @@ public class BeanFactory implements Serializable
      */
     public Component resolveComponent(String wicketId, ParameterValueAST parameterValue)
     {
-        String valueString = parameterValue.getValue();
-        if (valueString.charAt(0) == '$') {
-            // TODO Bound value.... bound to components "model" property. I'm wondering if we should even support this 
-            // TODO because it can be done more explicitly and can be more customized via the component form.
-            PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(valueString);
-            Class<?> propertyType = null;
-            // If we have _type, we don't have to try to get it from the model.
-            ParameterAST propertyTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_TYPE);
-            if (propertyTypeParam != null) {
-                propertyType = (Class<?>)loadClass(propertyTypeParam.getValuesAsStrings()[0]);
-            }
-
-            Class<?> elementType = null;
-            ParameterAST elementTypeParam = parameterValue.getSubParameter(SPECIAL_PARAM_ELEMENT_TYPE);
-            if (elementTypeParam != null) {
-                elementType = (Class<?>)loadClass(elementTypeParam.getValuesAsStrings()[0]);
-            }
-
-            if (propertyType == null) {
-                // Get property type from model.
-                Object propertyValue = propertyProxyModel.getObject();
-                if (propertyValue == null) {
-                    throw new RuntimeException("Cannot determine property type because the expression '" + valueString
-                                    + "' evaluates to null. Specify " + SPECIAL_PARAM_TYPE
-                                    + " as a sub-parameter to the property or use a Bean declaration.");
-                }
-
-                propertyType = propertyValue.getClass();
-            }
-
-            // Get component class from ComponentRegistry
-            Class<? extends Component> componentClass = getComponentRegistry().getComponentClass(propertyType,
-                            elementType);
-            if (componentClass == null) {
-                throw new RuntimeException("Cannot find component in the ComponentRegistry for the expression '"
-                                + valueString + "' and type of " + propertyType + ". Specify " + SPECIAL_PARAM_TYPE
-                                + " as a sub-parameter to the property or use a Bean declaration.");
-            }
-
-            // Create component
-            Component component;
-            try {
-                component = (Component)WwbClassUtils.invokeMostSpecificConstructor(componentClass, wicketId);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(
-                                "Cannot create component of "
-                                                + componentClass
-                                                + ". Component must have a public single-argument constructor whose parameter is a Wicket id");
-            }
-
-            component.setModel(propertyProxyModel);
-
-            for (ParameterAST parameter : parameterValue.getSubParameters()) {
-                setBeanProperty(component.getClass().getName(), component, parameter.getName(), parameter.getValues());
-            }
-
-            return component;
-        }
-        else {
-            BeanConfig beanConfig = getBeanConfig(valueString, parameterValue.getSubParameters());
-            return (Component)newInstance(beanConfig, wicketId);
-        }
+        BeanConfig beanConfig = getBeanConfig(parameterValue.getValue(), parameterValue.getSubParameters());
+        return (Component)newInstance(beanConfig, wicketId);
     }
 
     /** 
