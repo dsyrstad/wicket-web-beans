@@ -18,6 +18,7 @@
 package net.sourceforge.wicketwebbeans.model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,9 +27,11 @@ import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.test.Employee;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -376,6 +379,49 @@ public class BeanFactoryTest extends TestCase
             assertTrue(e.getMessage().contains("Cannot create instance of bean"));
             assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
+    }
+
+    public void testNewInstanceWithPropertyBindings() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
+        Employee bean = new Employee("15", null, BigDecimal.valueOf(25));
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(bean),
+                        "Bean1 { class: net.sourceforge.wicketwebbeans.test.Employee;"
+                                        + " name: $salary; salary: $name;  }");
+        Employee newBean = (Employee)factory.newInstance("Bean1");
+        assertEquals(bean.getName(), newBean.getSalary().toString());
+        assertEquals(bean.getSalary().toString(), newBean.getName());
+        PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
+        List<PropertyBinder> propertyBinders = dispatcher.getPropertyBinders();
+        assertEquals(2, propertyBinders.size());
+        PropertyBinder binder1 = propertyBinders.get(0);
+        assertFalse(binder1 instanceof AjaxPropertyBinder);
+        assertSame(bean, binder1.getListenBean());
+        assertSame(newBean, binder1.getUpdateBean());
+
+        PropertyBinder binder2 = propertyBinders.get(1);
+        assertFalse(binder2 instanceof AjaxPropertyBinder);
+        assertSame(bean, binder2.getListenBean());
+        assertSame(newBean, binder2.getUpdateBean());
+    }
+
+    public void testResolveComponentWithPropertyBindings() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
+        Employee bean = new Employee("false", null, null);
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(bean),
+                        "Bean1 { class: org.apache.wicket.markup.html.basic.Label;" + " enabled: $name;  }");
+        Label label = (Label)factory.resolveComponent("id", new ParameterValueAST("Bean1", false));
+        assertFalse(label.isEnabled());
+        PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
+        List<PropertyBinder> propertyBinders = dispatcher.getPropertyBinders();
+        assertEquals(1, propertyBinders.size());
+        PropertyBinder binder1 = propertyBinders.get(0);
+        assertTrue(binder1 instanceof AjaxPropertyBinder);
+        assertSame(bean, binder1.getListenBean());
+        assertSame(label, binder1.getUpdateBean());
     }
 
     public void testResolvePropertyProxyModel() throws Exception

@@ -32,7 +32,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
- * Implements a non-HTML form that submits input elements as they are changed. <p>
+ * Implements a non-HTML form that sends Ajax requests for input elements as they are changed. <p>
  * 
  * @author Dan Syrstad
  */
