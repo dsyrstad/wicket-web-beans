@@ -19,12 +19,10 @@ package net.sourceforge.wicketwebbeans.containers;
 
 import junit.framework.TestCase;
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
-import net.sourceforge.wicketwebbeans.test.TestPage;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
+import net.sourceforge.wicketwebbeans.test.WicketTesterUtils;
 
-import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.TagTester;
 import org.apache.wicket.util.tester.WicketTester;
 
@@ -47,7 +45,7 @@ public class GridLayoutTest extends TestCase
         final BeanFactory factory = TestUtils
                         .createBeanFactory("Grid { class: GridLayout; components: Field, Field, Field, Field; } "
                                         + " Field { class: org.apache.wicket.markup.html.form.TextField; }");
-        renderPage(factory);
+        WicketTesterUtils.renderPage(tester, factory, "Grid");
 
         tester.assertComponent("component", GridLayout.class);
         tester.assertComponent("component:r:1:c:1:frag:c", TextField.class);
@@ -61,7 +59,7 @@ public class GridLayoutTest extends TestCase
         final BeanFactory factory = TestUtils
                         .createBeanFactory("Grid { class: GridLayout; columns: 4; components: Field, Field, Field, Field, Field { _colspan: 2 }, Field, Field; } "
                                         + " Field { class: org.apache.wicket.markup.html.form.TextField; }");
-        renderPage(factory);
+        WicketTesterUtils.renderPage(tester, factory, "Grid");
 
         tester.assertComponent("component", GridLayout.class);
         tester.assertComponent("component:r:1:c:1:frag:c", TextField.class);
@@ -113,7 +111,7 @@ public class GridLayoutTest extends TestCase
         final BeanFactory factory = TestUtils
                         .createBeanFactory("Grid { class: GridLayout; components: Field { _colspan: 0 }; } Field { class: org.apache.wicket.markup.html.form.TextField; }");
         try {
-            renderPage(factory);
+            WicketTesterUtils.renderPage(tester, factory, "Grid");
             fail();
         }
         catch (RuntimeException e) {
@@ -121,16 +119,5 @@ public class GridLayoutTest extends TestCase
             assertTrue(e.getCause().getMessage().startsWith("Invalid colspan parameter value"));
         }
 
-    }
-
-    @SuppressWarnings("serial")
-    private void renderPage(final BeanFactory factory)
-    {
-        tester.startPage(new ITestPageSource() {
-            public Page getTestPage()
-            {
-                return new TestPage("Grid", factory);
-            }
-        });
     }
 }

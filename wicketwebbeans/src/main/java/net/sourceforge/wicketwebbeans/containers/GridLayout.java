@@ -103,6 +103,11 @@ public class GridLayout extends Panel
         @Override
         protected void onPopulate()
         {
+            if (components == null) {
+                //TODO Test
+                throw new RuntimeException("No components set on bean for " + GridLayout.class);
+            }
+
             int columnIndex = 0;
             int rowStartIndex = 0;
             int componentIndex = 0;

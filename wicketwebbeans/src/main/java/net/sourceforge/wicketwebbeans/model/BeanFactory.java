@@ -257,6 +257,12 @@ public class BeanFactory implements Serializable
     public Class<?> loadClass(BeanConfig beanConfig)
     {
         String beanClassName = beanConfig.getParameterValueAsString(PARAMETER_NAME_CLASS);
+        if (beanClassName == null) {
+            // TODO Test
+            throw new RuntimeException("Cannot find parameter '" + PARAMETER_NAME_CLASS + "' on bean '"
+                            + beanConfig.getBeanName() + "'");
+        }
+
         return loadClass(beanClassName);
     }
 
@@ -365,7 +371,6 @@ public class BeanFactory implements Serializable
                     binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), updateProxy);
                 }
 
-                // TODO Test
                 PropertyChanger.getCurrent().add(binder);
 
                 if (IModel.class.isAssignableFrom(propertyType)) {
@@ -416,7 +421,13 @@ public class BeanFactory implements Serializable
      */
     public Component resolveComponent(String wicketId, ParameterValueAST parameterValue)
     {
-        BeanConfig beanConfig = getBeanConfig(parameterValue.getValue(), parameterValue.getSubParameters());
+        String beanName = parameterValue.getValue();
+        BeanConfig beanConfig = getBeanConfig(beanName, parameterValue.getSubParameters());
+        if (beanConfig == null) {
+            // TODO Test
+            throw new RuntimeException("Cannot find bean named '" + beanName + "'");
+        }
+
         return (Component)newInstance(beanConfig, wicketId);
     }
 
