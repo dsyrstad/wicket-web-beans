@@ -258,7 +258,6 @@ public class BeanFactory implements Serializable
     {
         String beanClassName = beanConfig.getParameterValueAsString(PARAMETER_NAME_CLASS);
         if (beanClassName == null) {
-            // TODO Test
             throw new RuntimeException("Cannot find parameter '" + PARAMETER_NAME_CLASS + "' on bean '"
                             + beanConfig.getBeanName() + "'");
         }
