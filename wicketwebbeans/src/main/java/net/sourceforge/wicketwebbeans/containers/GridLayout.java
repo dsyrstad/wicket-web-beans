@@ -16,6 +16,7 @@
 ---*/
 package net.sourceforge.wicketwebbeans.containers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
@@ -45,7 +46,7 @@ public class GridLayout extends Panel
     public static final String SPECIAL_PARAM_COLSPAN = "_colspan";
 
     private int columns = 3;
-    private List<ParameterValueAST> components;
+    private List<ParameterValueAST> components = new ArrayList<ParameterValueAST>();
     private BeanFactory beanFactory;
 
     /**
@@ -103,11 +104,6 @@ public class GridLayout extends Panel
         @Override
         protected void onPopulate()
         {
-            if (components == null) {
-                //TODO Test
-                throw new RuntimeException("No components set on bean for " + GridLayout.class);
-            }
-
             int columnIndex = 0;
             int rowStartIndex = 0;
             int componentIndex = 0;

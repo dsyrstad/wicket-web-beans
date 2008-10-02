@@ -108,7 +108,7 @@ public class BeanFactoryTest extends TestCase
         }
     }
 
-    public void testLoadClass() throws Exception
+    public void testLoadClassBeanConfig() throws Exception
     {
         BeanFactory factory = TestUtils.createBeanFactory("PintoBean { class: java.util.Date } Another { class: x; }");
         assertSame(Date.class, factory.loadClass(factory.getBeanConfig("PintoBean")));
@@ -118,6 +118,18 @@ public class BeanFactoryTest extends TestCase
         catch (RuntimeException e) {
             // Expected
             assertTrue(e.getCause() instanceof ClassNotFoundException);
+        }
+    }
+
+    public void testLoadClassBeanConfigWithMissingClass() throws Exception
+    {
+        BeanFactory factory = TestUtils.createBeanFactory("PintoBean { extends: x }");
+        try {
+            factory.loadClass(factory.getBeanConfig("PintoBean"));
+        }
+        catch (RuntimeException e) {
+            // Expected
+            assertEquals("Cannot find parameter 'class' on bean 'PintoBean'", e.getMessage());
         }
     }
 
@@ -406,24 +418,6 @@ public class BeanFactoryTest extends TestCase
         assertSame(newBean, binder2.getUpdateBean());
     }
 
-    public void testResolveComponentWithPropertyBindings() throws Exception
-    {
-        @SuppressWarnings("unused")
-        WicketTester tester = new WicketTester();
-        Employee bean = new Employee("false", null, null);
-        BeanFactory factory = TestUtils.createBeanFactory(new Model(bean),
-                        "Bean1 { class: org.apache.wicket.markup.html.basic.Label;" + " enabled: $name;  }");
-        Label label = (Label)factory.resolveComponent("id", new ParameterValueAST("Bean1", false));
-        assertFalse(label.isEnabled());
-        PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
-        List<PropertyBinder> propertyBinders = dispatcher.getPropertyBinders();
-        assertEquals(1, propertyBinders.size());
-        PropertyBinder binder1 = propertyBinders.get(0);
-        assertTrue(binder1 instanceof AjaxPropertyBinder);
-        assertSame(bean, binder1.getListenBean());
-        assertSame(label, binder1.getUpdateBean());
-    }
-
     public void testResolvePropertyProxyModel() throws Exception
     {
         TestBean bean = new TestBean();
@@ -446,6 +440,24 @@ public class BeanFactoryTest extends TestCase
         catch (Exception e) {
             // Excpected
         }
+    }
+
+    public void testResolveComponentWithPropertyBindings() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
+        Employee bean = new Employee("false", null, null);
+        BeanFactory factory = TestUtils.createBeanFactory(new Model(bean),
+                        "Bean1 { class: org.apache.wicket.markup.html.basic.Label;" + " enabled: $name;  }");
+        Label label = (Label)factory.resolveComponent("id", new ParameterValueAST("Bean1", false));
+        assertFalse(label.isEnabled());
+        PropertyChangeDispatcher dispatcher = PropertyChanger.getCurrent();
+        List<PropertyBinder> propertyBinders = dispatcher.getPropertyBinders();
+        assertEquals(1, propertyBinders.size());
+        PropertyBinder binder1 = propertyBinders.get(0);
+        assertTrue(binder1 instanceof AjaxPropertyBinder);
+        assertSame(bean, binder1.getListenBean());
+        assertSame(label, binder1.getUpdateBean());
     }
 
     public void testResolveComponentWithBean() throws Exception
@@ -473,5 +485,21 @@ public class BeanFactoryTest extends TestCase
         assertTrue(component instanceof TextField);
         assertEquals("id", component.getId());
         assertEquals("test", component.getModelObject());
+    }
+
+    public void testResolveComponentWithInvalidBeanName() throws Exception
+    {
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester(); // Need for application context
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Field { class: org.apache.wicket.markup.html.form.TextField; }");
+
+        ParameterValueAST valueAST = new ParameterValueAST("UnknownBeanName", false);
+        try {
+            factory.resolveComponent("id", valueAST);
+        }
+        catch (RuntimeException e) {
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Cannot find bean named"));
+        }
     }
 }

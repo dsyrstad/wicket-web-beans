@@ -73,6 +73,10 @@ public class AjaxForm extends Panel
     @Override
     protected void onBeforeRender()
     {
+        if (componentParameterValue == null) {
+            throw new RuntimeException("No component set on bean for " + AjaxForm.class);
+        }
+
         Component component = getBeanFactory().resolveComponent("c", componentParameterValue);
         container.add(component);
 
