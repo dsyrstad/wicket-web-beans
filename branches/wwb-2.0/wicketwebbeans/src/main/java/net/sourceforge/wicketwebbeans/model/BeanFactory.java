@@ -424,7 +424,6 @@ public class BeanFactory implements Serializable
         String beanName = parameterValue.getValue();
         BeanConfig beanConfig = getBeanConfig(beanName, parameterValue.getSubParameters());
         if (beanConfig == null) {
-            // TODO Test
             throw new RuntimeException("Cannot find bean named '" + beanName + "'");
         }
 

@@ -22,7 +22,10 @@ import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 import net.sourceforge.wicketwebbeans.test.WicketTesterUtils;
 
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.WicketTester;
 
 /**
@@ -42,11 +45,32 @@ public class AjaxFormTest extends TestCase
     public void testRenderingWithDefaults() throws Exception
     {
         final BeanFactory factory = TestUtils.createBeanFactory("Form { class: AjaxForm; component: Grid; } "
-                        + " Grid { class: GridLayout; }");
+                        + " Grid { class: GridLayout; components: Field, Field, Field; }"
+                        + " Field { class: org.apache.wicket.markup.html.form.TextField; }");
         WicketTesterUtils.renderPage(tester, factory, "Form");
 
         tester.assertComponent("component", AjaxForm.class);
-        tester.assertComponent("component:c", Panel.class);
+        tester.assertComponent("component:component", WebMarkupContainer.class);
+        tester.assertComponent("component:component:c", GridLayout.class);
+        for (int i = 1; i <= 3; i++) {
+            String path = "component:component:c:r:1:c:" + i + ":frag:c";
+            tester.assertComponent(path, TextField.class);
+            Component field = tester.getComponentFromLastRenderedPage(path);
+            assertEquals(1, field.getBehaviors().size());
+            assertTrue(field.getBehaviors().get(0) instanceof AjaxFormComponentUpdatingBehavior);
+        }
+    }
 
+    public void testMissingComponent() throws Exception
+    {
+        final BeanFactory factory = TestUtils.createBeanFactory("Form { class: AjaxForm;  } ");
+
+        try {
+            WicketTesterUtils.renderPage(tester, factory, "Form");
+            fail();
+        }
+        catch (RuntimeException e) {
+            // Expected
+        }
     }
 }

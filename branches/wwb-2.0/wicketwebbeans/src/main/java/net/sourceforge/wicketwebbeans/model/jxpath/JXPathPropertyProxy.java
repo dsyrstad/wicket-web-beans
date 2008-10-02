@@ -33,8 +33,6 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * 
  * @author Dan Syrstad
  */
-// TODO Can we determine if a path is writable or not ahead of time? Then this should have a method to detect it so the component can be read-only
-// TODO It would be good if PropertyProxy determined the property type rather than BeanFactory.
 public class JXPathPropertyProxy implements PropertyProxy
 {
     private static final long serialVersionUID = -504835121389856794L;

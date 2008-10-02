@@ -120,8 +120,6 @@ public class PropertyBinder implements Serializable
             return;
         }
 
-        // TODO This needs convert utils. We have to handle the case were the property to 
-        // TODO update requires a IModel. Either that or the updateProxy should be for simple properties.
         updateProperty.setValue(updateBean, listenProperty.getValue(listenBean));
     }
 
