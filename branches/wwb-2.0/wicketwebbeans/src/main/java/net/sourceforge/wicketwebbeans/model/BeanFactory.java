@@ -70,7 +70,7 @@ public class BeanFactory implements Serializable
         "java.util.",
         "net.sourceforge.wicketwebbeans.",
         "net.sourceforge.wicketwebbeans.model.",
-        "net.sourceforge.wicketwebbeans.fields.",
+        "net.sourceforge.wicketwebbeans.components.",
         "net.sourceforge.wicketwebbeans.containers.",
         "net.sourceforge.wicketwebbeans.actions.",
     // 
@@ -104,6 +104,11 @@ public class BeanFactory implements Serializable
     public BeanFactory(IModel beanModel)
     {
         this.beanModel = beanModel;
+    }
+
+    public IModel getBeanModel()
+    {
+        return beanModel;
     }
 
     public PropertyResolver getPropertyResolver()
