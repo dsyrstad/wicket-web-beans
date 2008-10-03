@@ -18,7 +18,9 @@ Grid {
 		Label { model: DateBean },
 		Field { model: $operand1 },
 		Field { model: $operand2 },
-		Label { model: $result; outputMarkupId: true };
+		Label { model: $result; outputMarkupId: true },
+		Button { action: "save"; label: "Save"; },
+		Label { model: $saveMsg; outputMarkupId: true; }
 }
 
 SubGrid {
@@ -33,6 +35,11 @@ Field {
 
 Label {
 	class: org.apache.wicket.markup.html.basic.Label;
+}
+
+Button {
+	class: Button;
+	label: "Button";
 }
 
 DateBean { class: Date; }

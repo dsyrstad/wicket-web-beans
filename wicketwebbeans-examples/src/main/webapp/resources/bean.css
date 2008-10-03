@@ -186,7 +186,7 @@ td.beanActionButtonCell  {
 	height: auto;
 }
 
-a.beanSubmitButton {
+.wwbButton {
 	background: #ffffff url(images/buttons/btn-bkg-blue.gif) repeat-x left bottom;
 	border-top: solid 1px #a5a9b6;
 	border-left: solid 1px #a5a9b6;
@@ -203,7 +203,7 @@ a.beanSubmitButton {
 	height: 17px; /* font-size 13px + bottom padding 2px + top and bottom border 2px = 17px */
 }
 
-a.beanSubmitButton span { /* For IE - repeat font and text color for span. */
+.wwbButton span { /* For IE - repeat font and text color for span. */
 	white-space: nowrap;
 	font-size: 13px;
 	font-family: Verdana, Tahoma, Arial, sans-serif;
@@ -212,7 +212,7 @@ a.beanSubmitButton span { /* For IE - repeat font and text color for span. */
 	text-decoration: none;
 }
 
-a.beanSubmitButton:hover {
+.wwbButton:hover {
 	/* Have to repeat these for IE. */
 	font-size: 13px;
 	font-family: Verdana, Tahoma, Arial, sans-serif;

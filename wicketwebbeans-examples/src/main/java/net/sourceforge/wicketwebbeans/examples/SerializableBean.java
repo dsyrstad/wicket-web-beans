@@ -20,6 +20,8 @@ package net.sourceforge.wicketwebbeans.examples;
 import java.io.Serializable;
 import java.util.Date;
 
+import net.sourceforge.wicketwebbeans.model.PropertyChanger;
+
 /**
  * A test bean that is Serializable. <p>
  * 
@@ -28,6 +30,7 @@ import java.util.Date;
 public class SerializableBean extends NonSerializableBean implements Serializable
 {
     private static final long serialVersionUID = -4561485257546568056L;
+    private String saveMsg;
 
     /**
      * Construct a SerializableBean. 
@@ -43,5 +46,22 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
     public Date getStamp()
     {
         return new Date();
+    }
+
+    public void save()
+    {
+        //RequestCycle.get().redirectTo(new ExperimentalPage());
+        setSaveMsg("Saved it on " + new Date());
+    }
+
+    public void setSaveMsg(String saveMsg)
+    {
+        this.saveMsg = saveMsg;
+        PropertyChanger.dispatch(this, "saveMsg");
+    }
+
+    public String getSaveMsg()
+    {
+        return saveMsg;
     }
 }
