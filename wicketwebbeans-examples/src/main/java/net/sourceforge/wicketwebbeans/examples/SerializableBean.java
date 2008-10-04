@@ -22,6 +22,11 @@ import java.util.Date;
 
 import net.sourceforge.wicketwebbeans.model.PropertyChanger;
 
+import org.apache.wicket.Page;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+
 /**
  * A test bean that is Serializable. <p>
  * 
@@ -48,9 +53,15 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
         return new Date();
     }
 
-    public void save()
+    public void save(String msg, int value)
     {
+        //Passing parameters like URL...
         //RequestCycle.get().redirectTo(new ExperimentalPage());
+        final AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)RequestCycle.get().getRequestTarget();
+        Page page = ajaxRequestTarget.getPage();
+        // TODO How to update a specific feedback panel? Attach property to feedbackpanel model?
+        page.info("Saved " + msg + " value=" + value);
+        ajaxRequestTarget.addChildren(page, FeedbackPanel.class);
         setSaveMsg("Saved it on " + new Date());
     }
 

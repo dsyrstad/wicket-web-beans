@@ -5,7 +5,8 @@ Root {
 
 Grid { 
 	class: GridLayout;
-	components: 
+	components:
+		FeedbackPanel { _colspan: 3 }, 
 		Field { model: "$serialNumber" },
 		Field { model: "override" },
 		Field { model: $name }, 
@@ -19,8 +20,9 @@ Grid {
 		Field { model: $operand1 },
 		Field { model: $operand2 },
 		Label { model: $result; outputMarkupId: true },
-		Button { action: "save"; label: "Save"; },
-		Label { model: $saveMsg; outputMarkupId: true; }
+		Button { action: "save"; label: "Save"; actionParameters: "Msg1", 5; },
+		Link { action: "save"; label: "Save Link";  actionParameters: "Msg2", "66x"; },
+		Label { model: $saveMsg;  }
 }
 
 SubGrid {
@@ -35,11 +37,22 @@ Field {
 
 Label {
 	class: org.apache.wicket.markup.html.basic.Label;
+	outputMarkupId: true;
 }
 
 Button {
 	class: Button;
 	label: "Button";
+}
+
+Link {
+	class: Link;
+	label: "Link";
+}
+
+FeedbackPanel {
+	class: org.apache.wicket.markup.html.panel.FeedbackPanel;
+	outputMarkupId: true;
 }
 
 DateBean { class: Date; }

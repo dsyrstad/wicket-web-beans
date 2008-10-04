@@ -2,7 +2,7 @@ v2.0
 ----
 -Actions, validations have a WWB bean that can be bound to other bean properties to
 update messages, etc. We don't *have* to use wicket feedback messages. Page redirects
-can be driven by config -- page Beans given in config.
+can be driven by config -- page Beans given in config. ??
  
 - System config that is loaded first with BeanFactory - common defs
 - If we want pre-built components, then where do actions reside? ThreadLocal context that has component, AjaxRequestTarget, bean. 
