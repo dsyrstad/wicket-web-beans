@@ -17,17 +17,16 @@
 
 package net.sourceforge.wicketwebbeans.components;
 
-
 /**
- * Button that triggers an action method when clicked. <p>
+ * Link that triggers an action method when clicked. <p>
  * 
  * @author Dan Syrstad
  */
-public class Button extends AbstractAction
+public class Link extends AbstractAction
 {
     private static final long serialVersionUID = -7958656485641819413L;
 
-    public Button(String wicketId)
+    public Link(String wicketId)
     {
         super(wicketId);
     }
