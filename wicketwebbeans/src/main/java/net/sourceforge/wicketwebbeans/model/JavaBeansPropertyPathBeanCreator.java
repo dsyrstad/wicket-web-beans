@@ -17,6 +17,8 @@
 
 package net.sourceforge.wicketwebbeans.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.beanutils.ConstructorUtils;
 
 /**
@@ -25,8 +27,9 @@ import org.apache.commons.beanutils.ConstructorUtils;
  * 
  * @author Dan Syrstad
  */
-public class JavaBeansPropertyPathBeanCreator implements PropertyPathBeanCreator
+public class JavaBeansPropertyPathBeanCreator implements PropertyPathBeanCreator, Serializable
 {
+    private static final long serialVersionUID = 3282978619346687056L;
     private static final Object[] NO_ARGS = new Object[0];
 
     public Object createBean(Class<?> type)

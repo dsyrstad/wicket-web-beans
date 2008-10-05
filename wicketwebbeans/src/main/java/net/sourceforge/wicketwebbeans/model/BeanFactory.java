@@ -368,16 +368,19 @@ public class BeanFactory implements Serializable
                 // Bound property - create a binder to make it dynamic
                 PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(stringValue);
                 PropertyBinder binder;
+                boolean isIModelProperty = IModel.class.isAssignableFrom(propertyType);
+                // TODO TEST
+                PropertyProxy binderUpdateProxy = (isIModelProperty ? NoOpWriteOnlyPropertyProxy.INSTANCE : updateProxy);
                 if (bean instanceof Component) {
-                    binder = new AjaxPropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), updateProxy);
+                    binder = new AjaxPropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), binderUpdateProxy);
                 }
                 else {
-                    binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), updateProxy);
+                    binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), binderUpdateProxy);
                 }
 
                 PropertyChanger.getCurrent().add(binder);
 
-                if (IModel.class.isAssignableFrom(propertyType)) {
+                if (isIModelProperty) {
                     value = propertyProxyModel;
                 }
                 else {
