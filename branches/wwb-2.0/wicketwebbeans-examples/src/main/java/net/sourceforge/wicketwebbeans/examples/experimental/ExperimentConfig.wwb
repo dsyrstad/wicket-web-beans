@@ -12,7 +12,7 @@ Grid {
 		Field { model: $name }, 
 		Field { model: "$serialNumber/../name" }, 
 		Field { model: "$stamp"; label: "Yuck"; enabled: false; visible: true; }, 
-		Field, SubGrid { _colspan: 2 }, 
+		SubGrid { _colspan: 2 }, 
 		Label, 
 		Label { model: "A Label" }, 
 		Label { model: "Another Label" }, 
@@ -27,7 +27,7 @@ Grid {
 
 SubGrid {
 	class: GridLayout;
-	components: Field, Field, Field, Field, Field, Field;
+	components: Field { model: "$serialNumber" }, Field { model: "$serialNumber" }, Field { model: "$serialNumber" }, Field { model: "$serialNumber" }, Field { model: "$serialNumber" }, Field { model: "$serialNumber" };
 }
 
 Field {

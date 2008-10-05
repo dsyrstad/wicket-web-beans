@@ -18,23 +18,29 @@
 package net.sourceforge.wicketwebbeans.examples;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import net.sourceforge.wicketwebbeans.model.PropertyChanger;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 /**
- * A test bean that is Serializable. <p>
+ * A test bean. <p>
  * 
  * @author Dan Syrstad
  */
-public class SerializableBean extends NonSerializableBean implements Serializable
+public class BeanWithEvents implements Serializable
 {
     private static final long serialVersionUID = -4561485257546568056L;
+
+    private String name;
+    private String serialNumber;
+    private BigDecimal operand1;
+    private BigDecimal operand2;
+    private BigDecimal result;
     private String saveMsg;
 
     /**
@@ -43,9 +49,71 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
      * @param name
      * @param serialNumber
      */
-    public SerializableBean(String name, String serialNumber)
+    public BeanWithEvents(String name, String serialNumber)
     {
-        super(name, serialNumber);
+        setName(name);
+        setSerialNumber(serialNumber);
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getSerialNumber()
+    {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber)
+    {
+        this.serialNumber = serialNumber == null ? null : serialNumber.toUpperCase();
+        PropertyChanger.dispatch(this, "serialNumber");
+    }
+
+    public BigDecimal getOperand1()
+    {
+        return operand1;
+    }
+
+    public void setOperand1(BigDecimal operand1)
+    {
+        this.operand1 = operand1;
+        recalc();
+    }
+
+    public BigDecimal getOperand2()
+    {
+        return operand2;
+    }
+
+    public void setOperand2(BigDecimal operand2)
+    {
+        this.operand2 = operand2;
+        recalc();
+    }
+
+    private void recalc()
+    {
+        if (operand1 != null && operand2 != null) {
+            result = operand1.add(operand2);
+            PropertyChanger.dispatch(this, "result");
+        }
+    }
+
+    public BigDecimal getResult()
+    {
+        return result;
+    }
+
+    public void setResult(BigDecimal result)
+    {
+        this.result = result;
     }
 
     public Date getStamp()
@@ -55,9 +123,8 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
 
     public void save(String msg, int value)
     {
-        //Passing parameters like URL...
         //RequestCycle.get().redirectTo(new ExperimentalPage());
-        final AjaxRequestTarget ajaxRequestTarget = (AjaxRequestTarget)RequestCycle.get().getRequestTarget();
+        final AjaxRequestTarget ajaxRequestTarget = AjaxRequestTarget.get();
         Page page = ajaxRequestTarget.getPage();
         // TODO How to update a specific feedback panel? Attach property to feedbackpanel model?
         page.info("Saved " + msg + " value=" + value);

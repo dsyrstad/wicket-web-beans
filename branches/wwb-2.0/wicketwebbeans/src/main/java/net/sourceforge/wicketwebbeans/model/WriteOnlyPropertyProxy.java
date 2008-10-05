@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 public class WriteOnlyPropertyProxy implements PropertyProxy
 {
     private static final long serialVersionUID = 1283272898456177588L;
-    private static final String UNSUPPORTED_MSG = "Not Supported. Intended for updatable objects, not for objects that are listened to.";
+    static final String UNSUPPORTED_MSG = "Not Supported. Intended for updatable objects, not for objects that are listened to.";
 
     private Method writeMethod;
     private Class<?> parameterType;

@@ -17,6 +17,8 @@
 
 package net.sourceforge.wicketwebbeans.model.jxpath;
 
+import java.io.Serializable;
+
 import net.sourceforge.wicketwebbeans.model.PropertyPathBeanCreator;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -29,8 +31,10 @@ import org.apache.commons.jxpath.Pointer;
  * 
  * @author Dan Syrstad
  */
-public class JXPathObjectFactory extends AbstractFactory
+public class JXPathObjectFactory extends AbstractFactory implements Serializable
 {
+    private static final long serialVersionUID = -4199210836923584421L;
+
     private PropertyPathBeanCreator beanCreator;
 
     public JXPathObjectFactory(PropertyPathBeanCreator beanCreator)
