@@ -43,6 +43,7 @@ public class PropertyBinder implements Serializable
     private WeakReference<Object> updateBeanRef;
     private PropertyProxy listenProperty;
     private PropertyProxy updateProperty;
+    private boolean isCurrentlyBinding;
 
     /**
      * Construct a PropertyBinder. 
@@ -114,13 +115,21 @@ public class PropertyBinder implements Serializable
      */
     public void updateProperty()
     {
-        Object listenBean = getListenBean();
-        Object updateBean = getUpdateBean();
-        if (listenBean == null || updateBean == null) {
-            return;
-        }
+        if (!isCurrentlyBinding) {
+            isCurrentlyBinding = true;
+            try {
+                Object listenBean = getListenBean();
+                Object updateBean = getUpdateBean();
+                if (listenBean == null || updateBean == null) {
+                    return;
+                }
 
-        updateProperty.setValue(updateBean, listenProperty.getValue(listenBean));
+                updateProperty.setValue(updateBean, listenProperty.getValue(listenBean));
+            }
+            catch (Exception e) {
+                isCurrentlyBinding = false;
+            }
+        }
     }
 
     /**
