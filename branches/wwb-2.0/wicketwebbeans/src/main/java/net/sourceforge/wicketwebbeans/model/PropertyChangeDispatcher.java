@@ -21,11 +21,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Dispatches {@link PropertyChangeEvent}s to matching {@link PropertyBinder}s.
@@ -39,8 +37,6 @@ public class PropertyChangeDispatcher implements Serializable
     private static final long serialVersionUID = -2703015686602735485L;
 
     private List<PropertyBinder> binders = new LinkedList<PropertyBinder>();
-    // Binders that are currently being fired - this supports nesting of events. 
-    private Set<PropertyBinder> activeBinders = new HashSet<PropertyBinder>();
 
     public PropertyChangeDispatcher()
     {
@@ -68,29 +64,19 @@ public class PropertyChangeDispatcher implements Serializable
 
     public void dispatch(PropertyChangeEvent event)
     {
-        Set<PropertyBinder> activeBindersAddedThisCall = new HashSet<PropertyBinder>();
-        try {
-            for (Iterator<PropertyBinder> iter = binders.iterator(); iter.hasNext();) {
-                PropertyBinder binder = iter.next();
-                if (!binder.isActive()) {
-                    // Dead binder - get rid of it.
-                    iter.remove();
-                }
-                else {
-                    // TODO Test cycles - I put PropertyChanger in getter which caused cycles
-                    // If binder is already active, ignore this one to prevent cycles.
-                    if (!activeBinders.contains(binder)) {
-                        activeBinders.add(binder);
-                        activeBindersAddedThisCall.add(binder);
-                        if (binder.matchesListenBean(event)) {
-                            binder.updateProperty();
-                        }
-                    }
+        // TODO Test cycles - I put PropertyChanger in getter which caused cycles.  Also test A -> B ->A
+        // TODO also two binders to/from same propety
+        for (Iterator<PropertyBinder> iter = binders.iterator(); iter.hasNext();) {
+            PropertyBinder binder = iter.next();
+            if (!binder.isActive()) {
+                // Dead binder - get rid of it.
+                iter.remove();
+            }
+            else {
+                if (binder.matchesListenBean(event)) {
+                    binder.updateProperty();
                 }
             }
-        }
-        finally {
-            activeBinders.removeAll(activeBindersAddedThisCall);
         }
     }
 }

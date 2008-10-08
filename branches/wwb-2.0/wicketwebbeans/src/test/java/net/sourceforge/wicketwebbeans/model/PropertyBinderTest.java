@@ -189,4 +189,48 @@ public class PropertyBinderTest extends TestCase
         // Wrong bean
         assertFalse(binder.matchesListenBean(new PropertyChangeEvent(listenBeanModel, "salary", null, null)));
     }
+
+    public void testUpdatePropetyCurrentlyBinding()
+    {
+        Employee listenBean = new Employee("Dan", null, BigDecimal.valueOf(101.01));
+        CyclicalUpdateBean updateBean = new CyclicalUpdateBean();
+
+        PropertyProxy listenProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "name");
+        PropertyProxy updateProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "name");
+        PropertyBinder binder = new PropertyBinder(listenBean, updateBean, listenProxy, updateProxy);
+
+        // This bean will call back this binder.updateProperty() when set is called.
+        // Normally this would cause infinite recursion unless it's not specifically prevented.
+        updateBean.setBinder(binder);
+
+        binder.updateProperty();
+        // TODO asserts...
+    }
+
+
+    public static final class CyclicalUpdateBean
+    {
+        private PropertyBinder binder;
+        private String name;
+
+        public CyclicalUpdateBean()
+        {
+        }
+
+        public void setName(String name)
+        {
+            this.name = name;
+            binder.updateProperty();
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public void setBinder(PropertyBinder binder)
+        {
+            this.binder = binder;
+        }
+    }
 }
