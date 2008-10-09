@@ -81,4 +81,39 @@ public class PropertyChangeDispatcherTest extends TestCase
         dispatcher.dispatch(listenBean, null);
         assertNotNull(updateBean.getSalary());
     }
+
+    public void testDispatchWithCycleInBinders()
+    {
+        // Bean A.prop1 is bound to B.prop1. B.prop1 is bound to A.prop1.
+        // Both prop1 setters issue property change events on prop1.
+        CycleBean beanA = new CycleBean();
+        CycleBean beanB = new CycleBean();
+        PropertyProxy listenProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "prop1");
+        PropertyProxy updateProxy = new JXPathPropertyResolver().createPropertyProxy(beanCreator, "prop1");
+        PropertyBinder binder = new PropertyBinder(beanA, beanB, listenProxy, updateProxy);
+        dispatcher.add(binder);
+        PropertyBinder binder2 = new PropertyBinder(beanB, beanA, listenProxy, updateProxy);
+        dispatcher.add(binder2);
+
+        // No infinite cycle should occur with this set.
+        beanB.setProp1("change");
+        assertEquals("change", beanA.getProp1());
+    }
+
+
+    public final class CycleBean
+    {
+        private String prop1;
+
+        public String getProp1()
+        {
+            return prop1;
+        }
+
+        public void setProp1(String value)
+        {
+            prop1 = value;
+            dispatcher.dispatch(this, "prop1");
+        }
+    }
 }

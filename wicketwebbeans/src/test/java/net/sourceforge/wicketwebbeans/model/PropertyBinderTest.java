@@ -204,7 +204,7 @@ public class PropertyBinderTest extends TestCase
         updateBean.setBinder(binder);
 
         binder.updateProperty();
-        // TODO asserts...
+        assertEquals("Dan", updateBean.getName());
     }
 
 
