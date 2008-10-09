@@ -1,9 +1,13 @@
 v2.0
 ----
--Actions, validations have a WWB bean that can be bound to other bean properties to
-update messages, etc. We don't *have* to use wicket feedback messages. Page redirects
-can be driven by config -- page Beans given in config. ??
- 
+- Labels - container
+- Validation - must be tied to component (add(IValidator)) -should we beanify
+  components for add*() - e.g., setValidator() - or support regular methods.
+  We'll need to beanify anyway (?) - setValidator, but precludes existing components,
+  or at least requires subclassing or wrapping.
+- Bean methods
+- Support localization in constant strings
+
 - System config that is loaded first with BeanFactory - common defs
 - If we want pre-built components, then where do actions reside? ThreadLocal context that has component, AjaxRequestTarget, bean. 
   Then we can call on any bean. Action method can return a List of ValidationMessages or IValidationError / ValidationError.
