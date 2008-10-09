@@ -126,7 +126,7 @@ public class PropertyBinder implements Serializable
 
                 updateProperty.setValue(updateBean, listenProperty.getValue(listenBean));
             }
-            catch (Exception e) {
+            finally {
                 isCurrentlyBinding = false;
             }
         }
