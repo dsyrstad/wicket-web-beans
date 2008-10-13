@@ -1,7 +1,20 @@
 * {
 	font-size: 11px;
-	font-family: Verdana,Tahoma,Arial;
+	font-family: Verdana,Tahoma,Arial,sans-serif;
 	color: #3c3c3c;
+}
+
+.wwbLabeledComponent {
+}
+
+.wwbLabeledComponent div.wwbLabeledComponentLabel {
+	font-weight: bold;
+	display: inline;
+}
+
+.wwbLabeledComponent div.wwbHorizontalLabel {
+	display: inline;
+	margin-left: 1em;
 }
 
 .beanFormTopContent {

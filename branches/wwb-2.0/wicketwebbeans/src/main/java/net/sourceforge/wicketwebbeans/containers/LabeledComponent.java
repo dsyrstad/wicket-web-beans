@@ -21,8 +21,10 @@ import net.sourceforge.wicketwebbeans.model.BeanFactory;
 import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 
 /**
  * A container that lays out a Label and component either vertically or horizontally. <p>
@@ -91,6 +93,9 @@ public class LabeledComponent extends Panel
         add(labelComponent);
 
         Component child = getBeanFactory().resolveComponent("component", component);
+        if (horizontal) {
+            child.add(new AttributeAppender("class", new Model("wwbHorizontalLabel"), " "));
+        }
         add(child);
     }
 }

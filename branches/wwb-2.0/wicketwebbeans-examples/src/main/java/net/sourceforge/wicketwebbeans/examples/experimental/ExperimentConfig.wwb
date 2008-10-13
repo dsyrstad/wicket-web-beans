@@ -3,7 +3,14 @@ Root {
 	component: Grid;
 }
 
-Grid { 
+Grid {
+	class: GridLayout;
+	components: Grid3Col, Grid2Col;
+	columns: 1;
+}
+
+
+Grid3Col { 
 	class: GridLayout;
 	components:
 		FeedbackPanel { _colspan: 3 }, 
@@ -22,7 +29,19 @@ Grid {
 		Label { model: $result; outputMarkupId: true },
 		Button { action: "save"; label: "Save"; actionParameters: "Msg1", 5; },
 		Link { action: "save"; label: "Save Link";  actionParameters: "Msg2", "66x"; },
-		Label { model: $saveMsg;  }
+		Label { model: $saveMsg;  },
+		VLabeler { label: "VLabeler"; component: Field { model: "$serialNumber" } },
+		HLabeler { label: "HLabeler"; component: Label { model: "$serialNumber" } }
+}
+
+Grid2Col {
+	class: GridLayout;
+	columns: 2;
+	components:
+			Label { model: "Field1" }, Field { model: "$name" },
+			Label { model: "Field2 Longer Label Here" }, Field { model: "$serialNumber" },
+			Label { model: "Field3" }, Field { model: "$name" }
+			;
 }
 
 SubGrid {
@@ -38,6 +57,17 @@ Field {
 Label {
 	class: org.apache.wicket.markup.html.basic.Label;
 	outputMarkupId: true;
+}
+
+VLabeler {
+	class: LabeledComponent;
+	label: ""; 
+}
+
+HLabeler {
+	class: LabeledComponent;
+	label: "";
+	horizontal: true; 
 }
 
 Button {

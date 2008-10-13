@@ -25,8 +25,6 @@ import net.sourceforge.wicketwebbeans.model.ParameterValueAST;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.Model;
@@ -157,12 +155,7 @@ public class GridLayout extends Panel
 
                 WebMarkupContainer container = new WebMarkupContainer(newChildId());
                 add(container);
-
-                String fragmentId = component instanceof FormComponent ? "ci" : "c";
-                Fragment componentFragment = new Fragment("frag", fragmentId, this);
-                componentFragment.setRenderBodyOnly(true);
-                componentFragment.add(component);
-                container.add(componentFragment);
+                container.add(component);
 
                 int colspan = componentParameterValue.getSubParameterValueAsInt(SPECIAL_PARAM_COLSPAN, 1);
                 int pct100 = (colspan * 10000) / columns;
