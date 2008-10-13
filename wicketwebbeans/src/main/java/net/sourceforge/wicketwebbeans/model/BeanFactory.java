@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.wicketwebbeans.components.FormComponentWrapper;
 import net.sourceforge.wicketwebbeans.model.jxpath.JXPathPropertyResolver;
 import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 
@@ -419,7 +420,8 @@ public class BeanFactory implements Serializable
     /**
      * Resolves a Wicket Component from a ParameterValueAST. The value of the parameter is 
      * a Bean name that represents a Wicket Component. A Bean parameterValue can have sub-parameters
-     * that are used to configure the component. <p/>
+     * that are used to configure the component. If the resulting component is a FormComponent,
+     * it is wrapped in a FormComponentWrapper.<p/>
      * 
      * @param wicketId the Wicket id for the component.
      * @param parameterValue
@@ -434,7 +436,9 @@ public class BeanFactory implements Serializable
             throw new RuntimeException("Cannot find bean named '" + beanName + "'");
         }
 
-        return (Component)newInstance(beanConfig, wicketId);
+        Component component = (Component)newInstance(beanConfig, wicketId);
+        // TODO Test
+        return FormComponentWrapper.wrapIfFormComponent(component);
     }
 
     /** 
