@@ -19,6 +19,7 @@ package net.sourceforge.wicketwebbeans.test;
 
 import net.sourceforge.wicketwebbeans.model.BeanFactory;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.util.tester.ITestPageSource;
 import org.apache.wicket.util.tester.WicketTester;
@@ -52,4 +53,20 @@ public class WicketTesterUtils
         });
     }
 
+    /**
+     * Renders a {@link SingleComponentTestPage} using the given component.  
+     *
+     * @param tester
+     * @param component the component to add to the page.
+     */
+    @SuppressWarnings("serial")
+    public static void renderPage(WicketTester tester, final Component component)
+    {
+        tester.startPage(new ITestPageSource() {
+            public Page getTestPage()
+            {
+                return new SingleComponentTestPage(component);
+            }
+        });
+    }
 }
