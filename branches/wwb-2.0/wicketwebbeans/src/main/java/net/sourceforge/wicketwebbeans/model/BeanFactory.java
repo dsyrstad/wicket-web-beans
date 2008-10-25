@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,6 +39,7 @@ import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -241,11 +243,41 @@ public class BeanFactory implements Serializable
     public Object newInstance(BeanConfig beanConfig, Object... args)
     {
         Class<?> beanClass = loadClass(beanConfig);
+        ParameterValueAST classParameter = beanConfig.getParameterValue(PARAMETER_NAME_CLASS);
         String beanClassName = beanClass.getName();
+        ParameterAST classArgs = classParameter.getSubParameter("args");
 
         Object bean;
         try {
-            bean = WwbClassUtils.invokeMostSpecificConstructor(beanClass, args);
+            if (args.length == 0 && classArgs != null) {
+                //List<ParameterValueAST> argValues = classArgs.getValues();
+                args = classArgs.getValuesAsStrings();
+                // TODO null, $Proprety and Component name conversion? need a generic thing to convert args
+                Constructor<?> constructor = null;
+                for (Constructor<?> testConstructor : beanClass.getConstructors()) {
+                    if (testConstructor.getParameterTypes().length == args.length) {
+                        constructor = testConstructor;
+                        break;
+                    }
+                }
+
+                if (constructor == null) {
+                    throw new RuntimeException("Cannot find constructor matching args: " + ArrayUtils.toString(args));
+                }
+
+                Class<?>[] parameterTypes = constructor.getParameterTypes();
+                assert parameterTypes.length == args.length;
+                SessionConvertUtils converter = SessionConvertUtils.getCurrent();
+                Object[] newArgs = new Object[args.length];
+                for (int i = 0; i < args.length; i++) {
+                    newArgs[i] = converter.convert(args[i], parameterTypes[i]);
+                }
+
+                bean = constructor.newInstance(newArgs);
+            }
+            else {
+                bean = WwbClassUtils.invokeMostSpecificConstructor(beanClass, args);
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Cannot create instance of bean '" + beanConfig.getBeanName() + "' class: "

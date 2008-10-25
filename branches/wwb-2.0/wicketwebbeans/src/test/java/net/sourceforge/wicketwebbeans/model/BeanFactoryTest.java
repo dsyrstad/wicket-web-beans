@@ -378,6 +378,30 @@ public class BeanFactoryTest extends TestCase
         assertNull(bean.getIntegerObjProp());
     }
 
+    public void testNewInstanceWithBeanConfigConstructorArgs() throws Exception
+    {
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean { args: \"String\", 33, 66 } }");
+        TestBean bean = (TestBean)factory.newInstance("Bean1");
+        assertEquals("String", bean.getStringProp());
+        assertEquals(33, bean.getIntProp());
+        assertEquals(Integer.valueOf(66), bean.getIntegerObjProp());
+    }
+
+    public void testNewInstanceWithMismatchedBeanConfigConstructorArgs() throws Exception
+    {
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: net.sourceforge.wicketwebbeans.model.TestBean { args: \"String\", 33} }");
+        try {
+            factory.newInstance("Bean1");
+            fail();
+        }
+        catch (RuntimeException e) {
+            assertTrue(e.getMessage(), e.getMessage().startsWith("Cannot create instance of bean 'Bean1'"));
+            assertEquals("Cannot find constructor matching args: {String,33}", e.getCause().getMessage());
+        }
+    }
+
     public void testNewInstanceWithUnmatchedArgs() throws Exception
     {
         BeanFactory factory = TestUtils
