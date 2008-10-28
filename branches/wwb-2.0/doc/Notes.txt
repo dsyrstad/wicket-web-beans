@@ -22,7 +22,7 @@ ValidatorWithConstructor {
 }
 
 ValidatorFactory {
-	class: MyValidator { factory: range; args: p1, p2, p4 }; 
+	class: MyValidator { factoryMethod: range; args: p1, p2, p4 }; 
 }
 
 NonPropertyMethods {
