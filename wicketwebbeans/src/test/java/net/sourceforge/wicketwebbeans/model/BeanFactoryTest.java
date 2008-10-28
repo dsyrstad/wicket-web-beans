@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.WicketTester;
+import org.apache.wicket.validation.validator.NumberValidator;
 
 /**
  * Tests BeanFactory. <p>
@@ -386,6 +387,16 @@ public class BeanFactoryTest extends TestCase
         assertEquals("String", bean.getStringProp());
         assertEquals(33, bean.getIntProp());
         assertEquals(Integer.valueOf(66), bean.getIntegerObjProp());
+    }
+
+    public void testNewInstanceWithBeanConfigFactoryMethodArg() throws Exception
+    {
+        BeanFactory factory = TestUtils
+                        .createBeanFactory("Bean1 { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range ; args: -50, 50 } }");
+        NumberValidator.DoubleRangeValidator validator = (NumberValidator.DoubleRangeValidator)factory
+                        .newInstance("Bean1");
+        assertEquals(-50.0, validator.getMinimum());
+        assertEquals(50.0, validator.getMaximum());
     }
 
     public void testNewInstanceWithMismatchedBeanConfigConstructorArgs() throws Exception

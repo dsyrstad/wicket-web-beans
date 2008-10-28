@@ -19,9 +19,12 @@ package net.sourceforge.wicketwebbeans.util;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 
 /**
@@ -267,4 +270,68 @@ public class WwbClassUtils
         return cost;
     }
 
+    /**
+     * Invokes a constructor on aClass that has the same number of arguments as args.
+     * However, elements of args do not need to match the property types
+     * of the constructor. They will be converted using convertUtilsBean
+     *
+     * @param aClass
+     * @param args
+     * @param convertUtilsBean
+     * 
+     * @return the constructed object.
+     * @throws Exception if an error occurs constructor the object. 
+     */
+    // TODO Test
+    public static Object invokeConstructorWithArgConversion(Class<?> aClass, Object[] args,
+                    ConvertUtilsBean convertUtilsBean) throws Exception
+    {
+        Constructor<?> constructor = null;
+        for (Constructor<?> testConstructor : aClass.getConstructors()) {
+            if (testConstructor.getParameterTypes().length == args.length) {
+                constructor = testConstructor;
+                break;
+            }
+        }
+
+        if (constructor == null) {
+            throw new RuntimeException("Cannot find constructor matching args: " + ArrayUtils.toString(args));
+        }
+
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        assert parameterTypes.length == args.length;
+        Object[] newArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            newArgs[i] = convertUtilsBean.convert(args[i], parameterTypes[i]);
+        }
+
+        return constructor.newInstance(newArgs);
+    }
+
+    public static Object invokeStaticMethodWithArgConversion(Class<?> aClass, String methodName, Object[] args,
+                    ConvertUtilsBean convertUtilsBean) throws Exception
+    {
+        Method staticMethod = null;
+        for (Method testMethod : aClass.getMethods()) {
+            if (testMethod.getName().equals(methodName) && testMethod.getParameterTypes().length == args.length
+                            && (testMethod.getModifiers() & Modifier.STATIC) == Modifier.STATIC) {
+                staticMethod = testMethod;
+                break;
+            }
+        }
+
+        if (staticMethod == null) {
+            throw new RuntimeException("Cannot find static method '" + methodName + "' matching args: "
+                            + ArrayUtils.toString(args));
+        }
+
+        Class<?>[] parameterTypes = staticMethod.getParameterTypes();
+        assert parameterTypes.length == args.length;
+        Object[] newArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            newArgs[i] = convertUtilsBean.convert(args[i], parameterTypes[i]);
+        }
+
+        return staticMethod.invoke(null, newArgs);
+    }
 }

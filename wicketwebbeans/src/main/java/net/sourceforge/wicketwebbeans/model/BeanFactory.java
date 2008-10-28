@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -39,7 +38,6 @@ import net.sourceforge.wicketwebbeans.util.WwbClassUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
@@ -252,28 +250,16 @@ public class BeanFactory implements Serializable
             if (args.length == 0 && classArgs != null) {
                 //List<ParameterValueAST> argValues = classArgs.getValues();
                 args = classArgs.getValuesAsStrings();
-                // TODO null, $Proprety and Component name conversion? need a generic thing to convert args
-                Constructor<?> constructor = null;
-                for (Constructor<?> testConstructor : beanClass.getConstructors()) {
-                    if (testConstructor.getParameterTypes().length == args.length) {
-                        constructor = testConstructor;
-                        break;
-                    }
+                ParameterAST factoryMethod = classParameter.getSubParameter("factoryMethod");
+                if (factoryMethod == null) {
+                    // TODO null, $Property and Component name conversion? need a generic thing to convert args
+                    bean = WwbClassUtils.invokeConstructorWithArgConversion(beanClass, args, SessionConvertUtils
+                                    .getCurrent());
                 }
-
-                if (constructor == null) {
-                    throw new RuntimeException("Cannot find constructor matching args: " + ArrayUtils.toString(args));
+                else {
+                    bean = WwbClassUtils.invokeStaticMethodWithArgConversion(beanClass, factoryMethod
+                                    .getValuesAsStrings()[0], args, SessionConvertUtils.getCurrent());
                 }
-
-                Class<?>[] parameterTypes = constructor.getParameterTypes();
-                assert parameterTypes.length == args.length;
-                SessionConvertUtils converter = SessionConvertUtils.getCurrent();
-                Object[] newArgs = new Object[args.length];
-                for (int i = 0; i < args.length; i++) {
-                    newArgs[i] = converter.convert(args[i], parameterTypes[i]);
-                }
-
-                bean = constructor.newInstance(newArgs);
             }
             else {
                 bean = WwbClassUtils.invokeMostSpecificConstructor(beanClass, args);
