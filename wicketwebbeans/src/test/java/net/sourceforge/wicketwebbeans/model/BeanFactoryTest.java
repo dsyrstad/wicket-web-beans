@@ -453,6 +453,18 @@ public class BeanFactoryTest extends TestCase
         assertSame(newBean, binder2.getUpdateBean());
     }
 
+    public void testNewInstanceWithNonPropertyMethod() throws Exception
+    {
+        BeanFactory factory = TestUtils
+                        .createBeanFactory(
+                                        new Model(new Employee()),
+                                        "Bean1 { class: org.apache.wicket.markup.html.form.TextField;"
+                                                        + " add: Validator; }"
+                                                        + "Validator { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range; args: -50, 50 } }");
+        TextField field = (TextField)factory.newInstance("Bean1");
+        fail();
+    }
+
     public void testResolvePropertyProxyModel() throws Exception
     {
         TestBean bean = new TestBean();
