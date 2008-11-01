@@ -308,6 +308,7 @@ public class WwbClassUtils
         return constructor.newInstance(newArgs);
     }
 
+    // TODO Test
     public static Object invokeStaticMethodWithArgConversion(Class<?> aClass, String methodName, Object[] args,
                     ConvertUtilsBean convertUtilsBean) throws Exception
     {
@@ -333,5 +334,17 @@ public class WwbClassUtils
         }
 
         return staticMethod.invoke(null, newArgs);
+    }
+
+    // TODO javadoc TEST
+    public static Method findMethodWithNumberOfArgs(Class<?> aClass, String methodName, int numArgs)
+    {
+        for (Method method : aClass.getMethods()) {
+            if (method.getName().equals(methodName) && method.getParameterTypes().length == numArgs) {
+                return method;
+            }
+        }
+
+        return null;
     }
 }

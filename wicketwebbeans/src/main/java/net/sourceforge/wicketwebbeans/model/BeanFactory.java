@@ -39,6 +39,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -334,26 +335,31 @@ public class BeanFactory implements Serializable
         }
 
         PropertyDescriptor propertyDescriptor;
+        Class<?> propertyType = null;
+        Method writeMethod = null;
         try {
             propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
+            if (propertyDescriptor == null) {
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName);
+            }
+
+            propertyType = propertyDescriptor.getPropertyType();
+            writeMethod = propertyDescriptor.getWriteMethod();
         }
         catch (Exception e) {
-            throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName + "' class: "
-                            + beanClassName, e);
+            writeMethod = WwbClassUtils.findMethodWithNumberOfArgs(beanClass, parameterName, 1);
+            if (writeMethod == null) {
+                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
+                                + "' class: " + beanClassName, e);
+            }
+
+            propertyType = writeMethod.getParameterTypes()[0];
         }
 
-        if (propertyDescriptor == null) {
-            throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName + "' class: "
-                            + beanClassName);
-        }
-
-        Class<?> propertyType = propertyDescriptor.getPropertyType();
-        Method writeMethod = propertyDescriptor.getWriteMethod();
         if (writeMethod == null) {
             // Try to find a setter with a return value. This is common in Wicket for builder patterns.
-            String setterName = "set"
-                            + (parameterName.length() > 1 ? Character.toUpperCase(parameterName.charAt(0))
-                                            + parameterName.substring(1) : parameterName.toUpperCase());
+            String setterName = "set" + StringUtils.capitalize(parameterName);
             try {
                 writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
             }

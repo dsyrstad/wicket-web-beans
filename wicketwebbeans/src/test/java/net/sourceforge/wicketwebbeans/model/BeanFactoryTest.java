@@ -464,7 +464,8 @@ public class BeanFactoryTest extends TestCase
                                                         + " add: Validator; }"
                                                         + "Validator { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range; args: -50, 50 } }");
         TextField field = (TextField)factory.newInstance("Bean1");
-        fail();
+        assertEquals(1, field.getValidators().size());
+        // TODO test 2 args
     }
 
     public void testNewInstanceWithBeanAsBeanConfigConstructorArg()
