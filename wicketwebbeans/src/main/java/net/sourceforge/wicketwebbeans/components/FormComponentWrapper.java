@@ -31,8 +31,9 @@ import org.apache.wicket.markup.repeater.RepeatingView;
  */
 public class FormComponentWrapper extends Panel
 {
-
     private static final long serialVersionUID = 1720694533684915414L;
+
+    private Component wrappedComponent;
 
     /**
      * Construct a FormComponentWrapper. 
@@ -42,6 +43,7 @@ public class FormComponentWrapper extends Panel
     public FormComponentWrapper(String id, Component component)
     {
         super(id);
+        this.wrappedComponent = component;
         RepeatingView repeatingView = new RepeatingView("c");
         add(repeatingView);
         repeatingView.add(component);
@@ -54,6 +56,11 @@ public class FormComponentWrapper extends Panel
         }
 
         return component;
+    }
+
+    public Component getWrappedComponent()
+    {
+        return wrappedComponent;
     }
 
 }
