@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
+import net.sourceforge.wicketwebbeans.components.FormComponentWrapper;
 import net.sourceforge.wicketwebbeans.test.Employee;
 import net.sourceforge.wicketwebbeans.test.TestUtils;
 
@@ -524,8 +525,11 @@ public class BeanFactoryTest extends TestCase
 
         ParameterValueAST valueAST = new ParameterValueAST("Field", false);
         Component component = factory.resolveComponent("id", valueAST);
+        assertTrue(component.getClass().getName(), component instanceof FormComponentWrapper);
+        Component wrappedComponent = ((FormComponentWrapper)component).getWrappedComponent();
+        assertTrue(wrappedComponent.getClass().getName(), wrappedComponent instanceof TextField);
         assertEquals("id", component.getId());
-        assertEquals("test", component.getModelObject());
+        assertEquals("test", wrappedComponent.getModelObject());
     }
 
     public void testResolveComponentWithBeanWithImports() throws Exception
@@ -537,9 +541,11 @@ public class BeanFactoryTest extends TestCase
 
         ParameterValueAST valueAST = new ParameterValueAST("Field", false);
         Component component = factory.resolveComponent("id", valueAST);
-        assertTrue(component instanceof TextField);
+        assertTrue(component.getClass().getName(), component instanceof FormComponentWrapper);
+        Component wrappedComponent = ((FormComponentWrapper)component).getWrappedComponent();
+        assertTrue(wrappedComponent.getClass().getName(), wrappedComponent instanceof TextField);
         assertEquals("id", component.getId());
-        assertEquals("test", component.getModelObject());
+        assertEquals("test", wrappedComponent.getModelObject());
     }
 
     public void testResolveComponentWithInvalidBeanName() throws Exception

@@ -1,5 +1,6 @@
 v2.0
 ----
+- Constructor args don't work if bean is a wicket component
 - Validation - must be tied to component (add(IValidator)) -should we beanify
   components for add*() - e.g., setValidator() - or support regular methods.
   We'll need to beanify anyway (?) - setValidator, but precludes existing components,
