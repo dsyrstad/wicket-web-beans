@@ -52,8 +52,9 @@ public class AjaxFormTest extends TestCase
         tester.assertComponent("component", AjaxForm.class);
         tester.assertComponent("component:component", WebMarkupContainer.class);
         tester.assertComponent("component:component:c", GridLayout.class);
+
         for (int i = 1; i <= 3; i++) {
-            String path = "component:component:c:r:1:c:" + i + ":frag:c";
+            String path = "component:component:c:r:1:c:" + i + ":c:c:c";
             tester.assertComponent(path, TextField.class);
             Component field = tester.getComponentFromLastRenderedPage(path);
             assertEquals(1, field.getBehaviors().size());

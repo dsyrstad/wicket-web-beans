@@ -394,10 +394,9 @@ public class BeanFactoryTest extends TestCase
     {
         BeanFactory factory = TestUtils
                         .createBeanFactory("Bean1 { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range ; args: -50, 50 } }");
-        NumberValidator.DoubleRangeValidator validator = (NumberValidator.DoubleRangeValidator)factory
-                        .newInstance("Bean1");
-        assertEquals(-50.0, validator.getMinimum());
-        assertEquals(50.0, validator.getMaximum());
+        NumberValidator.RangeValidator validator = (NumberValidator.RangeValidator)factory.newInstance("Bean1");
+        assertEquals(-50, validator.getMinimum());
+        assertEquals(50, validator.getMaximum());
     }
 
     public void testNewInstanceWithMismatchedBeanConfigConstructorArgs() throws Exception
