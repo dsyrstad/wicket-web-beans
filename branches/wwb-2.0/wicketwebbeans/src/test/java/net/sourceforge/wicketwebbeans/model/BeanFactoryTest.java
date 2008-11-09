@@ -465,7 +465,21 @@ public class BeanFactoryTest extends TestCase
                                                         + "Validator { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range; args: -50, 50 } }");
         TextField field = (TextField)factory.newInstance("Bean1");
         assertEquals(1, field.getValidators().size());
-        // TODO test 2 args
+    }
+
+    public void testNewInstanceWithNonPropertyMethodAndTwoArgs() throws Exception
+    {
+        fail("test 2 args");
+        @SuppressWarnings("unused")
+        WicketTester tester = new WicketTester();
+        BeanFactory factory = TestUtils
+                        .createBeanFactory(
+                                        new Model(new Employee()),
+                                        "Bean1 { class: org.apache.wicket.markup.html.form.TextField { args: \"id\" };"
+                                                        + " add: Validator; }"
+                                                        + "Validator { class: org.apache.wicket.validation.validator.NumberValidator { factoryMethod: range; args: -50, 50 } }");
+        TextField field = (TextField)factory.newInstance("Bean1");
+        assertEquals(1, field.getValidators().size());
     }
 
     public void testNewInstanceWithBeanAsBeanConfigConstructorArg()
