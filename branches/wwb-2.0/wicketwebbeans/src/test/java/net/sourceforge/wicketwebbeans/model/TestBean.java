@@ -287,4 +287,10 @@ public class TestBean implements Serializable
     {
         return nestedBean;
     }
+
+    public void setStringAndIntProps(String stringProp, int intProp)
+    {
+        this.stringProp = stringProp;
+        this.intProp = intProp;
+    }
 }
