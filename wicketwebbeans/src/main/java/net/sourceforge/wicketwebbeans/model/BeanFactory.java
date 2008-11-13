@@ -348,10 +348,11 @@ public class BeanFactory implements Serializable
             writeMethod = propertyDescriptor.getWriteMethod();
         }
         catch (Exception e) {
-            writeMethod = WwbClassUtils.findMethodWithNumberOfArgs(beanClass, parameterName, 1);
+            int numArgs = values.size();
+            writeMethod = WwbClassUtils.findMethodWithNumberOfArgs(beanClass, parameterName, numArgs);
             if (writeMethod == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName, e);
+                throw new RuntimeException("Cannot find property " + parameterName + " with " + numArgs + " for bean '"
+                                + beanName + "' class: " + beanClassName, e);
             }
 
             propertyType = writeMethod.getParameterTypes()[0];
@@ -371,6 +372,12 @@ public class BeanFactory implements Serializable
                 throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
                                 + beanClassName + " does not have an exposed setter");
             }
+        }
+
+        if (writeMethod.getParameterTypes().length > 1) {
+            // TODO convert values "$", etc.
+            WwbClassUtils.invokeMethodWithArgConversion(bean, writeMethod, values, SessionConvertUtils.getCurrent());
+            return;
         }
 
         WriteOnlyPropertyProxy updateProxy = new WriteOnlyPropertyProxy(writeMethod);

@@ -336,6 +336,20 @@ public class WwbClassUtils
         return staticMethod.invoke(null, newArgs);
     }
 
+    // TODO Test
+    public static Object invokeMethodWithArgConversion(Object object, Method method, Object[] args,
+                    ConvertUtilsBean convertUtilsBean) throws Exception
+    {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        assert parameterTypes.length == args.length;
+        Object[] newArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            newArgs[i] = convertUtilsBean.convert(args[i], parameterTypes[i]);
+        }
+
+        return method.invoke(object, newArgs);
+    }
+
     // TODO javadoc TEST
     public static Method findMethodWithNumberOfArgs(Class<?> aClass, String methodName, int numArgs)
     {
