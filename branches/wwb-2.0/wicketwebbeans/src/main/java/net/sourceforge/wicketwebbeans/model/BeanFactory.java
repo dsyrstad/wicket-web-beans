@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -375,65 +376,94 @@ public class BeanFactory implements Serializable
         }
 
         if (writeMethod.getParameterTypes().length > 1) {
-            // TODO convert values "$", etc.
-            WwbClassUtils.invokeMethodWithArgConversion(bean, writeMethod, values, SessionConvertUtils.getCurrent());
+            Object[] convertedValues = convertParameters(bean, values, writeMethod.getParameterTypes(), null);
+            try {
+                WwbClassUtils.invokeMethodWithArgConversion(bean, writeMethod, convertedValues, SessionConvertUtils
+                                .getCurrent());
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Cannot invoke " + writeMethod.getName() + " for parameter '"
+                                + parameterName + "' for bean '" + beanName + "' class: " + beanClassName);
+            }
             return;
         }
 
         WriteOnlyPropertyProxy updateProxy = new WriteOnlyPropertyProxy(writeMethod);
-        propertyType = ClassUtils.primitiveToWrapper(propertyType);
-        Object value;
-        if (values.isEmpty()) {
-            value = null;
+        Object[] convertedValues = convertParameters(bean, values, new Class<?>[] { propertyType }, updateProxy);
+        if (convertedValues.length != 1) {
+            throw new RuntimeException("Too " + (convertedValues.length < 1 ? "few" : "many")
+                            + " arguments to parameter '" + parameterName + "' for bean '" + beanName + "' class: "
+                            + beanClassName);
         }
-        else if (List.class.isAssignableFrom(propertyType)) {
-            value = values;
-        }
-        else if (propertyType == ParameterValueAST.class) {
-            value = values.get(0);
-        }
-        else {
-            ParameterValueAST valueAst = values.get(0);
-            String stringValue = valueAst.getValue();
-            boolean hasPropertyValue = stringValue != null && stringValue.charAt(0) == '$';
-            if (hasPropertyValue) {
-                // Bound property - create a binder to make it dynamic
-                PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(stringValue);
-                PropertyBinder binder;
-                boolean isIModelProperty = IModel.class.isAssignableFrom(propertyType);
-                // TODO TEST
-                PropertyProxy binderUpdateProxy = (isIModelProperty ? NoOpWriteOnlyPropertyProxy.INSTANCE : updateProxy);
-                if (bean instanceof Component) {
-                    binder = new AjaxPropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), binderUpdateProxy);
-                }
-                else {
-                    binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), binderUpdateProxy);
-                }
+        updateProxy.setValue(bean, convertedValues[0]);
+    }
 
-                PropertyChanger.getCurrent().add(binder);
+    private Object[] convertParameters(Object bean, List<ParameterValueAST> values, Class<?>[] propertyTypes,
+                    WriteOnlyPropertyProxy updateProxy)
+    {
+        if (List.class.isAssignableFrom(propertyTypes[0])) {
+            return new Object[] { values };
+        }
 
-                if (isIModelProperty) {
-                    value = propertyProxyModel;
-                }
-                else {
-                    value = propertyProxyModel.getObject();
-                }
+        List<Object> convertedValues = new ArrayList<Object>();
+        for (int i = 0; i < propertyTypes.length; i++) {
+            Class<?> propertyType = propertyTypes[i];
+            propertyType = ClassUtils.primitiveToWrapper(propertyType);
+            if (values.size() <= i) {
+                convertedValues.add(null);
+                continue;
             }
-            else if (valueAst.isLiteral() || stringValue == null) {
-                value = stringValue;
+
+            Object value = values.get(i);
+            if (propertyType == ParameterValueAST.class) {
+                // We're good
             }
             else {
-                // Component name
-                BeanConfig subBean = getBeanConfig(stringValue, valueAst.getSubParameters());
-                if (subBean == null) {
-                    throw new RuntimeException("Cannot find bean named: " + stringValue);
+                ParameterValueAST valueAst = values.get(0);
+                String stringValue = valueAst.getValue();
+                boolean hasPropertyValue = stringValue != null && stringValue.charAt(0) == '$';
+                if (hasPropertyValue) {
+                    // Bound property - create a binder to make it dynamic
+                    PropertyProxyModel propertyProxyModel = resolvePropertyProxyModel(stringValue);
+                    PropertyBinder binder;
+                    boolean isIModelProperty = IModel.class.isAssignableFrom(propertyType);
+                    // TODO TEST
+                    PropertyProxy binderUpdateProxy = (isIModelProperty ? NoOpWriteOnlyPropertyProxy.INSTANCE
+                                    : updateProxy);
+                    if (bean instanceof Component) {
+                        binder = new AjaxPropertyBinder(beanModel, bean, propertyProxyModel.getProxy(),
+                                        binderUpdateProxy);
+                    }
+                    else {
+                        binder = new PropertyBinder(beanModel, bean, propertyProxyModel.getProxy(), binderUpdateProxy);
+                    }
+
+                    PropertyChanger.getCurrent().add(binder);
+
+                    if (isIModelProperty) {
+                        value = propertyProxyModel;
+                    }
+                    else {
+                        value = propertyProxyModel.getObject();
+                    }
                 }
+                else if (valueAst.isLiteral() || stringValue == null) {
+                    value = stringValue;
+                }
+                else {
+                    // Component name
+                    BeanConfig subBean = getBeanConfig(stringValue, valueAst.getSubParameters());
+                    if (subBean == null) {
+                        throw new RuntimeException("Cannot find bean named: " + stringValue);
+                    }
 
-                value = newInstance(subBean);
+                    value = newInstance(subBean);
+                }
             }
-        }
 
-        updateProxy.setValue(bean, value);
+            convertedValues.add(value);
+        }
+        return convertedValues.toArray();
     }
 
     /**
