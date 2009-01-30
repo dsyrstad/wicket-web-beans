@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -1319,19 +1320,33 @@ public class BeanMetaData extends MetaData implements Serializable
         
         String dynamicCssMethod = metaData.getParameter(PARAM_DYNAMIC_CSS);
         if (!Strings.isEmpty(dynamicCssMethod)) {
+            Method method = null;
+            String cssReturn = null;
             try {
-                Method method = component.getClass().getMethod(dynamicCssMethod, new Class[] { beanClass, metaData.getClass() } );
-                String cssReturn = (String)method.invoke(component, new Object[] { bean, metaData });
-                if (!Strings.isEmpty(cssReturn)) {
-                    applyToComponent.add( new AttributeAppender("class", new Model(cssReturn), " ") );
-                }
+                method = component.getClass().getMethod(dynamicCssMethod, new Class[]{beanClass, metaData.getClass()});
+            } catch (NoSuchMethodException ex) {
+                throw new RuntimeException("dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") is not defined in " + component.getClass());
+            } catch (SecurityException ex) {
+                throw new RuntimeException("securty exception accessing dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass(), ex);
             }
-            catch (Exception e) {
-                throw new RuntimeException("dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") is not defined in " + applyToComponent.getClass());
-            }            
+            if (bean instanceof IModel) {
+                bean = ((IModel) bean).getObject();
+            }
+            try {
+                cssReturn = (String) method.invoke(component, new Object[] { bean, metaData });
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException("access to dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass() + " is not allowed");
+            } catch (IllegalArgumentException ex) {
+                throw new RuntimeException("illegal arguments for dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass());
+            } catch (InvocationTargetException ex) {
+                throw new RuntimeException("invocation to dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass() + " has thrown an exception", ex);
+            }
+            if (!Strings.isEmpty(cssReturn)) {
+                applyToComponent.add( new AttributeAppender("class", new Model(cssReturn), " ") );
+            }
         }
     }
-    
+
     /**
      * A Cached Beanprops file.
      */
