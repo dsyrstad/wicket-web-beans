@@ -338,41 +338,40 @@ public class BeanFactory implements Serializable
         PropertyDescriptor propertyDescriptor;
         Class<?> propertyType = null;
         Method writeMethod = null;
+        Exception propertyLookupException = null;
         try {
             propertyDescriptor = PropertyUtils.getPropertyDescriptor(bean, parameterName);
-            if (propertyDescriptor == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " for bean '" + beanName
-                                + "' class: " + beanClassName);
+            if (propertyDescriptor != null) {
+                propertyType = propertyDescriptor.getPropertyType();
+                writeMethod = propertyDescriptor.getWriteMethod();
             }
-
-            propertyType = propertyDescriptor.getPropertyType();
-            writeMethod = propertyDescriptor.getWriteMethod();
         }
         catch (Exception e) {
-            int numArgs = values.size();
-            writeMethod = WwbClassUtils.findMethodWithNumberOfArgs(beanClass, parameterName, numArgs);
-            if (writeMethod == null) {
-                throw new RuntimeException("Cannot find property " + parameterName + " with " + numArgs + " for bean '"
-                                + beanName + "' class: " + beanClassName, e);
-            }
-
-            propertyType = writeMethod.getParameterTypes()[0];
+            // Handled below
+            propertyLookupException = e;
         }
 
         if (writeMethod == null) {
-            // Try to find a setter with a return value. This is common in Wicket for builder patterns.
-            String setterName = "set" + StringUtils.capitalize(parameterName);
-            try {
-                writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
-            }
-            catch (NoSuchMethodException e) {
-                // Handled below.
+            int numArgs = values.size();
+            writeMethod = WwbClassUtils.findMethodWithNumberOfArgs(beanClass, parameterName, numArgs);
+            if (writeMethod == null) {
+                // Try to find a setter with a return value. This is common in Wicket for builder patterns.
+                String setterName = "set" + StringUtils.capitalize(parameterName);
+                try {
+                    writeMethod = ClassUtils.getPublicMethod(beanClass, setterName, new Class[] { propertyType });
+                }
+                catch (NoSuchMethodException e) {
+                    // Handled below.
+                }
+
+                if (writeMethod == null) {
+                    throw new RuntimeException("Cannot find property " + parameterName + " with " + numArgs
+                                    + " arguments for bean '" + beanName + "' class: " + beanClassName,
+                                    propertyLookupException);
+                }
             }
 
-            if (writeMethod == null) {
-                throw new RuntimeException("Property " + parameterName + " for bean '" + beanName + "' class "
-                                + beanClassName + " does not have an exposed setter");
-            }
+            propertyType = writeMethod.getParameterTypes()[0];
         }
 
         if (writeMethod.getParameterTypes().length > 1) {
