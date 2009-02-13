@@ -23,10 +23,7 @@ import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -112,14 +109,6 @@ abstract public class AbstractField extends Panel implements Field
         if (defaultValue != null && Strings.isEmpty(getModelObjectAsString())) {
             field.setModelValue(defaultValue);
         }
-
-        field.add( new AbstractBehavior() {
-            public void onComponentTag(Component component, ComponentTag tag)
-            {
-                tag.put("id", elementMetaData.getPropertyName());
-                super.onComponentTag(component, tag);
-            }
-        });
     }
     
     /**
