@@ -23,6 +23,7 @@ import net.sourceforge.wicketwebbeans.containers.BeanForm;
 import net.sourceforge.wicketwebbeans.model.BeanPropertyModel;
 import net.sourceforge.wicketwebbeans.model.ElementMetaData;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -120,10 +121,18 @@ abstract public class AbstractField extends Panel implements Field
     {
         super.onBeforeRender();
         // If we're part of a BeanForm, register ourself with it.
-        BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
-        if (beanForm != null) {
-            this.beanForm = beanForm;
-            beanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
+        BeanForm parentBeanForm  = (BeanForm)findParent(BeanForm.class);
+        if (parentBeanForm != null) {
+            this.beanForm = parentBeanForm;
+            parentBeanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
+
+            if (parentBeanForm.getFocusField() != null
+                        && parentBeanForm.getFocusField().equals(
+                                elementMetaData.getPropertyName())) {
+
+                FormComponentVisitor focusFinder = new FormComponentVisitor();
+                visitChildren(focusFinder);
+            }
         }
     }
 
@@ -186,4 +195,22 @@ abstract public class AbstractField extends Panel implements Field
 
         return null;
     }
+
+    /**
+     * Deep searches in this field for the nested FormComponent that is set to receive focus.
+     * Should not be called if none set. If the same property occurs many times
+     * as in a table, this will set the focus on the first occurrence found.
+     */
+    private final class FormComponentVisitor implements IVisitor {
+
+        public Object component(Component innerComponent) {
+            if (innerComponent instanceof FormComponent) {
+                AbstractField.this.beanForm.setFocusField(innerComponent.getMarkupId());
+                return IVisitor.STOP_TRAVERSAL;
+            }
+            return IVisitor.CONTINUE_TRAVERSAL;
+        }
+
+    }
+
 }
