@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,8 +52,6 @@ import net.sourceforge.wicketwebbeans.model.api.JBeans;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -61,7 +60,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
-
 
 /**
  * Represents the metadata for a bean properties and actions. Metadata for beans is derived automatically by convention and optionally 
@@ -79,7 +77,7 @@ public class BeanMetaData extends MetaData implements Serializable
     private static final Class<?>[] PROP_CHANGE_LISTENER_ARG = new Class<?>[] { PropertyChangeListener.class };
     /** Cache of beanprops files, already parsed. Key is the beanprops name, value is a List of Beans. */
     private static final Map<String, CachedBeanProps> cachedBeanProps = new HashMap<String, CachedBeanProps>();
-    private static final String DEFAULT_RESOURCE_KEY = "STUB"; 
+    private static final String DEFAULT_RESOURCE_KEY = "STUB";
 
     public static final String PARAM_EXPLICIT_ONLY = "explicitOnly";
     public static final String PARAM_VIEW_ONLY = "viewOnly";
@@ -95,7 +93,7 @@ public class BeanMetaData extends MetaData implements Serializable
     public static final String TAB_PROPERTY_PREFIX = "tab.";
     public static final String ACTION_PROPERTY_PREFIX = "action.";
     public static final String DEFAULT_TAB_ID = "DEFAULT_TAB";
-    
+
     private Class<?> beanClass;
     private Class<?> metaDataClass;
     private Beans beansMetaData;
@@ -141,8 +139,8 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Class<?> metaDataClass, Component component,
+                    ComponentRegistry componentRegistry, boolean viewOnly)
     {
         this(beanClass, context, null, metaDataClass, component, componentRegistry, viewOnly, false);
     }
@@ -159,8 +157,8 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Component component,
+                    ComponentRegistry componentRegistry, boolean viewOnly)
     {
         this(beanClass, context, beans, null, component, componentRegistry, viewOnly, false);
     }
@@ -177,10 +175,11 @@ public class BeanMetaData extends MetaData implements Serializable
      * @param viewOnly if true, specifies that the entire bean is view-only. This can be overridden by the
      *  Localizer configuration.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly)
+    public BeanMetaData(Class<?> beanClass, String context, Bean bean, Component component,
+                    ComponentRegistry componentRegistry, boolean viewOnly)
     {
-        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly, false);
+        this(beanClass, context, bean == null ? null : new JBeans(bean), null, component, componentRegistry, viewOnly,
+                        false);
     }
 
     /**
@@ -198,11 +197,11 @@ public class BeanMetaData extends MetaData implements Serializable
      *  Localizer configuration.
      * @param isChildBean true if this bean is a child of another bean.
      */
-    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component, ComponentRegistry componentRegistry,
-                    boolean viewOnly, boolean isChildBean)
+    public BeanMetaData(Class<?> beanClass, String context, Beans beans, Class<?> metaDataClass, Component component,
+                    ComponentRegistry componentRegistry, boolean viewOnly, boolean isChildBean)
     {
         super(component);
-        
+
         this.beanClass = beanClass;
         this.context = context;
         this.beansMetaData = beans;
@@ -217,7 +216,7 @@ public class BeanMetaData extends MetaData implements Serializable
 
         setParameter(PARAM_VIEW_ONLY, String.valueOf(viewOnly));
         setParameter(PARAM_DISPLAYED, "true");
-        
+
         String beanClassName = getBaseClassName(beanClass);
         String label = getLabelFromLocalizer(beanClassName, beanClassName);
         if (label == null) {
@@ -308,7 +307,7 @@ public class BeanMetaData extends MetaData implements Serializable
         // Check if bean supports PropertyChangeListeners.
         hasAddPropertyChangeListenerMethod = getAddPropertyChangeListenerMethod() != null;
         hasRemovePropertyChangeListenerMethod = getRemovePropertyChangeListenerMethod() != null;
-        
+
         String baseBeanClassName = getBaseClassName(beanClass);
 
         // Deduce actions from the component.
@@ -320,39 +319,39 @@ public class BeanMetaData extends MetaData implements Serializable
             if (label == null) {
                 label = createLabel(name);
             }
-            
+
             ElementMetaData actionMeta = new ElementMetaData(this, prefixedName, label, null);
             actionMeta.setAction(true);
             elements.add(actionMeta);
         }
-        
+
         // Create defaults based on the bean itself.
         PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(beanClass);
         for (PropertyDescriptor descriptor : descriptors) {
             String name = descriptor.getName();
-            
+
             // Skip getClass() and methods that are not readable or hidden.
             if (name.equals("class") || descriptor.getReadMethod() == null || descriptor.isHidden()) {
                 continue;
             }
-            
+
             String label = getLabelFromLocalizer(baseBeanClassName, name);
             if (label == null) {
                 label = descriptor.getDisplayName();
             }
-            
+
             if (label.equals(name)) {
                 label = createLabel(name);
             }
 
             ElementMetaData propertyMeta = new ElementMetaData(this, name, label, descriptor.getPropertyType());
-            propertyMeta.setViewOnly( isViewOnly() );
+            propertyMeta.setViewOnly(isViewOnly());
             elements.add(propertyMeta);
 
             if (descriptor.getWriteMethod() == null) {
                 propertyMeta.setViewOnly(true);
             }
-            
+
             deriveElementFromAnnotations(descriptor, propertyMeta);
         }
 
@@ -360,7 +359,7 @@ public class BeanMetaData extends MetaData implements Serializable
         collectAnnotations();
         collectFromBeanProps();
         collectBeansAnnotation(beansMetaData, false);
-        
+
         // Process action annotations on component.
         for (Method method : getActionMethods(component.getClass())) {
             Action action = method.getAnnotation(Action.class);
@@ -370,14 +369,14 @@ public class BeanMetaData extends MetaData implements Serializable
         // Determine the hierarchy of Bean contexts. I.e., the default Bean is always processed first, followed by those that
         // extend it, etc. This acts as a stack.
         List<Bean> beansHier = buildContextStack();
-        
+
         // Apply beans in order from highest to lowest. The default context will always be first.
         boolean foundSpecifiedContext = false;
         for (Bean bean : beansHier) {
             if (context != null && context.equals(bean.context())) {
                 foundSpecifiedContext = true;
             }
-            
+
             processBeanAnnotation(bean);
         }
 
@@ -385,43 +384,43 @@ public class BeanMetaData extends MetaData implements Serializable
         if (context != null && !foundSpecifiedContext) {
             throw new RuntimeException("Could not find specified context '" + context + "' in metadata.");
         }
-        
+
         // Post-process Bean-level parameters
         if (!getBooleanParameter(PARAM_DISPLAYED)) {
             elements.clear();
             tabs.clear();
         }
-        
+
         // Configure tabs
         if (tabs.isEmpty()) {
             // Create single default tab.
-            tabs.add( new TabMetaData(this, DEFAULT_TAB_ID, getParameter(PARAM_LABEL) ) );
+            tabs.add(new TabMetaData(this, DEFAULT_TAB_ID, getParameter(PARAM_LABEL)));
         }
-        
+
         String defaultTabId = tabs.get(0).getId();
-        
-        if (!getBooleanParameter(PARAM_EXPLICIT_ONLY)
-				|| defaultTabId.equals(DEFAULT_TAB_ID)) {
-			// Post-process each property based on bean parameters
-			for (ElementMetaData elementMeta : elements) {
-				// If element is not on a tab, add it to the first. If it's an
-				// action, it must have been assigned an order to
-				// appear on a tab. Otherwise it is a global action.
-				if (elementMeta.getTabId() == null
-						&& (!elementMeta.isAction() || (elementMeta.isAction() && elementMeta
-								.isActionSpecifiedInProps()))) {
-					elementMeta.setTabId(defaultTabId);
-				}
-			}
-		}
-        
+
+        if (!getBooleanParameter(PARAM_EXPLICIT_ONLY) || defaultTabId.equals(DEFAULT_TAB_ID)) {
+            // Post-process each property based on bean parameters
+            for (ElementMetaData elementMeta : elements) {
+                // If element is not on a tab, add it to the first. If it's an
+                // action, it must have been assigned an order to
+                // appear on a tab. Otherwise it is a global action.
+                if (elementMeta.getTabId() == null
+                                && (!elementMeta.isAction() || (elementMeta.isAction() && elementMeta
+                                                .isActionSpecifiedInProps()))) {
+                    elementMeta.setTabId(defaultTabId);
+                }
+            }
+        }
+
         // Remove elements not specified in props
         if (getBooleanParameter(PARAM_EXPLICIT_ONLY)) {
-        	CollectionUtils.filter(elements, new Predicate() {
-				public boolean evaluate(Object object) {
-					return ((ElementMetaData)object).isSpecifiedInProps();
-				}
-        	});       	
+            for (Iterator<ElementMetaData> iter = elements.iterator(); iter.hasNext();) {
+                ElementMetaData element = iter.next();
+                if (!element.isSpecifiedInProps()) {
+                    iter.remove();
+                }
+            }
         }
 
         Collections.sort(elements, new Comparator<ElementMetaData>() {
@@ -442,7 +441,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         List<Bean> beansHier = new ArrayList<Bean>();
         String currContext = context;
-        
+
         // Note: Limit accidental cyclical specs (e.g., A extends B, B extends A). This also limits the maximum hierarchy depth to the same 
         // amount, which should be plenty.
         for (int limit = 0; limit < 20; ++limit) {
@@ -452,11 +451,11 @@ public class BeanMetaData extends MetaData implements Serializable
                 if (beanContext != null && beanContext.length() == 0) {
                     beanContext = null;
                 }
-                
+
                 if (beanContext == currContext || (beanContext != null && beanContext.equals(currContext))) {
                     // Push it on stack
                     beansHier.add(0, collectedBean);
-                    
+
                     if (extendsContext == null) {
                         extendsContext = collectedBean.extendsContext();
                         if (extendsContext != null && extendsContext.length() == 0) {
@@ -464,8 +463,8 @@ public class BeanMetaData extends MetaData implements Serializable
                         }
                     }
                     else if (!extendsContext.equals(collectedBean.extendsContext())) {
-                        throw new RuntimeException("Inconsistent extends context " + collectedBean.extendsContext() + 
-                                        " is not consistent with first one encountered " + extendsContext);
+                        throw new RuntimeException("Inconsistent extends context " + collectedBean.extendsContext()
+                                        + " is not consistent with first one encountered " + extendsContext);
                     }
                 }
             }
@@ -493,18 +492,19 @@ public class BeanMetaData extends MetaData implements Serializable
         // Try to retrieve label from properties file in the form of "Bean.{name}.label" or
         // simply {name}.label.
         String propLabelKey = name + ".label";
-        String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component, DEFAULT_RESOURCE_KEY);
+        String label = component.getLocalizer().getString(baseBeanClassName + '.' + propLabelKey, component,
+                        DEFAULT_RESOURCE_KEY);
         if (label == DEFAULT_RESOURCE_KEY) {
             label = component.getLocalizer().getString(propLabelKey, component, DEFAULT_RESOURCE_KEY);
         }
-        
+
         if (label == DEFAULT_RESOURCE_KEY) {
             label = null;
         }
-        
+
         return label;
     }
-    
+
     /**
      * Collect any WWB Beans or Bean annotations that may exist on the component, bean, or meta-data class that
      * apply to the specified bean.
@@ -514,21 +514,21 @@ public class BeanMetaData extends MetaData implements Serializable
     private void collectAnnotations()
     {
         // Bean itself
-        collectBeansAnnotation( beanClass.getAnnotation(Beans.class), true);
-        collectBeanAnnotation( beanClass.getAnnotation(Bean.class), true);
+        collectBeansAnnotation(beanClass.getAnnotation(Beans.class), true);
+        collectBeanAnnotation(beanClass.getAnnotation(Bean.class), true);
 
         // Metadata class
         if (metaDataClass != null) {
-            collectBeansAnnotation( metaDataClass.getAnnotation(Beans.class), false);
-            collectBeanAnnotation( metaDataClass.getAnnotation(Bean.class), false);
+            collectBeansAnnotation(metaDataClass.getAnnotation(Beans.class), false);
+            collectBeanAnnotation(metaDataClass.getAnnotation(Bean.class), false);
         }
-        
+
         // Component
-        Class<? extends Component> componentClass = component.getClass(); 
-        collectBeansAnnotation( componentClass.getAnnotation(Beans.class), false);
-        collectBeanAnnotation( componentClass.getAnnotation(Bean.class), false);
+        Class<? extends Component> componentClass = component.getClass();
+        collectBeansAnnotation(componentClass.getAnnotation(Beans.class), false);
+        collectBeanAnnotation(componentClass.getAnnotation(Bean.class), false);
     }
-    
+
     private void collectBeansAnnotation(Beans beans, boolean isBeanAnnotation)
     {
         if (beans != null) {
@@ -537,27 +537,28 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
     }
-    
+
     private void collectBeanAnnotation(Bean bean, boolean isBeanAnnotation)
     {
         if (bean == null) {
             return;
         }
-        
+
         Class<?> beanType = bean.type();
         if (beanType == Object.class) {
             if (!isBeanAnnotation) {
-                throw new RuntimeException("@Bean must include the type attribute when used on non-bean components. Occurred while processing annotations for bean " 
-                                + beanClass.getName());
+                throw new RuntimeException(
+                                "@Bean must include the type attribute when used on non-bean components. Occurred while processing annotations for bean "
+                                                + beanClass.getName());
             }
-            
+
             beanType = beanClass;
         }
-        
+
         if (beanType != beanClass) {
             return; // Doesn't match what we're interested in.
         }
-        
+
         collectedBeans.add(bean);
     }
 
@@ -569,12 +570,12 @@ public class BeanMetaData extends MetaData implements Serializable
         if (bean.container() != Panel.class) {
             setParameter(PARAM_CONTAINER, bean.container().getName());
         }
-        
+
         setParameter(BeanForm.PARAM_ROWS, String.valueOf(bean.rows()));
-        
+
         setParameter(PARAM_CSS, bean.css());
         setParameter(PARAM_DYNAMIC_CSS, bean.dynamicCss());
-        
+
         if (bean.viewOnly().length > 0) {
             // Only set if explicitly set.
             boolean viewOnly = bean.viewOnly()[0];
@@ -586,16 +587,16 @@ public class BeanMetaData extends MetaData implements Serializable
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : bean.params()) {
             setParameterIfNotEmpty(param.name(), param.value());
             if (param.name().equals(PARAM_VIEW_ONLY)) {
-                updateElementsViewOnlyState( getBooleanParameter(PARAM_VIEW_ONLY) );
+                updateElementsViewOnlyState(getBooleanParameter(PARAM_VIEW_ONLY));
             }
         }
-        
+
         for (String actionName : bean.actionNames()) {
             if (!handleElementRemove(actionName, true)) {
                 findElementAddPseudos(ACTION_PROPERTY_PREFIX + actionName);
             }
         }
-        
+
         for (Action action : bean.actions()) {
             if (!handleElementRemove(action.name(), false)) {
                 processActionAnnotation(action, null);
@@ -609,15 +610,15 @@ public class BeanMetaData extends MetaData implements Serializable
                 ElementMetaData element = findElementAddPseudos(propName);
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
-                } 
+                }
                 element.setSpecifiedInProps(true);
-                
+
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
                     element.setOrder(order++);
                 }
             }
         }
-        
+
         order = 1;
         for (Property property : bean.properties()) {
             if (!handleElementRemove(property.name(), false)) {
@@ -626,7 +627,7 @@ public class BeanMetaData extends MetaData implements Serializable
                     element.setActionSpecifiedInProps(true);
                 }
                 element.setSpecifiedInProps(true);
-                
+
                 if (element.getOrder() == ElementMetaData.DEFAULT_ORDER) {
                     element.setOrder(order++);
                 }
@@ -668,7 +669,7 @@ public class BeanMetaData extends MetaData implements Serializable
             element.setViewOnly(viewOnly);
         }
     }
-    
+
     /**
      * Handle element removal if element name starts with a '-'. 
      *
@@ -683,58 +684,59 @@ public class BeanMetaData extends MetaData implements Serializable
             if (prependActionPrefix) {
                 elementName = ACTION_PROPERTY_PREFIX + elementName;
             }
-            
-            elements.remove( findElementAddPseudos(elementName) );
+
+            elements.remove(findElementAddPseudos(elementName));
             return true;
         }
-        
+
         return false;
     }
-    
+
     private ElementMetaData processPropertyAnnotation(Property property, ElementMetaData element)
     {
         if (property == null) {
             return null;
         }
-        
+
         if (element == null && property.name().length() == 0) {
-            throw new RuntimeException("@Property annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
+            throw new RuntimeException("@Property annotation of @Bean " + beanClass.getName()
+                            + " did not set the name attribute.");
         }
-        
+
         if (element == null || property.name().length() > 0) {
             element = findElementAddPseudos(property.name());
         }
-        
+
         if (property.colspan() > 1) {
             element.setParameter(BeanGridPanel.PARAM_COLSPAN, String.valueOf(property.colspan()));
         }
-        
+
         if (property.rows() > 0) {
             element.setParameter(ElementMetaData.PARAM_ROWS, String.valueOf(property.rows()));
         }
-        
+
         if (property.columns() > 0) {
             element.setParameter(ElementMetaData.PARAM_COLUMNS, String.valueOf(property.columns()));
         }
-        
+
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_DEFAULT_VALUE, property.defaultValue());
         if (property.elementType() != Object.class) {
             element.setParameter(ElementMetaData.PARAM_ELEMENT_TYPE, property.elementType().getName());
         }
-        
+
         if (property.fieldType() != Field.class) {
             element.setParameter(ElementMetaData.PARAM_FIELD_TYPE, property.fieldType().getName());
         }
-        
+
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, property.label());
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, property.labelImage());
         element.setParameter(PARAM_CSS, property.css());
         element.setParameter(PARAM_DYNAMIC_CSS, property.dynamicCss());
-        
+
         if (property.maxLength() > 0) {
             element.setMaxLength(property.maxLength());
         }
-        
+
         element.setRequired(property.required());
         if (!element.isAction()) {
             // Only set viewOnly if explicitly set.
@@ -742,50 +744,51 @@ public class BeanMetaData extends MetaData implements Serializable
                 element.setViewOnly(property.viewOnly()[0]);
             }
         }
-        
+
         element.setParameterIfNotEmpty(property.paramName(), property.paramValue());
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : property.params()) {
             element.setParameterIfNotEmpty(param.name(), param.value());
         }
-        
+
         return element;
     }
-    
+
     private ElementMetaData processActionAnnotation(Action action, String methodName)
     {
         if (action == null) {
             return null;
         }
-        
+
         if (methodName == null && action.name().length() == 0) {
-            throw new RuntimeException("@Action annotation of @Bean " + beanClass.getName() + " did not set the name attribute.");
+            throw new RuntimeException("@Action annotation of @Bean " + beanClass.getName()
+                            + " did not set the name attribute.");
         }
-        
+
         if (action.name().length() > 0) {
             methodName = action.name();
         }
-        
+
         ElementMetaData element = findElementAddPseudos(ACTION_PROPERTY_PREFIX + methodName);
 
         if (action.colspan() > 1) {
             element.setParameter(BeanGridPanel.PARAM_COLSPAN, String.valueOf(action.colspan()));
         }
-        
+
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL, action.label());
         element.setParameterIfNotEmpty(ElementMetaData.PARAM_LABEL_IMAGE, action.labelImage());
-        
+
         element.setParameterIfNotEmpty(BeanSubmitButton.PARAM_CONFIRM, action.confirm());
         element.setParameter(BeanSubmitButton.PARAM_AJAX, String.valueOf(action.ajax()));
         element.setParameterIfNotEmpty(BeanSubmitButton.PARAM_DEFAULT, String.valueOf(action.isDefault()));
-        
+
         element.setParameterIfNotEmpty(action.paramName(), action.paramValue());
         for (net.sourceforge.wicketwebbeans.annotations.Parameter param : action.params()) {
             element.setParameterIfNotEmpty(param.name(), param.value());
         }
-        
+
         return element;
     }
-    
+
     /**
      * Process a Tab annotation.
      *
@@ -797,28 +800,28 @@ public class BeanMetaData extends MetaData implements Serializable
         if (tab == null) {
             return;
         }
-        
+
         String tabName = tab.name();
         if (tabMetaData == null) {
-        	String baseBeanClassName = getBaseClassName(beanClass);
+            String baseBeanClassName = getBaseClassName(beanClass);
             String prefixedName = TAB_PROPERTY_PREFIX + tabName;
             String label = getLabelFromLocalizer(baseBeanClassName, prefixedName);
             if (label == null) {
                 label = createLabel(tabName);
             }
-            
+
             tabMetaData = new TabMetaData(this, tabName, label);
             tabs.add(tabMetaData);
         }
-        
+
         tabMetaData.setParameterIfNotEmpty(PARAM_LABEL, tab.label());
-        
+
         // Process propertyNames after properties because propertyNames is typically used to define order.
         int order = 1;
         for (Property property : tab.properties()) {
             if (!handleElementRemove(property.name(), false)) {
                 ElementMetaData element = processPropertyAnnotation(property, null);
-                element.setTabId( tabMetaData.getId() );
+                element.setTabId(tabMetaData.getId());
                 element.setOrder(order++);
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
@@ -826,12 +829,12 @@ public class BeanMetaData extends MetaData implements Serializable
                 element.setSpecifiedInProps(true);
             }
         }
-        
+
         order = 1;
         for (String propName : tab.propertyNames()) {
             if (!handleElementRemove(propName, false)) {
                 ElementMetaData element = findElementAddPseudos(propName);
-                element.setTabId( tabMetaData.getId() );
+                element.setTabId(tabMetaData.getId());
                 element.setOrder(order++);
                 if (element.isAction()) {
                     element.setActionSpecifiedInProps(true);
@@ -844,7 +847,7 @@ public class BeanMetaData extends MetaData implements Serializable
             tabMetaData.setParameterIfNotEmpty(param.name(), param.value());
         }
     }
-    
+
     /**
      * Collection Beans from the beanprops file, if any.
      */
@@ -857,16 +860,17 @@ public class BeanMetaData extends MetaData implements Serializable
             try {
                 timestamp = new File(propFileURL.toURI()).lastModified();
             }
-            catch (URISyntaxException e) { /* Ignore - treat as zero */ }
+            catch (URISyntaxException e) { /* Ignore - treat as zero */
+            }
         }
-        
+
         String cacheKey = beanClass.getName() + ':' + propFileName;
         CachedBeanProps beanprops = cachedBeanProps.get(cacheKey);
         if (beanprops == null || beanprops.getModTimestamp() != timestamp) {
             if (beanprops != null) {
                 logger.info("File changed: " + propFileName + " re-reading.");
             }
-            
+
             // It's OK not to have a beanprops file. We can deduce the parameters by convention. 
             InputStream propsStream = component.getClass().getResourceAsStream(propFileName);
             if (propsStream != null) {
@@ -876,22 +880,26 @@ public class BeanMetaData extends MetaData implements Serializable
                     cachedBeanProps.put(cacheKey, beanprops);
                 }
                 finally {
-                    try { propsStream.close(); } catch (IOException e) { /* Ignore */ }
+                    try {
+                        propsStream.close();
+                    }
+                    catch (IOException e) { /* Ignore */
+                    }
                 }
             }
         }
-        
+
         if (beanprops != null) {
             collectBeansAnnotation(beanprops.getBeans(), false);
         }
     }
-    
+
     /**
-	 * Derive metadata from standard annotations such as JPA and FindBugs.
-	 * 
-	 * @param descriptor
-	 * @param elementMetaData
-	 */
+     * Derive metadata from standard annotations such as JPA and FindBugs.
+     * 
+     * @param descriptor
+     * @param elementMetaData
+     */
     private void deriveElementFromAnnotations(PropertyDescriptor descriptor, ElementMetaData elementMetaData)
     {
         // NOTE: !!! The annotation classes must be present at runtime, otherwise getAnnotations() doesn't 
@@ -906,7 +914,7 @@ public class BeanMetaData extends MetaData implements Serializable
             processElementAnnotations(elementMetaData, writeMethod.getAnnotations());
         }
     }
-    
+
     /**
      * Process annotations for {@link #deriveElementFromAnnotations(PropertyDescriptor, ElementMetaData)}.
      *
@@ -918,29 +926,29 @@ public class BeanMetaData extends MetaData implements Serializable
         if (annotations == null) {
             return;
         }
-        
+
         // Note: We only reference the annotations using their string name, not the class.
         // If we referenced the class, we'd have a dependency on those classes.
         // We also have to access the values by reflection so we don't depend on the class.
         for (Annotation annotation : annotations) {
             Class<?> annotationType = annotation.annotationType();
             String name = annotationType.getName();
-            
+
             if (name.equals("javax.persistence.Column")) {
-                elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
-                elementMetaData.setRequired( !(Boolean)invokeAnnotationMethod(annotation, "nullable") );
+                elementMetaData.setMaxLength((Integer)invokeAnnotationMethod(annotation, "length"));
+                elementMetaData.setRequired(!(Boolean)invokeAnnotationMethod(annotation, "nullable"));
             }
             else if (name.equals("javax.jdo.annotations.Column")) {
-                elementMetaData.setMaxLength( (Integer)invokeAnnotationMethod(annotation, "length") );
-                elementMetaData.setRequired( "false".equals((String)invokeAnnotationMethod(annotation, "allowsNull")) );
-                elementMetaData.setDefaultValue( (String)invokeAnnotationMethod(annotation, "defaultValue") );
+                elementMetaData.setMaxLength((Integer)invokeAnnotationMethod(annotation, "length"));
+                elementMetaData.setRequired("false".equals((String)invokeAnnotationMethod(annotation, "allowsNull")));
+                elementMetaData.setDefaultValue((String)invokeAnnotationMethod(annotation, "defaultValue"));
             }
             else if (annotationType == Property.class) {
                 processPropertyAnnotation((Property)annotation, elementMetaData);
             }
         }
     }
-    
+
     /**
      * Invokes an annotation method to get a value, possibly returning null if no value or if the method doesn't exist.
      */
@@ -968,20 +976,18 @@ public class BeanMetaData extends MetaData implements Serializable
         for (Method method : aClass.getMethods()) {
             Class<?>[] params = method.getParameterTypes();
             Class<?> returnType = method.getReturnType();
-            if (returnType.equals(Void.TYPE) && params.length == 3 &&
-                params[0] == AjaxRequestTarget.class &&
-                params[1] == Form.class &&
-                (params[2] == beanClass || params[2] == Object.class)) {
+            if (returnType.equals(Void.TYPE) && params.length == 3 && params[0] == AjaxRequestTarget.class
+                            && params[1] == Form.class && (params[2] == beanClass || params[2] == Object.class)) {
                 result.add(method);
             }
         }
-        
+
         Collections.sort(result, new Comparator<Method>() {
             public int compare(Method o1, Method o2)
             {
                 return o1.getName().compareTo(o2.getName());
             }
-            
+
         });
         return result;
     }
@@ -1118,7 +1124,7 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         return getParameter(PARAM_LABEL);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Class<? extends Panel> getContainerClass()
     {
@@ -1175,17 +1181,18 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         List<ElementMetaData> elems = new ArrayList<ElementMetaData>();
         if (getBooleanParameter(PARAM_EXPLICIT_ONLY)) {
-        	for (ElementMetaData elem : elements) {
-        		if (elem.isAction() && elem.getTabId()==null) {
-        			elems.add(elem);
-        		}
-        	}
-        } else {
-        	for (ElementMetaData elem : elements) {
-        		if (elem.isAction() && !elem.isActionSpecifiedInProps()) {
-        			elems.add(elem);
-        		}
-        	}
+            for (ElementMetaData elem : elements) {
+                if (elem.isAction() && elem.getTabId() == null) {
+                    elems.add(elem);
+                }
+            }
+        }
+        else {
+            for (ElementMetaData elem : elements) {
+                if (elem.isAction() && !elem.isActionSpecifiedInProps()) {
+                    elems.add(elem);
+                }
+            }
         }
 
         return elems;
@@ -1306,46 +1313,62 @@ public class BeanMetaData extends MetaData implements Serializable
             }
         }
     }
-    
+
     /**
      * Applies any metadata-based CSS classes for the given bean or property to the component.
      */
     public void applyCss(Object bean, MetaData metaData, Component applyToComponent)
     {
         String css = metaData.getParameter(PARAM_CSS);
-        
+
         if (!Strings.isEmpty(css)) {
-            applyToComponent.add( new AttributeAppender("class", new Model(css), " ") );
+            applyToComponent.add(new AttributeAppender("class", new Model(css), " "));
         }
-        
+
         String dynamicCssMethod = metaData.getParameter(PARAM_DYNAMIC_CSS);
         if (!Strings.isEmpty(dynamicCssMethod)) {
             Method method = null;
             String cssReturn = null;
             try {
-                method = component.getClass().getMethod(dynamicCssMethod, new Class[]{beanClass, metaData.getClass()});
-            } catch (NoSuchMethodException ex) {
-                throw new RuntimeException("dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") is not defined in " + component.getClass());
-            } catch (SecurityException ex) {
-                throw new RuntimeException("securty exception accessing dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass(), ex);
+                method = component.getClass().getMethod(dynamicCssMethod,
+                                new Class[] { beanClass, metaData.getClass() });
+            }
+            catch (NoSuchMethodException ex) {
+                throw new RuntimeException("dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", "
+                                + metaData.getClass().getName() + ") is not defined in " + component.getClass());
+            }
+            catch (SecurityException ex) {
+                throw new RuntimeException("securty exception accessing dynamicCss method " + dynamicCssMethod + "("
+                                + beanClass.getName() + ", " + metaData.getClass().getName() + ") in "
+                                + component.getClass(), ex);
             }
             if (bean instanceof IModel) {
-                bean = ((IModel) bean).getObject();
+                bean = ((IModel)bean).getObject();
             }
             try {
-                cssReturn = (String) method.invoke(component, new Object[] { bean, metaData });
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException("access to dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass() + " is not allowed");
-            } catch (IllegalArgumentException ex) {
-                throw new RuntimeException("illegal arguments for dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass());
-            } catch (InvocationTargetException ex) {
-                throw new RuntimeException("invocation to dynamicCss method " + dynamicCssMethod + "(" + beanClass.getName() + ", " + metaData.getClass().getName() + ") in " + component.getClass() + " has thrown an exception", ex);
+                cssReturn = (String)method.invoke(component, new Object[] { bean, metaData });
+            }
+            catch (IllegalAccessException ex) {
+                throw new RuntimeException("access to dynamicCss method " + dynamicCssMethod + "("
+                                + beanClass.getName() + ", " + metaData.getClass().getName() + ") in "
+                                + component.getClass() + " is not allowed");
+            }
+            catch (IllegalArgumentException ex) {
+                throw new RuntimeException("illegal arguments for dynamicCss method " + dynamicCssMethod + "("
+                                + beanClass.getName() + ", " + metaData.getClass().getName() + ") in "
+                                + component.getClass());
+            }
+            catch (InvocationTargetException ex) {
+                throw new RuntimeException("invocation to dynamicCss method " + dynamicCssMethod + "("
+                                + beanClass.getName() + ", " + metaData.getClass().getName() + ") in "
+                                + component.getClass() + " has thrown an exception", ex);
             }
             if (!Strings.isEmpty(cssReturn)) {
-                applyToComponent.add( new AttributeAppender("class", new Model(cssReturn), " ") );
+                applyToComponent.add(new AttributeAppender("class", new Model(cssReturn), " "));
             }
         }
     }
+
 
     /**
      * A Cached Beanprops file.
@@ -1355,18 +1378,18 @@ public class BeanMetaData extends MetaData implements Serializable
     {
         private JBeans beans;
         private long modTimestamp;
-        
+
         CachedBeanProps(JBeans beans, long modTimestamp)
         {
             this.beans = beans;
             this.modTimestamp = modTimestamp;
         }
-        
+
         JBeans getBeans()
         {
             return beans;
         }
-        
+
         long getModTimestamp()
         {
             return modTimestamp;
