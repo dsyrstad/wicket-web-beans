@@ -67,15 +67,23 @@ public abstract class DataBeanListPanel extends Panel
     {
         this(id, beanClass, criteriaBuilder, null);
     }
-    
+
+    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder, BeanMetaData beanMetaData)
+    {
+        this(id, beanClass, criteriaBuilder, null, 20);
+    }
+
     /**
      *
      * @param beanClass the fully qualified class name of the bean to be edited 
      */
-    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder, BeanMetaData beanMetaData)
+    public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder, BeanMetaData beanMetaData, int numRows)
     {
         super(id);
 
+        if (numRows < 1) {
+            numRows = 20;
+        }
         Databinder.getHibernateSession().beginTransaction();
         metaData = new BeanMetaData(beanClass, null, this, null, true);
         metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(beanClass, null, this, null, true);
@@ -102,7 +110,7 @@ public abstract class DataBeanListPanel extends Panel
         CriteriaSorter sorter = new CriteriaSorter(orderBy, asc);
         
         IDataProvider provider = new HibernateProvider(beanClass, filter, sorter);
-        panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, 20);
+        panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, numRows);
         panel.setOutputMarkupId(true);
         Form form = new Form("form");
         add(form);
