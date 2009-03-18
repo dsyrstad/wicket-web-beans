@@ -81,9 +81,8 @@ public abstract class DataBeanListPanel extends Panel
     {
         super(id);
 
-        if (numRows < 1) {
-            numRows = 20;
-        }
+        int rows = (numRows < 1) ? 20 : numRows;
+
         Databinder.getHibernateSession().beginTransaction();
         metaData = new BeanMetaData(beanClass, null, this, null, true);
         metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(beanClass, null, this, null, true);
@@ -110,7 +109,7 @@ public abstract class DataBeanListPanel extends Panel
         CriteriaSorter sorter = new CriteriaSorter(orderBy, asc);
         
         IDataProvider provider = new HibernateProvider(beanClass, filter, sorter);
-        panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, numRows);
+        panel = new BeanTablePanel("beanTable", provider, sorter, metaData, true, rows);
         panel.setOutputMarkupId(true);
         Form form = new Form("form");
         add(form);
