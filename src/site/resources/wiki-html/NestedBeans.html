@@ -42,7 +42,7 @@ th {
 td {
 	vertical-align: top;
 	padding: 1px;
-	margin; 2px;
+	margin: 2px;
 	font: 10pt verdana, sans-serif;
 }
 --></style>
@@ -166,6 +166,11 @@ Which results in collapsible fields for the Address beans:</p>
 </p>
 <p>
 These fields have a bar across the top that allows you to expand and contract the content.</p>
+<p>
+</p>
+<p>
+NOTE: If your bean has a nested bean that is null, WWB will instantiate it so that it can be rendered to be edited. When using LoadableDetachableModel, you should save that instantiated nested bean in the onDetach event, otherwise you will get an error when trying to set a property value to the null bean returned in the next attach.
+</p>
 <p>
 </p>
 <p>
