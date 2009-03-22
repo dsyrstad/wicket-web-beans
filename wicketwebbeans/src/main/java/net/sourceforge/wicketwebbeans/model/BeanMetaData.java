@@ -1251,6 +1251,22 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
+     * Sets a new context and rebuilds all metadata so that
+     * it is consistent with the new context.
+     *
+     * @param the context.
+     */
+    public void setContext(String context)
+    {
+        this.context = context;
+        cachedBeanProps.clear();
+        collectedBeans.clear();
+        elements.clear();
+        tabs.clear();
+        init();
+    }
+
+    /**
      * @return the viewOnly flag.
      */
     public boolean isViewOnly()

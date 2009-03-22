@@ -110,6 +110,10 @@ public class BeanForm extends Panel
     /** Form submit recursion counter. Zero means we're not validating currently. */
     private int submitCnt = 0;
     private TabbedPanel tabbedPanel = null;
+
+    private Object bean;
+    private BeanMetaData beanMetaData;
+    private Class<? extends Panel> container;
     
     /**
      * Construct a new BeanForm.
@@ -149,9 +153,14 @@ public class BeanForm extends Panel
     public BeanForm(String id, final Object bean, final BeanMetaData beanMetaData, final Class<? extends Panel> container)
     {
         super(id);
+
+        this.bean = bean;
+        this.beanMetaData = beanMetaData;
+        this.container = container;
         
         form = new Form("f") {
             // Track whether the form is in submit processing.
+            @Override
             public boolean process()
             {
                 ++submitCnt;
@@ -174,8 +183,9 @@ public class BeanForm extends Panel
         
         beanMetaData.consumeParameter(PARAM_ROWS);
         
-        final HiddenField focusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
-        focusField.add( new AbstractBehavior() {
+        final HiddenField hiddenFocusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
+        hiddenFocusField.add( new AbstractBehavior() {
+            @Override
             public void onComponentTag(Component component, ComponentTag tag)
             {
                 tag.put("id", "bfFocusField");
@@ -183,37 +193,12 @@ public class BeanForm extends Panel
             }
         });
         
-        form.add(focusField);
+        form.add(hiddenFocusField);
         
         formVisitor = new FormVisitor();
-        
-        List<TabMetaData> tabMetaDataList = beanMetaData.getTabs();
-        if (tabMetaDataList.get(0).getId().equals(BeanMetaData.DEFAULT_TAB_ID)) {
-            // Single default tab - none explicitly specified. Don't add a tab panel.
-            form.add( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0), container) );
-        }
-        else {
-            List<AbstractTab> tabs = new ArrayList<AbstractTab>();
-            for (final TabMetaData tabMetaData : tabMetaDataList) {
-                tabs.add( new AbstractTab( new Model(tabMetaData.getLabel()) ) {
-                    public Panel getPanel(String panelId)
-                    {
-                        return createPanel(panelId, bean, beanMetaData, tabMetaData, container);
-                    }
-                } );
-            }
-    
-            // This is a tabbed panel that submits the form and doesn't switch if there are errors. 
-            tabbedPanel = new TabbedPanel("tabs", tabs) {
-                protected WebMarkupContainer newLink(String linkId, final int index)
-                {
-                    return new TabbedPanelSubmitLink(linkId, index);
-                }
-            };
-            
-            form.add(tabbedPanel);
-        }
-        
+
+        createTabs(bean, beanMetaData, container);
+
         // Use a FeedbackMessageFilter to handle messages for multiple BeanForms on a page. This is because messages are stored on the session.
         IFeedbackMessageFilter feedbackFilter = new IFeedbackMessageFilter() {
                 public boolean accept(FeedbackMessage message)
@@ -235,9 +220,54 @@ public class BeanForm extends Panel
         feedback.setOutputMarkupId(true);
         form.add(feedback);        
 
+        createGlobalActions();
+    }
+    
+    /**
+     * Creates the tabs for the form.
+     *
+     * @param bean may be a bean or an IModel containing a bean.
+     * @param beanMetaData the BeanMetaData.
+     * @param container the container class to use. May be null.
+     */
+    protected void createTabs(final Object bean, final BeanMetaData beanMetaData, final Class<? extends Panel> container)
+    {
+        List<TabMetaData> tabMetaDataList = beanMetaData.getTabs();
+        if (tabMetaDataList.get(0).getId().equals(BeanMetaData.DEFAULT_TAB_ID)) {
+            // Single default tab - none explicitly specified. Don't add a tab panel.
+            form.addOrReplace( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0), container) );
+        }
+        else {
+            List<AbstractTab> tabs = new ArrayList<AbstractTab>();
+            for (final TabMetaData tabMetaData : tabMetaDataList) {
+                tabs.add( new AbstractTab( new Model(tabMetaData.getLabel()) ) {
+                    public Panel getPanel(String panelId)
+                    {
+                        return createPanel(panelId, bean, beanMetaData, tabMetaData, container);
+                    }
+                } );
+            }
+
+            // This is a tabbed panel that submits the form and doesn't switch if there are errors.
+            tabbedPanel = new TabbedPanel("tabs", tabs) {
+                @Override
+                protected WebMarkupContainer newLink(String linkId, final int index)
+                {
+                    return new TabbedPanelSubmitLink(linkId, index);
+                }
+            };
+
+            form.addOrReplace(tabbedPanel);
+        }
+    }
+
+    /**
+     * Creates global action buttons
+     */
+    protected void createGlobalActions() {
         // Add bean actions.
         List<ElementMetaData> globalActions = beanMetaData.getGlobalActions();
-        form.add(new ListView("actions", globalActions) {
+        form.addOrReplace(new ListView("actions", globalActions) {
             protected void populateItem(ListItem item)
             {
                 ElementMetaData element = (ElementMetaData)item.getModelObject();
@@ -245,7 +275,17 @@ public class BeanForm extends Panel
             }
         });
     }
-    
+
+    /**
+     * Allow applications to recreate the tabs and panels.
+     * This is useful to reflect changes in metadata,
+     * for example to support dynamic contexts.
+     */
+    public void recreateFormContents() {
+        createTabs(this.bean, this.beanMetaData, this.container);
+        createGlobalActions();
+    }
+
     /**
      * Creates the panel for the given tab.
      *

@@ -87,6 +87,10 @@ public class BeanSubmitButton extends Panel
      * Construct a BeanSubmitButton. The link has a class of "beanSubmitButton" if label is a 
      * regular Label, otherwise the class is "beanSubmitImageButton".
      *
+     * Note that updateFeedbackPanels(target) will not work if the action
+     * makes you change context. In this case, you should avoid doing
+     * something after BeanSubmitButton.this.onAction()
+     *
      * @param id
      * @param label
      * @param form
@@ -111,7 +115,7 @@ public class BeanSubmitButton extends Panel
                 protected void onSubmit(AjaxRequestTarget target, Form form)
                 {
                     BeanSubmitButton.this.onAction(target, form, bean);
-                    updateFeedbackPanels(target);
+                    updateFeedbackPanels(target); // see comments in function javadoc
                 }
     
     
@@ -119,7 +123,7 @@ public class BeanSubmitButton extends Panel
                 protected void onError(AjaxRequestTarget target, Form form)
                 {
                     BeanSubmitButton.this.onError(target, form, bean);
-                    updateFeedbackPanels(target);
+                    updateFeedbackPanels(target); // see comments in function javadoc
                 }
     
                 @Override
@@ -215,18 +219,27 @@ public class BeanSubmitButton extends Panel
     /**
      * Called to update feedback panels.
      *
+     * Note: If you are using dynamic context, this function is called after
+     * the comopnent is detached from the page, so getPage() will fail.
+     *
      * @param target the Ajax target, which may be null if not in an Ajax context.
      * @param form the form that was submitted.
      * @param bean the bean that the button corresponds to.
      */
     protected void updateFeedbackPanels(final AjaxRequestTarget target)
     {
-        getPage().visitChildren(IFeedback.class, new IVisitor() {
-            public Object component(Component component) 
-            {
-                target.addComponent(component);
-                return IVisitor.CONTINUE_TRAVERSAL;
-            }            
-        });
+        try {
+            getPage().visitChildren(IFeedback.class, new IVisitor() {
+                public Object component(Component component)
+                {
+                    target.addComponent(component);
+                    return IVisitor.CONTINUE_TRAVERSAL;
+                }
+            });
+        } catch (Exception ex) {
+            // TODO: Add logging here, better exception handling !?
+            // getPage() is null when you recreate all the components
+            // on the page after changing context.
+        }
     }
 }
