@@ -31,6 +31,7 @@ import org.apache.wicket.feedback.IFeedback;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.AbstractSubmitLink;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.SubmitLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -50,6 +51,9 @@ public class BeanSubmitButton extends Panel
 
     private IAjaxCallDecorator decorator = null;
     
+    private ElementMetaData elementMetaData;
+    private BeanForm beanForm;
+
     /**
      * Construct a BeanSubmitButton. element.config may contain:<p> 
      * <ul>
@@ -70,6 +74,7 @@ public class BeanSubmitButton extends Panel
                         element.getParameter(PARAM_CONFIRM),
                         element.getParameter(PARAM_AJAX),
                         element.getParameter(PARAM_DEFAULT)); 
+        elementMetaData = element;
     }
 
     /**
@@ -172,6 +177,7 @@ public class BeanSubmitButton extends Panel
             button.add( new SimpleAttributeModifier("id", "bfDefaultButton") );
         }
 
+        button.setOutputMarkupId(true);
         add(button);
         button.add(label);
     }
@@ -184,10 +190,20 @@ public class BeanSubmitButton extends Panel
     protected void onBeforeRender()
     {
         super.onBeforeRender();
-        BeanForm beanForm  = (BeanForm)findParent(BeanForm.class);
-        if (beanForm != null) {
+        BeanForm parentBeanForm  = (BeanForm)findParent(BeanForm.class);
+        if (parentBeanForm != null) {
             // Only set this if we're in a BeanForm.
             decorator = BeanForm.AjaxBusyDecorator.INSTANCE;
+
+            beanForm = parentBeanForm;
+
+            if (parentBeanForm.getFocusField() != null
+                    && parentBeanForm.getFocusField().equals(elementMetaData.getPropertyName())) {
+
+                AbstractSubmitLinkVisitor focusFinder = new AbstractSubmitLinkVisitor();
+                visitChildren(focusFinder);
+            }
+
         }
     }
 
@@ -242,4 +258,22 @@ public class BeanSubmitButton extends Panel
             // on the page after changing context.
         }
     }
+
+    /**
+     * Deep searches in this field for the nested AbstractSubmitLink that is set to receive focus.
+     * Should not be called if none set. If the same property occurs many times
+     * as in a table, this will set the focus on the first occurrence found.
+     */
+    private final class AbstractSubmitLinkVisitor implements IVisitor {
+
+        public Object component(Component innerComponent) {
+            if (innerComponent instanceof AbstractSubmitLink) {
+                BeanSubmitButton.this.beanForm.setFocusField(innerComponent.getMarkupId());
+                return IVisitor.STOP_TRAVERSAL;
+            }
+            return IVisitor.CONTINUE_TRAVERSAL;
+        }
+
+    }
+
 }
