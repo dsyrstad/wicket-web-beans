@@ -30,7 +30,7 @@ The target parameter may be null for non-Ajax requests.
    
    * *css* - CSS class to be used for the bean container.
     
-   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !BeanMetaData beanMetaData). See net.sourceforge.wicketwebbeans.examples.css.CssPage for an example.
+   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !BeanMetaData beanMetaData). See com.googlecode.wicketwebbeans.examples.css.CssPage for an example.
        
    * *container* - a container component to use in place of the default !BeanGridPanel or !BeanTablePanel. This container must be a Panel and implement a constructor of the form:
 
@@ -72,7 +72,7 @@ Actions (action.action-name) additionally support the following parameters (supp
 
    * *css* - CSS class to be used for the bean container.
     
-   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !ElementMetaData elementMetaData propertyMetaData). See net.sourceforge.wicketwebbeans.examples.css.CssPage for an example.
+   * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !ElementMetaData elementMetaData propertyMetaData). See com.googlecode.wicketwebbeans.examples.css.CssPage for an example.
 
 ---++ Standard Tab Parameters
 
@@ -152,6 +152,6 @@ Defines a field for Strings that allows more than one line of input.
  
 ---++ Third-Party Annotations
 
-Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See _Standard Property Parameters_ above for more details. Also see the net.sourceforge.wicketwebbeans.examples.thirdpartyannotations.AnnotationsBeanPage example.
+Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See _Standard Property Parameters_ above for more details. Also see the com.googlecode.wicketwebbeans.examples.thirdpartyannotations.AnnotationsBeanPage example.
 
 For annotations to be effective at runtime, you *must* have the JDO or JPA annotation classes in your classpath. For web apps, this means having the appropriate JARs in your WEB-INF/lib directory. 

@@ -10,7 +10,7 @@
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
     <init-param>
       <param-name>applicationClassName</param-name>
-      <param-value>net.sourceforge.wicketwebbeans.databinder.examples.ExampleApplication</param-value>
+      <param-value>com.googlecode.wicketwebbeans.databinder.examples.ExampleApplication</param-value>
     </init-param>
   </filter>
   

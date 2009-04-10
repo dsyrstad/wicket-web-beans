@@ -1,10 +1,10 @@
 Back: BeanContexts  Next: EnumeratedTypes
 
-It is quite common for beans to reference other beans. WWB handles this for you. Let's look at net.sourceforge.wicketwebbeans.examples.nested.NestedBeanPage. 
+It is quite common for beans to reference other beans. WWB handles this for you. Let's look at com.googlecode.wicketwebbeans.examples.nested.NestedBeanPage. 
 
-Embed:net.sourceforge.wicketwebbeans.examples.nested.NestedBeanPage
+Embed:com.googlecode.wicketwebbeans.examples.nested.NestedBeanPage
 
-Note that we only create an instance of net.sourceforge.wicketwebbeans.examples.nested.Customer. The bill-to and ship-to net.sourceforge.wicketwebbeans.examples.nested.Address objects are automatically instantiated by WWB.
+Note that we only create an instance of com.googlecode.wicketwebbeans.examples.nested.Customer. The bill-to and ship-to com.googlecode.wicketwebbeans.examples.nested.Address objects are automatically instantiated by WWB.
 
 Here are the beanprops.
 
@@ -32,7 +32,7 @@ The result looks like:
 
 WWB:/doc/wiki/images/NestedBeanScreenshot.png
 
-By default, nested objects are presented in a net.sourceforge.wicketwebbeans.fields.BeanGridField - which is a nested version of the !BeanGridPanel used by !BeanForm. There are other variations of nested bean fields, such as net.sourceforge.wicketwebbeans.fields.BeanInCollapsibleField, net.sourceforge.wicketwebbeans.fields.BeanInlineField, and net.sourceforge.wicketwebbeans.fields.BeanWithParentLabelField. If we wanted to use !BeanInCollapsibleField rather than the default, we could say:
+By default, nested objects are presented in a com.googlecode.wicketwebbeans.fields.BeanGridField - which is a nested version of the !BeanGridPanel used by !BeanForm. There are other variations of nested bean fields, such as com.googlecode.wicketwebbeans.fields.BeanInCollapsibleField, com.googlecode.wicketwebbeans.fields.BeanInlineField, and com.googlecode.wicketwebbeans.fields.BeanWithParentLabelField. If we wanted to use !BeanInCollapsibleField rather than the default, we could say:
 
 <verbatim>
 ...	
