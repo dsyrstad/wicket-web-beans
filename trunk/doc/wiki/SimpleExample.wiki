@@ -1,6 +1,6 @@
 Back: [[Requirements]] Next: [[Actions]]
 
-Let's take a look at a simple bean from the examples: net.sourceforge.wicketwebbeans.examples.simple.TestBean
+Let's take a look at a simple bean from the examples: com.googlecode.wicketwebbeans.examples.simple.TestBean
 
 This is a Java Bean compliant POJO. As most people know, getters start with "get" or "is" and setters start with "set". Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.
 
@@ -8,7 +8,7 @@ This bean also implements !PropertyChangeListeners and Events. This is an option
 
 If you don't implement !PropertyChangeListeners, !BeanForm already knows if a single property changes from a change on the form. For example, setFirstName() automatically changes the input value to upper case. !BeanForm knows to refresh this field on the form because the user changed it. If you type "xyzzy" in the First Name field and tab or click away from the field, the field is sent to the bean and the field is dynamically refreshed to it's new value "XYZZY".
 
-Before we get too deep, let's take a look at the Wicket page (net.sourceforge.wicketwebbeans.examples.simple.SimpleBeanPage) and HTML:
+Before we get too deep, let's take a look at the Wicket page (com.googlecode.wicketwebbeans.examples.simple.SimpleBeanPage) and HTML:
 
 <verbatim>
 	<html xmlns:wicket>
@@ -24,9 +24,9 @@ Before we get too deep, let's take a look at the Wicket page (net.sourceforge.wi
 	</html>
 </verbatim>
 
-Embed:net.sourceforge.wicketwebbeans.examples.simple.SimpleBeanPage
+Embed:com.googlecode.wicketwebbeans.examples.simple.SimpleBeanPage
 
-You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of net.sourceforge.wicketwebbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of net.sourceforge.wicketwebbeans.model.BeanMetaData. !BeanMetaData reflects on the !TestBean class to derive the fields and actions for the form.
+You can see this is pretty simple. There is only a single component added to the page - "beanForm" - which is an instance of com.googlecode.wicketwebbeans.containers.BeanForm. You can see in the constructor that we create an instance of !TestBean which is passed to !BeanForm. We also create an instance of com.googlecode.wicketwebbeans.model.BeanMetaData. !BeanMetaData reflects on the !TestBean class to derive the fields and actions for the form.
 
 Note that you can also pass a Wicket IModel that contains your bean, rather than the bean itself, to !BeanForm. If the bean is a List, or the IModel contains a List, the results will be displayed as a data table.
 
@@ -48,6 +48,6 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
    * All fields are displayed in alphabetical order by property name.
    * All fields are displayed in a single page. (Known as the "default tab", but the tab is hidden).
 
-Field types are deduced from the property's Java type. The mappings from the property's Java class to the net.sourceforge.wicketwebbeans.fields.Field type is done by net.sourceforge.wicketwebbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
+Field types are deduced from the property's Java type. The mappings from the property's Java class to the com.googlecode.wicketwebbeans.fields.Field type is done by com.googlecode.wicketwebbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
 
 Back: [[Requirements]] Next: [[Actions]]

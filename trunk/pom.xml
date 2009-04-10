@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.sourceforge.wicketwebbeans.parent</groupId>
+    <groupId>com.googlecode.wicketwebbeans.parent</groupId>
     <artifactId>WicketWebBeans-parent</artifactId>
     <packaging>pom</packaging>
     <name>Wicket Web Beans</name>
@@ -15,10 +15,10 @@
         actions of these pages can be customized on an exception basis. In other words, the toolkit
         normally does what you'd expect, but when it doesn't, you can override its behavior.
     </description>
-    <url>http://wicketwebbeans.sourceforge.net/</url>
+    <url>http://code.google.com/p/wicket-web-beans/</url>
     <issueManagement>
-        <system>SourceForge Tracker</system>
-        <url>http://sourceforge.net/tracker/?group_id=205206</url>
+        <system>Google Code Issues</system>
+        <url>http://code.google.com/p/wicket-web-beans/issues/list</url>
     </issueManagement>
     <inceptionYear>2007</inceptionYear>
     <mailingLists>
@@ -36,7 +36,9 @@
     </mailingLists>
     <developers>
         <developer>
+        	<id>dsyrstad</id>
             <name>Dan Syrstad</name>
+            <email>dsyrstad@ener-j.org</email>
             <organization>Visual Systems Corp.</organization>
             <organizationUrl>http://www.vscorp.com</organizationUrl>
             <roles>
@@ -44,10 +46,9 @@
             </roles>
         </developer>
         <developer>
-            <name>Mark Southern</name>
-            <roles>
-                <role>Developer</role>
-            </roles>
+        	<id>dtoffe</id>
+        	<name>Daniel Toffe</name>
+        	<email>dtoffe@yahoo.com.ar</email>
         </developer>
     </developers>
     <licenses>
@@ -56,6 +57,39 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+    <repositories>
+        <repository>
+            <id>org.wicketstuff</id>
+            <name>Wicket Stuff Repository</name>
+            <url>http://wicketstuff.org/maven/repository</url>
+        </repository>
+        <repository>
+            <id>java.net.maven.1</id>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+        </repository>
+        <repository>
+            <id>java.net.maven.2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>wicket.contrib.wicketwebbeans.repository</id>
+            <name>Wicket Web Beans Repository</name>
+            <url>http://wicketwebbeans.sourceforge.net/repository</url>
+            <releases>
+            </releases>
+        </repository>
+        <repository>
+            <id>wicket.contrib.wicketwebbeans.snapshotRepository</id>
+            <name>Wicket Web Beans Snapshot Repository</name>
+            <url>http://wicketwebbeans.sourceforge.net/snapshotRepository</url>
+        </repository>
+        <!-- repository>
+            <id>org.apache.repository</id>
+            <name>Apache Repository For Recent Releases</name>
+            <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+            </repository -->
+    </repositories>
 	<profiles>
 		<profile>
 			<id>bamboo</id>
@@ -78,10 +112,8 @@
 		</profile>
 	</profiles>
     <scm>
-        <connection>
-            scm:svn:https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans
-        </connection>
-        <url>http://wicketwebbeans.svn.sourceforge.net/viewvc/wicketwebbeans/</url>
+        <connection>scm:svn:https://wicket-web-beans.googlecode.com/svn</connection>
+        <url>https://wicket-web-beans.googlecode.com/svn</url>
     </scm>
     <organization>
         <name>Visual Systems Corporation</name>
@@ -110,6 +142,10 @@
                 </excludes>
             </testResource>
         </testResources>
+        <pluginManagement>
+          <plugins>
+          </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -136,9 +172,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <tagBase>
-                        https://wicketwebbeans.svn.sourceforge.net/svnroot/wicketwebbeans/tags
-                    </tagBase>
+                    <tagBase>https://wicket-web-beans.googlecode.com/svn/tags</tagBase>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy assembly:assembly gcupload:gcupload</goals>
                 </configuration>
             </plugin>
             <plugin>
@@ -154,37 +190,6 @@
         <module>wicketwebbeans-databinder</module>
         <module>wicketwebbeans-databinder-examples</module>
     </modules>
-    <repositories>
-        <repository>
-            <id>org.wicketstuff</id>
-            <name>Wicket Stuff Repository</name>
-            <url>http://wicketstuff.org/maven/repository</url>
-        </repository>
-        <repository>
-            <id>java.net.maven.1</id>
-            <url>http://download.java.net/maven/1</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <id>java.net.maven.2</id>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>wicket.contrib.wicketwebbeans.repository</id>
-            <name>Wicket Web Beans Repository</name>
-            <url>http://wicketwebbeans.sourceforge.net/repository</url>
-        </repository>
-        <repository>
-            <id>wicket.contrib.wicketwebbeans.snapshotRepository</id>
-            <name>Wicket Web Beans Snapshot Repository</name>
-            <url>http://wicketwebbeans.sourceforge.net/snapshotRepository</url>
-        </repository>
-        <!-- repository>
-            <id>org.apache.repository</id>
-            <name>Apache Repository For Recent Releases</name>
-            <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
-            </repository -->
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.apache.wicket</groupId>
@@ -286,7 +291,21 @@
             </plugin>
         </plugins>
     </reporting>
-    <distributionManagement>
+<distributionManagement>
+  <!-- use the following if you're not using a snapshot version. -->
+  <repository>
+            <id>wicketwebbeans-googlecode-com</id>
+            <name>Wicket Web Beans Release</name>
+            <url>file:///home/dsyrstad/WicketWebBeans-Maven/repository</url>
+  </repository>
+  <!-- use the following if you ARE using a snapshot version. -->
+  <snapshotRepository>
+            <id>wicketwebbeans-googlecode-com</id>
+            <name>Wicket Web Beans Snapshot</name>
+            <url>file:///home/dsyrstad/WicketWebBeans-Maven/snapshotRepository</url>
+  </snapshotRepository>
+</distributionManagement>
+    <!-- distributionManagement>
         <site>
             <id>wicketwebbeans-sourceforge-net</id>
             <url>scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs</url>
@@ -303,6 +322,6 @@
                 scp://shell.sf.net/home/groups/w/wi/wicketwebbeans/htdocs/snapshotRepository
             </url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement -->
 </project>
 

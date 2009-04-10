@@ -1,7 +1,7 @@
 Back: [[Actions]] Next: BeanContexts
 
 
-There may be many times when you have more information for a form than can fit on a single page. One method of splitting up this information is to group it into tabs. Of course, WWB makes tabs easy too. Let's look at net.sourceforge.wicketwebbeans.examples.tabs.TabBeanPage. The Java code is exactly the same as !ActionBeanPage, but the beanprops are a little different:
+There may be many times when you have more information for a form than can fit on a single page. One method of splitting up this information is to group it into tabs. Of course, WWB makes tabs easy too. Let's look at com.googlecode.wicketwebbeans.examples.tabs.TabBeanPage. The Java code is exactly the same as !ActionBeanPage, but the beanprops are a little different:
 
 <verbatim>
 	# Tabs Example

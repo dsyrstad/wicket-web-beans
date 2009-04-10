@@ -54,7 +54,7 @@ Back: <a href="Tables.html">Tables</a> Next: <a href="MoreInformation.html">More
 <p>
 </p>
 <p>
-There are times when you may want to implement your own Fields (<a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/Field.java.html">net.sourceforge.wicketwebbeans.fields.Field</a>). <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/AbstractField.java.html">net.sourceforge.wicketwebbeans.fields.AbstractField</a> is the base class for the Field interface. It is recommended that you use the AbstractField base class, or an extension of it, if your field will participate in a BeanForm. </p>
+There are times when you may want to implement your own Fields (<a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/Field.java.html">com.googlecode.wicketwebbeans.fields.Field</a>). <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/AbstractField.java.html">com.googlecode.wicketwebbeans.fields.AbstractField</a> is the base class for the Field interface. It is recommended that you use the AbstractField base class, or an extension of it, if your field will participate in a BeanForm. </p>
 <p>
 </p>
 <p>
@@ -64,7 +64,7 @@ By convention, all Fields must define a constructor with the signature:</p>
 <pre>	public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)</pre><p>
 </p>
 <p>
-In this example, we're going to enhance the <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/Address.java.html">net.sourceforge.wicketwebbeans.examples.customfields.Address</a> bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things simpler for you, WWB defines an interface called <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/model/NonJavaEnum.java.html">net.sourceforge.wicketwebbeans.model.NonJavaEnum</a>. It also has a base class for this interface called <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/model/BaseNonJavaEnum.java.html">net.sourceforge.wicketwebbeans.model.BaseNonJavaEnum</a>. So let's look at our <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/Country.java.html">net.sourceforge.wicketwebbeans.examples.customfields.Country</a> enumeration:</p>
+In this example, we're going to enhance the <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/Address.java.html">com.googlecode.wicketwebbeans.examples.customfields.Address</a> bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things simpler for you, WWB defines an interface called <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/model/NonJavaEnum.java.html">com.googlecode.wicketwebbeans.model.NonJavaEnum</a>. It also has a base class for this interface called <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/model/BaseNonJavaEnum.java.html">com.googlecode.wicketwebbeans.model.BaseNonJavaEnum</a>. So let's look at our <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/Country.java.html">com.googlecode.wicketwebbeans.examples.customfields.Country</a> enumeration:</p>
 <p>
 </p>
 <p>
@@ -80,12 +80,12 @@ In this example, we're going to enhance the <a href="workspace/WicketWebBeans/wi
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.customfields;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.examples.customfields;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.util.ArrayList;</font><br/>
 <font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">java.util.List;</font><br/>
 <font color="#808080">05</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.BaseNonJavaEnum;</font><br/>
+<font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.model.BaseNonJavaEnum;</font><br/>
 <font color="#808080">07</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">08</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">09</font>&nbsp;<font color="#7f0055"><b>public&nbsp;class&nbsp;</b></font><font color="#000000">Country&nbsp;</font><font color="#7f0055"><b>extends&nbsp;</b></font><font color="#000000">BaseNonJavaEnum</font><br/>
@@ -156,7 +156,7 @@ You would normally query the database for countries in the static values() metho
 <p>
 </p>
 <p>
-Next we need to implement the Field. WWB has a base Field class <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/EnumField.java.html">net.sourceforge.wicketwebbeans.fields.EnumField</a> that can be used for Java enums and NonJavaEnums. Here's our <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/CountryField.java.html">net.sourceforge.wicketwebbeans.examples.customfields.CountryField</a> that extends EnumField:</p>
+Next we need to implement the Field. WWB has a base Field class <a href="workspace/WicketWebBeans/wicketwebbeans/src/main/java/net/sourceforge/wicketwebbeans/fields/EnumField.java.html">com.googlecode.wicketwebbeans.fields.EnumField</a> that can be used for Java enums and NonJavaEnums. Here's our <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/CountryField.java.html">com.googlecode.wicketwebbeans.examples.customfields.CountryField</a> that extends EnumField:</p>
 <p>
 </p>
 <p>
@@ -172,10 +172,10 @@ Next we need to implement the Field. WWB has a base Field class <a href="workspa
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.customfields;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.examples.customfields;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.fields.EnumField;</font><br/>
-<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.ElementMetaData;</font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.fields.EnumField;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.model.ElementMetaData;</font><br/>
 <font color="#808080">05</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">06</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.model.IModel;</font><br/>
 <font color="#808080">07</font>&nbsp;<font color="#ffffff"></font><br/>
@@ -208,7 +208,7 @@ Next we need to implement the Field. WWB has a base Field class <a href="workspa
 <p>
 </p>
 <p>
-Next, we need to register the CountryField type so that whenever WWB sees a Country bean, it will know how to handle it. In this example, this is done in <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/CustomFieldPage.java.html">net.sourceforge.wicketwebbeans.examples.customfields.CustomFieldPage</a>:</p>
+Next, we need to register the CountryField type so that whenever WWB sees a Country bean, it will know how to handle it. In this example, this is done in <a href="workspace/WicketWebBeans/wicketwebbeans-examples/src/main/java/net/sourceforge/wicketwebbeans/examples/customfields/CustomFieldPage.java.html">com.googlecode.wicketwebbeans.examples.customfields.CustomFieldPage</a>:</p>
 <p>
 </p>
 <p>
@@ -224,11 +224,11 @@ Next, we need to register the CountryField type so that whenever WWB sees a Coun
   <!-- start source code -->
    <td nowrap="nowrap" valign="top" align="left">
     <code>
-<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.examples.customfields;</font><br/>
+<font color="#808080">01</font>&nbsp;<font color="#7f0055"><b>package&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.examples.customfields;</font><br/>
 <font color="#808080">02</font>&nbsp;<font color="#ffffff"></font><br/>
-<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.containers.BeanForm;</font><br/>
-<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.BeanMetaData;</font><br/>
-<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">net.sourceforge.wicketwebbeans.model.ComponentRegistry;</font><br/>
+<font color="#808080">03</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.containers.BeanForm;</font><br/>
+<font color="#808080">04</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.model.BeanMetaData;</font><br/>
+<font color="#808080">05</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">com.googlecode.wicketwebbeans.model.ComponentRegistry;</font><br/>
 <font color="#808080">06</font>&nbsp;<font color="#ffffff"></font><br/>
 <font color="#808080">07</font>&nbsp;<font color="#7f0055"><b>import&nbsp;</b></font><font color="#000000">org.apache.wicket.markup.html.WebPage;</font><br/>
 <font color="#808080">08</font>&nbsp;<font color="#ffffff"></font><br/>
