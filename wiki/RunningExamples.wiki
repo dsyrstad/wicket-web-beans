@@ -2,6 +2,6 @@
 
 Under the Wicket Web Beans main directory:
 
-# cd wicketwebbeans-examples
-# mvn jetty:run
-# In your browser, go to:  http://localhost:8080/wicketwebbeans-examples/WebBeans/
+ # cd wicketwebbeans-examples
+ # mvn jetty:run
+ # In your browser, go to:  http://localhost:8080/wicketwebbeans-examples/WebBeans/
