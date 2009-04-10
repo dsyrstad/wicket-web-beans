@@ -1,2 +1,7 @@
 =Running Examples=
-URL: http://localhost:8080/wicketwebbeans-examples/WebBeans/
+
+Under the Wicket Web Beans main directory:
+
+1. cd wicketwebbeans-examples
+2. mvn jetty:run
+3. In your browser, go to:  http://localhost:8080/wicketwebbeans-examples/WebBeans/
