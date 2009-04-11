@@ -1,3 +1,4 @@
+#labels UserGuide
 Back: EnumeratedTypes  Next: CreatingYourOwnFieldTypes
 
 You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: com.googlecode.wicketwebbeans.examples.tables.TableBeanPage:
@@ -6,7 +7,7 @@ Embed:com.googlecode.wicketwebbeans.examples.tables.TableBeanPage
 
 This page references two beans com.googlecode.wicketwebbeans.examples.tables.Invoice and com.googlecode.wicketwebbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
 
-<verbatim>
+{{{
 	# Table Bean Example
 	Invoice {
 		props: invoiceNumber, invoiceDate, EMPTY, customerName, 
@@ -23,7 +24,7 @@ This page references two beans com.googlecode.wicketwebbeans.examples.tables.Inv
 	Address {
 		props: address1{colspan: 3}, address2{colspan: 3}, city, state, zip;
 	}
-</verbatim>
+}}}
 
 You'll note a couple of new things here. First, the pseudo-property "EMPTY". In the !BeanGridPanel (the default layout for !BeanForm), EMPTY consumes a blank cell in the grid. Second, the "action.removeLine" action specifies a "labelImage" parameter. This allows you to display an image in place of a text label. Also note that Invoice has an addLine action that will add a line to the invoice. !InvoiceLine has a removeLine action that will remove a line from the table. 
 

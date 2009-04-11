@@ -1,12 +1,13 @@
-Back: [[Tables]] Next: MoreInformation
+#labels UserGuide
+Back: [Tables] Next: MoreInformation
 
 There are times when you may want to implement your own Fields (com.googlecode.wicketwebbeans.fields.Field). com.googlecode.wicketwebbeans.fields.AbstractField is the base class for the Field interface. It is recommended that you use the !AbstractField base class, or an extension of it, if your field will participate in a !BeanForm. 
 
 By convention, all Fields must define a constructor with the signature:
  
-<verbatim>
+{{{
 	public SomeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
-</verbatim>
+}}}
 
 In this example, we're going to enhance the com.googlecode.wicketwebbeans.examples.customfields.Address bean to add a Country property. The Country property will be a non-Java enumeration. While Java enums are statically defined at compile-time, there are cases where you need to derive the values at runtime - let's say from a database. To make things simpler for you, WWB defines an interface called com.googlecode.wicketwebbeans.model.NonJavaEnum. It also has a base class for this interface called com.googlecode.wicketwebbeans.model.BaseNonJavaEnum. So let's look at our com.googlecode.wicketwebbeans.examples.customfields.Country enumeration:
 
@@ -28,4 +29,4 @@ The end result looks like this:
 
 WWB:/doc/wiki/images/CustomFieldScreenshot.png 
 
-Back: [[Tables]] Next: MoreInformation
+Back: [Tables] Next: MoreInformation

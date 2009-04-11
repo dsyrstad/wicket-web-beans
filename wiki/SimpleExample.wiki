@@ -1,4 +1,5 @@
-Back: [[Requirements]] Next: [[Actions]]
+#labels UserGuide
+Back: [Requirements] Next: [Actions]
 
 Let's take a look at a simple bean from the examples: com.googlecode.wicketwebbeans.examples.simple.TestBean
 
@@ -10,7 +11,7 @@ If you don't implement !PropertyChangeListeners, !BeanForm already knows if a si
 
 Before we get too deep, let's take a look at the Wicket page (com.googlecode.wicketwebbeans.examples.simple.SimpleBeanPage) and HTML:
 
-<verbatim>
+{{{
 	<html xmlns:wicket>
 	<head>
 	<wicket:head>
@@ -22,7 +23,7 @@ Before we get too deep, let's take a look at the Wicket page (com.googlecode.wic
 		<span wicket:id="beanForm"></span>
 	</body>
 	</html>
-</verbatim>
+}}}
 
 Embed:com.googlecode.wicketwebbeans.examples.simple.SimpleBeanPage
 
@@ -50,4 +51,4 @@ As we mentioned, !BeanMetaData represents the metadata for a bean properties and
 
 Field types are deduced from the property's Java type. The mappings from the property's Java class to the com.googlecode.wicketwebbeans.fields.Field type is done by com.googlecode.wicketwebbeans.model.ComponentRegistry. !ComponentRegistry has mappings for most common types and more types can be added if necessary. Also, Field types may be overridden for a specific property in the "beanprops" file, which we'll discuss later.  
 
-Back: [[Requirements]] Next: [[Actions]]
+Back: [Requirements] Next: [Actions]

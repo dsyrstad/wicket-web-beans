@@ -1,4 +1,5 @@
----+ Running the Samples
+#labels UserGuide
+=Running the Samples=
 
 0. Build WWB from the source distribution by typing: mvn clean install  
 1. cd wicketwebbeans-examples

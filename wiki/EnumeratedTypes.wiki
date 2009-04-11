@@ -1,4 +1,5 @@
-Back: NestedBeans  Next: [[Tables]]
+#labels UserGuide
+Back: NestedBeans  Next: [Tables]
 
 Sometimes a property represents a selection from a set of values. If the property returns a Java enum, WWB makes it really easy to present a drop-down list of choices. Let's look at com.googlecode.wicketwebbeans.examples.enums.EnumBeanPage: 
 
@@ -10,7 +11,7 @@ Embed:com.googlecode.wicketwebbeans.examples.enums.CustomerType
 
 And here are the beanprops:
 
-<verbatim>
+{{{
 	# Enum Bean Example
 	Customer {
 		cols: 1;
@@ -18,7 +19,7 @@ And here are the beanprops:
 			firstName, lastName, 
 			customerType{default: Government}; 
 	}
-</verbatim>
+}}}
 
 The result looks like:
 
@@ -28,4 +29,4 @@ We specify the parameter "default" for customerType so that the the drop-down de
 
 Later you'll see how to implement custom/dynamic runtime enums where the values can be derived from a database or other source.
 
-Back: NestedBeans  Next: [[Tables]]
+Back: NestedBeans  Next: [Tables]

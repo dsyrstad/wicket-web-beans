@@ -1,19 +1,19 @@
-
----+ WWB beanprops Parameter Reference
+#labels UserGuide
+=WWB beanprops Parameter Reference=
 
 Note that any parameter value may contain a properties file macro reference in the form: _${propertyName}_.  This references a Wicket properties file property. For example:
 
-<verbatim>
+{{{
     label: "Text before ${some.Property} text after";
-</verbatim>
+}}}
 
 ---++ Standard Bean Parameters
    * *label* - Specifies a label for the bean.
    
    * *actions* - a comma-separated list of action method names that define the actions available for the bean. This is a list of action methods available on the Wicket Page or component that the bean is embedded in. These actions can be referenced as "action.{action-method-name}" in props. Actions not included in the "props" parameter are considered to be "global" actions and they appear outside of any tabs. These methods must be public and have the following signature:
-<verbatim>
+{{{
  	public void <i>doSomething</i>(AjaxRequestTarget target, Form form, Object bean)
-</verbatim> 
+}}} 
 The target parameter may be null for non-Ajax requests. 
    
    * *props* - This is a list of properties that may have parameters and are presented on the page in the order specified. Any other properties not specified are presented at the end of the page. Properties beginning with "action." refer to actions defined in "actions:" above, not to bean properties. If the property name begins with "-", it tells WWB not to display it. The "EMPTY" pseudo-property name can be used to provide an empty field (e.g., a blank cell in a grid). Configuration may be specified for each property within "{}" - see Standard Property Parameters below. 

@@ -1,9 +1,10 @@
+#labels Releasing
 =Release Process=
 
 *This needs updating for googlecode *
 
 
- * Make sure you followed: [[Maven Build & Publising Notes|Maven Build & Publising]]
+ * Make sure you followed: [Maven Build & Publising Notes|Maven Build & Publising]
  * Change version #s
  * Deploy to wicketwebbeans repository
  * Tag with Maven version #
@@ -14,7 +15,7 @@
  * mvn clean ; zip full source tree: zip -r /tmp/wicketwebbeans-fullsrc-1.0-rc2.zip .
 
  * Upload bin/src/javadoc to SF.net
- * Change pom version #'s to next version + SNAPSHOT, build and deploy new snapshot as described in [[Maven Build & Publising Notes|Maven Build & Publising]]
- * Announce to mailing lists, <[[mailto:wicketwebbeans-users@lists.sourceforge.net|wicketwebbeans-users@lists.sourceforge.net]]>, <[[mailto:users@wicket.apache.org|users@wicket.apache.org]]>.
+ * Change pom version #'s to next version + SNAPSHOT, build and deploy new snapshot as described in [Maven Build & Publising Notes|Maven Build & Publising]
+ * Announce to mailing lists, <[mailto:wicketwebbeans-users@lists.sourceforge.net|wicketwebbeans-users@lists.sourceforge.net]>, <[mailto:users@wicket.apache.org|users@wicket.apache.org]>.
  * Announce to SF news, Freshmeat
  * Take a break

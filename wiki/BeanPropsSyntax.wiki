@@ -1,4 +1,5 @@
----+ Syntax of a beanprops File
+#labels UserGuide
+=Syntax of a beanprops File=
 
 ---++ General: 
 
