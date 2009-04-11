@@ -1,0 +1,53 @@
+Back: BeanContexts  Next: EnumeratedTypes
+
+It is quite common for beans to reference other beans. WWB handles this for you. Let's look at com.googlecode.wicketwebbeans.examples.nested.NestedBeanPage. 
+
+Embed:com.googlecode.wicketwebbeans.examples.nested.NestedBeanPage
+
+Note that we only create an instance of com.googlecode.wicketwebbeans.examples.nested.Customer. The bill-to and ship-to com.googlecode.wicketwebbeans.examples.nested.Address objects are automatically instantiated by WWB.
+
+Here are the beanprops.
+
+<verbatim>
+	# Nested Bean Example
+	Customer {
+		props: 
+			firstName, lastName, 
+			billToAddress{colspan: 3}, 
+			shipToAddress{colspan: 3};
+	}
+	
+	Address {
+		props: 
+			address1{colspan: 3}, 
+			address2{colspan: 3},
+			city, state, zip; 
+	}
+</verbatim>
+
+
+Here we have specifications for the two beans we use: !Customer and !Address. The "colspan" specification tells !BeanGridPanel to span the field across the three grid columns. In other words, this causes the field to span the entire row.  
+
+The result looks like:
+
+WWB:/doc/wiki/images/NestedBeanScreenshot.png
+
+By default, nested objects are presented in a com.googlecode.wicketwebbeans.fields.BeanGridField - which is a nested version of the !BeanGridPanel used by !BeanForm. There are other variations of nested bean fields, such as com.googlecode.wicketwebbeans.fields.BeanInCollapsibleField, com.googlecode.wicketwebbeans.fields.BeanInlineField, and com.googlecode.wicketwebbeans.fields.BeanWithParentLabelField. If we wanted to use !BeanInCollapsibleField rather than the default, we could say:
+
+<verbatim>
+...	
+	Customer {
+		props: 
+			firstName, lastName, 
+			billToAddress{colspan: 3; fieldType: BeanInCollapsibleField }, 
+			shipToAddress{colspan: 3; fieldType: BeanInCollapsibleField };
+	}
+</verbatim>
+
+Which results in collapsible fields for the Address beans:
+ 
+WWB:/doc/wiki/images/NestedBean2Screenshot.png
+
+These fields have a bar across the top that allows you to expand and contract the content.
+
+Back: BeanContexts  Next: EnumeratedTypes
