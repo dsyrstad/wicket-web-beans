@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Wicket Web Beans">
+  <poweredBy>
+    <logo img="http://sflogo.sourceforge.net/sflogo.php?group_id=205206&amp;type=4" name="Wicket Web Beans at SourceForge" href="http://sourceforge.net/projects/wicketwebbeans" />
+    <logo img="http://maven.apache.org/images/logos/maven-feather.png" name="Maven" href="http://maven.apache.org/" />
+  </poweredBy>
+  <body>
+    <menu name="Documentation">
+      <item name="About..." href="/index.html" />
+      <item name="Getting Started" href="/wiki-html/WicketWebBeans.html" />
+      <item name="Index" href="/wiki-html/AAATableOfContents.html" />
+    </menu>
+    <menu name="Modules" ref="modules">
+      <item name="Wicket Web Beans" href="wicketwebbeans/index.html" />
+      <item name="Examples" href="wicketwebbeans-examples/index.html" />
+      <item name="Databinder 1.2 Support" href="wicketwebbeans-databinder/index.html" />
+      <item name="Databinder 1.2 Examples" href="wicketwebbeans-databinder-examples/index.html" />
+    </menu>
+    <menu ref="reports" />
+  </body>
+</project>
