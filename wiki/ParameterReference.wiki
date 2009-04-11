@@ -82,7 +82,7 @@ Actions (action.action-name) additionally support the following parameters (supp
 
 ==Container-specific Parameters==
 
----+++ !BeanGridPanel
+===!BeanGridPanel===
  
  Displays its properties in a grid. The grid is evenly spaced across the width of the window.
  
@@ -90,35 +90,35 @@ Actions (action.action-name) additionally support the following parameters (supp
    
    * *colspan* - May be specified on individual properties. This is the number of columns to span in the grid. Default is 1.
 
----+++ !BeanTablePanel
+===!BeanTablePanel===
  
 Displays a collection of beans in a table. Each property of the bean is a column in the table. The table also allows sorting of bean properties that are Comparable (which includes primitive and wrapper types). Note that !BeanTableField (a Field for properties that are collections) allows a "rows" parameter to be specified for the table.
  
 ==Property/Field-specific Parameters==
  
----+++ !BeanGridField
+===!BeanGridField===
  
 Displays a bean in a box with a label. No field-level parameters. This is the default field for properties whose type is otherwise not mapped in !ComponentRegistry.
  
----+++ !BeanInCollapsibleField
+===!BeanInCollapsibleField===
  
 Displays a bean in a collapsible box with a label. No field-level parameters. 
  
----+++ !BeanInlineField
+===!BeanInlineField===
  
 Displays a bean inline with other fields on the parent bean. No field-level parameters.
  
----+++ !BeanTableField
+===!BeanTableField===
  
 Displays a property's collection as a list of beans in a table. See !BeanTablePanel. 
  
    * *rows* - the number of rows to display in the table. Default is 10.
     
----+++ !BeanWithParentLabelField
+===!BeanWithParentLabelField===
 
 A Field that presents a property's bean in a panel, but the bean's properties do not have labels. For errors, the bean's properties use the parent property's label. This is useful for creating simple composite fields directly from small beans. No field-level parameters.
 
----+++ !DateTimeField
+===!DateTimeField===
 
    * *format* - the format of the date. The default format is based on the property type:
      java.util.Date, java.sql.Timestamp: yyyy-MM-dd HH:MM
@@ -132,17 +132,17 @@ A Field that presents a property's bean in a panel, but the bean's properties do
 		!DateTimeField.time.format - Format for java.sql.Time.
 		!DateTimeField.datetimetz.format - Format for java.util.Calendar types.
 
----+++ !EnumField/!JavaEnumField
+===!EnumField/!JavaEnumField===
 
    * *default* - specifies the default value to use from the enumeration. This value must match a value returned from the name() method.
 
----+++ !InputField
+===!InputField===
 
 A common field used to accept input for a variety of primitive and wrapper property types.
 
    * *advOnEnter* - If "true" this tells WWB to advance to the next field when the Enter key is pressed. 
  
----+++ !TextAreaField
+===!TextAreaField===
  
 Defines a field for Strings that allows more than one line of input.
  
