@@ -1,5 +1,4 @@
-
-WicketWebBeans - Introduction/Getting Started
+WicketWebBeans - Introduction/Getting <br\>
 RunningSamples - How to Run the Samples
 BeanPropsSyntax - Syntax and Grammar of the beanprops File
 ParameterReference - Reference to beanprops Parameters
