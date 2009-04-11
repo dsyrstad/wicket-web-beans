@@ -1,4 +1,4 @@
-#labels UserGuide
+#labels ... Start Here
 Back: [SimpleExample] Next: [Customization]
 
 It's simple to add actions to your form. Here's the code for com.googlecode.wicketwebbeans.examples.actions.ActionBeanPage:
