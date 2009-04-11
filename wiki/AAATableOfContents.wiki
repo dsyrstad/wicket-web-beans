@@ -1,3 +1,4 @@
+#labels UserGuide
 WicketWebBeans - Introduction/Getting Started<br/>
 RunningSamples - How to Run the Samples <br/>
 BeanPropsSyntax - Syntax and Grammar of the beanprops File <br/>

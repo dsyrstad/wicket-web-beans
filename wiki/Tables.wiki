@@ -30,7 +30,7 @@ You'll note a couple of new things here. First, the pseudo-property "EMPTY". In 
 
 When you bring up the page, it will look something like:
 
-https://wicket-web-beans.googlecode.com/svn/wiki/images/TableBeanScreenshot.png
+http://wicket-web-beans.googlecode.com/svn/wiki/images/TableBeanScreenshot.png
 
 Of course, you could throw the lines in a separate tab to clean up the page a bit. Note that clicking "Add Line" adds a new line to the table. Clicking the trash can icon on one of the lines will remove the corresponding line. 
 

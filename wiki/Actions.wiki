@@ -17,7 +17,7 @@ Note the methods in !ActionBeanPage.java: save, cancel, and clearLastName. These
 The target parameter normally null. The Wicket Form is always passed in "form" and the bean that the action applies to is in "bean". _!BeanClassName_ is the class name of the bean to which the action will apply. Optionally this may be "Object" if the action should apply to all beans on your page. WWB only automatically matches actions whose "bean" parameter type matches the bean in question or Object. 
 
 This configuration yields the following page:
-https://wicket-web-beans.googlecode.com/svn/wiki/images/ActionBeanSimpleScreenshot.png
+http://wicket-web-beans.googlecode.com/svn/wiki/images/ActionBeanSimpleScreenshot.png
 
 
 Back: [SimpleExample] Next: [Customization]
