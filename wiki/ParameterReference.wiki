@@ -7,7 +7,7 @@ Note that any parameter value may contain a properties file macro reference in t
     label: "Text before ${some.Property} text after";
 }}}
 
----++ Standard Bean Parameters
+==Standard Bean Parameters==
    * *label* - Specifies a label for the bean.
    
    * *actions* - a comma-separated list of action method names that define the actions available for the bean. This is a list of action methods available on the Wicket Page or component that the bean is embedded in. These actions can be referenced as "action.{action-method-name}" in props. Actions not included in the "props" parameter are considered to be "global" actions and they appear outside of any tabs. These methods must be public and have the following signature:
@@ -41,7 +41,7 @@ bean = the bean, or IModel containing the bean
 beanMetaData = the !BeanMetaData for bean
 tabMetaData = the tab metadata 
 
----++ Standard Property Parameters
+==Standard Property Parameters==
    * *label* - Specifies the label for the property.
 
    * *labelImage* - An image file name relative to the component. Specifies that the property's field should have the specified image rather than a text label. 
@@ -74,13 +74,13 @@ Actions (action.action-name) additionally support the following parameters (supp
     
    * *dynamicCss* - Dynamic CSS class method name to be used for the bean. This method must exist on your component and have the signature: public String methodName(<!BeanClass> bean, !ElementMetaData elementMetaData propertyMetaData). See com.googlecode.wicketwebbeans.examples.css.CssPage for an example.
 
----++ Standard Tab Parameters
+==Standard Tab Parameters==
 
    * *label* - Specifies the label for the property.
    
    * *props* - Specifies the properties and order of the properties for the tab. This is specified exactly as in the Bean "props" parameter (see Standard Bean Properties).
 
----++ Container-specific Parameters
+==Container-specific Parameters==
 
 ---+++ !BeanGridPanel
  
@@ -94,7 +94,7 @@ Actions (action.action-name) additionally support the following parameters (supp
  
 Displays a collection of beans in a table. Each property of the bean is a column in the table. The table also allows sorting of bean properties that are Comparable (which includes primitive and wrapper types). Note that !BeanTableField (a Field for properties that are collections) allows a "rows" parameter to be specified for the table.
  
----++ Property/Field-specific Parameters
+==Property/Field-specific Parameters==
  
 ---+++ !BeanGridField
  
@@ -150,7 +150,7 @@ Defines a field for Strings that allows more than one line of input.
     
     * *cols* - The number of columns (characters) across to be displayed for the field. Default is the CSS defined width.
  
----++ Third-Party Annotations
+==Third-Party Annotations==
 
 Certain JDO and JPA annotations are supported. Right now, certain attributes of the @Column annotation are supported. See _Standard Property Parameters_ above for more details. Also see the com.googlecode.wicketwebbeans.examples.thirdpartyannotations.AnnotationsBeanPage example.
 

@@ -1,7 +1,7 @@
 #labels UserGuide
 =Syntax of a beanprops File=
 
----++ General: 
+==General: ==
 
    * Comments start with a pound sign '#' and continue until the end of the line.
    * Identifier strings can contain the following ASCII characters: a-z, A-Z, 0-9, _, - (minus), . (period), *, $, any ASCII character in the range 160 - 255 (decimal) and any Unicode character above 255 (0u00ff).
@@ -9,7 +9,7 @@
    * The double quote character (") is used to delimit the start and end of strings. Literal strings are used to include punctuation, and other characters that WWB would normally consider tokens, inside a string. Other than this, WWB make no distinction between identifier strings and quoted strings.
    
 
----++ Grammar:
+==Grammar:==
 
 Notes: _[ optional ]_ denotes an optional element. *Bold* indicates a literal character or string. Semi-colons terminate a rule. "..." indicates that the preceeding element can be repeated one or more times.
 

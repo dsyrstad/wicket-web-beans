@@ -130,7 +130,7 @@ The WWB annotations are:
 
 You can apply these annotations at various points in your code, as we'll see next. Your choice of where to apply the annotations will be based on your preferences and development practices. We'll examine each of these choices next.
 
----++ Annotations on Your Page
+==Annotations on Your Page==
 
 Placing the WWB annotations on your Page (or other component containing the form) has the most direct correspondence to the beanprops file. A beanprops file is associated with your Page due to the Wicket naming convention, so placing annotations on your Page class is very similar. Let's look at an example:  com.googlecode.wicketwebbeans.examples.annotations.AnnotationsOnPage.
 
@@ -153,7 +153,7 @@ Here you can see that the @Bean annotation declares two tabs (see [Tabs]), with 
     }
 }}}
  
----++ Annotations on Your Bean
+==Annotations on Your Bean==
 
 You can also place annotations directly on your bean. This may arguably blur the line between the model and the view, but again it's your choice. If you're concerned about this, you can just use the more model-oriented @Property annotation and configure the view of your bean using annotations in your page or using beanprops file.
 
@@ -161,7 +161,7 @@ Take a look at com.googlecode.wicketwebbeans.examples.annotations.TestBeanWithAn
 
 You can see that it may be more natural to place the @Property annotations directly on the bean properties so both are defined in one place. If you JDO or JPA, you can also use their @Column annotations to annotate propertys. More on that later.
 
----++ Annotations on a Special Metadata Class
+==Annotations on a Special Metadata Class==
 
 Sometimes you may want to reuse bean metadata in more than one page. If you don't want to place annotations on your bean, you can create a special class (or interface) that does nothing more than declare the annotations. com.googlecode.wicketwebbeans.examples.annotations.TestBeanMetaData is an example of this. It has annotations similar to that of com.googlecode.wicketwebbeans.examples.annotations.AnnotationsOnPage, but is reusable. To reuse it, simply pass the class to the !BeanMetaData constructor:
 
