@@ -33,7 +33,7 @@ Note that you can also pass a Wicket IModel that contains your bean, rather than
 
 If you bring up this page in a browser (see RunningSamples), you will see something like:
 
-WWB:/doc/wiki/images/SimpleBeanScreenShot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/SimpleBeanScreenShot.png
 
 Note that "Result" is not editable because there is no setter method on the bean. Also, if you type numbers into Operand 1 and Operand 2, you'll see that the Result field automatically is calculated and updated. The calculation is done by !TestBean and the !PropertyChangeEvents are notifying WWB to update the result field.
 

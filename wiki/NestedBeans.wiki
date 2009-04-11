@@ -31,7 +31,7 @@ Here we have specifications for the two beans we use: !Customer and !Address. Th
 
 The result looks like:
 
-WWB:/doc/wiki/images/NestedBeanScreenshot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/NestedBeanScreenshot.png
 
 By default, nested objects are presented in a com.googlecode.wicketwebbeans.fields.BeanGridField - which is a nested version of the !BeanGridPanel used by !BeanForm. There are other variations of nested bean fields, such as com.googlecode.wicketwebbeans.fields.BeanInCollapsibleField, com.googlecode.wicketwebbeans.fields.BeanInlineField, and com.googlecode.wicketwebbeans.fields.BeanWithParentLabelField. If we wanted to use !BeanInCollapsibleField rather than the default, we could say:
 
@@ -47,7 +47,7 @@ By default, nested objects are presented in a com.googlecode.wicketwebbeans.fiel
 
 Which results in collapsible fields for the Address beans:
  
-WWB:/doc/wiki/images/NestedBean2Screenshot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/NestedBean2Screenshot.png
 
 These fields have a bar across the top that allows you to expand and contract the content.
 

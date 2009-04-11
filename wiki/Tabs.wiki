@@ -17,7 +17,7 @@ There may be many times when you have more information for a form than can fit o
 
 Here we just use !TestBean "props" to specify the properties we don't want. "name" and "calculator" specify the tab groupings. We specify a "props" parameter for each tab to say which properties fall on which tab, and in what order. The result looks like:  
 
-WWB:/doc/wiki/images/TabBeanScreenshot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/TabBeanScreenshot.png
 
 Alternately we could configure all of the properties in !TestBean's "props" if we wanted. By default all properties that weren't specified for a tab fall in the first tab, so we could have said: 
  

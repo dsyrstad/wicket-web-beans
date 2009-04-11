@@ -27,6 +27,6 @@ For simplicity, we add the mapping to !ComponentRegistry directly in our Page co
 
 The end result looks like this:
 
-WWB:/doc/wiki/images/CustomFieldScreenshot.png 
+https://wicket-web-beans.googlecode.com/svn/wiki/images/CustomFieldScreenshot.png 
 
 Back: [Tables] Next: MoreInformation

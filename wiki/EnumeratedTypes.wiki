@@ -23,7 +23,7 @@ And here are the beanprops:
 
 The result looks like:
 
-WWB:/doc/wiki/images/EnumBeanScreenshot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/EnumBeanScreenshot.png
 
 We specify the parameter "default" for customerType so that the the drop-down defaults to "Government". If we hadn't specified the default, the drop-down would have defaulted to null (an empty selection).
 

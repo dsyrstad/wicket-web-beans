@@ -54,7 +54,7 @@ Note that we didn't specify a package name when we wrote "!TestBean". The packag
 
 If you run this example, you'll see something like:
 
-WWB:/doc/wiki/images/CustomSimpleBeanScreenShot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/CustomSimpleBeanScreenShot.png
 
 If you want to do something more sophisticated, WWB supports Wicket resources in any beanprops value. For example, you could change !CustomSimpleBeanPage.beanprops as follows:
 {{{
@@ -113,7 +113,7 @@ You can also specify an "actions" parameter in the beanprops file to customize a
 
 it will cause the Save button to be invoked using Ajax. Hence, the !AjaxRequestTarget parameter will be non-null when the action is invoked. You can also do other action customizations, as we'll see later. The end result looks like this:
 
-WWB:/doc/wiki/images/ActionBeanScreenshot.png
+https://wicket-web-beans.googlecode.com/svn/wiki/images/ActionBeanScreenshot.png
 
 =WWB Annotations=
 
