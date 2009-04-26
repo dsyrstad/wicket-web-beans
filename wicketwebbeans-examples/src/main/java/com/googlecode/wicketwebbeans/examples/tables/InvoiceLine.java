@@ -6,18 +6,22 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class InvoiceLine implements Serializable 
+public class InvoiceLine implements Serializable
 {
     private static final long serialVersionUID = -6032061214458712439L;
-    
-    public enum ItemCode { Gears, Sprockets, Chains, Wheels, Gizmos };
+
+
+    public enum ItemCode {
+        Gears, Sprockets, Chains, Wheels, Gizmos
+    };
 
     private Integer quantity;
     private ItemCode itemCode;
     private BigDecimal cost;
+    private int projectCode;
 
     private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
-    
+
     public InvoiceLine()
     {
     }
@@ -27,7 +31,7 @@ public class InvoiceLine implements Serializable
     {
         listeners.addPropertyChangeListener(listener);
     }
-    
+
     // JavaBeans compliant method to remove a PropertyChangeListener. 
     public void removePropertyChangeListener(PropertyChangeListener listener)
     {
@@ -66,14 +70,24 @@ public class InvoiceLine implements Serializable
         this.cost = (cost == null ? null : cost.setScale(2, RoundingMode.HALF_UP));
         fireTotalChange();
     }
-    
+
     private void fireTotalChange()
     {
         listeners.firePropertyChange("total", null, getTotal());
     }
-    
+
     public BigDecimal getTotal()
     {
-        return cost == null ? null : cost.multiply( BigDecimal.valueOf((long)quantity) );
+        return cost == null ? null : cost.multiply(BigDecimal.valueOf((long)quantity));
+    }
+
+    public int getProjectCode()
+    {
+        return projectCode;
+    }
+
+    public void setProjectCode(int value)
+    {
+        this.projectCode = value;
     }
 }
