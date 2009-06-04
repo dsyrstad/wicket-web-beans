@@ -8,6 +8,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class SimpleBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 2282855853289144370L;
+
     public SimpleBeanPage()
     {
         TestBean bean = new TestBean();

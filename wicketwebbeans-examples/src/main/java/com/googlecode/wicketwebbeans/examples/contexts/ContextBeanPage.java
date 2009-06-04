@@ -11,6 +11,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class ContextBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 1182855853289191460L;
+
     public ContextBeanPage()
     {
         TestBean bean = new TestBean();

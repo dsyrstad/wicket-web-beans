@@ -9,6 +9,8 @@ import com.googlecode.wicketwebbeans.model.ComponentRegistry;
 
 public class CustomFieldPage extends WebPage
 {
+    private static final long serialVersionUID = 1092855853289323120L;
+
     public CustomFieldPage()
     {
         Address bean = new Address();

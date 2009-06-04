@@ -15,6 +15,8 @@ import com.googlecode.wicketwebbeans.model.api.JProperty;
 
 public class CssPage extends WebPage
 {
+    private static final long serialVersionUID = 2152855853285341120L;
+
     public CssPage()
     {
         TestBean bean = new TestBean();

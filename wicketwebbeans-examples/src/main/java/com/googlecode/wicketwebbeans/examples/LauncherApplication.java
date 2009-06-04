@@ -2,9 +2,9 @@ package com.googlecode.wicketwebbeans.examples;
 
 
 
+import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 
-import com.googlecode.wicketwebbeans.examples.complex.ExpPage2;
 
 public class LauncherApplication extends WebApplication {
 
@@ -12,7 +12,7 @@ public class LauncherApplication extends WebApplication {
 	}
 
 	@Override
-	public Class getHomePage() {
+	public Class<? extends Page> getHomePage() {
 		return LauncherPage.class;
 	}
 }

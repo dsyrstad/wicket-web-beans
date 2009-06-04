@@ -17,6 +17,8 @@ import com.googlecode.wicketwebbeans.model.api.JTab;
 
 public class ApiPage extends WebPage
 {
+    private static final long serialVersionUID = 1042855853289916520L;
+
     public ApiPage()
     {
         TestBean bean = new TestBean();

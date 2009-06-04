@@ -11,6 +11,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class FileUploaderPage extends WebPage
 {
+    private static final long serialVersionUID = 1022855853289192520L;
+
     public FileUploaderPage()
     {
         TestBean bean = new TestBean();

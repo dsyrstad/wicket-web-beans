@@ -2,7 +2,6 @@ package com.googlecode.wicketwebbeans.examples.models;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
 
 
 import org.apache.wicket.markup.html.WebPage;
@@ -15,6 +14,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class ListModelBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 2292855853289141029L;
+
     public ListModelBeanPage()
     {
         SerializableBean[] beans = new SerializableBean[20];
@@ -22,7 +23,7 @@ public class ListModelBeanPage extends WebPage
             beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
         }
         
-        IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
+        IModel beanModel = new Model<Serializable>((Serializable)(Object)Arrays.asList(beans));
         
         BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, this, null, false);
         add( new BeanForm("beanForm", beanModel, meta) );

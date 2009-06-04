@@ -14,7 +14,7 @@ public class TestBean implements Serializable
 {
     private static final long serialVersionUID = -8500883418534059147L;
 
-    private enum ColorEnum { 
+    public enum ColorEnum {
         RedishBlack ("Redish Black"), 
         Green ("Green"), 
         Blue ("Blue"), 

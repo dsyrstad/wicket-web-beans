@@ -22,6 +22,8 @@ import com.googlecode.wicketwebbeans.model.api.JProperty;
  */
 public class DynamicContextBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 1002855853289127918L;
+
     JBeans jbeans;
     BeanMetaData meta;
     BeanForm form;
@@ -109,8 +111,10 @@ public class DynamicContextBeanPage extends WebPage
 
     /**
      * Actions
+     * @param target
+     * @param form
+     * @param bean
      */
-    
     public void goToGlobal(AjaxRequestTarget target, Form form, TestBean bean) {
         global = true;
         meta.setContext(getContext());

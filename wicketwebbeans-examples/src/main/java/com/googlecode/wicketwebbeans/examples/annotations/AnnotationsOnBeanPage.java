@@ -3,21 +3,18 @@ package com.googlecode.wicketwebbeans.examples.annotations;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
-import static com.googlecode.wicketwebbeans.annotations.Property.EMPTY;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 
 import com.googlecode.wicketwebbeans.annotations.Action;
-import com.googlecode.wicketwebbeans.annotations.Bean;
-import com.googlecode.wicketwebbeans.annotations.Beans;
-import com.googlecode.wicketwebbeans.annotations.Property;
-import com.googlecode.wicketwebbeans.annotations.Tab;
 import com.googlecode.wicketwebbeans.containers.BeanForm;
 import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class AnnotationsOnBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 1072855853289135160L;
+
     public AnnotationsOnBeanPage()
     {
         TestBeanWithAnnotations bean = new TestBeanWithAnnotations();

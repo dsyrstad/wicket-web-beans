@@ -11,6 +11,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class TabBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 3147855853289348620L;
+
     public TabBeanPage()
     {
         TestBean bean = new TestBean();

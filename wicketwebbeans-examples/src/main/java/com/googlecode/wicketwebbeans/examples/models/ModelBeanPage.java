@@ -10,6 +10,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class ModelBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 2219855853289144320L;
+
     public ModelBeanPage()
     {
         IModel beanModel = new LoadableDetachableObjectModel();

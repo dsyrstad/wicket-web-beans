@@ -12,7 +12,7 @@ public class TestBean implements Serializable
     private java.sql.Date javaSqlDate;
     private java.sql.Time javaSqlTime;
     private java.sql.Timestamp javaSqlTimestamp;
-    private java.util.GregorianCalendar javaUtilCalendar = new GregorianCalendar();
+//    private java.util.GregorianCalendar javaUtilCalendar = new GregorianCalendar();
     private java.util.Date beanpropsCustomized;
 
     public TestBean()
@@ -59,15 +59,15 @@ public class TestBean implements Serializable
         this.javaSqlTimestamp = javaSqlTimestamp;
     }
 
-    public java.util.GregorianCalendar getJavaUtilCalendar()
-    {
-        return javaUtilCalendar;
-    }
-
-    public void setJavaUtilCalendar(java.util.GregorianCalendar javaUtilCalendar)
-    {
-        this.javaUtilCalendar = javaUtilCalendar;
-    }
+//    public java.util.GregorianCalendar getJavaUtilCalendar()
+//    {
+//        return javaUtilCalendar;
+//    }
+//
+//    public void setJavaUtilCalendar(java.util.GregorianCalendar javaUtilCalendar)
+//    {
+//        this.javaUtilCalendar = javaUtilCalendar;
+//    }
 
     public java.util.Date getBeanpropsCustomized()
     {

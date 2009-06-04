@@ -6,6 +6,8 @@ import java.io.Serializable;
 
 public class Car implements Serializable
 {
+    private static final long serialVersionUID = 1442855853283191120L;
+
     private Make make;
     private Model model;
     

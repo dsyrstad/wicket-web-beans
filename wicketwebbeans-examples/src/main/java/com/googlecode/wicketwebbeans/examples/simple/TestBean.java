@@ -23,6 +23,7 @@ public class TestBean implements Serializable
 
     /**
      * JavaBeans compliant method to add a PropertyChangeListener. 
+     * @param listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener)
     {
@@ -31,6 +32,7 @@ public class TestBean implements Serializable
     
     /**
      * JavaBeans compliant method to remove a PropertyChangeListener. 
+     * @param listener 
      */
     public void removePropertyChangeListener(PropertyChangeListener listener)
     {

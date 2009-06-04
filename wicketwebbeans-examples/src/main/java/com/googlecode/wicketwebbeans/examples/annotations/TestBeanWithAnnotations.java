@@ -26,7 +26,10 @@ import com.googlecode.wicketwebbeans.annotations.Tab;
     // Inherits from default context.
     @Bean(context = "someContext", propertyNames = "-idNumber")
 })
-public class TestBeanWithAnnotations implements Serializable {
+public class TestBeanWithAnnotations implements Serializable
+{
+    private static final long serialVersionUID = 1149855853289142361L;
+
     private String firstName;
     private String lastName;
     private Integer idNumber;

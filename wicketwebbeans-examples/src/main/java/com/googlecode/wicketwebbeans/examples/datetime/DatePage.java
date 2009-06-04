@@ -8,6 +8,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class DatePage extends WebPage
 {
+    private static final long serialVersionUID = 2182855853289141490L;
+
     public DatePage()
     {
         TestBean bean = new TestBean();

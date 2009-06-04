@@ -8,6 +8,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class NestedBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 1842855853289143920L;
+
     public NestedBeanPage()
     {
         Customer bean = new Customer();

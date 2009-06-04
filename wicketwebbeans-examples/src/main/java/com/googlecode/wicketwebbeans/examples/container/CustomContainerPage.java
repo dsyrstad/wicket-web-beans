@@ -12,6 +12,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 @Bean(type = TestBean.class, container = VerticalLayoutBeanPanel.class)
 public class CustomContainerPage extends WebPage
 {
+    private static final long serialVersionUID = 1209855853289131570L;
+
     public CustomContainerPage()
     {
         TestBean bean = new TestBean();
