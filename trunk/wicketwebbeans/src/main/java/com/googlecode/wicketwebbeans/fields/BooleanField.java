@@ -33,6 +33,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BooleanField extends AbstractField
 {
+    private static final long serialVersionUID = 3272855853415381110L;
+
     /**
      * Construct a new BooleanField.
      *
@@ -41,7 +43,7 @@ public class BooleanField extends AbstractField
      * @param metaData the meta data for the property.
      * @param viewOnly true if the component should be view-only.
      */
-    public BooleanField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public BooleanField(String id, IModel<Boolean> model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly);
 

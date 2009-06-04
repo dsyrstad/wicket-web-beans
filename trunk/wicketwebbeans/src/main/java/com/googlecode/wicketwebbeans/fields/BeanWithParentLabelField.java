@@ -37,6 +37,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BeanWithParentLabelField extends AbstractField
 {
+    private static final long serialVersionUID = 4412855853289276110L;
+
     /**
      * Construct a new BeanWithParentLabelField.
      *

@@ -37,10 +37,13 @@ import com.googlecode.wicketwebbeans.containers.BeanForm;
  * set indirectly. Wicket dumps the whole form back every time and we do not want to wipe out those
  * properties that were indirectly set.<p>
  * 
+ * @param <T>
  * @author Dan Syrstad
  */
-public class BeanPropertyModel extends PropertyModel implements IComponentAssignedModel, IWrapModel
+public class BeanPropertyModel<T> extends PropertyModel<T> implements IComponentAssignedModel<T>, IWrapModel<T>
 {
+    private static final long serialVersionUID = 1432855853184541120L;
+
     private ElementMetaData elementMetaData;
     // This value is tracked from onGetObject to see if the value changes. The assumption is that
     // Wicket calls getObject() when populating the HTML form on the way out, so this is the last value
@@ -61,8 +64,7 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
      * Construct a BeanPropertyModel. 
      *
      * @param modelObject
-     * @param expression
-     * @param propertyType
+     * @param elementMetaData
      */
     public BeanPropertyModel(Object modelObject, ElementMetaData elementMetaData)
     {
@@ -70,7 +72,7 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
         this.elementMetaData = elementMetaData;
     }
     
-    public IWrapModel wrapOnAssignment(Component component)
+    public IWrapModel<T> wrapOnAssignment(Component component)
     {
         this.component = component;
         return this;
@@ -98,13 +100,14 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
 
     /** 
      * {@inheritDoc}
+     * @return
      * @see org.apache.wicket.model.AbstractPropertyModel#onGetObject(wicket.Component)
      */
     @Override
-    public Object getObject()
+    public T getObject()
     {
         attach();
-        Object value = super.getObject();
+        T value = super.getObject();
         if (!BeanForm.isInSubmit(component)) {
             // Only set these if we're not in submit processing.
             lastValueGot = value;
@@ -118,10 +121,11 @@ public class BeanPropertyModel extends PropertyModel implements IComponentAssign
      * {@inheritDoc}
      * Only sets the object if it is different from what getObject() returns. 
      * 
+     * @param object 
      * @see org.apache.wicket.model.AbstractPropertyModel#onSetObject(wicket.Component, java.lang.Object)
      */
     @Override
-    public void setObject(Object object)
+    public void setObject(T object)
     {
         attach();
         Object newValue = object;

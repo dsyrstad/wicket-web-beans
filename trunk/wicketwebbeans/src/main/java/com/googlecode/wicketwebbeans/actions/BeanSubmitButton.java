@@ -67,7 +67,9 @@ public class BeanSubmitButton extends Panel
      * </ul>     
      *
      * @param id
-     * @param model
+     * @param element
+     * @param form
+     * @param bean
      */
     public BeanSubmitButton(String id, ElementMetaData element, Form form, final Object bean)
     {
@@ -82,7 +84,9 @@ public class BeanSubmitButton extends Panel
      * Construct a BeanSubmitButton. 
      *
      * @param id
-     * @param model
+     * @param label
+     * @param form
+     * @param bean
      */
     public BeanSubmitButton(String id, String label, Form form, final Object bean)
     {
@@ -117,6 +121,8 @@ public class BeanSubmitButton extends Panel
         WebMarkupContainer button;
         if (Boolean.valueOf(ajaxFlag)) {
             button = new AjaxSubmitLink("button", form) {
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form)
                 {
@@ -149,6 +155,8 @@ public class BeanSubmitButton extends Panel
         }
         else {
             button = new SubmitLink("button", form) {
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public void onSubmit()
                 {
@@ -166,6 +174,8 @@ public class BeanSubmitButton extends Panel
             
         if (confirmMsg != null) {
             button.add( new AttributeModifier("onclick", true, null) {
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 protected String newValue(String currentValue, String replacementValue)
                 {
@@ -191,7 +201,7 @@ public class BeanSubmitButton extends Panel
     protected void onBeforeRender()
     {
         super.onBeforeRender();
-        BeanForm parentBeanForm  = (BeanForm)findParent(BeanForm.class);
+        BeanForm parentBeanForm  = findParent(BeanForm.class);
         if (parentBeanForm != null) {
             // Only set this if we're in a BeanForm.
             decorator = BeanForm.AjaxBusyDecorator.INSTANCE;
@@ -240,13 +250,11 @@ public class BeanSubmitButton extends Panel
      * the comopnent is detached from the page, so getPage() will fail.
      *
      * @param target the Ajax target, which may be null if not in an Ajax context.
-     * @param form the form that was submitted.
-     * @param bean the bean that the button corresponds to.
      */
     protected void updateFeedbackPanels(final AjaxRequestTarget target)
     {
         try {
-            getPage().visitChildren(IFeedback.class, new IVisitor() {
+            getPage().visitChildren(IFeedback.class, new IVisitor<Component>() {
                 public Object component(Component component)
                 {
                     target.addComponent(component);
@@ -265,7 +273,7 @@ public class BeanSubmitButton extends Panel
      * Should not be called if none set. If the same property occurs many times
      * as in a table, this will set the focus on the first occurrence found.
      */
-    private final class AbstractSubmitLinkVisitor implements IVisitor {
+    private final class AbstractSubmitLinkVisitor implements IVisitor<Component> {
 
         public Object component(Component innerComponent) {
             if (innerComponent instanceof AbstractSubmitLink) {

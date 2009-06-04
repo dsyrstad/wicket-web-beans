@@ -108,7 +108,7 @@ abstract public class AbstractField extends Panel implements Field
         }
         
         String defaultValue = getDefaultValue();
-        if (defaultValue != null && Strings.isEmpty(getModelObjectAsString())) {
+        if (defaultValue != null && Strings.isEmpty(getDefaultModelObjectAsString())) {
             field.setModelValue(defaultValue);
         }
     }
@@ -122,10 +122,10 @@ abstract public class AbstractField extends Panel implements Field
     {
         super.onBeforeRender();
         // If we're part of a BeanForm, register ourself with it.
-        BeanForm parentBeanForm  = (BeanForm)findParent(BeanForm.class);
+        BeanForm parentBeanForm  = findParent(BeanForm.class);
         if (parentBeanForm != null) {
             this.beanForm = parentBeanForm;
-            parentBeanForm.registerComponent(this, (BeanPropertyModel)getModel(), elementMetaData);
+            parentBeanForm.registerComponent(this, (BeanPropertyModel)getDefaultModel(), elementMetaData);
 
             if (parentBeanForm.getFocusField() != null
                         && parentBeanForm.getFocusField().equals(
@@ -150,6 +150,7 @@ abstract public class AbstractField extends Panel implements Field
 
     /**
      * For internal BeanForm use only. Returns the BeanForm that this component is contained in, only after onBeforeRender().
+     * @return 
      */
     public BeanForm getBeanForm()
     {
@@ -190,7 +191,7 @@ abstract public class AbstractField extends Panel implements Field
     protected Object getDependentPropertyBean(ElementMetaData property)
     {
         if (property != null) {
-            BeanPropertyModel model = (BeanPropertyModel)getModel();
+            BeanPropertyModel model = (BeanPropertyModel)getDefaultModel();
             return property.getPropertyValue( model.getBean() );
         }
 
@@ -202,7 +203,7 @@ abstract public class AbstractField extends Panel implements Field
      * Should not be called if none set. If the same property occurs many times
      * as in a table, this will set the focus on the first occurrence found.
      */
-    private final class FormComponentVisitor implements IVisitor {
+    private final class FormComponentVisitor implements IVisitor<Component> {
 
         public Object component(Component innerComponent) {
             if (innerComponent instanceof FormComponent) {

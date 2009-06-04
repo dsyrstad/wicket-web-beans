@@ -1151,6 +1151,7 @@ public class BeanMetaData extends MetaData implements Serializable
     }
 
     /**
+     * @param tab
      * @return a list of all displayed elements for a tab.
      */
     public List<ElementMetaData> getTabElements(TabMetaData tab)
@@ -1255,7 +1256,7 @@ public class BeanMetaData extends MetaData implements Serializable
      * Sets a new context and rebuilds all metadata so that
      * it is consistent with the new context.
      *
-     * @param the context.
+     * @param context
      */
     public void setContext(String context)
     {
@@ -1333,13 +1334,16 @@ public class BeanMetaData extends MetaData implements Serializable
 
     /**
      * Applies any metadata-based CSS classes for the given bean or property to the component.
+     * @param bean
+     * @param metaData
+     * @param applyToComponent
      */
     public void applyCss(Object bean, MetaData metaData, Component applyToComponent)
     {
         String css = metaData.getParameter(PARAM_CSS);
 
         if (!Strings.isEmpty(css)) {
-            applyToComponent.add(new AttributeAppender("class", new Model(css), " "));
+            applyToComponent.add(new AttributeAppender("class", new Model<String>(css), " "));
         }
 
         String dynamicCssMethod = metaData.getParameter(PARAM_DYNAMIC_CSS);
@@ -1381,7 +1385,7 @@ public class BeanMetaData extends MetaData implements Serializable
                                 + component.getClass() + " has thrown an exception", ex);
             }
             if (!Strings.isEmpty(cssReturn)) {
-                applyToComponent.add(new AttributeAppender("class", new Model(cssReturn), " "));
+                applyToComponent.add(new AttributeAppender("class", new Model<String>(cssReturn), " "));
             }
         }
     }

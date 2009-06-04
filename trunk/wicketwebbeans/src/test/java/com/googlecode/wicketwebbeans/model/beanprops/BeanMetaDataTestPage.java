@@ -19,11 +19,12 @@ package com.googlecode.wicketwebbeans.model.beanprops;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 
 public class BeanMetaDataTestPage extends WebPage
 {
+    private static final long serialVersionUID = 1188462014965917173L;
+
     public BeanMetaDataTestPage()
     {
     }

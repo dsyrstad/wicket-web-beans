@@ -24,6 +24,7 @@ import com.googlecode.wicketwebbeans.containers.BeanTablePanel;
 import com.googlecode.wicketwebbeans.model.BeanMetaData;
 import com.googlecode.wicketwebbeans.model.ElementMetaData;
 
+
 /**
  * Displays a property's list as a list of beans in a table. This Field accepts a single 
  * parameter "rows" which defines the number of rows to be displayed.<p>
@@ -32,6 +33,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BeanTableField extends AbstractField
 {
+    private static final long serialVersionUID = 3212855853286481110L;
+
     /**
      * Construct a new BeanTableField.
      *

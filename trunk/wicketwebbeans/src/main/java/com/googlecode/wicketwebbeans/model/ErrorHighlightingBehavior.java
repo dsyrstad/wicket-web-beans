@@ -17,13 +17,12 @@
 
 package com.googlecode.wicketwebbeans.model;
 
+import java.io.Serializable;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.feedback.FeedbackMessages;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.IComponentAssignedModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
 /**
@@ -34,13 +33,13 @@ import org.apache.wicket.util.string.Strings;
  */
 public class ErrorHighlightingBehavior extends AttributeModifier
 {
+    private static final long serialVersionUID = 3152855853289137820L;
+    
     public static final String BEAN_FORM_ERROR_CLASS = "beanFormError";
+
     /**
      * Construct a ErrorHighlightingBehavior. 
      *
-     * @param attribute
-     * @param addAttributeIfNotPresent
-     * @param replaceModel
      */
     public ErrorHighlightingBehavior()
     {
@@ -72,6 +71,8 @@ public class ErrorHighlightingBehavior extends AttributeModifier
 
     private static final class ErrorSwitchModel extends Model implements IComponentAssignedModel, IWrapModel
     {
+        private static final long serialVersionUID = 1L;
+
         private Component component;
         
         public IWrapModel wrapOnAssignment(Component component)
@@ -85,12 +86,13 @@ public class ErrorHighlightingBehavior extends AttributeModifier
             return this;
         }
         
-        public Object getObject()
+        public Serializable getObject()
         {
-            if( component != null &&  component.hasErrorMessage() )
+            if( component != null &&  component.hasErrorMessage() ) {
                 return BEAN_FORM_ERROR_CLASS;
-            else
+            } else {
                 return "";
+            }
         }
 
         public void setObject(Object object)

@@ -19,7 +19,6 @@ package com.googlecode.wicketwebbeans.containers;
 
 import java.io.Serializable;
 
-
 /**
  * A test bean that is Serializable. <p>
  * 
@@ -27,6 +26,8 @@ import java.io.Serializable;
  */
 public class SerializableBean extends NonSerializableBean implements Serializable
 {
+    private static final long serialVersionUID = 1128469813614931174L;
+
     /**
      * Construct a SerializableBean. 
      *
@@ -37,4 +38,5 @@ public class SerializableBean extends NonSerializableBean implements Serializabl
     {
         super(name, serialNumber);
     }
+
 }

@@ -58,6 +58,7 @@ public class FileUploaderField extends AbstractField
      * Called when the upload load is uploaded and ready to be used
      * Return the url of the new uploaded resource
      * @param upload {@link FileUpload}
+     * @return
      */
     public String onFileUploaded(FileUpload upload)
     {
@@ -86,12 +87,12 @@ public class FileUploaderField extends AbstractField
      * {@link FileUpload} has been done in {@link #onFileUploaded}.
      * 
      * @param target an {@link AjaxRequestTarget}
-     * @param fileName name of the file on the client side
-     * @param newFileUrl Url of the uploaded file 
+     * @param filename
+     * @param newFileUrl Url of the uploaded file
      */
     public void onUploadFinished(AjaxRequestTarget target, String filename, String newFileUrl)
     {
-        setModelObject(newFileUrl);
+        setDefaultModelObject(newFileUrl);
     }
 
     protected void onBeforeRender()
@@ -116,6 +117,7 @@ public class FileUploaderField extends AbstractField
             public Page getPage()
             {
                 return new FileUploaderIFrame() {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     protected String getOnUploadedCallback()
                     {
@@ -130,7 +132,7 @@ public class FileUploaderField extends AbstractField
                 };
             }
 
-            public Class<?> getPageIdentity()
+            public Class<? extends Page> getPageIdentity()
             {
                 return FileUploaderIFrame.class;
             }

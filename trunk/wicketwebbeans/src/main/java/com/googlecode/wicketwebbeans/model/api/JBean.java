@@ -40,6 +40,8 @@ import com.googlecode.wicketwebbeans.annotations.Tab;
  */
 public class JBean implements Bean, Serializable
 {
+    private static final long serialVersionUID = 2092855853289294120L;
+
     private Class<?> type = Object.class;
     private String context =  "";
     private String extendsContext =  "";

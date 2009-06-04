@@ -28,7 +28,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.time.Duration;
 
@@ -43,7 +42,7 @@ public abstract class FileUploaderIFrame extends WebPage
     private boolean uploaded = false;
     private FileUploadField uploadField;
     private String newFileUrl;
-    private Model clientFileName = new Model("");
+    private Model<String> clientFileName = new Model<String>("");
 
     public FileUploaderIFrame()
     {
@@ -63,17 +62,21 @@ public abstract class FileUploaderIFrame extends WebPage
      * on server side
      * return the url of the uploaded file
      * @param upload fileUpload
+     * @return
      */
     protected abstract String manageInputSream(FileUpload upload);
 
 
     private final class UploadForm extends Form
     {
+        private static final long serialVersionUID = 1L;
+
         public UploadForm(String id)
         {
             super(id);
             uploadField = new FileUploadField("file", new Model("/etc/termcap"));
             AjaxEventBehavior onChangeEventHandler = new AjaxEventBehavior("onchange") {
+                private static final long serialVersionUID = 1L;
                 @Override
                 public void onEvent(AjaxRequestTarget target)
                 {
@@ -111,6 +114,7 @@ public abstract class FileUploaderIFrame extends WebPage
     {
         // Run the callback on the parent
         add(new WebComponent("onUploaded") {
+            private static final long serialVersionUID = 1L;
             protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)
             {
                 if (uploaded) {

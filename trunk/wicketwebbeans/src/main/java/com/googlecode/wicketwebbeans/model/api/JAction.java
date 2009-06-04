@@ -35,6 +35,8 @@ import com.googlecode.wicketwebbeans.annotations.Parameter;
  */
 public class JAction implements Action, Serializable
 {
+    private static final long serialVersionUID = 1052855853289149120L;
+
     private String name = "";
     private boolean isDefault = false;
     private String confirm = "";

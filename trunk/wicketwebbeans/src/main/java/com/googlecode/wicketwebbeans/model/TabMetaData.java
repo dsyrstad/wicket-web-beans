@@ -17,13 +17,14 @@
 package com.googlecode.wicketwebbeans.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Meta data for a tab.
  */
 public final class TabMetaData extends MetaData implements Serializable
 {
+    private static final long serialVersionUID = 2432855853289141431L;
+
     public static final String PARAM_LABEL = "label";
     
     private BeanMetaData beanMetaData;

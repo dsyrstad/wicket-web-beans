@@ -77,6 +77,7 @@ public class BeanTablePanel extends Panel
      * @param id the Wicket id for the editor.
      * @param model the model, which must return a Collection type for its object.
      * @param metaData the meta data for the bean/row.
+     * @param viewOnly
      * @param numRows the number of rows to be displayed.
      */
     public BeanTablePanel(String id, IModel model, BeanMetaData metaData, boolean viewOnly, int numRows)
@@ -90,6 +91,7 @@ public class BeanTablePanel extends Panel
      * @param id the Wicket id for the editor.
      * @param dataProvider - sortable source of the data
      * @param metaData the meta data for the bean/row.
+     * @param viewOnly
      * @param numRows the number of rows to be displayed.
      */
     public BeanTablePanel(String id, ISortableDataProvider dataProvider, BeanMetaData metaData, boolean viewOnly,
@@ -105,6 +107,7 @@ public class BeanTablePanel extends Panel
      * @param dataProvider - source of the data
      * @param sortStateLocator - the sorter for the dataProvider
      * @param metaData the meta data for the bean/row.
+     * @param viewOnly
      * @param numRows the number of rows to be displayed.
      */
     public BeanTablePanel(String id, IDataProvider dataProvider, ISortStateLocator sortStateLocator,
@@ -130,6 +133,7 @@ public class BeanTablePanel extends Panel
         navigatorLabel.setOutputMarkupId(true);
         add(navigatorLabel);
         add(new AjaxPagingNavigator("np", table) {
+            private static final long serialVersionUID = 1L;
             protected void onAjaxEvent(AjaxRequestTarget target)
             {
                 super.onAjaxEvent(target);
@@ -206,11 +210,13 @@ public class BeanTablePanel extends Panel
         }
 
         /**
+         * @param object
+         * @return
          * @see org.apache.wicket.extensions.markup.html.repeater.data.IDataProvider#model(java.lang.Object)
          */
         public IModel model(Object object)
         {
-            return new Model((Serializable)object);
+            return new Model<Serializable>((Serializable) object);
         }
 
         @Override
@@ -262,7 +268,7 @@ public class BeanTablePanel extends Panel
             Component component;
             BeanMetaData beanMetaData = element.getBeanMetaData();
             if (element.isAction()) {
-                Form form = (Form)parentComponent.findParent(Form.class);
+                Form form = parentComponent.findParent(Form.class);
                 component = new BeanActionButton(componentId, element, form, bean);
             }
             else {
@@ -311,7 +317,7 @@ public class BeanTablePanel extends Panel
                 rc = 1;
             }
             else {
-                rc = ((Comparable)v1).compareTo(v2);
+                rc = ((Comparable) v1).compareTo(v2);
             }
 
             if (!isAscending) {
@@ -325,6 +331,7 @@ public class BeanTablePanel extends Panel
 
     private static final class EmptyColumn implements IColumn
     {
+        private static final long serialVersionUID = 1L;
         public Component getHeader(String id)
         {
             return new Label(id, "");
@@ -349,4 +356,5 @@ public class BeanTablePanel extends Panel
         {
         }
     }
+
 }

@@ -17,6 +17,7 @@
 
 package com.googlecode.wicketwebbeans.fields;
 
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -27,7 +28,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
-
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
@@ -44,9 +44,10 @@ import org.apache.wicket.util.string.Strings;
 
 import com.googlecode.wicketwebbeans.model.ElementMetaData;
 
-import wicket.extensions.markup.html.datepicker.DatePicker;
-import wicket.extensions.markup.html.datepicker.DatePickerSettings;
-import wicket.extensions.markup.html.datepicker.PopupDatePicker;
+import com.googlecode.wicketwebbeans.datepicker.DatePicker;
+import com.googlecode.wicketwebbeans.datepicker.DatePickerSettings;
+import com.googlecode.wicketwebbeans.datepicker.PopupDatePicker;
+
 
 /**
  * Date/Time Field component. Implemented as a text field combined with a DatePicker.
@@ -65,6 +66,8 @@ import wicket.extensions.markup.html.datepicker.PopupDatePicker;
  */
 public class DateTimeField extends AbstractField
 {
+    private static final long serialVersionUID = 3342855853289141120L;
+
     public static final String DATE_FMT_STR = "yyyy-MM-dd";
     public static final String TIME_FMT_STR = "HH:mm";
     public static final String DATE_TIME_FMT_STR = DATE_FMT_STR + ' ' + TIME_FMT_STR;
@@ -84,7 +87,7 @@ public class DateTimeField extends AbstractField
      * @param metaData the meta data for the property.
      * @param viewOnly true if the component should be view-only.
      */
-    public DateTimeField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public DateTimeField(String id, IModel<Date> model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly);
         
@@ -117,6 +120,7 @@ public class DateTimeField extends AbstractField
         if (viewOnly) {
             fragment = new Fragment("frag", "viewer");
             Label label = new LabelWithMinSize("date", model) {
+                private static final long serialVersionUID = 1L;
                 @Override
                 public IConverter getConverter(Class type)
                 {
@@ -129,7 +133,8 @@ public class DateTimeField extends AbstractField
         else {
             fragment = new Fragment("frag", "editor");
 
-            FormComponent dateField = new DateTextField("dateTextField", model) {
+            final FormComponent dateField = new DateTextField("dateTextField", model) {
+                private static final long serialVersionUID = 1L;
                 @Override
                 public IConverter getConverter(Class type)
                 {
@@ -147,6 +152,7 @@ public class DateTimeField extends AbstractField
             DatePicker picker = new PopupDatePicker("datePicker", dateField, settings);
             // This sucks! It expects a DateConverter. I've got my own.
             DateConverter dateConverter = new DateConverter() {
+                private static final long serialVersionUID = 1L;
                 @Override
                 public DateFormat getDateFormat(Locale locale)
                 {
@@ -168,6 +174,7 @@ public class DateTimeField extends AbstractField
 
             if (displayTz) {
                 Label label = new Label("timezone", model) {
+                    private static final long serialVersionUID = 1L;
                     @Override
                     public IConverter getConverter(Class type)
                     {
@@ -187,6 +194,8 @@ public class DateTimeField extends AbstractField
 
     private final class InternalDateConverter implements IConverter 
     {
+        private static final long serialVersionUID = 1L;
+
         public String convertToString(Object value, Locale locale)
         {
             SimpleDateFormat dateFmt = new SimpleDateFormat(fmt);
@@ -214,7 +223,7 @@ public class DateTimeField extends AbstractField
             SimpleDateFormat dateFmt = new SimpleDateFormat(fmt);
             dateFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
             try {
-                date = dateFmt.parse((String)value);
+                date = dateFmt.parse(value);
             }
             catch (ParseException e) {
                 throw new ConversionException("Cannot convert '" + value + "' to a Date.").setSourceValue(value)
@@ -249,7 +258,8 @@ public class DateTimeField extends AbstractField
 
     private final class TimeZoneConverter implements IConverter 
     {
-        
+        private static final long serialVersionUID = 1L;
+
         public String convertToString(Object value, Locale locale)
         {
             if (value instanceof Calendar) {

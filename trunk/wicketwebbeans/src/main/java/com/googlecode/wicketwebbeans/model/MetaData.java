@@ -36,6 +36,8 @@ import com.googlecode.wicketwebbeans.util.WicketUtil;
  */
 public class MetaData implements Serializable
 {
+    private static final long serialVersionUID = 2472855853289142315L;
+
     private Map<String, String[]> parameters = new HashMap<String, String[]>();
     private Set<String> consumedParameters = new HashSet<String>();
     private Component component;
@@ -152,7 +154,7 @@ public class MetaData implements Serializable
      * Gets an int parameter.
      *
      * @param key the parameter key.
-     * 
+     * @param defaultValue
      * @return the value, or defaultValue if not set.
      */
     public int getIntParameter(String key, int defaultValue)

@@ -31,6 +31,8 @@ import com.googlecode.wicketwebbeans.annotations.Parameter;
  */
 public class JParameter implements Parameter, Serializable
 {
+    private static final long serialVersionUID = 2212855853289415120L;
+
     private String name = "";
     private String[] value = {};
     

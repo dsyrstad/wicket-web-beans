@@ -36,6 +36,8 @@ import com.googlecode.wicketwebbeans.annotations.Tab;
  */
 public class JTab implements Tab, Serializable
 {
+    private static final long serialVersionUID = 2102855853289191520L;
+
     private String name = "";
     private String label = "";
     private List<Property> properties = new ArrayList<Property>();

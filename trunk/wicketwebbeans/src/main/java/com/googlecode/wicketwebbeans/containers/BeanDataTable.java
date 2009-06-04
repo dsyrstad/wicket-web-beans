@@ -65,6 +65,7 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
  * toolbar, while the {@link NoRecordsToolbar} toolbar is added as a bottom
  * toolbar.
  * 
+ * @param <T>
  * @see DataTable
  * @see HeadersToolbar
  * @see NavigationToolbar
@@ -74,7 +75,7 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
  * @author Dan Syrstad (From AjaxFallbackDefaultDataTable).
  * @author Mark Southern (mrsouthern)
  */
-public class BeanDataTable extends DataTable
+public class BeanDataTable<T> extends DataTable<T>
 {
     private static final long serialVersionUID = 1L;
 
@@ -91,10 +92,11 @@ public class BeanDataTable extends DataTable
      *            data provider
      * @param rowsPerPage
      *            number of rows per page
+     * @param metaData
      */
     public BeanDataTable(String id, final List<IColumn>columns, ISortableDataProvider dataProvider, int rowsPerPage, BeanMetaData metaData)
     {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage, metaData);
+        this(id, (IColumn[]) columns.toArray(new IColumn[columns.size()]), dataProvider, dataProvider, rowsPerPage, metaData);
     }
     
     /**
@@ -110,11 +112,12 @@ public class BeanDataTable extends DataTable
      *            sorter           
      * @param rowsPerPage
      *            number of rows per page
+     * @param metaData
      */
-    public BeanDataTable(String id, final List<IColumn> columns,
-            IDataProvider dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, BeanMetaData metaData)
+    public BeanDataTable(String id, final List<IColumn<T>> columns,
+            IDataProvider<T> dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, BeanMetaData metaData)
     {
-        this(id, (IColumn[])columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage, metaData);
+        this(id, (IColumn[]) columns.toArray(new IColumn[columns.size()]), dataProvider, sortStateLocator, rowsPerPage, metaData);
     }
     
     /**
@@ -127,25 +130,33 @@ public class BeanDataTable extends DataTable
      * @param dataProvider
      *            data provider
      * @param sortStateLocator
-     *            sorter           
      * @param rowsPerPage
      *            number of rows per page
+     * @param metaData
      */
-    public BeanDataTable(String id, final IColumn[] columns,
-            IDataProvider dataProvider, ISortStateLocator sortSateLocator, int rowsPerPage, BeanMetaData metaData)
+    public BeanDataTable(String id, final IColumn<T>[] columns,
+            IDataProvider<T> dataProvider, ISortStateLocator sortStateLocator, int rowsPerPage, BeanMetaData metaData)
     {
         super(id, columns, dataProvider, rowsPerPage);
         this.beanMetaData = metaData;
         setOutputMarkupId(true);
         setVersioned(false);
-        addTopToolbar(new AjaxFallbackHeadersToolbar(this, sortSateLocator));
+        addTopToolbar(new AjaxFallbackHeadersToolbar(this, sortStateLocator));
         addBottomToolbar(new NoRecordsToolbar(this));
     }
     
-    protected Item newRowItem(String id, int index, IModel model)
+    /**
+     *
+     * @param id
+     * @param index
+     * @param model
+     * @return
+     */
+    protected Item<T> newRowItem(String id, int index, IModel<T> model)
     {
-        Item item = new OddEvenItem(id, index, model);
+        Item<T> item = new OddEvenItem<T>(id, index, model);
         beanMetaData.applyCss(model.getObject(), beanMetaData, item);
         return item;
     }
+
 }

@@ -65,9 +65,9 @@ public abstract class BaseNonJavaEnum implements NonJavaEnum, Serializable
      */
     public static BaseNonJavaEnum valueOf(String enumValue, List<? extends BaseNonJavaEnum> enums)
     {
-        if (enumValue == null)
+        if (enumValue == null) {
             return null;
-
+        }
         for (BaseNonJavaEnum nonJavaEnum : enums) {
             if (nonJavaEnum.name().equals(enumValue)) {
                 return nonJavaEnum;
@@ -96,5 +96,13 @@ public abstract class BaseNonJavaEnum implements NonJavaEnum, Serializable
 
         BaseNonJavaEnum other = (BaseNonJavaEnum)obj;
         return name().equals(other.name());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 59 * hash + (this.displayValue != null ? this.displayValue.hashCode() : 0);
+        return hash;
     }
 }

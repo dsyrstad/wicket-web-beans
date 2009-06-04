@@ -241,7 +241,8 @@ public class BeanForm extends Panel
         else {
             List<AbstractTab> tabs = new ArrayList<AbstractTab>();
             for (final TabMetaData tabMetaData : tabMetaDataList) {
-                tabs.add( new AbstractTab( new Model(tabMetaData.getLabel()) ) {
+                tabs.add( new AbstractTab( new Model<String>(tabMetaData.getLabel()) ) {
+                    private static final long serialVersionUID = 1L;
                     public Panel getPanel(String panelId)
                     {
                         return createPanel(panelId, bean, beanMetaData, tabMetaData, container);
@@ -251,6 +252,7 @@ public class BeanForm extends Panel
 
             // This is a tabbed panel that submits the form and doesn't switch if there are errors.
             tabbedPanel = new TabbedPanel("tabs", tabs) {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected WebMarkupContainer newLink(String linkId, final int index)
                 {
@@ -269,6 +271,7 @@ public class BeanForm extends Panel
         // Add bean actions.
         List<ElementMetaData> globalActions = beanMetaData.getGlobalActions();
         form.addOrReplace(new ListView("actions", globalActions) {
+            private static final long serialVersionUID = 1L;
             protected void populateItem(ListItem item)
             {
                 ElementMetaData element = (ElementMetaData)item.getModelObject();
@@ -294,8 +297,7 @@ public class BeanForm extends Panel
      * @param bean may be a bean or an IModel containing a bean.
      * @param beanMetaData the BeanMetaData.
      * @param tabMetaData the TabMetaData.
-     * @param container the container class to use. May be null.
-     * 
+     * @param containerClass
      * @return a Panel.
      */
     protected Panel createPanel(String panelId, Object bean, BeanMetaData beanMetaData, TabMetaData tabMetaData, Class<? extends Panel> containerClass)
@@ -327,7 +329,7 @@ public class BeanForm extends Panel
                 model = (IModel)bean;
             }
             else {
-                model = new Model((Serializable)bean);
+                model = new Model<Serializable>((Serializable) bean);
             }
             
             // Get Number of rows from parameters
@@ -351,7 +353,7 @@ public class BeanForm extends Panel
             return null;
         }
         
-        return (BeanForm)childComponent.findParent(BeanForm.class);
+        return childComponent.findParent(BeanForm.class);
     }
     
     /**
@@ -409,6 +411,8 @@ public class BeanForm extends Panel
      * components.
      * 
      * @param component
+     * @param beanModel
+     * @param element
      */
     public void registerComponent(Component component, BeanPropertyModel beanModel, ElementMetaData element)
     {
@@ -506,10 +510,10 @@ public class BeanForm extends Panel
             // Refresh components fired from our PropertyChangeListener.
             
             // Visit all children and see if they match the fired events. 
-            form.visitChildren( new IVisitor() {
+            form.visitChildren( new IVisitor<Component>() {
                 public Object component(Component component)
                 {
-                    Object model = component.getModel();
+                    Object model = component.getDefaultModel();
                     if (model instanceof BeanPropertyModel) {
                         BeanPropertyModel propModel = (BeanPropertyModel)model;
                         ElementMetaData componentMetaData = propModel.getElementMetaData();
@@ -546,7 +550,7 @@ public class BeanForm extends Panel
             }
             else {
                 // Field is RenderBodyOnly, have to add children individually
-                field.visitChildren( new IVisitor() {
+                field.visitChildren( new IVisitor<Component>() {
                     public Object component(Component component)
                     {
                         if (!component.getRenderBodyOnly()) {
@@ -569,6 +573,8 @@ public class BeanForm extends Panel
      */
     private final class TabbedPanelSubmitLink extends SubmitLink
     {
+        private static final long serialVersionUID = 1L;
+
         private final int index;
 
         private TabbedPanelSubmitLink(String id, int index)
@@ -593,11 +599,12 @@ public class BeanForm extends Panel
 
     private final class FormVisitor implements IVisitor, Serializable
     {
+        private static final long serialVersionUID = 4187721147178283645L;
         public Object component(Component component) 
         {
             if (component instanceof FormComponent) {
                 boolean addBehavior = true;
-                for (IBehavior behavior : (List<IBehavior>)component.getBehaviors()) {
+                for (IBehavior behavior : component.getBehaviors()) {
                     if (behavior instanceof FormSubmitter) {
                         addBehavior = false;
                         break;
@@ -620,6 +627,7 @@ public class BeanForm extends Panel
 
     private final class FormSubmitter extends AjaxFormValidatingBehavior implements Serializable
     {
+        private static final long serialVersionUID = 1787721147132483245L;
         private FormSubmitter(String event)
         {
             super(form, event);
@@ -657,6 +665,7 @@ public class BeanForm extends Panel
     
     public static final class AjaxBusyDecorator implements IAjaxCallDecorator
     {
+        private static final long serialVersionUID = 1287721257178963345L;
         public static final AjaxBusyDecorator INSTANCE = new AjaxBusyDecorator();
 
         public CharSequence decorateOnFailureScript(CharSequence script)
@@ -680,6 +689,7 @@ public class BeanForm extends Panel
      */
     private static final class ComponentPropertyMapping implements Serializable
     {
+        private static final long serialVersionUID = 2987721358178283623L;
         /** IModel holding the bean. */
         private BeanPropertyModel beanModel;
         private ElementMetaData elementMetaData;
@@ -731,6 +741,7 @@ public class BeanForm extends Panel
      */
     public final class BeanPropertyChangeListener implements PropertyChangeListener, Serializable
     {
+        private static final long serialVersionUID = 3387721147224283645L;
         public void propertyChange(PropertyChangeEvent evt)
         {
             // Find matching component
@@ -747,9 +758,11 @@ public class BeanForm extends Panel
     /**
      * Validates required fields on the form and sets an error message on the component if necessary.
      */
-    private final class RequiredFieldValidator implements IVisitor 
+    private final class RequiredFieldValidator implements IVisitor
     {
-    	private class FieldLabel implements Serializable {
+    	private class FieldLabel implements Serializable
+        {
+            private static final long serialVersionUID = 1L;
     		String fieldLabel;
     		public FieldLabel(String fieldLabel){this.fieldLabel = fieldLabel;}
 			public String getFieldLabel() {return fieldLabel;}
@@ -761,9 +774,9 @@ public class BeanForm extends Panel
         public Object component(Component component)
         {
             AbstractField field = (AbstractField)component;
-            if (field.isRequiredField() && Strings.isEmpty(field.getModelObjectAsString())) {
+            if (field.isRequiredField() && Strings.isEmpty(field.getDefaultModelObjectAsString())) {
             	FieldLabel fieldName = new FieldLabel(field.getElementMetaData().getLabel());
-            	StringResourceModel labelModel = new StringResourceModel("wicketwebbeans.BeanForm.fieldIsRequired", field.getElementMetaData().getBeanMetaData().getComponent(), new Model(fieldName), "${fieldLabel} is required");
+            	StringResourceModel labelModel = new StringResourceModel("wicketwebbeans.BeanForm.fieldIsRequired", field.getElementMetaData().getBeanMetaData().getComponent(), new Model<FieldLabel>(fieldName), "${fieldLabel} is required");
             	BeanForm.this.error(labelModel.getObject().toString());
                 errorsFound = true;
             }

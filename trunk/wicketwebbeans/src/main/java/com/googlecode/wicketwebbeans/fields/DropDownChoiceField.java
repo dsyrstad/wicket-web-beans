@@ -26,6 +26,8 @@ import org.apache.wicket.markup.*;
 import org.apache.wicket.util.string.Strings;
 
 import com.googlecode.wicketwebbeans.model.ElementMetaData;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * A Field that displays a DropDownChoice with a bound list of beans. A ChoiceRenderer is used  
@@ -51,7 +53,7 @@ public abstract class DropDownChoiceField extends AbstractField
      * @param choiceRenderer displays the bean value
      *  produce the value displayed to the user.
      */
-    public DropDownChoiceField(String id, IModel model, ElementMetaData metaData, boolean viewOnly, IModel valueModel, final IChoiceRenderer choiceRenderer)
+    public DropDownChoiceField(String id, IModel<Serializable> model, ElementMetaData metaData, boolean viewOnly, IModel<? extends List<? extends Serializable>> valueModel, final IChoiceRenderer choiceRenderer)
     {
         super(id, model, metaData, viewOnly);
         
@@ -62,7 +64,7 @@ public abstract class DropDownChoiceField extends AbstractField
             {
                 protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)
                 {
-                    String value = choiceRenderer.getDisplayValue(getModelObject()).toString();
+                    String value = choiceRenderer.getDisplayValue(getDefaultModelObject()).toString();
                     if (Strings.isEmpty(value))
                     {
                         value = "&nbsp;";

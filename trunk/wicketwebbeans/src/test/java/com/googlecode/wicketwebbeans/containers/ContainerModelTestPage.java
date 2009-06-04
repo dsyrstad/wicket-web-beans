@@ -14,13 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ---*/
-package com.googlecode.wicketwebbeans.containers;
 
+package com.googlecode.wicketwebbeans.containers;
 
 import org.apache.wicket.markup.html.WebPage;
 
 public class ContainerModelTestPage extends WebPage
 {
+    private static final long serialVersionUID = 1358462084665931174L;
+
     /**
      * Construct a ContainerModelTestPage. 
      *
@@ -28,4 +30,5 @@ public class ContainerModelTestPage extends WebPage
     public ContainerModelTestPage()
     {
     }
+
 }
