@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 public class RowBean implements Serializable
 {
+    private static final long serialVersionUID = 3142855853289142316L;
+
     private String description;
     private int amount;
     

@@ -27,6 +27,8 @@ import java.io.Serializable;
  */
 public class SerializableBean extends NonSerializableBean implements Serializable
 {
+    private static final long serialVersionUID = 1997855853289824120L;
+
     /**
      * Construct a SerializableBean. 
      *

@@ -16,6 +16,8 @@ import com.googlecode.wicketwebbeans.model.ComponentRegistry;
 
 public class DatePage extends WebPage
 {
+    private static final long serialVersionUID = 2572855853286541120L;
+
     public DatePage()
     {
         ComponentRegistry registry = new ComponentRegistry();
@@ -23,7 +25,7 @@ public class DatePage extends WebPage
         registry.register(java.sql.Date.class, YUIDateField.class);
         registry.register(Time.class, YUIDateField.class);
         registry.register(Timestamp.class, YUIDateField.class);
-        registry.register(Calendar.class, YUIDateField.class);
+        //registry.register(Calendar.class, YUIDateField.class);
 
         TestBean bean = new TestBean();
         BeanMetaData meta = new BeanMetaData(bean.getClass(), null, this, registry, false);

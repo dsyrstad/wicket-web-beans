@@ -9,6 +9,8 @@ import com.googlecode.wicketwebbeans.model.BaseNonJavaEnum;
 
 public class Country extends BaseNonJavaEnum
 {
+    private static final long serialVersionUID = 3582855853289134520L;
+
     private volatile static List<Country> cachedEnums;
 
     public Country(String name, String displayValue)

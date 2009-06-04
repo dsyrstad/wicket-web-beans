@@ -29,6 +29,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class AnnotationsOnPage extends WebPage
 {
+    private static final long serialVersionUID = 2192855853289142345L;
+
     public AnnotationsOnPage()
     {
         TestBean bean = new TestBean();

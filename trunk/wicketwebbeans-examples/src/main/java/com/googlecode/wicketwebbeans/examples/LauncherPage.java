@@ -7,6 +7,8 @@ import org.apache.wicket.markup.html.WebPage;
  */
 public class LauncherPage extends WebPage
 {
+    private static final long serialVersionUID = 1482855853289141920L;
+
     public LauncherPage()
     {
     }

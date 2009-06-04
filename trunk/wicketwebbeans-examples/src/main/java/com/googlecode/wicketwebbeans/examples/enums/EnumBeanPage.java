@@ -8,6 +8,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class EnumBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 1642855853289142140L;
+
     public EnumBeanPage()
     {
         Customer bean = new Customer();

@@ -8,7 +8,7 @@ import java.util.Date;
 public class TestBean2 implements Serializable
 {
     private static final long serialVersionUID = -8500883418534059147L;
-    private enum Gender { Male, Female };
+    public enum Gender { Male, Female };
 
     private String firstName;
     private String lastName;

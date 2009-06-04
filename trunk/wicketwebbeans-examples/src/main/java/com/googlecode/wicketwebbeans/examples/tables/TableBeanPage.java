@@ -10,6 +10,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class TableBeanPage extends WebPage
 {
+    private static final long serialVersionUID = 3342855853289141120L;
+    
     private Invoice bean = new Invoice();
     
     public TableBeanPage()

@@ -9,6 +9,8 @@ import com.googlecode.wicketwebbeans.model.ComponentRegistry;
 
 public class DependentFieldPage extends WebPage
 {
+    private static final long serialVersionUID = 102855853289141014L;
+
     public DependentFieldPage()
     {
         // Register the ModelField for the Model enum class.

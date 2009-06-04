@@ -10,9 +10,10 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 import com.googlecode.wicketwebbeans.model.api.JBean;
 
 
-@SuppressWarnings("serial")
 public class LoginPage extends WebPage
 {
+    private static final long serialVersionUID = 1142855853289149320L;
+
     public LoginPage()
     {
         LoginBean bean = new LoginBean();

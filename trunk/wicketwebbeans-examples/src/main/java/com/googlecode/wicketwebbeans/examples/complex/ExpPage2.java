@@ -14,6 +14,8 @@ import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
 public class ExpPage2 extends WebPage
 {
+    private static final long serialVersionUID = 1142855853289141416L;
+
     private TestBean bean = new TestBean();
     private BeanForm beanForm;
     

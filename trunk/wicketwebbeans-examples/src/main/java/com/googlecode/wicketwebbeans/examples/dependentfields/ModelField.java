@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 
-import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
@@ -14,6 +13,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
 
 public class ModelField extends EnumField
 {
+    private static final long serialVersionUID = 1092855853289141207L;
+
     private ElementMetaData makeProp;
     
     public ModelField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
@@ -31,6 +32,8 @@ public class ModelField extends EnumField
     
     private final class ValuesModel extends AbstractReadOnlyModel 
     {
+        private static final long serialVersionUID = 1842855853289103250L;
+
         @Override
         public Object getObject()
         {
