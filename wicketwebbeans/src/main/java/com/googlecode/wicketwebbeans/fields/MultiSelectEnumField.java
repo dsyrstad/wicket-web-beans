@@ -21,7 +21,6 @@ package com.googlecode.wicketwebbeans.fields;
 
 import java.util.Arrays;
 
-
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
@@ -35,6 +34,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class MultiSelectEnumField extends AbstractField
 {
+    private static final long serialVersionUID = 1492855853289132920L;
+
     /**
      * Construct a new MultiSelectEnumField.
      *

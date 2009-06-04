@@ -94,7 +94,7 @@ public class VerticalLayoutBeanPanel extends Panel
             displayedProperties = beanMetaData.getTabElements(tabMetaData);
         }
         
-        Model propModel = new Model((Serializable)displayedProperties);
+        Model propModel = new Model<Serializable>((Serializable) displayedProperties);
         add( new RowListView("r", propModel) );
     }
 
@@ -116,6 +116,7 @@ public class VerticalLayoutBeanPanel extends Panel
     
     private final class RowListView extends ListView
     {
+        private static final long serialVersionUID = 1L;
         RowListView(String id, IModel model)
         {
             super(id, model);
@@ -126,7 +127,7 @@ public class VerticalLayoutBeanPanel extends Panel
             ElementMetaData element = (ElementMetaData)item.getModelObject();
             
             if (element.isAction()) {
-                Form form = (Form)findParent(Form.class);
+                Form form = findParent(Form.class);
                 item.add( new SimpleAttributeModifier("class", "beanActionButtonCell") );
                 item.add( new Label("l", "") );
                 item.add( new BeanActionButton("c", element, form, bean) );

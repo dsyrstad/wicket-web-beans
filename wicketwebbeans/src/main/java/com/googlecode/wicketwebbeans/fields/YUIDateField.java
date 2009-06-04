@@ -64,6 +64,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class YUIDateField extends AbstractField
 {
+    private static final long serialVersionUID = 2432855853285841120L;
+
     public static final String DATE_FMT_STR = "yyyy-MM-dd";
     public static final String DATE_ZONE_FMT_STR = DATE_FMT_STR + " z";
     
@@ -81,7 +83,7 @@ public class YUIDateField extends AbstractField
      * @param metaData the meta data for the property.
      * @param viewOnly true if the component should be view-only.
      */
-    public YUIDateField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public YUIDateField(String id, IModel<Date> model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly);
         
@@ -122,6 +124,7 @@ public class YUIDateField extends AbstractField
             fragment.add(dateField);
             
             dateField.add(new DatePicker() {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected boolean enableMonthYearSelection()
                 {
@@ -149,6 +152,8 @@ public class YUIDateField extends AbstractField
 
     private final class InternalDateConverter extends DateConverter 
     {
+        private static final long serialVersionUID = 1L;
+
         public InternalDateConverter()
         {
             super(false);
@@ -169,7 +174,7 @@ public class YUIDateField extends AbstractField
             return null;
         }
         
-        public Object convertToObject(String value, Locale locale)
+        public Date convertToObject(String value, Locale locale)
         {
             if (Strings.isEmpty(value)) {
                 return null;
@@ -209,7 +214,7 @@ public class YUIDateField extends AbstractField
             if (Calendar.class.isAssignableFrom(type)) {
                 Calendar cal = new GregorianCalendar( TimeZone.getTimeZone("GMT") );
                 cal.setTimeInMillis(date);
-                return cal;
+                return cal.getTime();
             }
 
             throw new RuntimeException("Don't know how to convert a String to " + type);
@@ -228,6 +233,8 @@ public class YUIDateField extends AbstractField
 
     private final class TimeZoneConverter extends DateConverter 
     {
+        private static final long serialVersionUID = 1L;
+
         public TimeZoneConverter()
         {
             super(true);
@@ -244,7 +251,7 @@ public class YUIDateField extends AbstractField
             throw new RuntimeException("Don't know how to convert " + value.getClass() + " to a String");
         }
 
-        public Object convertToObject(String value, Locale locale)
+        public Date convertToObject(String value, Locale locale)
         {
             return null;
         }

@@ -21,7 +21,10 @@ import org.apache.wicket.markup.html.WebPage;
 
 public class BeanMetaDataTestNoPropsPage extends WebPage
 {
+    private static final long serialVersionUID = 1212262079665961174L;
+
     public BeanMetaDataTestNoPropsPage()
     {
     }
+
 }

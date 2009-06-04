@@ -97,6 +97,7 @@ abstract public class EnumField extends AbstractField
         if (viewOnly) {
             fragment = new Fragment("frag", "viewer");
             fragment.add(new LabelWithMinSize("component", model) {
+                private static final long serialVersionUID = 1L;
                 @Override
                 protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)
                 {
@@ -104,7 +105,7 @@ abstract public class EnumField extends AbstractField
                         super.onComponentTagBody(markupStream, openTag);
                     }
                     else {
-                        String value = choiceRenderer.getDisplayValue(getModelObject()).toString();
+                        String value = choiceRenderer.getDisplayValue(getDefaultModelObject()).toString();
                         if (Strings.isEmpty(value)) {
                             value = "&nbsp;";
                             setEscapeModelStrings(false);

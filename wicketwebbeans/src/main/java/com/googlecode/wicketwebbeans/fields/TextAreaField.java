@@ -22,7 +22,6 @@ package com.googlecode.wicketwebbeans.fields;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 import com.googlecode.wicketwebbeans.model.ElementMetaData;
@@ -35,6 +34,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class TextAreaField extends AbstractField
 {
+    private static final long serialVersionUID = 1862855853289214820L;
+
     /**
      * Construct a new TextAreaField.
      *
@@ -50,6 +51,7 @@ public class TextAreaField extends AbstractField
         metaData.consumeParameter(ElementMetaData.PARAM_ROWS);
         metaData.consumeParameter(ElementMetaData.PARAM_COLUMNS);
         TextArea field = new TextArea("component", model) {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onComponentTag(ComponentTag tag)
             {

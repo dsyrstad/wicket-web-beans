@@ -21,10 +21,6 @@ package com.googlecode.wicketwebbeans.fields;
 
 import java.util.Arrays;
 
-
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 
 import com.googlecode.wicketwebbeans.model.ElementMetaData;
@@ -37,6 +33,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class JavaEnumField extends EnumField
 {
+    private static final long serialVersionUID = 2743855853289217120L;
+
     /**
      * Construct a new EnumField.
      *

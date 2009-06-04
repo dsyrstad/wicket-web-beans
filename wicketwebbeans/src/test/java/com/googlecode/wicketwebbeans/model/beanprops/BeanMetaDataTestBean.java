@@ -510,6 +510,8 @@ public class BeanMetaDataTestBean implements Serializable
 
     public static final class SubComponent implements Serializable
     {
+        private static final long serialVersionUID = 1218552013115994174L;
+
         private Date date;
         private String field;
         

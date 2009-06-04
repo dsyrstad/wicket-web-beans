@@ -45,6 +45,7 @@ public class NonSerializableBean
 
     /**
      * JavaBeans compliant method to add a PropertyChangeListener. 
+     * @param listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener)
     {
@@ -53,6 +54,7 @@ public class NonSerializableBean
     
     /**
      * JavaBeans compliant method to remove a PropertyChangeListener. 
+     * @param listener
      */
     public void removePropertyChangeListener(PropertyChangeListener listener)
     {

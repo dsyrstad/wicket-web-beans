@@ -34,6 +34,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BeanGridField extends AbstractField
 {
+    private static final long serialVersionUID = 2843855853271381110L;
+
     /**
      * Construct a new BeanGridField.
      *

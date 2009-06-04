@@ -22,7 +22,6 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.Page;
@@ -73,6 +72,7 @@ public class ContainerModelTest extends TestCase
         page.add(form);
         
         tester.startPage(new ITestPageSource() {
+            private static final long serialVersionUID = 1L;
             public Page getTestPage()
             {
                 return page;
@@ -97,7 +97,7 @@ public class ContainerModelTest extends TestCase
         Component serialNumField = tester.getComponentFromLastRenderedPage(serialNumFieldPath);
         
         // Check attaching/detaching component's model (BeanPropertyModel).
-        BeanPropertyModel nameFieldModel = (BeanPropertyModel)nameField.getModel();
+        BeanPropertyModel nameFieldModel = (BeanPropertyModel) nameField.getDefaultModel();
         
         assertFalse(nestedModel.isAttached());
 
@@ -143,7 +143,7 @@ public class ContainerModelTest extends TestCase
 
     private void detachModels(Page page)
     {
-        page.visitChildren(new IVisitor() {
+        page.visitChildren(new IVisitor<Component>() {
             public Object component(Component component)
             {
                 try {
@@ -174,7 +174,7 @@ public class ContainerModelTest extends TestCase
             beans[i] = new SerializableBean("Name" + i, "XYZ" + i);
         }
         
-        IModel beanModel = new Model((Serializable)(Object)Arrays.asList(beans));
+        IModel<Serializable> beanModel = new Model<Serializable>((Serializable)(Object) Arrays.asList(beans));
         
         BeanMetaData meta = new BeanMetaData(SerializableBean.class, null, page, null, false);
         BeanForm form = new BeanForm("beanForm", beanModel, meta);
@@ -182,6 +182,7 @@ public class ContainerModelTest extends TestCase
         page.add(form);
         
         tester.startPage(new ITestPageSource() {
+            private static final long serialVersionUID = 1L;
             public Page getTestPage()
             {
                 return page;
@@ -214,6 +215,7 @@ public class ContainerModelTest extends TestCase
         page.add(form);
         
         tester.startPage(new ITestPageSource() {
+            private static final long serialVersionUID = 1L;
             public Page getTestPage()
             {
                 return page;
@@ -245,12 +247,13 @@ public class ContainerModelTest extends TestCase
             String firstCellPath = rowPath + ":cells:1:cell";
             tester.assertComponent(firstCellPath, InputField.class);
             Component nameField = tester.getComponentFromLastRenderedPage(firstCellPath);
-            assertEquals(beans[i - 1].getName(), nameField.getModel().getObject());
+            assertEquals(beans[i - 1].getName(), nameField.getDefaultModel().getObject());
 
             String secondCellPath = rowPath + ":cells:2:cell";
             tester.assertComponent(secondCellPath, InputField.class);
             Component serailNumField = tester.getComponentFromLastRenderedPage(secondCellPath);
-            assertEquals(beans[i - 1].getSerialNumber(), serailNumField.getModel().getObject());
+            assertEquals(beans[i - 1].getSerialNumber(), serailNumField.getDefaultModel().getObject());
         }
     }
+
 }

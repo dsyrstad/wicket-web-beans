@@ -149,6 +149,7 @@ public class ComponentRegistry implements Serializable
      * Registers an Field with an element type in a type-safe fashion.
      *
      * @param targetType
+     * @param elementType
      * @param fieldComponent
      */
     public void register(Class<?> targetType, Class<?> elementType, Class<? extends Field> fieldComponent)
@@ -297,7 +298,7 @@ public class ComponentRegistry implements Serializable
     {
         if (component instanceof MarkupContainer) {
             MarkupContainer container = (MarkupContainer)component;
-            container.visitChildren(FormComponent.class, new IVisitor() {
+            container.visitChildren(FormComponent.class, new IVisitor<Component>() {
                 public Object component(Component component) 
                 {
                     FormComponent formComponent = (FormComponent)component;

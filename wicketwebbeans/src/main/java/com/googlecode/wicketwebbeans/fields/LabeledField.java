@@ -30,6 +30,8 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class LabeledField extends Panel
 {
+    private static final long serialVersionUID = 2272855853285741120L;
+
     /**
      * Construct a LabeledField. 
      *

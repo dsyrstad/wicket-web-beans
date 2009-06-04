@@ -33,6 +33,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class EmptyField extends Panel implements Field
 {
+    private static final long serialVersionUID = 3418855853285941120L;
+
     /**
      * Construct a new EmptyField.
      *

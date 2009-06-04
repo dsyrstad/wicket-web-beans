@@ -17,10 +17,8 @@
 package com.googlecode.wicketwebbeans.fields;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -32,6 +30,8 @@ import org.apache.wicket.markup.html.panel.Panel;
  */
 public class ImageLabel extends Panel
 {
+    private static final long serialVersionUID = 2272855853289931120L;
+
     /**
      * Construct a new ImageLabel.
      *
@@ -50,6 +50,7 @@ public class ImageLabel extends Panel
 
     private static final class ImageWithAltText extends Image
     {
+        private static final long serialVersionUID = 1L;
         private String altText;
         
         ImageWithAltText(String id, ResourceReference resourceReference, String altText)

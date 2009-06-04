@@ -44,6 +44,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BeanActionButton extends BeanSubmitButton
 {
+    private static final long serialVersionUID = 1212662032661731174L;
+
     private static final Class[] GENERIC_ACTION_PARAMS = new Class[] { AjaxRequestTarget.class, Form.class, Object.class };
     
     private ElementMetaData element;
@@ -52,7 +54,7 @@ public class BeanActionButton extends BeanSubmitButton
      * Construct a BeanActionButton. 
      *
      * @param id
-     * @param label
+     * @param element 
      * @param form
      * @param bean may be a direct bean or an IModel.
      */

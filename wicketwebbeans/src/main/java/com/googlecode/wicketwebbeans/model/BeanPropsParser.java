@@ -51,9 +51,8 @@ public class BeanPropsParser
     /**
      * Construct a BeanPropsParser. 
      *
+     * @param streamName
      * @param stream
-     * @param beanMetaData
-     * @param context
      */
     public BeanPropsParser(String streamName, InputStream stream)
     {
@@ -168,6 +167,7 @@ public class BeanPropsParser
     /**
      * Parses the stream given on construction.
      *
+     * @param beanMetaData 
      * @return a JBeans object representing the parsed beans.
      * 
      * @throws RuntimeException if a parsing error occurs.

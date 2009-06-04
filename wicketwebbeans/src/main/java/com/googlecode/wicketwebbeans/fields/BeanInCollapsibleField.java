@@ -34,6 +34,8 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  */
 public class BeanInCollapsibleField extends AbstractField
 {
+    private static final long serialVersionUID = 1732855853289151110L;
+
     /**
      * Construct a new BeanInCollapsibleField.
      *

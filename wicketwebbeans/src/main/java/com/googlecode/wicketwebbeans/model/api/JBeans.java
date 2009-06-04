@@ -35,6 +35,8 @@ import com.googlecode.wicketwebbeans.annotations.Beans;
  */
 public class JBeans implements Beans, Serializable
 {
+    private static final long serialVersionUID = 1092855853289149820L;
+
     private List<Bean> value = new ArrayList<Bean>();
 
     /**

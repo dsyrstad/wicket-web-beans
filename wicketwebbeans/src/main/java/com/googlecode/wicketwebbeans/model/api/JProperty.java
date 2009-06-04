@@ -36,6 +36,8 @@ import com.googlecode.wicketwebbeans.fields.Field;
  */
 public class JProperty implements Property, Serializable
 {
+    private static final long serialVersionUID = 2222855853289147190L;
+
     private String name = "";
     private boolean required = false;
     private int maxLength = 0;

@@ -38,6 +38,7 @@ public class TestLoadableDetachableObjectModel extends LoadableDetachableModel
 
     /** 
      * {@inheritDoc}
+     * @return 
      * @see org.apache.wicket.model.LoadableDetachableModel#load()
      */
     @Override

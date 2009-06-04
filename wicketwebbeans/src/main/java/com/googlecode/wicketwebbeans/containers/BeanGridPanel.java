@@ -152,7 +152,7 @@ public class BeanGridPanel extends Panel
             }
         }
         
-        Model propModel = new Model((Serializable)rowsAndCols);
+        Model propModel = new Model<Serializable>((Serializable) rowsAndCols);
         add( new RowListView("r", propModel) );
     }
 
@@ -174,7 +174,8 @@ public class BeanGridPanel extends Panel
     
     private final class RowListView extends ListView
     {
-        
+        private static final long serialVersionUID = 1L;
+
         RowListView(String id, IModel model)
         {
             super(id, model);
@@ -190,6 +191,8 @@ public class BeanGridPanel extends Panel
 
     private final class ColListView extends ListView
     {
+        private static final long serialVersionUID = 1L;
+
         ColListView(String id, IModel model)
         {
             super(id, model);
@@ -197,12 +200,12 @@ public class BeanGridPanel extends Panel
 
         protected void populateItem(ListItem item)
         {
-            ElementMetaData element = (ElementMetaData)item.getModelObject();
+            ElementMetaData element = (ElementMetaData) item.getModelObject();
             int colspan = element.getIntParameter(PARAM_COLSPAN, 1);
             
             Component component;
             if (element.isAction()) {
-                Form form = (Form)findParent(Form.class);
+                Form form = findParent(Form.class);
                 component = new BeanActionButton("c", element, form, bean);
                 item.add( new SimpleAttributeModifier("class", "beanActionButtonCell") );
             }
@@ -215,10 +218,10 @@ public class BeanGridPanel extends Panel
 
             beanMetaData.applyCss(bean, element, component);
 
-            item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model(String.valueOf(colspan))) );
+            item.add( new AttributeModifier(PARAM_COLSPAN, true, new Model<String>(String.valueOf(colspan))) );
             int pct100 = (colspan * 10000) / columns;
             String width = "width: " + (pct100 / 100) + "." + (pct100 % 100) + "%;";
-            item.add( new AttributeModifier("style", true, new Model(width)) );
+            item.add( new AttributeModifier("style", true, new Model<String>(width)) );
             item.add(component);
         }
     }

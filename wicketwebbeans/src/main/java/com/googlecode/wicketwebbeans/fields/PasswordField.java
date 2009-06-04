@@ -32,9 +32,11 @@ import com.googlecode.wicketwebbeans.model.ElementMetaData;
  * 
  * @author Dan Syrstad
  */
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 public class PasswordField extends AbstractField
 {
+    private static final long serialVersionUID = 2382855853289141580L;
+
     /**
      * Construct a new PasswordField.
      *
@@ -43,7 +45,7 @@ public class PasswordField extends AbstractField
      * @param metaData the meta data for the property.
      * @param viewOnly true if the component should be view-only.
      */
-    public PasswordField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
+    public PasswordField(String id, IModel<String> model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly);
 

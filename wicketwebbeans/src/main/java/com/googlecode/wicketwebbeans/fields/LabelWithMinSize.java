@@ -31,6 +31,8 @@ import org.apache.wicket.util.string.Strings;
  */
 public class LabelWithMinSize extends Label
 {
+    private static final long serialVersionUID = 1252855853289141340L;
+
     /**
      * Construct a new LabelWithMinSize.
      *
@@ -65,12 +67,14 @@ public class LabelWithMinSize extends Label
 
     /**
      * {@inheritDoc}
+     * @param markupStream
+     * @param openTag 
      * @see org.apache.wicket.markup.html.basic.Label#onComponentTagBody(wicket.markup.MarkupStream, org.apache.wicket.markup.ComponentTag)
      */
     @Override
     protected void onComponentTagBody(MarkupStream markupStream, ComponentTag openTag)
     {
-        String value = getModelObjectAsString();
+        String value = getDefaultModelObjectAsString();
         if (Strings.isEmpty(value)) {
             value = "&nbsp;";
             setEscapeModelStrings(false);

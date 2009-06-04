@@ -35,6 +35,8 @@ import com.googlecode.wicketwebbeans.fields.ImageLabel;
  */
 public final class ElementMetaData extends MetaData implements Serializable
 {
+    private static final long serialVersionUID = 1842855853283371120L;
+
     public static final String PARAM_ELEMENT_TYPE = "elementType";
     public static final String PARAM_VIEW_ONLY = "viewOnly";
     public static final String PARAM_LABEL_IMAGE = "labelImage";
@@ -169,6 +171,7 @@ public final class ElementMetaData extends MetaData implements Serializable
     }
 
     /**
+     * @param wicketId
      * @return the Component used to render the label. If a label image was specified, this is the
      *  image, otherwise a plain-text label. 
      */
@@ -183,7 +186,7 @@ public final class ElementMetaData extends MetaData implements Serializable
         }
         
         if (isRequired()) {
-            component.add( new AttributeAppender("class", new Model(CSS_REQUIRED_FIELD_CLASS), " ") );
+            component.add( new AttributeAppender("class", new Model<String>(CSS_REQUIRED_FIELD_CLASS), " ") );
         }
         
         return component; 
@@ -307,7 +310,9 @@ public final class ElementMetaData extends MetaData implements Serializable
                 }
                 else {
                     // If empty - just use Object.
-                    elementType = new Serializable() { }.getClass();
+                    elementType = new Serializable() {
+                            private static final long serialVersionUID = 1L;
+                        }.getClass();
                 }
             }
         }
