@@ -184,7 +184,7 @@ public class BeanForm extends Panel
         
         beanMetaData.consumeParameter(PARAM_ROWS);
         
-        final HiddenField hiddenFocusField = new HiddenField("focusField", new PropertyModel(this, "focusField"));
+        final HiddenField hiddenFocusField = new HiddenField<String>("focusField", new PropertyModel<String>(this, "focusField"));
         hiddenFocusField.add( new AbstractBehavior() {
             @Override
             public void onComponentTag(Component component, ComponentTag tag)
@@ -239,7 +239,7 @@ public class BeanForm extends Panel
             form.addOrReplace( createPanel("tabs", bean, beanMetaData, tabMetaDataList.get(0), container) );
         }
         else {
-            List<AbstractTab> tabs = new ArrayList<AbstractTab>();
+            List<ITab> tabs = new ArrayList<ITab>();
             for (final TabMetaData tabMetaData : tabMetaDataList) {
                 tabs.add( new AbstractTab( new Model<String>(tabMetaData.getLabel()) ) {
                     private static final long serialVersionUID = 1L;
@@ -270,7 +270,7 @@ public class BeanForm extends Panel
     protected void createGlobalActions() {
         // Add bean actions.
         List<ElementMetaData> globalActions = beanMetaData.getGlobalActions();
-        form.addOrReplace(new ListView("actions", globalActions) {
+        form.addOrReplace(new ListView<ElementMetaData>("actions", globalActions) {
             private static final long serialVersionUID = 1L;
             protected void populateItem(ListItem item)
             {
@@ -391,7 +391,7 @@ public class BeanForm extends Panel
             visitChildren(AbstractField.class, validator);
         }
         else {
-            for (ITab tab : (List<ITab>)tabbedPanel.getTabs()) {
+            for (ITab tab : tabbedPanel.getTabs()) {
                 Panel panel = tab.getPanel("x");
                 // Needs to be part of the page for errors.
                 getPage().add(panel);
@@ -597,7 +597,7 @@ public class BeanForm extends Panel
         }
     }
 
-    private final class FormVisitor implements IVisitor, Serializable
+    private final class FormVisitor implements IVisitor<Component>, Serializable
     {
         private static final long serialVersionUID = 4187721147178283645L;
         public Object component(Component component) 
@@ -758,7 +758,7 @@ public class BeanForm extends Panel
     /**
      * Validates required fields on the form and sets an error message on the component if necessary.
      */
-    private final class RequiredFieldValidator implements IVisitor
+    private final class RequiredFieldValidator implements IVisitor<Component>
     {
     	private class FieldLabel implements Serializable
         {
