@@ -43,6 +43,8 @@ import org.hibernate.criterion.Restrictions;
  */
 public class DataFilter implements IFilterStateLocator, CriteriaBuilder, Serializable
 {
+    private static final long serialVersionUID = 1412855853286535315L;
+
     private Object beanState;
     private String defaultProperty = null;
     
@@ -59,8 +61,9 @@ public class DataFilter implements IFilterStateLocator, CriteriaBuilder, Seriali
     public void build(Criteria criteria)
     {
         Object name = PropertyResolver.getValue(defaultProperty, beanState);
-        if(name != null && name instanceof String )
+        if (name != null && name instanceof String ) {
             criteria.add(Restrictions.like(defaultProperty, name.toString(), MatchMode.ANYWHERE));
+        }
     }
     
     public Object getFilterState()

@@ -126,8 +126,9 @@ public abstract class DataBeanEditPanel extends Panel {
 			setResponsePage(returnPage);
 		} else {
 			getPage().info("Saved.");
-			if (replacementComponent != null)
+			if (replacementComponent != null) {
 				replaceWith(replacementComponent);
+                        }
 		}
 
 	}
@@ -139,8 +140,9 @@ public abstract class DataBeanEditPanel extends Panel {
 			setResponsePage(returnPage);
 		} else {
 			getPage().info("Canceled edit.");
-			if (replacementComponent != null)
+			if (replacementComponent != null) {
 				replaceWith(replacementComponent);
+                        }
 		}
 	}
 }
