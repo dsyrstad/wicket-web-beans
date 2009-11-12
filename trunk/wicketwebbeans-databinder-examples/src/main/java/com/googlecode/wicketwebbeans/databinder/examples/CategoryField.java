@@ -10,6 +10,8 @@ import org.apache.wicket.markup.html.form.ChoiceRenderer;
 
 public class CategoryField extends DropDownChoiceField
 {
+    private static final long serialVersionUID = 3522855853286535180L;
+
     public CategoryField(String id, IModel model, ElementMetaData metaData, boolean viewOnly)
     {
         super(id, model, metaData, viewOnly, new HibernateListModel("from Category order by name"), new ChoiceRenderer("name"));
