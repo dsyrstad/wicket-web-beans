@@ -25,8 +25,6 @@ import net.databinder.models.hib.CriteriaSorter;
 import com.googlecode.wicketwebbeans.containers.BeanTablePanel;
 import com.googlecode.wicketwebbeans.model.BeanMetaData;
 
-import org.hibernate.Criteria;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -75,7 +73,7 @@ public abstract class DataBeanListPanel extends Panel
 
     /**
      *
-     * @param beanClass the fully qualified class name of the bean to be edited 
+     * @param beanClass the fully qualified class name of the bean to be edited
      */
     public DataBeanListPanel(String id, Class<?> beanClass, CriteriaBuilder criteriaBuilder, BeanMetaData beanMetaData, int numRows)
     {
@@ -86,10 +84,10 @@ public abstract class DataBeanListPanel extends Panel
         Databinder.getHibernateSession().beginTransaction();
         metaData = new BeanMetaData(beanClass, null, this, null, true);
         metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(beanClass, null, this, null, true);
-        Label label = new Label("label", new Model(metaData.getParameter("label")));
+        Label label = new Label("label", new Model<String>(metaData.getParameter("label")));
         add(label);
 
-        SearchPanel search = newSearchPanel("search", new Model(null));
+        SearchPanel search = newSearchPanel("search", new Model<String>(null));
         add(search);
 
         
@@ -128,8 +126,9 @@ public abstract class DataBeanListPanel extends Panel
         session.beginTransaction();
         session.delete(bean);
         session.getTransaction().commit();
-        if (target != null) // ajax request
+        if (target != null) {// ajax request
             target.addComponent(panel);
+        }
     }
     
     /**
@@ -156,7 +155,7 @@ public abstract class DataBeanListPanel extends Panel
                 target.addComponent(getTablePanel());
             }
         };
-		search.setModel(model);
+	search.setDefaultModel(model);
         return search;
     }
 }

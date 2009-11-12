@@ -9,6 +9,8 @@ import org.hibernate.Criteria;
 
 public class CriteriaBuilderDelegate implements ICriteriaBuilderDelegate
 {
+    private static final long serialVersionUID = 1282855853286535520L;
+
 	private Set<CriteriaBuilder> builders = new LinkedHashSet<CriteriaBuilder>();
 	
 	public void addCriteriaBuilder(CriteriaBuilder criteriaBuilder) {
@@ -24,7 +26,8 @@ public class CriteriaBuilderDelegate implements ICriteriaBuilderDelegate
 	}
 
 	public void build(Criteria criteria){
-		for(CriteriaBuilder builder: criteriaBuilders())
+		for(CriteriaBuilder builder: criteriaBuilders()) {
 			builder.build(criteria);
+                }
 	}
 }

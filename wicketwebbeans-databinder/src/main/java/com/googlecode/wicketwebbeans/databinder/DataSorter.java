@@ -45,6 +45,8 @@ import org.hibernate.criterion.Order;
 @Deprecated
 public class DataSorter implements ISortStateLocator, OrderingCriteriaBuilder, Serializable
 {
+    private static final long serialVersionUID = 2222855853286535147L;
+
     private SingleSortState sortState = new SingleSortState();
     private String defaultProperty = null;
     boolean asc = true;
@@ -92,16 +94,17 @@ public class DataSorter implements ISortStateLocator, OrderingCriteriaBuilder, S
             property  = sort.getProperty();
             asc = sort.isAscending();
         }
-        else
+        else {
             property = defaultProperty;
-        
+        }
         if( property != null )
         {
             if( property.contains(".") )
             {
                 String[] path = property.split("\\.");
-                for( int ii = 0; ii < path.length - 1; ii++ )
+                for( int ii = 0; ii < path.length - 1; ii++ ) {
                     criteria.createAlias(path[ii], path[ii]);
+                }
             }
             
             criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));

@@ -52,9 +52,11 @@ import org.hibernate.criterion.Restrictions;
  */
 public class DataSearchFilter extends CriteriaBuilderDelegate implements CriteriaBuilder, Serializable
 {
+    private static final long serialVersionUID = 2453155853286535357L;
+
     private SearchPanel searchPanel;
     private String[] properties = null;
-    private Set<String> aliases = new HashSet();
+    private Set<String> aliases = new HashSet<String>();
 
     /**
      * Construct a new DataSearchFilter.
@@ -77,8 +79,9 @@ public class DataSearchFilter extends CriteriaBuilderDelegate implements Criteri
                 if (property.contains(".")) // i.e. property from another bean
                 {
                     String[] path = property.split("\\.");
-                    for (int ii = 0; ii < path.length - 1; ii++)
+                    for (int ii = 0; ii < path.length - 1; ii++) {
                         aliases.add(path[ii]);
+                    }
                 }
             }
         }
@@ -88,7 +91,7 @@ public class DataSearchFilter extends CriteriaBuilderDelegate implements Criteri
     {
     	super.build(criteria);
     	
-        if( searchPanel.getModelObject() != null && properties != null )
+        if( searchPanel.getDefaultModelObject() != null && properties != null )
         {
             for(String alias: aliases) {
                 criteria.createAlias(alias, alias);
@@ -98,7 +101,7 @@ public class DataSearchFilter extends CriteriaBuilderDelegate implements Criteri
             criteria.add(disjunction);
             for(String property: properties) {
                 disjunction.add(Restrictions.ilike(property, 
-                                                searchPanel.getModelObject().toString(),
+                                                searchPanel.getDefaultModelObject().toString(),
                                                 MatchMode.ANYWHERE));
             }
         }
