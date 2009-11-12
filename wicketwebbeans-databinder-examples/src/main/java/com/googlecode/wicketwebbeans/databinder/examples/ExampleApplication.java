@@ -14,6 +14,7 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import net.databinder.hib.DataApplication;
 import net.databinder.hib.Databinder;
 
+import org.apache.wicket.Page;
 import org.hibernate.Session;
 
 public class ExampleApplication extends DataApplication
@@ -26,7 +27,7 @@ public class ExampleApplication extends DataApplication
 	}
 
 	@Override
-	public Class<?> getHomePage()
+	public Class<? extends Page> getHomePage()
 	{
 		return ListPage.class;
 	}

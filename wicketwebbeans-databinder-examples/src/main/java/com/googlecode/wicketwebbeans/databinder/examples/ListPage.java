@@ -7,9 +7,10 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 
-@SuppressWarnings("serial")
 public class ListPage extends WebPage
 {
+    private static final long serialVersionUID = 1112855853286535564L;
+
     public ListPage()
     {
         Form form = new Form("contactForm");
@@ -24,6 +25,8 @@ public class ListPage extends WebPage
 
     public static class ListPanel extends DataBeanListPanel
     {
+        private static final long serialVersionUID = 3102855853286535541L;
+
         private Page returnPage;
 
         public ListPanel(String id, Class<?> beanClass, Page returnPage)

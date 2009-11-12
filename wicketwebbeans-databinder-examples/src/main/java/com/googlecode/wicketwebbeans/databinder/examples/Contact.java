@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Contact implements Serializable
 {
+    private static final long serialVersionUID = 2042855853286535579L;
+
     private Long id;
     private String firstName;
     private String lastName;
@@ -86,33 +88,52 @@ public class Contact implements Serializable
 
     @Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+                }
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Contact))
+                }
+		if (!(obj instanceof Contact)) {
 			return false;
+                }
 		final Contact other = (Contact) obj;
 		if (firstName == null) {
-			if (other.firstName != null)
+			if (other.firstName != null) {
 				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
+                        }
+		} else {
+                    if (!firstName.equals(other.firstName)) {
+                        return false;
+                    }
+                }
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
-			return false;
+                        }
+		} else {
+                    if (!id.equals(other.id)) {
+                        return false;
+                    }
+                }
 		if (lastName == null) {
-			if (other.lastName != null)
+			if (other.lastName != null) {
 				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
+                        }
+		} else {
+                    if (!lastName.equals(other.lastName)) {
+                        return false;
+                    }
+                }
 		if (phoneNumber == null) {
-			if (other.phoneNumber != null)
+			if (other.phoneNumber != null) {
 				return false;
-		} else if (!phoneNumber.equals(other.phoneNumber))
-			return false;
+                        }
+		} else {
+                    if (!phoneNumber.equals(other.phoneNumber)) {
+                        return false;
+                    }
+                }
 		return true;
 	}
 }
