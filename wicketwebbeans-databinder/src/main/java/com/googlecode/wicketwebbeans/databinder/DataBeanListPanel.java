@@ -149,7 +149,7 @@ public abstract class DataBeanListPanel extends Panel
     @SuppressWarnings("serial")
     protected SearchPanel newSearchPanel(String wicketId, IModel model)
     {
-        SearchPanel search = new SearchPanel(wicketId) {
+        SearchPanel search = new SearchPanel(wicketId, model) {
             public void onUpdate(AjaxRequestTarget target)
             {
                 target.addComponent(getTablePanel());
