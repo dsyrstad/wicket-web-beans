@@ -28,6 +28,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.PropertyResolver;
 
 import com.googlecode.wicketwebbeans.fields.ImageLabel;
+import java.lang.reflect.Type;
 
 
 /**
@@ -309,10 +310,17 @@ public final class ElementMetaData extends MetaData implements Serializable
                     elementType = iter.next().getClass();
                 }
                 else {
-                    // If empty - just use Object.
-                    elementType = new Serializable() {
-                            private static final long serialVersionUID = 1L;
-                        }.getClass();
+                    if (value.getClass().getTypeParameters().length > 0) {
+                        // if it is a generic collection, assume the first type
+                        // parameter if the element type
+                        Type type = value.getClass().getTypeParameters()[0];
+                        elementType = type.getClass();
+                    } else {
+                        // If empty - just use Object.
+                        elementType = new Serializable() {
+                                private static final long serialVersionUID = 1L;
+                            }.getClass();
+                    }
                 }
             }
         }
