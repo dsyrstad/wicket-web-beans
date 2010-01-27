@@ -42,6 +42,7 @@ import com.googlecode.wicketwebbeans.fields.BeanGridField;
 import com.googlecode.wicketwebbeans.fields.BeanInCollapsibleField;
 import com.googlecode.wicketwebbeans.fields.BeanInlineField;
 import com.googlecode.wicketwebbeans.fields.BeanTableField;
+import com.googlecode.wicketwebbeans.fields.BeanTableInCollapsibleField;
 import com.googlecode.wicketwebbeans.fields.BeanWithParentLabelField;
 import com.googlecode.wicketwebbeans.fields.BooleanField;
 import com.googlecode.wicketwebbeans.fields.DateTimeField;
@@ -121,6 +122,7 @@ public class ComponentRegistry implements Serializable
         register(EmptyField.class, EmptyField.class);
         register(TextAreaField.class, TextAreaField.class);
         register(PasswordField.class, PasswordField.class);
+        register(BeanTableInCollapsibleField.class, BeanTableInCollapsibleField.class);
     }
     
     /**
