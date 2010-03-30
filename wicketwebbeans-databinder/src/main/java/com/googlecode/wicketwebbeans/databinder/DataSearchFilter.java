@@ -20,12 +20,9 @@ package com.googlecode.wicketwebbeans.databinder;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;
-
 import net.databinder.components.hib.SearchPanel;
 import net.databinder.models.hib.CriteriaBuilder;
-
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -52,58 +49,67 @@ import org.hibernate.criterion.Restrictions;
  */
 public class DataSearchFilter extends CriteriaBuilderDelegate implements CriteriaBuilder, Serializable
 {
-    private static final long serialVersionUID = 2453155853286535357L;
+	private static final long serialVersionUID = 2453155853286535357L;
 
-    private SearchPanel searchPanel;
-    private String[] properties = null;
-    private Set<String> aliases = new HashSet<String>();
+	private SearchPanel searchPanel;
+	private String[] properties = null;
+	private Set<String> aliases = new HashSet<String>();
 
-    /**
-     * Construct a new DataSearchFilter.
-     *
-     * @param searchPanel the Databinder SearchPanel where the user types the search criteria
-     * @param property the bean field on which to perform the search
-     */
-    public DataSearchFilter(SearchPanel searchPanel, String[] properties)
-    {
-        this.searchPanel = searchPanel;
-        setProperties(properties);
-    }
+	/**
+	* Construct a new DataSearchFilter.
+	*
+	* @param searchPanel the Databinder SearchPanel where the user types the search criteria
+	* @param properties the bean field on which to perform the search
+	*/
+	public DataSearchFilter(SearchPanel searchPanel, String[] properties)
+	{
+		this.searchPanel = searchPanel;
+		setProperties(properties);
+	}
 
-    public void setProperties(String[] properties)
-    {
-        this.properties = properties;
-        aliases = new HashSet<String>();
-        if (properties != null) {
-            for (String property : properties) {
-                if (property.contains(".")) // i.e. property from another bean
-                {
-                    String[] path = property.split("\\.");
-                    for (int ii = 0; ii < path.length - 1; ii++) {
-                        aliases.add(path[ii]);
-                    }
-                }
-            }
-        }
-    }
+	/**
+	 *
+	 * @param properties
+	 */
+	public void setProperties(String[] properties)
+	{
+		this.properties = properties;
+		aliases = new HashSet<String>();
+		if (properties != null)
+		{
+			for (String property : properties)
+			{
+				if (property.contains(".")) // i.e. property from another bean
+				{
+					String[] path = property.split("\\.");
+					for (int ii = 0; ii < path.length - 1; ii++)
+					{
+						aliases.add(path[ii]);
+					}
+				}
+			}
+		}
+	}
 
-    public void build(Criteria criteria)
-    {
-    	super.build(criteria);
-    	
-        if( searchPanel.getDefaultModelObject() != null && properties != null )
-        {
-            for(String alias: aliases) {
-                criteria.createAlias(alias, alias);
-            }
-            
-            Disjunction disjunction = Restrictions.disjunction(); 
-            criteria.add(disjunction);
-            for(String property: properties) {
-                disjunction.add(Restrictions.ilike(property, 
-                                                searchPanel.getDefaultModelObject().toString(),
-                                                MatchMode.ANYWHERE));
-            }
-        }
-    }
+	@Override
+	public void build(Criteria criteria)
+	{
+		super.build(criteria);
+		if( searchPanel.getDefaultModelObject() != null && properties != null )
+		{
+			for(String alias: aliases)
+			{
+				criteria.createAlias(alias, alias);
+			}
+			Disjunction disjunction = Restrictions.disjunction();
+			criteria.add(disjunction);
+			for(String property: properties)
+			{
+				disjunction.add(Restrictions.ilike(property,
+							searchPanel.getDefaultModelObject().toString(),
+							MatchMode.ANYWHERE));
+			}
+		}
+	}
+
 }
