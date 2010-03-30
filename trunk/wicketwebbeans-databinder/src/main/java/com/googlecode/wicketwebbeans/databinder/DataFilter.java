@@ -18,12 +18,9 @@
 package com.googlecode.wicketwebbeans.databinder;
 
 import java.io.Serializable;
-
 import org.apache.wicket.extensions.markup.html.repeater.data.table.filter.IFilterStateLocator;
 import org.apache.wicket.util.lang.PropertyResolver;
-
 import net.databinder.models.hib.CriteriaBuilder;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -43,36 +40,38 @@ import org.hibernate.criterion.Restrictions;
  */
 public class DataFilter implements IFilterStateLocator, CriteriaBuilder, Serializable
 {
-    private static final long serialVersionUID = 1412855853286535315L;
+	private static final long serialVersionUID = 1412855853286535315L;
 
-    private Object beanState;
-    private String defaultProperty = null;
-    
-    /**
-     * Construct a new DataFilter.
-     *
-     * @param defaultProperty the bean field on which to perform the search
-     */
-    public DataFilter(String defaultProperty)
-    {
-        this.defaultProperty = defaultProperty;
-    }
-    
-    public void build(Criteria criteria)
-    {
-        Object name = PropertyResolver.getValue(defaultProperty, beanState);
-        if (name != null && name instanceof String ) {
-            criteria.add(Restrictions.like(defaultProperty, name.toString(), MatchMode.ANYWHERE));
-        }
-    }
-    
-    public Object getFilterState()
-    {
-        return beanState;
-    }
-    
-    public void setFilterState(Object beanState)
-    {
-        this.beanState = beanState;
-    }
+	private Object beanState;
+	private String defaultProperty = null;
+
+	/**
+	* Construct a new DataFilter.
+	*
+	* @param defaultProperty the bean field on which to perform the search
+	*/
+	public DataFilter(String defaultProperty)
+	{
+		this.defaultProperty = defaultProperty;
+	}
+
+	public void build(Criteria criteria)
+	{
+		Object name = PropertyResolver.getValue(defaultProperty, beanState);
+		if (name != null && name instanceof String )
+		{
+			criteria.add(Restrictions.like(defaultProperty, name.toString(), MatchMode.ANYWHERE));
+		}
+	}
+
+	public Object getFilterState()
+	{
+		return beanState;
+	}
+
+	public void setFilterState(Object beanState)
+	{
+		this.beanState = beanState;
+	}
+
 }

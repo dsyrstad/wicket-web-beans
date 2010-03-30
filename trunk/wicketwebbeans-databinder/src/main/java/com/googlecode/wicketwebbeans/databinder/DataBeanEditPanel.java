@@ -22,12 +22,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
-
-
 import net.databinder.hib.Databinder;
 import com.googlecode.wicketwebbeans.containers.BeanForm;
 import com.googlecode.wicketwebbeans.model.BeanMetaData;
-
 import org.hibernate.Session;
 
 /**
@@ -37,11 +34,14 @@ import org.hibernate.Session;
  * @author Mark Southern (mrsouthern)
  * @author Vitek Rozkovec - replacement component
  */
-public abstract class DataBeanEditPanel extends Panel {
+public abstract class DataBeanEditPanel extends Panel
+{
 	private Page returnPage;
 	private Component replacementComponent;
 	private BeanForm beanForm;
 	private BeanMetaData metaData;
+	private Object bean;
+	private BeanMetaData beanMetaData;
 
 	/**
 	 * @param id
@@ -52,7 +52,8 @@ public abstract class DataBeanEditPanel extends Panel {
 	 *            component which will be switched with this panel after save
 	 */
 	public DataBeanEditPanel(String id, Object bean,
-			Component replacementComponent) {
+				Component replacementComponent)
+	{
 		this(id, bean);
 		this.replacementComponent = replacementComponent;
 	}
@@ -65,7 +66,8 @@ public abstract class DataBeanEditPanel extends Panel {
 	 * @param returnPage
 	 *            the page to return to after saving
 	 */
-	public DataBeanEditPanel(String id, Object bean, Page returnPage) {
+	public DataBeanEditPanel(String id, Object bean, Page returnPage)
+	{
 		this(id, bean);
 		this.returnPage = returnPage;
 	}
@@ -81,7 +83,8 @@ public abstract class DataBeanEditPanel extends Panel {
 	 *            the BeanMetaData to use for rendering
 	 */
 	public DataBeanEditPanel(String id, Object bean,
-			Component replacementComponent, BeanMetaData beanMetaData) {
+			Component replacementComponent, BeanMetaData beanMetaData)
+	{
 		this(id, bean, beanMetaData);
 		this.replacementComponent = replacementComponent;
 	}
@@ -97,52 +100,88 @@ public abstract class DataBeanEditPanel extends Panel {
 	 *            the BeanMetaData to use for rendering
 	 */
 	public DataBeanEditPanel(String id, Object bean, 
-			Page returnPage, BeanMetaData beanMetaData) {
+			Page returnPage, BeanMetaData beanMetaData)
+	{
 		this(id, bean, beanMetaData);
 		this.returnPage = returnPage;
 	}
 
-	private DataBeanEditPanel(String id, Object bean) {
+	private DataBeanEditPanel(String id, Object bean)
+	{
 		this(id, bean, (BeanMetaData) null);
 	}
 
-	private DataBeanEditPanel(String id, Object bean, BeanMetaData beanMetaData) {
+	private DataBeanEditPanel(String id, Object bean, BeanMetaData beanMetaData)
+	{
 		super(id);
-		metaData = beanMetaData != null ? beanMetaData : new BeanMetaData(bean.getClass(), null, this, null, false);
-		beanForm = new BeanForm("beanForm", bean, metaData);
-		add(beanForm);
+		this.bean = bean;
+		this.beanMetaData = beanMetaData;
 	}
 
-	public void save(AjaxRequestTarget target, Form form, Object bean) {
-        if (!beanForm.validateRequired()) {
-            return; // Errors
-        }
-        
+	@Override
+	public void onBeforeRender()
+	{
+		if (beanForm == null)
+		{
+			metaData = beanMetaData != null ? beanMetaData :
+					new BeanMetaData(bean.getClass(), null, this, null, false);
+			beanForm = new BeanForm("beanForm", bean, metaData);
+			add(beanForm);
+		}
+		super.onBeforeRender();  // mandatory if overriding
+	}
+
+	/**
+	 * 
+	 * @param target
+	 * @param form
+	 * @param bean
+	 */
+	public void save(AjaxRequestTarget target, Form<?> form, Object bean)
+	{
+		if (!beanForm.validateRequired())
+		{
+		    return; // Errors
+		}
 		Session session = Databinder.getHibernateSession();
 		session.saveOrUpdate(bean);
 		session.getTransaction().commit();
-		if (returnPage != null) {
+		if (returnPage != null)
+		{
 			returnPage.info("Saved.");
 			setResponsePage(returnPage);
-		} else {
+		} else
+		{
 			getPage().info("Saved.");
-			if (replacementComponent != null) {
+			if (replacementComponent != null)
+			{
 				replaceWith(replacementComponent);
                         }
 		}
 
 	}
 
-	public void cancel(AjaxRequestTarget target, Form form, Object bean) {
+	/**
+	 * 
+	 * @param target
+	 * @param form
+	 * @param bean
+	 */
+	public void cancel(AjaxRequestTarget target, Form<?> form, Object bean)
+	{
 		Databinder.getHibernateSession().evict(bean);
-		if (returnPage != null) {
+		if (returnPage != null)
+		{
 			returnPage.info("Canceled edit.");
 			setResponsePage(returnPage);
-		} else {
+		} else
+		{
 			getPage().info("Canceled edit.");
-			if (replacementComponent != null) {
+			if (replacementComponent != null)
+			{
 				replaceWith(replacementComponent);
                         }
 		}
 	}
+
 }
