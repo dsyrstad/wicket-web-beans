@@ -17,13 +17,13 @@
 
 package com.googlecode.wicketwebbeans.databinder;
 
+import com.googlecode.wicketwebbeans.containers.BeanTablePanel;
+import com.googlecode.wicketwebbeans.model.BeanMetaData;
 import net.databinder.hib.Databinder;
 import net.databinder.components.hib.SearchPanel;
 import net.databinder.models.hib.HibernateProvider;
 import net.databinder.models.hib.CriteriaBuilder;
 import net.databinder.models.hib.CriteriaSorter;
-import com.googlecode.wicketwebbeans.containers.BeanTablePanel;
-import com.googlecode.wicketwebbeans.model.BeanMetaData;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -97,7 +97,7 @@ public abstract class DataBeanListPanel extends Panel
 		if (panel == null) {
 			int rows = (numRows < 1) ? 20 : numRows;
 
-			Databinder.getHibernateSession().beginTransaction();
+			getHibernateSession().beginTransaction();
 			//metaData = new BeanMetaData(beanClass, null, this, null, true);
 			metaData = beanMetaData != null ? beanMetaData :
 					new BeanMetaData(beanClass, null, this, null, true);
@@ -152,7 +152,7 @@ public abstract class DataBeanListPanel extends Panel
 	public void delete(AjaxRequestTarget target, Form<?> form, Object bean)
 	{
 		// confirm message shown by wwb. If we get here we do a delete
-		Session session = Databinder.getHibernateSession();
+		Session session = getHibernateSession();
 		session.beginTransaction();
 		session.delete(bean);
 		session.getTransaction().commit();
@@ -163,21 +163,21 @@ public abstract class DataBeanListPanel extends Panel
 	}
     
 	/**
-	* Gets the table panel to be refreshed on a search.
-	* @return
-	*/
+	 * Gets the table panel to be refreshed on a search.
+	 * @return
+	 */
 	protected Component getTablePanel()
 	{
 		return panel;
 	}
 
 	/**
-	* Creates instance of new search panel, override to supply your own search panel
-	*
-	* @param wicketId
-	* @param model
-	* @return the SearchPanel.
-	*/
+	 * Creates instance of new search panel, override to supply your own search panel
+	 *
+	 * @param wicketId
+	 * @param model
+	 * @return the SearchPanel.
+	 */
 	protected SearchPanel newSearchPanel(String wicketId, IModel<?> model)
 	{
 		SearchPanel search = new SearchPanel(wicketId, model) {
@@ -189,6 +189,16 @@ public abstract class DataBeanListPanel extends Panel
 		};
 		search.setDefaultModel(model);
 		return search;
+	}
+
+	/**
+	 * Overridable method to get Hibernate Session, fixes issue 16
+	 *
+	 * @return By default, the Databinder Hibernate session
+	 */
+	protected Session getHibernateSession()
+	{
+		return Databinder.getHibernateSession();
 	}
 
 }

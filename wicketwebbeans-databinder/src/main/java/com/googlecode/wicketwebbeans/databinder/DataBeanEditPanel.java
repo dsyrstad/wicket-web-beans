@@ -17,15 +17,15 @@
 
 package com.googlecode.wicketwebbeans.databinder;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
-import net.databinder.hib.Databinder;
 import com.googlecode.wicketwebbeans.containers.BeanForm;
 import com.googlecode.wicketwebbeans.model.BeanMetaData;
-import org.hibernate.Session;
+import net.databinder.hib.Databinder;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.hibernate.classic.Session;
 
 /**
  * A basic Databinder/Hibernate Bean editing panel. A subclass and matching
@@ -143,7 +143,7 @@ public abstract class DataBeanEditPanel extends Panel
 		{
 		    return; // Errors
 		}
-		Session session = Databinder.getHibernateSession();
+		Session session = getHibernateSession();
 		session.saveOrUpdate(bean);
 		session.getTransaction().commit();
 		if (returnPage != null)
@@ -169,7 +169,7 @@ public abstract class DataBeanEditPanel extends Panel
 	 */
 	public void cancel(AjaxRequestTarget target, Form<?> form, Object bean)
 	{
-		Databinder.getHibernateSession().evict(bean);
+		getHibernateSession().evict(bean);
 		if (returnPage != null)
 		{
 			returnPage.info("Canceled edit.");
@@ -182,6 +182,16 @@ public abstract class DataBeanEditPanel extends Panel
 				replaceWith(replacementComponent);
                         }
 		}
+	}
+
+	/**
+	 * Overridable method to get Hibernate Session, fixes issue 16
+	 *
+	 * @return By default, the Databinder Hibernate session
+	 */
+	protected Session getHibernateSession()
+	{
+		return Databinder.getHibernateSession();
 	}
 
 }
