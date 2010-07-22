@@ -914,6 +914,17 @@ public class BeanMetaData extends MetaData implements Serializable
         if (writeMethod != null) {
             processElementAnnotations(elementMetaData, writeMethod.getAnnotations());
         }
+
+        // Collects annotations on fields
+        // Patch submitted by Richard O'Sullivan, fixes issue 9
+        try {
+            java.lang.reflect.Field beanField =
+                        beanClass.getDeclaredField(descriptor.getName());
+            processElementAnnotations(elementMetaData, beanField.getAnnotations());
+        }
+        catch (Exception e) {
+            // no foul, no harm.
+        }
     }
 
     /**

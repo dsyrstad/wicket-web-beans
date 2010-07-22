@@ -17,6 +17,7 @@
 
 package com.googlecode.wicketwebbeans.annotations;
 
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -38,7 +39,7 @@ import com.googlecode.wicketwebbeans.fields.Field;
  * @author Dan Syrstad
  */
 @Documented
-@Target({TYPE, METHOD}) @Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
 public @interface Property {
     public static final String EMPTY = "EMPTY";
     
