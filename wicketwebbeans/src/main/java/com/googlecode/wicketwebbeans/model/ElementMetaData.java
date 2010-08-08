@@ -377,15 +377,17 @@ public final class ElementMetaData extends MetaData implements Serializable
         this.actionSpecifiedInProps = actionSpecifiedInProps;
     }
     
-    public boolean isSpecifiedInProps() {
-		return specifiedInProps;
-	}
+    public boolean isSpecifiedInProps()
+    {
+	return specifiedInProps;
+    }
 
-	public void setSpecifiedInProps(boolean specifiedInProps) {
-		this.specifiedInProps = specifiedInProps;
-	}
+    public void setSpecifiedInProps(boolean specifiedInProps)
+    {
+        this.specifiedInProps = specifiedInProps;
+    }
 
-	/**
+    /**
      * If this is an action, return the action's method name. 
      *
      * @return the action method name, or null if this is not an action.

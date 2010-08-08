@@ -584,6 +584,10 @@ public class BeanMetaData extends MetaData implements Serializable
             updateElementsViewOnlyState(viewOnly);
         }
 
+        if (bean.explicitOnly()) {
+            setParameter(PARAM_EXPLICIT_ONLY, String.valueOf(bean.explicitOnly()));
+        }
+
         setParameterIfNotEmpty(bean.paramName(), bean.paramValue());
         for (com.googlecode.wicketwebbeans.annotations.Parameter param : bean.params()) {
             setParameterIfNotEmpty(param.name(), param.value());
