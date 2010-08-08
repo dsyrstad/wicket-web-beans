@@ -50,6 +50,7 @@ public class JBean implements Bean, Serializable
     private int rows =  10;
     private boolean displayed =  true;
     private boolean[] viewOnly =  {};
+    private boolean explicitOnly = false;
     private List<Action> actions = new ArrayList<Action>();
     private String[] actionNames =  {};
     private List<Property> properties = new ArrayList<Property>();
@@ -448,6 +449,22 @@ public class JBean implements Bean, Serializable
     public JBean viewOnly(boolean flag)
     {
         this.viewOnly = new boolean[] { flag };
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see com.googlecode.wicketwebbeans.annotations.Bean#explicitOnly()
+     */
+    public boolean explicitOnly()
+    {
+        return explicitOnly;
+    }
+
+    /** @see #displayed() */
+    public JBean explicitOnly(boolean explicitOnly)
+    {
+        this.explicitOnly = explicitOnly;
         return this;
     }
 

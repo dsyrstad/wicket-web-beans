@@ -63,7 +63,11 @@ public @interface Bean {
      * Note that this is defined as an array so WWB can tell if the attribute was explicitly set. However, you should just say viewOnly = true/false 
      * and not use the array syntax. */
     boolean[] viewOnly() default {};
-    
+
+    /** By default, WWB will display all properties except those prefixed with a minus sign '-'.
+     *  If explicitOnly is true, WWB will display only the bean properties explicitly listed. */
+    boolean explicitOnly() default false;
+
     /** Specify detailed parameters for each action. */
     Action[] actions() default {};
     /** A short-cut in place of specifying individual Actions. Simply specify the action method names. This may include "-actionName" to remove an action. */
