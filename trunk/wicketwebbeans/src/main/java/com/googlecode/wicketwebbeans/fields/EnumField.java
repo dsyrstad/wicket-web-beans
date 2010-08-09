@@ -153,9 +153,17 @@ abstract public class EnumField extends AbstractField
     {
         // Handle default selection if no model is provided
         if (choice.getModelObject() == null) {
-            String defaultChoice = getElementMetaData().getParameter("default");
-            if (defaultChoice != null)
-                setupDefault(defaultChoice);
+            String defaultValueChoice = getElementMetaData().getParameter("defaultValue");
+            if (defaultValueChoice != null) {
+                setupDefault(defaultValueChoice);
+            } else {
+                // "default" is deprecated, keep this as a second guess to avoid
+                // breaking compatibility, but should be removed in WWB v. 1.4 or 1.5
+                String defaultChoice = getElementMetaData().getParameter("default");
+                if (defaultChoice != null) {
+                    setupDefault(defaultChoice);
+                }
+            }
         }
     }
     
