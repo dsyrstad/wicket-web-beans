@@ -134,8 +134,9 @@ A Field that presents a property's bean in a panel, but the bean's properties do
 
 ===!EnumField/!JavaEnumField===
 
-    _Deprecated_ - Since revision 414, Please use *defaultValue* instead
+   _Deprecated_
    * *default* - specifies the default value to use from the enumeration. This value must match a value returned from the name() method.
+   * Since revision 414, please use *defaultValue* instead. *default* is still supported for backwards compatibility, but *defaultValue* takes precedence if present.
 
 ===!InputField===
 
