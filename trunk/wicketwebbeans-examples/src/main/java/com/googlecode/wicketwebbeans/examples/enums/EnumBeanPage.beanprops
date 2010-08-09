@@ -2,6 +2,6 @@
 Customer {
 	cols: 1;
 	props: 
-		firstName, lastName, 
-		customerType{default: Government}; 
+		firstName, lastName,
+		customerType{defaultValue: Government};
 }

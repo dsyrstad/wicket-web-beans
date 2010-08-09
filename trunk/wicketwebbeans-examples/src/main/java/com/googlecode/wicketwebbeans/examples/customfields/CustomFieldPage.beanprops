@@ -4,5 +4,5 @@ Address {
 		address1{colspan: 3}, 
 		address2{colspan: 3},
 		city, state, zip,
-		country{default: "USA"}; 
+		country{defaultValue: "USA"};
 }
