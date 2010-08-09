@@ -17,7 +17,7 @@ And here are the beanprops:
 		cols: 1;
 		props: 
 			firstName, lastName, 
-			customerType{default: Government}; 
+			customerType{defaultValue: Government}; 
 	}
 }}}
 
