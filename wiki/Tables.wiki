@@ -1,11 +1,9 @@
 #labels UserGuide
 Back: EnumeratedTypes  Next: CreatingYourOwnFieldTypes
 
-You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: com.googlecode.wicketwebbeans.examples.tables.TableBeanPage:
+You may encounter times when you need to manage Lists of nested beans. By default, WWB displays Lists in an editable table. Let's look at an example: [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/tables/TableBeanPage.java TableBeanPage].
 
-Embed:com.googlecode.wicketwebbeans.examples.tables.TableBeanPage
-
-This page references two beans com.googlecode.wicketwebbeans.examples.tables.Invoice and com.googlecode.wicketwebbeans.examples.tables.InvoiceLine - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
+This page references two beans [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/tables/Invoice.java Invoice] and [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/tables/InvoiceLine.java InvoiceLine] - the typical invoice pattern. If you look at !InvoiceLine, you'll see that it uses a couple of features we talked about previously: enums and !PropertyChangeEvents. The enum is for the itemCode and the !PropertyChangeEvents cause the total to be updated when either the quantity or cost change.  
 
 {{{
 	# Table Bean Example
