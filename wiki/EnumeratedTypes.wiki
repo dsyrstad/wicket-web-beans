@@ -1,13 +1,9 @@
 #labels UserGuide
 Back: NestedBeans  Next: [Tables]
 
-Sometimes a property represents a selection from a set of values. If the property returns a Java enum, WWB makes it really easy to present a drop-down list of choices. Let's look at com.googlecode.wicketwebbeans.examples.enums.EnumBeanPage: 
+Sometimes a property represents a selection from a set of values. If the property returns a Java enum, WWB makes it really easy to present a drop-down list of choices. Let's look at [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/enums/EnumBeanPage.java EnumBeanPage]:
 
-Embed:com.googlecode.wicketwebbeans.examples.enums.EnumBeanPage
-
-The com.googlecode.wicketwebbeans.examples.enums.Customer bean references a Java enum type called com.googlecode.wicketwebbeans.examples.enums.CustomerType:
-
-Embed:com.googlecode.wicketwebbeans.examples.enums.CustomerType
+The [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/enums/Customer.java Customer] bean references a Java enum type called [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/enums/Customer.java CustomerType]:
 
 And here are the beanprops:
 
