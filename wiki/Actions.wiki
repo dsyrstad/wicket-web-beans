@@ -1,9 +1,7 @@
 #labels UserGuide
 Back: [SimpleExample] Next: [Customization]
 
-It's simple to add actions to your form. Here's the code for com.googlecode.wicketwebbeans.examples.actions.ActionBeanPage:
-
-Embed:com.googlecode.wicketwebbeans.examples.actions.ActionBeanPage
+It's simple to add actions to your form. Here's the code for [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/actions/ActionBeanPage.java ActionBeanPage].
 
 Note the methods in !ActionBeanPage.java: save, cancel, and clearLastName. These methods define the actions available from your Page (or whatever component the form is embedded in). By default, the action's label is derived from the method name. Every action method must have the following method signature:
 
