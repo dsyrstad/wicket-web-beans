@@ -1,7 +1,7 @@
 #labels UserGuide
 Back: [Requirements] Next: [Actions]
 
-Let's take a look at a simple bean from the examples: com.googlecode.wicketwebbeans.examples.simple.TestBean
+Let's take a look at a simple bean from the examples: [http://code.google.com/p/wicket-web-beans/source/browse/trunk/wicketwebbeans-examples/src/main/java/com/googlecode/wicketwebbeans/examples/simple/TestBean.java TestBean.java]
 
 This is a Java Bean compliant POJO. As most people know, getters start with "get" or "is" and setters start with "set". Java Beans also require a public no-argument constructor, which we have. All beans must be Serializable by Wicket convention.
 
