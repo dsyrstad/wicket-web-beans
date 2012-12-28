@@ -16,6 +16,6 @@
 
  * Upload bin/src/javadoc to SF.net
  * Change pom version #'s to next version + SNAPSHOT, build and deploy new snapshot as described in [Maven Build & Publising Notes|Maven Build & Publising]
- * Announce to mailing lists, <[mailto:wicketwebbeans-users@lists.sourceforge.net|wicketwebbeans-users@lists.sourceforge.net]>, <[mailto:users@wicket.apache.org|users@wicket.apache.org]>.
+ * Announce to mailing lists, <[mailto:wicket-web-beans@googlecode.com wicket-web-beans@googlecode.com]>, <[mailto:users@wicket.apache.org users@wicket.apache.org]>.
  * Announce to SF news, Freshmeat
  * Take a break
