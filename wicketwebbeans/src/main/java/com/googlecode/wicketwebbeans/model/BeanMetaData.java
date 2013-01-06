@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -345,7 +345,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 label = createLabel(name);
             }
 
-            ElementMetaData propertyMeta = new ElementMetaData(this, name, label, descriptor.getPropertyType());
+            ElementMetaData propertyMeta = new ElementMetaData(this, name, label, descriptor.getReadMethod().getGenericReturnType());
             propertyMeta.setViewOnly(isViewOnly());
             elements.add(propertyMeta);
 
@@ -867,7 +867,7 @@ public class BeanMetaData extends MetaData implements Serializable
             }
             catch (URISyntaxException e) { /* Ignore - treat as zero */
             }
-        }
+            }
 
         String cacheKey = beanClass.getName() + ':' + propFileName;
         CachedBeanProps beanprops = cachedBeanProps.get(cacheKey);
@@ -876,7 +876,7 @@ public class BeanMetaData extends MetaData implements Serializable
                 logger.info("File changed: " + propFileName + " re-reading.");
             }
 
-            // It's OK not to have a beanprops file. We can deduce the parameters by convention. 
+            // It's OK not to have a beanprops file. We can deduce the parameters by convention.
             InputStream propsStream = component.getClass().getResourceAsStream(propFileName);
             if (propsStream != null) {
                 try {
@@ -890,9 +890,9 @@ public class BeanMetaData extends MetaData implements Serializable
                     }
                     catch (IOException e) { /* Ignore */
                     }
+                    }
                 }
             }
-        }
 
         if (beanprops != null) {
             collectBeansAnnotation(beanprops.getBeans(), false);
@@ -907,7 +907,7 @@ public class BeanMetaData extends MetaData implements Serializable
      */
     private void deriveElementFromAnnotations(PropertyDescriptor descriptor, ElementMetaData elementMetaData)
     {
-        // NOTE: !!! The annotation classes must be present at runtime, otherwise getAnnotations() doesn't 
+        // NOTE: !!! The annotation classes must be present at runtime, otherwise getAnnotations() doesn't
         // return the annotation.
         Method readMethod = descriptor.getReadMethod();
         if (readMethod != null) {

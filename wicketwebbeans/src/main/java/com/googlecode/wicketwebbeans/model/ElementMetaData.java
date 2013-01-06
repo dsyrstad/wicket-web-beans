@@ -17,9 +17,10 @@
 package com.googlecode.wicketwebbeans.model;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
-
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -28,7 +29,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.lang.PropertyResolver;
 
 import com.googlecode.wicketwebbeans.fields.ImageLabel;
-import java.lang.reflect.Type;
 
 
 /**
@@ -54,14 +54,14 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     private BeanMetaData beanMetaData;
     private String propertyName;
-    private Class propertyType;
+    private Type propertyType;
     private int order;
     private String tabId;
     private boolean isAction = false;
     private boolean actionSpecifiedInProps = false;
     private boolean specifiedInProps = false;
     
-    ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Class propertyType)
+    ElementMetaData(BeanMetaData beanMetaData, String propertyName, String label, Type propertyType)
     {
         super(beanMetaData.getComponent());
         
@@ -254,7 +254,16 @@ public final class ElementMetaData extends MetaData implements Serializable
     
     public Class getPropertyType()
     {
-        return propertyType;
+        if (propertyType == null) {
+            return null;
+        } else if (propertyType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) propertyType;
+            return (Class) parameterizedType.getRawType();
+        } else if (propertyType instanceof Class) {
+            return (Class) propertyType;
+        } else {
+            throw new RuntimeException("Unknown subclass of element type: " + propertyType.getClass().getName());
+        }
     }
 
     /**
@@ -289,6 +298,9 @@ public final class ElementMetaData extends MetaData implements Serializable
      * not defined and value is not null and it is
      * a Collection and is not empty, the element type is derived from the first element of the collection. 
      *
+     * Patch submitted by Kent in issue 31:
+     * If the Collection is empty, use reflection at runtime to obtain the elementType
+     *
      * @param value the property's current value. May be null to ignore runtime type detection.
      * 
      * @return the elementType or null if not defined.
@@ -310,11 +322,9 @@ public final class ElementMetaData extends MetaData implements Serializable
                     elementType = iter.next().getClass();
                 }
                 else {
-                    if (value.getClass().getTypeParameters().length > 0) {
-                        // if it is a generic collection, assume the first type
-                        // parameter if the element type
-                        Type type = value.getClass().getTypeParameters()[0];
-                        elementType = type.getClass();
+                    Class compileTimeElementType = getCompileTimeElementType();
+                    if (compileTimeElementType != null) {
+                        elementType = compileTimeElementType;
                     } else {
                         // If empty - just use Object.
                         elementType = new Serializable() {
@@ -335,6 +345,26 @@ public final class ElementMetaData extends MetaData implements Serializable
         }
         
         return elementType;
+    }
+
+    /**
+     * Uses reflection at runtime to get the elementType of an empty Collection
+     * 
+     * @return the actual elementType of the Collection at runtime
+     */
+    private Class getCompileTimeElementType()
+    {
+        if (propertyType instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) propertyType;
+            Type[] typeArgs = parameterizedType.getActualTypeArguments();
+            if (typeArgs.length == 1) {
+                Type firstTypeArg = typeArgs[0];
+                if (firstTypeArg instanceof Class) {
+                    return (Class) typeArgs[0];
+                }
+            }
+        }
+        return null;
     }
 
     /**
