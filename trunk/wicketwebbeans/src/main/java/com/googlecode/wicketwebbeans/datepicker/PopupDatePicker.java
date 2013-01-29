@@ -122,7 +122,7 @@ public class PopupDatePicker extends DatePicker
 
 				public String getObject()
 				{
-					return (String) urlFor(resourceReference);
+					return urlFor(resourceReference).toString();
 				};
 			};
 			add(new AttributeModifier("src", true, srcReplacement));
