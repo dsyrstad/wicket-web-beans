@@ -1,0 +1,1 @@
+Wicket Web Beans is an Apache Wicket (http://wicket.apache.org) toolkit for JavaBeans. AJAX Web forms are automatically generated from bean properties. The toolkit normally does what you'd expect, but when it doesn't, you can override its behavior.
